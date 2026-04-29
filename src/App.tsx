@@ -202,19 +202,6 @@ function Socios() {
   )
 }
 
-function Devolucion() {
-  return (
-    <>
-      <h2 className="mb-2 text-xl font-semibold">Devolución de un libro</h2>
-        <form className="flex gap-2 rounded py-4">
-
-        <input type="text" name="" id="" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Apellido del socio" />
-        <input type="submit" value="Buscar" className="px-4 bg-[#fe8753] rounded" />
-        </form>
-    </>
-  )
-}
-
 function Inscripcion() {
 
   const handleSubmit = (e: SyntheticEvent) => {
