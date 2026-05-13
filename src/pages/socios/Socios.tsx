@@ -1,59 +1,78 @@
-import { useState, type SyntheticEvent } from "react";
-import { ListaSocios } from "./ListaSocios";
-import { Prestamos } from "./Prestamos";
-import { CalendarioCuotas } from "./CalendarioCuotas";
+import { useState, useEffect, type SyntheticEvent } from "react"
+import { ListaSocios } from "./ListaSocios"
+import type { Socio } from "@/models/Socio"
+import { cargarSocios } from "@/services/cargarSocios"
+import { Prestamos } from "./Prestamos"
+import { CalendarioCuotas } from "./CalendarioCuotas"
+import { SocioDatos } from "./SocioDatos"
 
 export function Socios() {
-  const [lista, setLista] = useState(false);
-  const [cuotas, setCuotas] = useState(false);
+  const [lista, setLista] = useState(false)
+  const [cuotas, setCuotas] = useState(false)
+  const [socios, setSocios] = useState<Socio[]>([])
+  const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(
+    null
+  )
+
+  useEffect(() => {
+    cargarSocios().then(setSocios).catch(console.error)
+  }, [])
 
   const handleSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
+    e.preventDefault()
+    setLista(true)
+    setCuotas(false)
+  }
 
-    setLista(true);
-    setCuotas(false);
-  };
+  const handleSelect = (socio: Socio) => {
+    setSocioSeleccionado(socio)
+    setLista(false)
+    setCuotas(true)
+  }
+
   return (
     <>
       <div className="">
-        <h2 className="mb-2 text-xl font-semibold">Gestión de cuotas y socios</h2>
+        <h2 className="mb-2 text-xl font-semibold">
+          Gestión de cuotas y socios
+        </h2>
         <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 pt-4">
           <div>
-            <form className="flex gap-2 rounded pb-4 mb-2" onSubmit={handleSubmit}>
-              <input type="text" name="" id="" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Apellido del socio" />
+            <form
+              className="flex gap-2 rounded pb-4 mb-2"
+              onSubmit={handleSubmit}
+            >
+              <input
+                type="text"
+                className="w-full border bg-white border-black rounded p-1 px-2"
+                placeholder="Apellido del socio"
+              />
               <input type="submit" value="Buscar" className="btn" />
             </form>
 
             {lista && (
-              <ListaSocios />
+              <ListaSocios socios={socios} onSelect={handleSelect} />
             )}
           </div>
-          {!cuotas && <aside className="p-4 rounded bg-white text-base">
-            <p>Dentro de esta sección puedes:</p>
-            <ul className="pl-4 pt-1 ml-1 list-disc">
-              <li>Buscar socios según su apellido,</li>
-              <li>ver sus datos personales</li>
-              <li>el estado de sus cuotas,</li>
-              <li>el préstamo y devolución de libros,</li>
-              <li>darlo de baja o reincribirlo.</li>
-            </ul>
-          </aside>}
+          {!cuotas && (
+            <aside className="p-4 rounded bg-white text-base">
+              <p>Dentro de esta sección puedes:</p>
+              <ul className="pl-4 pt-1 ml-1 list-disc">
+                <li>Buscar socios según su apellido,</li>
+                <li>ver sus datos personales</li>
+                <li>el estado de sus cuotas,</li>
+                <li>el préstamo y devolución de libros,</li>
+                <li>darlo de baja o reincribirlo.</li>
+              </ul>
+            </aside>
+          )}
         </main>
       </div>
 
       {cuotas && (
         <div className="grid grid-cols-2 gap-10">
           <div className="flex flex-col gap-8">
-            <div className="card">
-              <h2 className="text-xl">Datos de <span className="font-semibold">Ciro Mirkin</span></h2>
-              <ul className="pt-2 list-disc pl-6 text-sm">
-                <li>DNI: 47668800</li>
-                <li>Numero de celular: 354467894</li>
-                <li>Dirección: Calle s/n</li>
-                <li>Fecha de nacimiento: 03/06/2006</li>
-                <li>Nacionalidad: Argentino</li>
-              </ul>
-            </div>
+            <SocioDatos socio={socioSeleccionado} />
 
             <div className="flex flex-col gap-4 card">
               <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
@@ -75,5 +94,5 @@ export function Socios() {
         </div>
       )}
     </>
-  );
+  )
 }
