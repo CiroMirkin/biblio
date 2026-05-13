@@ -6,3 +6,21 @@
 
     --color-secondary: #f7dfbe;
 }
+
+html, body, #root {
+  height: 100%;
+}
+
+@layer components {
+    .btn-disabled {
+        @apply cursor-default pointer-events-none select-none opacity-50;
+    }
+
+    .btn {
+        @apply px-4 pt-px bg-[#8cbfb3] rounded;
+    }
+
+    .card {
+        @apply bg-white rounded p-4;
+    }
+}
