@@ -2,6 +2,7 @@ import { useState, useEffect, type SyntheticEvent } from "react"
 import { ListaSocios } from "./ListaSocios"
 import type { Socio } from "@/models/Socio"
 import { cargarSocios } from "@/services/cargarSocios"
+import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
@@ -10,9 +11,8 @@ export function Socios() {
   const [lista, setLista] = useState(false)
   const [cuotas, setCuotas] = useState(false)
   const [socios, setSocios] = useState<Socio[]>([])
-  const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(
-    null
-  )
+  const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(null)
+  const [mesesCuotas, setMesesCuotas] = useState<Record<string, boolean>[]>([])
 
   useEffect(() => {
     cargarSocios().then(setSocios).catch(console.error)
@@ -28,6 +28,7 @@ export function Socios() {
     setSocioSeleccionado(socio)
     setLista(false)
     setCuotas(true)
+    cargarCuotasSocio(socio.nroSocio).then(setMesesCuotas).catch(console.error)
   }
 
   return (
@@ -84,7 +85,7 @@ export function Socios() {
             <div className="p-4 bg-white rounded">
               <h2 className="pb-4 text-xl">Cuotas 2026</h2>
               
-              <CalendarioCuotas />
+              <CalendarioCuotas meses={mesesCuotas} />
             </div>
             <div className="mt-2 flex gap-4 card">
               <button className="px-4 pb-1 rounded bg-sky-200">Dar de baja</button>
