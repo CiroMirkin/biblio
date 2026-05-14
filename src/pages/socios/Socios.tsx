@@ -93,7 +93,7 @@ export function Socios() {
             )}
           </div>
           {!cuotas && (
-            <aside className="p-4 rounded bg-white text-base">
+            <aside className="p-4 sticky h-auto rounded bg-white text-base">
               <p>Dentro de esta sección puedes:</p>
               <ul className="pl-4 pt-1 ml-1 list-disc">
                 <li>Buscar socios según su apellido,</li>

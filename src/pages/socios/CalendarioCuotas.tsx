@@ -1,4 +1,5 @@
 import type { Calendario } from "@/models"
+import { cn } from "@/utils"
 
 type MesProps = {
   nombre: string
@@ -8,11 +9,14 @@ type MesProps = {
 
 function Mes({ nombre, pagado, onToggle }: MesProps) {
   return (
-    <li className={`px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center ${pagado ? "bg-green-300" : "bg-gray-200"}`}>
+    <li className={cn(
+      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center",
+      pagado ? "bg-green-300" : "bg-gray-200"
+    )}>
       <span className="font-semibold text-lg text-center">{nombre}</span>
       {pagado
         ? <button onClick={onToggle} className="px-4 pb-1 bg-white opacity-50 hover:opacity-100 rounded">Pago</button>
-        : <button onClick={onToggle} className="px-4 pb-1 bg-[#8cbfb3] rounded">No Pago</button>
+        : <button onClick={onToggle} className="px-4 pb-1 bg-[#8cbfb3] rounded">Adeuda</button>
       }
     </li>
   )
@@ -45,7 +49,7 @@ export function CalendarioCuotas({ meses, anio, onToggleMes, onAnioAnterior, onA
         <span className="font-semibold text-lg">{anio}</span>
         <button
           onClick={onAnioSiguiente}
-          className={`btn ${anio >= anioActual ? "opacity-35 pointer-events-none" : ""}`}
+          className={cn("btn", anio >= anioActual ? "opacity-35 pointer-events-none" : "")}
           disabled={anio >= anioActual}
         >
           {anio + 1}

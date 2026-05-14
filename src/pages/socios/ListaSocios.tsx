@@ -1,4 +1,5 @@
 import type { Socio } from "@/models/Socio";
+import { cn } from "@/utils";
 
 interface ListaSociosProps {
   socios: Socio[];
@@ -11,7 +12,10 @@ export function ListaSocios({ socios, onSelect }: ListaSociosProps) {
       {socios.map((socio, index) => (
         <li
           key={socio.nroSocio}
-          className={`px-4 py-4 flex gap-2 justify-between ${index % 2 === 0 ? "bg-white" : "bg-white/50"}`}
+          className={cn(
+            "px-4 py-4 flex gap-2 justify-between", 
+            index % 2 === 0 ? "bg-white" : "bg-white/50"
+          )}
         >
           <span className="w-full text-lg">{socio.nombreYApellido}</span>
           <button className="btn" onClick={() => onSelect(socio)}>
