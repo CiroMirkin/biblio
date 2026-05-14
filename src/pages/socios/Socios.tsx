@@ -114,7 +114,7 @@ export function Socios() {
 
             <div className="flex flex-col gap-4 card">
               <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
-              <Prestamos />
+              <Prestamos nombreSocio={socioSeleccionado!.nombreYApellido} nroSocio={socioSeleccionado?.nroSocio} />
             </div>
           </div>
 

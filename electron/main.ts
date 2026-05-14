@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
 import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio, rowToLibro } from './utils/excelhelpers'
+import type { Libro } from './libro'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -42,6 +43,26 @@ ipcMain.handle('getLibros', async () => {
     if (rowIndex === 1) return
 
     libros.push(rowToLibro(row))
+  })
+
+  return libros
+})
+
+ipcMain.handle('getLibrosPrestadosSocio', async (_, nombreSocio: string, nroSocio?: number) => {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+  const worksheet = workbook.getWorksheet('Hoja1')
+  if (!worksheet) return []
+
+  const libros: Libro[] = []
+
+  worksheet.eachRow((row, rowIndex) => {
+    if (rowIndex === 1) return
+
+    const libro = rowToLibro(row)
+    if (libro.numeroSocio === nroSocio || libro.nombreSocio === nombreSocio) {
+      libros.push(libro)
+    }
   })
 
   return libros
