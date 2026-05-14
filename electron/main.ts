@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
+import { parseFecha } from './utils/parseFecha'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -23,18 +24,6 @@ let writeQueue: Promise<unknown> = Promise.resolve()
 function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
   writeQueue = writeQueue.then(fn).catch(fn)
   return writeQueue
-}
-
-function parseFecha(value: ExcelJS.CellValue): string | null {
-  if (value instanceof Date) {
-    const d = value as Date
-    return isNaN(d.getTime()) ? null : d.toISOString()
-  }
-  if (typeof value === 'string' && value.trim() !== '') {
-    const d = new Date(value)
-    return isNaN(d.getTime()) ? null : d.toISOString()
-  }
-  return null
 }
 
 ipcMain.handle('getSocios', async () => {
