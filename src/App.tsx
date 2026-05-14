@@ -33,8 +33,8 @@ function App() {
   })
 
   return (
-    <div className="h-full p-4 bg-white flex flex-col">
-      <nav className="pt-4 flex justify-start items-end gap-1">
+    <div className="h-full bg-white flex flex-col">
+      <nav className="flex justify-start items-end gap-1">
         <button
           onClick={() => setActualView(options.CUOTA)}
           className={cn(
@@ -42,7 +42,7 @@ function App() {
             actualView === options.CUOTA && "font-bold h-18"
           )}
         >
-          Prestamo
+          Socios y cuotas
         </button>
         <button
           onClick={() => setActualView(options.INSCRIPCION)}

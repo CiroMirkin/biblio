@@ -71,21 +71,21 @@ export function Socios() {
   return (
     <>
       <div className="">
-        <h2 className="mb-2 text-xl font-semibold">
-          Gestión de cuotas y socios
-        </h2>
-        <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 pt-4">
+        <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 rounded bg-white/60 hover:bg-white transition-colors duration-100 ">
           <div>
             <form
-              className="flex gap-2 rounded pb-4 mb-2"
+              className="w-full rounded p-4 mb-2"
               onSubmit={handleSubmit}
             >
-              <input
-                type="text"
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="Apellido del socio"
-              />
-              <input type="submit" value="Buscar" className="btn" />
+              <label className="text-lg">Buscar socio:</label>
+              <div className="mt-1 w-full flex gap-2">
+                <input
+                  type="text"
+                  className="w-full border bg-white border-black rounded p-1 px-2"
+                  placeholder="Apellido del socio"
+                />
+                <input type="submit" value="Buscar" className="btn" />
+              </div>
             </form>
 
             {lista && (
@@ -108,7 +108,7 @@ export function Socios() {
       </div>
 
       {cuotas && (
-        <div className="grid grid-cols-2 gap-10">
+        <div className="pt-6 grid grid-cols-2 gap-10">
           <div className="flex flex-col gap-8">
             <SocioDatos socio={socioSeleccionado} />
 
