@@ -31,6 +31,23 @@ export function Socios() {
     cargarCuotasSocio(socio.nroSocio).then(setMesesCuotas).catch(console.error)
   }
 
+  const handleToggleMes = async (mesIndex: number) => {
+    if (!socioSeleccionado) return
+
+    try {
+      const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, mesIndex)
+
+      setMesesCuotas(prev => {
+        const next = [...prev]
+        const key = Object.keys(next[mesIndex])[0]
+        next[mesIndex] = { [key]: pagado }
+        return next
+      })
+    } catch (e) {
+      console.error('Error al actualizar cuota:', e)
+    }
+  }
+
   return (
     <>
       <div className="">
@@ -84,8 +101,8 @@ export function Socios() {
           <div className="flex flex-col gap-4">
             <div className="p-4 bg-white rounded">
               <h2 className="pb-4 text-xl">Cuotas 2026</h2>
-              
-              <CalendarioCuotas meses={mesesCuotas} />
+
+              <CalendarioCuotas meses={mesesCuotas} onToggleMes={handleToggleMes} />
             </div>
             <div className="mt-2 flex gap-4 card">
               <button className="px-4 pb-1 rounded bg-sky-200">Dar de baja</button>
