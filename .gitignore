@@ -1,3 +1,9 @@
+# Electron
+dist-electron
+
+public/*.xlsx
+public/*/*.xlsx
+
 # Logs
 logs
 *.log
