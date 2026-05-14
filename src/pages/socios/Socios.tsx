@@ -6,6 +6,7 @@ import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
+import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
 
 export function Socios() {
   const [lista, setLista] = useState(false)
@@ -15,7 +16,7 @@ export function Socios() {
   const [mesesCuotas, setMesesCuotas] = useState<Record<string, boolean>[]>([])
 
   useEffect(() => {
-    cargarSocios().then(setSocios).catch(console.error)
+    cargarSocios().then(socios => setSocios(ordenarSociosAlfabeticamente(socios))).catch(console.error)
   }, [])
 
   const handleSubmit = (e: SyntheticEvent) => {
