@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { motion } from "motion/react"
 import { Inscripcion, Socios } from "@/pages";
 import { cn } from "./utils";
 
@@ -34,25 +35,29 @@ function App() {
 
   return (
     <div className="h-full bg-white flex flex-col">
-      <nav className="flex justify-start items-end gap-1">
-        <button
+      <nav className="h-18 flex justify-start items-end gap-1">
+        <motion.button
           onClick={() => setActualView(options.CUOTA)}
+          animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "h-14 text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-secondary font-semibold transition-all duration-100",
-            actualView === options.CUOTA && "font-bold h-18"
+            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-secondary",
+            actualView === options.CUOTA && "font-semibold"
           )}
         >
           Socios y cuotas
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={() => setActualView(options.INSCRIPCION)}
+          animate={{ height: actualView === options.INSCRIPCION ? 72 : 56 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "h-14 text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#cadbf0]",
-            actualView === options.INSCRIPCION && "font-bold h-18"
+            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#cadbf0]",
+            actualView === options.INSCRIPCION && "font-semibold"
           )}
         >
           Inscripción
-        </button>
+        </motion.button>
       </nav>
 
       <main className={cn("p-4 rounded-b rounded-r flex-1", bg)}>
