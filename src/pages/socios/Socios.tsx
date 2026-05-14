@@ -28,14 +28,14 @@ export function Socios() {
     setSocioSeleccionado(socio)
     setLista(false)
     setCuotas(true)
-    cargarCuotasSocio(socio.nroSocio).then(setMesesCuotas).catch(console.error)
+    cargarCuotasSocio(socio.nroSocio, 2026).then(setMesesCuotas).catch(console.error)
   }
 
   const handleToggleMes = async (mesIndex: number) => {
     if (!socioSeleccionado) return
 
     try {
-      const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, mesIndex)
+      const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, 2026,mesIndex)
 
       setMesesCuotas(prev => {
         const next = [...prev]

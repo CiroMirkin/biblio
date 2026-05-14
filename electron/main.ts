@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
-import { parseFecha } from './utils/parseFecha'
+import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio } from './utils/excelhelpers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -29,7 +29,7 @@ function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
 ipcMain.handle('getSocios', async () => {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('datos_prueba_socios')
+  const worksheet = workbook.getWorksheet('Hoja1')
   if (!worksheet) return []
 
   const socios: unknown[] = []
@@ -37,41 +37,36 @@ ipcMain.handle('getSocios', async () => {
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
 
-    const telefonoRaw = row.getCell(5).value
-    const telefono =
-      telefonoRaw && telefonoRaw !== 0 ? String(telefonoRaw) : null
-
-    socios.push({
-      nroSocio: Number(row.getCell(1).value) || 0,
-      nombreYApellido: String(row.getCell(2).value ?? ''),
-      domicilio: String(row.getCell(3).value ?? ''),
-      dni: Number(row.getCell(4).value) || 0,
-      telefono,
-      nacionalidad: String(row.getCell(6).value ?? ''),
-      fechaNacimiento: parseFecha(row.getCell(7).value),
-      caracterSocio: String(row.getCell(8).value ?? ''),
-      fechaIngresoEgreso: parseFecha(row.getCell(9).value),
-      observaciones: String(row.getCell(10).value ?? ''),
-    })
+    socios.push(rowToSocio(row))
   })
 
   return socios
 })
 
-ipcMain.handle('getCuotasSocio', async (_event, nroSocio: number) => {
+ipcMain.handle('getCuotasSocio', async (_event, nroSocio: number, anio: number) => {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('cuotas')
+  const worksheet = workbook.getWorksheet('original')
   if (!worksheet) return []
 
+  const headerRow = worksheet.getRow(1)
+  const indiceMeses = construirIndiceMeses(headerRow)
+
+  const columnasSocio = [...indiceMeses.entries()]
+    .filter(([, { anio: a }]) => a === Number(anio))
+    .map(([colIndex, { mes }]) => ({ colIndex, mes }))
+  
   let meses: Record<string, boolean>[] = []
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
-    if (Number(row.getCell(1).value) !== nroSocio) return
+    if (Number(row.getCell(3).value) !== nroSocio) return
 
-    meses = MESES.map((nombre, i) => {
-      const cell = row.getCell(3 + i)
+    meses = MESES.map((nombre, mesIndex) => {
+      const col = columnasSocio.find(c => c.mes === mesIndex)
+      if (!col) return { [nombre]: false }
+      const cell = row.getCell(col.colIndex)
+      migrarCeldaPintadaAPago(cell)
       return { [nombre]: cell.value === 'pago' }
     })
   })
@@ -79,30 +74,32 @@ ipcMain.handle('getCuotasSocio', async (_event, nroSocio: number) => {
   return meses
 })
 
-ipcMain.handle('toggleCuota', async (_event, nroSocio: number, mesIndex: number) => {
+ipcMain.handle('toggleCuota', async (_event, nroSocio: number, anio: number, mesIndex: number) => {
   return enqueueWrite(async () => {
     const workbook = new ExcelJS.Workbook()
     await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-    const worksheet = workbook.getWorksheet('cuotas')
+    const worksheet = workbook.getWorksheet('original')
     if (!worksheet) throw new Error('Hoja de cuotas no encontrada')
 
+    const headerRow = worksheet.getRow(1)
+    const indiceMeses = construirIndiceMeses(headerRow)
+
+    const colEntry = [...indiceMeses.entries()].find(
+      ([, { anio: a, mes }]) => a === anio && mes === mesIndex
+    )
+
+    if (!colEntry) throw new Error(`Mes ${mesIndex + 1}/${anio} no encontrado en el archivo`)
+
+    const colIndex = colEntry[0]
     let found = false
     let newStatus = false
 
     worksheet.eachRow((row, rowIndex) => {
       if (rowIndex === 1) return
-      if (Number(row.getCell(1).value) !== nroSocio) return
+      if (Number(row.getCell(3).value) !== nroSocio) return
 
       found = true
-      const cell = row.getCell(3 + mesIndex)
-
-      if (cell.value === 'pago') {
-        cell.value = ''
-        newStatus = false
-      } else {
-        cell.value = 'pago'
-        newStatus = true
-      }
+      newStatus = toggleCeldaPago(row.getCell(colIndex))
     })
 
     if (!found) throw new Error(`Socio ${nroSocio} no encontrado`)
