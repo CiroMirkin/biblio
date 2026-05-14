@@ -1,42 +1,129 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { Libro } from "@/models"
+import { formatAutor, formatTitulo } from "@/utils"
 
 interface Props {
   nombreSocio: string
   nroSocio?: number
 }
 
+const MAX_PRESTAMOS = 4
+const FIELDS = ['autor', 'titulo', 'numeroInventario'] as const
+
+const emptyLibro = () => ({
+  autor: '',
+  titulo: '',
+  numeroInventario: '',
+})
+
+const colAutor = "w-[35%]"
+const colTitulo = "w-[35%]"
+const colNro = "w-[20%]"
+const colBtn = "w-[10%]"
+
 export function Prestamos({ nombreSocio, nroSocio }: Props) {
   const [libros, setLibros] = useState<Libro[]>([])
+  const [inputs, setInputs] = useState(
+    Array.from({ length: MAX_PRESTAMOS }, emptyLibro)
+  )
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   useEffect(() => {
     if (!nroSocio) return
     window.electronAPI.getLibrosPrestadosSocio(nombreSocio, nroSocio).then(setLibros)
   }, [nroSocio, nombreSocio])
 
+  function handleChange(index: number, field: typeof FIELDS[number], value: string) {
+    setInputs(prev => prev.map((input, i) => i === index ? { ...input, [field]: value } : input))
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number, fieldIndex: number) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+
+    const slotsLibres = MAX_PRESTAMOS - libros.length
+    const totalInputs = slotsLibres * FIELDS.length
+    const currentFlat = rowIndex * FIELDS.length + fieldIndex
+    const nextFlat = currentFlat + 1
+
+    if (nextFlat < totalInputs) {
+      inputRefs.current[nextFlat]?.focus()
+    }
+  }
+
+  async function handleAgregar() {
+    const nuevos = inputs.filter(input => input.titulo || input.numeroInventario)
+    if (nuevos.length === 0) return
+
+    for (const input of nuevos) {
+      const libro: Libro = {
+        autor: formatAutor(input.autor),
+        titulo: formatTitulo(input.titulo),
+        nombreSocio,
+        numeroSocio: nroSocio ?? null,
+        numeroInventario: Number(input.numeroInventario) || 0,
+      }
+      const ok = await window.electronAPI.addLibroPrestado(libro)
+      if (ok) setLibros(prev => [...prev, libro])
+    }
+
+    setInputs(Array.from({ length: MAX_PRESTAMOS }, emptyLibro))
+  }
+
+  const slotsOcupados = libros.length
+  const slotsLibres = MAX_PRESTAMOS - slotsOcupados
+
   return (
     <form className="w-full flex flex-col rounded">
+      <div className="flex gap-2 px-2 py-1 text-sm font-semibold text-gray-600">
+        <span className={colAutor}>Autor</span>
+        <span className={colTitulo}>Título</span>
+        <span className={colNro}>N° Inventario</span>
+        <span className={colBtn}>Devolver</span>
+      </div>
+
       {libros.map((libro, index) => (
         <div
           key={libro.numeroInventario}
-          className={`flex justify-between gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
+          className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
         >
-          <div className="text-lg flex gap-4">
-            <span>{libro.titulo}</span>
-            <span>N° {libro.numeroInventario}</span>
+          <span className={`${colAutor} text-lg truncate`}>{libro.autor}</span>
+          <span className={`${colTitulo} text-lg truncate`}>{libro.titulo}</span>
+          <span className={`${colNro} text-lg`}>N° {libro.numeroInventario}</span>
+          <div className={colBtn}>
+            <button type="button" className="btn w-full overflow-hidden whitespace-nowrap text-ellipsis">Devuelto</button>
           </div>
-          <button className="btn">Devuelto</button>
         </div>
       ))}
-      <div className="flex gap-2 py-3 px-2 rounded bg-gray-200">
-        <input type="text" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Titulo del libro" />
-        <input type="text" className="border border-black bg-white rounded p-1 px-2" placeholder="N° de Inventario" />
-      </div>
-      <div className="flex gap-2 py-3 px-2 rounded bg-white">
-        <input type="text" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Titulo del libro" />
-        <input type="text" className="border border-black bg-white rounded p-1 px-2" placeholder="N° de Inventario" />
-      </div>
-      <button className="bg-[#8cbfb3] mt-4 p-1 pb-2 text-lg rounded">Registrar préstamo</button>
+
+      {Array.from({ length: slotsLibres }, (_, i) => (
+        <div
+          key={i}
+          className={`flex items-center gap-2 py-3 px-2 rounded ${(slotsOcupados + i) % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
+        >
+          {FIELDS.map((field, fieldIndex) => (
+            <input
+              key={field}
+              ref={el => { inputRefs.current[i * FIELDS.length + fieldIndex] = el }}
+              type="text"
+              value={inputs[i][field]}
+              onChange={e => handleChange(i, field, e.target.value)}
+              onKeyDown={e => handleKeyDown(e, i, fieldIndex)}
+              className={`${field === 'autor' ? colAutor : field === 'titulo' ? colTitulo : colNro} border bg-white border-black rounded p-1 px-2`}
+              placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N° Inventario'}
+            />
+          ))}
+          <div className={colBtn} />
+        </div>
+      ))}
+
+      <button
+        type="button"
+        onClick={handleAgregar}
+        className="bg-[#8cbfb3] mt-4 p-1 pb-2 text-lg rounded"
+      >
+        Registrar préstamo
+      </button>
     </form>
   )
 }

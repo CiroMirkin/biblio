@@ -5,6 +5,7 @@ import ExcelJS from 'exceljs'
 import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio, rowToLibro } from './utils/excelhelpers'
 import type { Libro } from './libro'
 import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from './constants'
+import { addLibroPrestado } from './handlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -34,6 +35,8 @@ ipcMain.handle('getLibros', async () => {
 
   return libros
 })
+
+ipcMain.handle('addLibroPrestado', (_, libro: Libro) => addLibroPrestado(libro))
 
 ipcMain.handle('getLibrosPrestadosSocio', async (_, nombreSocio: string, nroSocio?: number) => {
   const workbook = new ExcelJS.Workbook()
