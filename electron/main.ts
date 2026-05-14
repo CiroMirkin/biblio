@@ -4,25 +4,12 @@ import path from 'node:path'
 import ExcelJS from 'exceljs'
 import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio, rowToLibro } from './utils/excelhelpers'
 import type { Libro } from './libro'
+import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from './constants'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-
-const IS_DEV = Boolean(process.env.VITE_DEV_SERVER_URL)
-
-const SOCIOS_XLSX_PATH = IS_DEV
-  ? path.join(process.cwd(), 'public', 'socios.xlsx')
-  : path.join(app.getPath('userData'), 'socios.xlsx')
-
-const CUOTAS_XLSX_PATH = IS_DEV
-  ? path.join(process.cwd(), 'public', 'cuotas.xlsx')
-  : path.join(app.getPath('userData'), 'cuotas.xlsx')
-
-const LIBROS_XLSX_PATH = IS_DEV
-  ? path.join(process.cwd(), 'public', 'libros.xlsx')
-  : path.join(app.getPath('userData'), 'libros.xlsx')
 
 let writeQueue: Promise<unknown> = Promise.resolve()
 
