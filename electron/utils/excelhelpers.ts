@@ -28,7 +28,7 @@ export function celdaEstaPintada(cell: ExcelJS.Cell): boolean {
 }
 
 export function migrarCeldaPintadaAPago(cell: ExcelJS.Cell): void {
-  if (cell.value === 'pago') return
+  if (cell.value === 'pago' || cell.value === 'adeuda') return
   if (celdaEstaPintada(cell)) {
     cell.value = 'pago'
   }
@@ -36,7 +36,7 @@ export function migrarCeldaPintadaAPago(cell: ExcelJS.Cell): void {
 
 export function toggleCeldaPago(cell: ExcelJS.Cell): boolean {
   if (cell.value === 'pago') {
-    cell.value = ''
+    cell.value = 'adeuda'
     return false
   }
   cell.value = 'pago'
