@@ -71,7 +71,7 @@ export function Socios() {
   return (
     <>
       <div className="">
-        <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 rounded bg-white/60 hover:bg-white transition-colors duration-100 ">
+        <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 rounded bg-white/60 transition-colors duration-100 ">
           <div>
             <form
               className="w-full rounded p-4 mb-2"

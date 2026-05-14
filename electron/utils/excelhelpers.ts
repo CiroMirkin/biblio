@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { parseFecha } from './parseFecha'
 import type { Socio } from '../socio'
+import type { Libro } from '../libro'
 
 export function rowToSocio(row: ExcelJS.Row): Socio {
   const telefonoRaw = row.getCell(9).value
@@ -17,6 +18,16 @@ export function rowToSocio(row: ExcelJS.Row): Socio {
     fechaIngresoEgreso: parseFecha(row.getCell(11).value),
     observaciones: String(row.getCell(12).value ?? ''),
     telefono,
+  }
+}
+
+export function rowToLibro(row: ExcelJS.Row): Libro {
+  return {
+    autor: String(row.getCell(1).value ?? ''),
+    titulo: String(row.getCell(2).value ?? ''),
+    numeroInventario: Number(row.getCell(3).value || 0),
+    nombreSocio: String(row.getCell(4).value ?? ''),
+    numeroSocio: Number(row.getCell(5).value ?? null),
   }
 }
 

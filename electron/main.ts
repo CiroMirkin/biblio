@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
-import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio } from './utils/excelhelpers'
+import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio, rowToLibro } from './utils/excelhelpers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -19,12 +19,33 @@ const CUOTAS_XLSX_PATH = IS_DEV
   ? path.join(process.cwd(), 'public', 'cuotas.xlsx')
   : path.join(app.getPath('userData'), 'cuotas.xlsx')
 
+const LIBROS_XLSX_PATH = IS_DEV
+  ? path.join(process.cwd(), 'public', 'libros.xlsx')
+  : path.join(app.getPath('userData'), 'libros.xlsx')
+
 let writeQueue: Promise<unknown> = Promise.resolve()
 
 function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
   writeQueue = writeQueue.then(fn).catch(fn)
   return writeQueue
 }
+
+ipcMain.handle('getLibros', async () => {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+  const worksheet = workbook.getWorksheet('Hoja1')
+  if (!worksheet) return []
+
+  const libros: unknown[] = []
+
+  worksheet.eachRow((row, rowIndex) => {
+    if (rowIndex === 1) return
+
+    libros.push(rowToLibro(row))
+  })
+
+  return libros
+})
 
 ipcMain.handle('getSocios', async () => {
   const workbook = new ExcelJS.Workbook()
