@@ -14,10 +14,15 @@ export function Socios() {
   const [socios, setSocios] = useState<Socio[]>([])
   const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(null)
   const [mesesCuotas, setMesesCuotas] = useState<Record<string, boolean>[]>([])
+  const [anio, setAnio] = useState(new Date().getFullYear())
 
   useEffect(() => {
     cargarSocios().then(socios => setSocios(ordenarSociosAlfabeticamente(socios))).catch(console.error)
   }, [])
+
+  const cargarCuotas = (socio: Socio, anioSeleccionado: number) => {
+    cargarCuotasSocio(socio.nroSocio, anioSeleccionado).then(setMesesCuotas).catch(console.error)
+  }
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -29,14 +34,14 @@ export function Socios() {
     setSocioSeleccionado(socio)
     setLista(false)
     setCuotas(true)
-    cargarCuotasSocio(socio.nroSocio, 2026).then(setMesesCuotas).catch(console.error)
+    cargarCuotas(socio, anio)
   }
 
   const handleToggleMes = async (mesIndex: number) => {
     if (!socioSeleccionado) return
 
     try {
-      const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, 2026,mesIndex)
+      const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, anio, mesIndex)
 
       setMesesCuotas(prev => {
         const next = [...prev]
@@ -47,6 +52,20 @@ export function Socios() {
     } catch (e) {
       console.error('Error al actualizar cuota:', e)
     }
+  }
+
+  const handleAnioAnterior = () => {
+    if (!socioSeleccionado) return
+    const nuevoAnio = anio - 1
+    setAnio(nuevoAnio)
+    cargarCuotas(socioSeleccionado, nuevoAnio)
+  }
+
+  const handleAnioSiguiente = () => {
+    if (!socioSeleccionado) return
+    const nuevoAnio = anio + 1
+    setAnio(nuevoAnio)
+    cargarCuotas(socioSeleccionado, nuevoAnio)
   }
 
   return (
@@ -101,9 +120,15 @@ export function Socios() {
 
           <div className="flex flex-col gap-4">
             <div className="p-4 bg-white rounded">
-              <h2 className="pb-4 text-xl">Cuotas 2026</h2>
+              <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
 
-              <CalendarioCuotas meses={mesesCuotas} onToggleMes={handleToggleMes} />
+              <CalendarioCuotas
+                meses={mesesCuotas}
+                anio={anio}
+                onToggleMes={handleToggleMes}
+                onAnioAnterior={handleAnioAnterior}
+                onAnioSiguiente={handleAnioSiguiente}
+              />
             </div>
             <div className="mt-2 flex gap-4 card">
               <button className="px-4 pb-1 rounded bg-sky-200">Dar de baja</button>

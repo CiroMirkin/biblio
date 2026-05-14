@@ -18,7 +18,17 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
   )
 }
 
-export function CalendarioCuotas({ meses, onToggleMes }: { meses: Calendario; onToggleMes?: (i: number) => void }) {
+type Props = {
+  meses: Calendario
+  anio: number
+  onToggleMes?: (i: number) => void
+  onAnioAnterior: () => void
+  onAnioSiguiente: () => void
+}
+
+export function CalendarioCuotas({ meses, anio, onToggleMes, onAnioAnterior, onAnioSiguiente }: Props) {
+  const anioActual = new Date().getFullYear()
+
   return (
     <>
       <ul className="grid sm:grid-cols-3 grid-cols-2 gap-2">
@@ -28,9 +38,18 @@ export function CalendarioCuotas({ meses, onToggleMes }: { meses: Calendario; on
         })}
       </ul>
 
-      <footer className="w-full pt-4 flex gap-6 justify-center">
-        <button className="btn">2025</button>
-        <button className="btn opacity-35">2027</button>
+      <footer className="w-full pt-4 flex gap-6 justify-center items-center">
+        <button onClick={onAnioAnterior} className="btn">
+          {anio - 1}
+        </button>
+        <span className="font-semibold text-lg">{anio}</span>
+        <button
+          onClick={onAnioSiguiente}
+          className={`btn ${anio >= anioActual ? "opacity-35 pointer-events-none" : ""}`}
+          disabled={anio >= anioActual}
+        >
+          {anio + 1}
+        </button>
       </footer>
     </>
   )
