@@ -1,10 +1,8 @@
-import type { Socio } from "@/models/Socio";
+import { useSociosStore } from "../useSociosStore";
 
-interface Props {
-    socio: Socio | null
-}
-
-export function SocioDatos({ socio }: Props) {
+export function SocioDatos() {
+    const { socioSeleccionado: socio } = useSociosStore()
+    
     return (
         <div className="card">
             <h2 className="text-xl">Datos de <span className="font-semibold">{socio?.nombreYApellido}</span></h2>

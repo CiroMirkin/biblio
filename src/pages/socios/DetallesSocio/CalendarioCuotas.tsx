@@ -1,5 +1,5 @@
-import type { Calendario } from "@/models"
 import { cn } from "@/utils"
+import { useSociosStore } from "../useSociosStore"
 
 type MesProps = {
   nombre: string
@@ -22,33 +22,26 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
   )
 }
 
-type Props = {
-  meses: Calendario
-  anio: number
-  onToggleMes?: (i: number) => void
-  onAnioAnterior: () => void
-  onAnioSiguiente: () => void
-}
-
-export function CalendarioCuotas({ meses, anio, onToggleMes, onAnioAnterior, onAnioSiguiente }: Props) {
+export function CalendarioCuotas() {
+  const { mesesCuotas, anio, toggleMes, irAnioAnterior, irAnioSiguiente } = useSociosStore()
   const anioActual = new Date().getFullYear()
 
   return (
     <>
       <ul className="grid sm:grid-cols-3 grid-cols-2 gap-2">
-        {meses.map((mes, i) => {
+        {mesesCuotas.map((mes, i) => {
           const [nombre, pagado] = Object.entries(mes)[0]
-          return <Mes key={nombre} nombre={nombre} pagado={pagado} onToggle={() => onToggleMes?.(i)} />
+          return <Mes key={nombre} nombre={nombre} pagado={pagado} onToggle={() => toggleMes(i)} />
         })}
       </ul>
 
       <footer className="w-full pt-4 flex gap-6 justify-center items-center">
-        <button onClick={onAnioAnterior} className="btn">
+        <button onClick={irAnioAnterior} className="btn">
           {anio - 1}
         </button>
         <span className="font-semibold text-lg">{anio}</span>
         <button
-          onClick={onAnioSiguiente}
+          onClick={irAnioSiguiente}
           className={cn("btn", anio >= anioActual ? "opacity-35 pointer-events-none" : "")}
           disabled={anio >= anioActual}
         >

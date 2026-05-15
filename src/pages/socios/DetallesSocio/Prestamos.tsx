@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import type { Libro, LibroEnPrestamo } from "@/models"
 import { cn, formatAutor, formatTitulo } from "@/utils"
-
-interface Props {
-  nombreSocio: string
-  nroSocio?: number
-}
+import { useSociosStore } from "../useSociosStore"
 
 const MAX_PRESTAMOS = 4
 const FIELDS = ['autor', 'titulo', 'numeroInventario'] as const
@@ -21,7 +17,11 @@ const colTitulo = "w-[35%]"
 const colNro = "w-[20%]"
 const colBtn = "w-[10%]"
 
-export function Prestamos({ nombreSocio, nroSocio }: Props) {
+export function Prestamos() {
+  const { socioSeleccionado: socio } = useSociosStore()
+  const nombreSocio = socio!.nombreYApellido || ""
+  const nroSocio = socio?.nroSocio
+
   const [libros, setLibros] = useState<LibroEnPrestamo[]>([])
   const [inputs, setInputs] = useState(
     Array.from({ length: MAX_PRESTAMOS }, emptyLibro)
