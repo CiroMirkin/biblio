@@ -1,4 +1,4 @@
-import { useState, useEffect, type SyntheticEvent } from "react"
+import { useState, useEffect } from "react"
 import { ListaSocios } from "./ListaSocios"
 import type { Socio } from "@/models/Socio"
 import { cargarSocios } from "@/services/cargarSocios"
@@ -7,32 +7,55 @@ import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
+import { BuscarSocioForm } from "./BuscarSocioForm"
+import { levenshtein } from "@/utils"
 
 export function Socios() {
-  const [lista, setLista] = useState(false)
   const [cuotas, setCuotas] = useState(false)
   const [socios, setSocios] = useState<Socio[]>([])
+  const [sociosFiltrados, setSociosFiltrados] = useState<Socio[]>([])
   const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(null)
   const [mesesCuotas, setMesesCuotas] = useState<Record<string, boolean>[]>([])
   const [anio, setAnio] = useState(new Date().getFullYear())
 
   useEffect(() => {
-    cargarSocios().then(socios => setSocios(ordenarSociosAlfabeticamente(socios))).catch(console.error)
+    cargarSocios().then(socios => {
+      const ordenados = ordenarSociosAlfabeticamente(socios)
+      setSocios(ordenados)
+      setSociosFiltrados(ordenados)
+    }).catch(console.error)
   }, [])
 
   const cargarCuotas = (socio: Socio, anioSeleccionado: number) => {
     cargarCuotasSocio(socio.nroSocio, anioSeleccionado).then(setMesesCuotas).catch(console.error)
   }
 
-  const handleSubmit = (e: SyntheticEvent) => {
-    e.preventDefault()
-    setLista(true)
+  const handleSearch = (apellido: string) => {
+    if (!apellido.trim()) {
+      setSociosFiltrados(socios)
+      return
+    }
+
+    const query = apellido.toLowerCase().trim()
+
+    const filtrados = socios.filter(socio => {
+      const nombre = socio.nombreYApellido.toLowerCase()
+      if (nombre.includes(query)) return true
+
+      return nombre.split(' ').some(palabra => {
+        if (palabra.startsWith(query)) return true
+        if (query.length < 5) return false
+        if (Math.abs(palabra.length - query.length) > 1) return false
+        return levenshtein(palabra, query) <= 1
+      })
+    })
+
+    setSociosFiltrados(filtrados)
     setCuotas(false)
   }
 
   const handleSelect = (socio: Socio) => {
     setSocioSeleccionado(socio)
-    setLista(false)
     setCuotas(true)
     cargarCuotas(socio, anio)
   }
@@ -71,26 +94,10 @@ export function Socios() {
   return (
     <>
       <div className="">
-        <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 rounded bg-white/60 transition-colors duration-100 ">
+        <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 rounded bg-white/60 transition-colors duration-100">
           <div>
-            <form
-              className="w-full rounded p-4 mb-2"
-              onSubmit={handleSubmit}
-            >
-              <label className="text-lg">Buscar socio:</label>
-              <div className="mt-1 w-full flex gap-2">
-                <input
-                  type="text"
-                  className="w-full border bg-white border-black rounded p-1 px-2"
-                  placeholder="Apellido del socio"
-                />
-                <input type="submit" value="Buscar" className="btn" />
-              </div>
-            </form>
-
-            {lista && (
-              <ListaSocios socios={socios} onSelect={handleSelect} />
-            )}
+            <BuscarSocioForm onSearch={handleSearch} />
+            <ListaSocios socios={sociosFiltrados} onSelect={handleSelect} />
           </div>
           {!cuotas && (
             <aside className="p-4 sticky h-auto rounded bg-white text-base">

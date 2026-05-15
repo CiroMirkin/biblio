@@ -11,7 +11,7 @@ export function ListaSocios({ socios, onSelect }: ListaSociosProps) {
     <ul className="w-full flex flex-col pb-4">
       {socios.map((socio, index) => (
         <li
-          key={socio.nroSocio}
+          key={`${socio.nroSocio}-${socio.nombreYApellido}`}
           className={cn(
             "px-4 py-4 flex gap-2 justify-between", 
             index % 2 === 0 ? "bg-white" : "bg-white/50"

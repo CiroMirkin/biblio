@@ -1,5 +1,6 @@
 
 export * from './cn'
 export * from './ordenarSocios'
-export * from './FormatTitulo'
+export * from './formatTitulo'
 export * from './formatAutor'
+export * from './levenshtein'
