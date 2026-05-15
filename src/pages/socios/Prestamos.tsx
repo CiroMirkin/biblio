@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import type { Libro } from "@/models"
+import type { Libro, LibroEnPrestamo } from "@/models"
 import { cn, formatAutor, formatTitulo } from "@/utils"
 
 interface Props {
@@ -22,7 +22,7 @@ const colNro = "w-[20%]"
 const colBtn = "w-[10%]"
 
 export function Prestamos({ nombreSocio, nroSocio }: Props) {
-  const [libros, setLibros] = useState<Libro[]>([])
+  const [libros, setLibros] = useState<LibroEnPrestamo[]>([])
   const [inputs, setInputs] = useState(
     Array.from({ length: MAX_PRESTAMOS }, emptyLibro)
   )
@@ -63,8 +63,8 @@ export function Prestamos({ nombreSocio, nroSocio }: Props) {
         numeroSocio: nroSocio ?? null,
         numeroInventario: Number(input.numeroInventario) || 0,
       }
-      const ok = await window.electronAPI.addLibroPrestado(libro)
-      if (ok) setLibros(prev => [...prev, libro])
+      const libroEnPrestamo = await window.electronAPI.addLibroPrestado(libro)
+      if (libroEnPrestamo) setLibros(prev => [...prev, libroEnPrestamo])
     }
 
     setInputs(Array.from({ length: MAX_PRESTAMOS }, emptyLibro))

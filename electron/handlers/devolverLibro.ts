@@ -14,6 +14,7 @@ export async function devolverLibro(numeroInventario: number): Promise<boolean> 
     if (Number(row.getCell(3).value) === numeroInventario) {
       row.getCell(4).value = ''
       row.getCell(5).value = null
+      row.getCell(6).value = null
       row.commit()
       found = true
     }

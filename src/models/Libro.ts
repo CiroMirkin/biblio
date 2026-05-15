@@ -6,3 +6,7 @@ export interface Libro {
     nombreSocio: string
     numeroSocio?: number | null
 }
+
+export interface LibroEnPrestamo extends Libro {
+    fechaDePrestamo: Date | null
+}
