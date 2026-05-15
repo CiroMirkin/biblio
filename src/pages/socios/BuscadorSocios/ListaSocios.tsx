@@ -8,7 +8,7 @@ interface ListaSociosProps {
 
 export function ListaSocios({ socios, onSelect }: ListaSociosProps) {
   return (
-    <ul className="w-full flex flex-col pb-4">
+    <ul className="w-full flex flex-col pb-4 mt-2">
       {socios.map((socio, index) => (
         <li
           key={`${socio.nroSocio}-${socio.nombreYApellido}`}

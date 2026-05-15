@@ -60,7 +60,7 @@ function App() {
         </motion.button>
       </nav>
 
-      <main className={cn("p-4 rounded-b rounded-r flex-1", bg)}>
+      <main className={cn("p-4 pt-0 rounded-b rounded-r flex-1 overflow-y-auto", bg)}>
         { views.filter(view => view.id === actualView)[0].view }
       </main>
     </div>

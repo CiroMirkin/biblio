@@ -13,7 +13,7 @@ export function BuscarSocioForm({ onSearch }: Props) {
   }
 
   return (
-    <form className="w-full rounded p-4 mb-2" onSubmit={handleSubmit}>
+    <form className="w-full rounded p-4" onSubmit={handleSubmit}>
       <label className="text-lg">Buscar socio:</label>
       <div className="mt-1 w-full flex gap-2">
         <input

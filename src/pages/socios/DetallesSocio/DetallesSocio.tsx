@@ -9,8 +9,8 @@ export function DetalleSocio() {
     if(!cuotas) return
 
     return (
-        <div className="pt-6 grid grid-cols-2 gap-10">
-          <div className="flex flex-col gap-8">
+        <div className="pt-4 grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
             <SocioDatos />
 
             <div className="flex flex-col gap-4 card">
