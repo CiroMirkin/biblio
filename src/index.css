@@ -11,6 +11,11 @@ html, body, #root {
   height: 100%;
 }
 
+*::selection {
+    background-color: #8cbfb390;
+    color: #000;
+}
+
 @layer components {
     .btn-disabled {
         @apply cursor-default pointer-events-none select-none opacity-50;
