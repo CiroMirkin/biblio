@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import type { Libro } from "@/models"
-import { formatAutor, formatTitulo } from "@/utils"
+import { cn, formatAutor, formatTitulo } from "@/utils"
 
 interface Props {
   nombreSocio: string
@@ -70,6 +70,11 @@ export function Prestamos({ nombreSocio, nroSocio }: Props) {
     setInputs(Array.from({ length: MAX_PRESTAMOS }, emptyLibro))
   }
 
+  async function handleDevolver(nroInventario: number) {
+    const ok = await window.electronAPI.devolverLibro(nroInventario)
+    if (ok) setLibros(libros.filter(libro => libro.numeroInventario !== nroInventario))
+  }
+
   const slotsOcupados = libros.length
   const slotsLibres = MAX_PRESTAMOS - slotsOcupados
 
@@ -87,11 +92,15 @@ export function Prestamos({ nombreSocio, nroSocio }: Props) {
           key={libro.numeroInventario}
           className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
         >
-          <span className={`${colAutor} text-lg truncate`}>{libro.autor}</span>
-          <span className={`${colTitulo} text-lg truncate`}>{libro.titulo}</span>
-          <span className={`${colNro} text-lg`}>N° {libro.numeroInventario}</span>
+          <span className={cn("text-lg truncate", colAutor)}>{libro.autor}</span>
+          <span className={cn("text-lg truncate", colTitulo)}>{libro.titulo}</span>
+          <span className={cn("text-lg", colNro)}>N° {libro.numeroInventario}</span>
           <div className={colBtn}>
-            <button type="button" className="btn w-full overflow-hidden whitespace-nowrap text-ellipsis">Devuelto</button>
+            <button
+              type="button"
+              className="btn w-full overflow-hidden whitespace-nowrap text-ellipsis"
+              onClick={() => handleDevolver(libro.numeroInventario)}
+            >Devuelto</button>
           </div>
         </div>
       ))}

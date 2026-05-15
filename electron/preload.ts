@@ -4,6 +4,7 @@ import type { Libro } from './libro'
 contextBridge.exposeInMainWorld('electronAPI', {
   getSocios: () => ipcRenderer.invoke('getSocios'),
   getLibro: () => ipcRenderer.invoke('getLibros'),
+  devolverLibro: (numeroInventario: number) => ipcRenderer.invoke('devolverLibro', numeroInventario),
   addLibroPrestado: (libro: Libro) => ipcRenderer.invoke('addLibroPrestado', libro),
   getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nombreSocio, nroSocio),
   getCuotasSocio: (nroSocio: number, anio: number) => ipcRenderer.invoke('getCuotasSocio', nroSocio, anio),
