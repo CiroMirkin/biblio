@@ -34,7 +34,7 @@ function App() {
   })
 
   return (
-    <div className="h-full bg-white flex flex-col">
+    <div className="h-full bg-white flex flex-col scroll-smooth">
       <nav className="h-18 flex justify-start items-end gap-1">
         <motion.button
           onClick={() => setActualView(options.CUOTA)}
@@ -60,7 +60,7 @@ function App() {
         </motion.button>
       </nav>
 
-      <main className={cn("p-4 pt-0 rounded-b rounded-r flex-1 overflow-y-auto", bg)}>
+      <main className={cn("p-4 pt-0 rounded-b rounded-r flex-1 overflow-y-auto scroll_custom", bg)}>
         { views.filter(view => view.id === actualView)[0].view }
       </main>
     </div>
