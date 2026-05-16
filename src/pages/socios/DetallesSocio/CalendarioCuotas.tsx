@@ -1,5 +1,7 @@
 import { cn } from "@/utils"
+import { useState } from "react"
 import { useSociosStore } from "../useSociosStore"
+import { Spinner } from "@/components"
 
 type MesProps = {
   nombre: string
@@ -8,15 +10,34 @@ type MesProps = {
 }
 
 function Mes({ nombre, pagado, onToggle }: MesProps) {
+  const [loading, setLoading] = useState(false)
+
+  const handleToggle = async () => {
+    setLoading(true)
+    await onToggle()
+    setLoading(false)
+  }
+
   return (
     <li className={cn(
       "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center",
-      pagado ? "bg-green-300" : "bg-gray-200"
+      pagado ? "bg-green-300" : "bg-gray-200",
+      loading && "opacity-60"
     )}>
       <span className="font-semibold text-lg text-center">{nombre}</span>
       {pagado
-        ? <button onClick={onToggle} className="px-4 pb-1 bg-white opacity-50 hover:opacity-100 rounded">Pago</button>
-        : <button onClick={onToggle} className="px-4 pb-1 bg-[#8cbfb3] rounded">Adeuda</button>
+        ? <button onClick={handleToggle} disabled={loading} className={cn(
+          "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded disabled:cursor-not-allowed",
+          loading && "btn-disabled"
+        )}>
+          {loading && <Spinner />}  Pago
+        </button>
+        : <button onClick={handleToggle} disabled={loading} className={cn(
+          "px-4 pb-1 flex items-center justify-center gap-1.5 bg-[#8cbfb3] rounded disabled:cursor-not-allowed",
+          loading && "btn-disabled"
+        )}>
+          {loading && <Spinner />}  Adeuda
+        </button>
       }
     </li>
   )
