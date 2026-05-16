@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { motion } from "motion/react"
-import { Inscripcion, Socios } from "@/pages";
+import { Inscripcion, Socios, Prestamos } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
 
 const options = {
   CUOTA: "Socios",
   INSCRIPCION: "Inscripción",
+  LIBROS: "Rastrear Libros",
 } as const;
 
 type options = typeof options[keyof typeof options];
@@ -21,6 +22,11 @@ const views = [
     id: options.INSCRIPCION,
     view: <Inscripcion />,
     bgColor: "bg-[#cadbf0]",
+  },
+    {
+    id: options.LIBROS,
+    view: <Prestamos />,
+    bgColor: "bg-[#d9376e95]",
   },
 ]
 
@@ -58,6 +64,17 @@ function App() {
           )}
         >
           Inscripción
+        </motion.button>
+        <motion.button
+          onClick={() => setActualView(options.LIBROS)}
+          animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          className={cn(
+            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d9376d8d]",
+            actualView === options.LIBROS && "font-semibold"
+          )}
+        >
+          Rastrear Libros
         </motion.button>
         
         <ZoomControl />
