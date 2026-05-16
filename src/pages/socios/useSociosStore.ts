@@ -4,6 +4,7 @@ import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
 import { getApellido, levenshtein } from "@/utils"
+import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
 
 interface SociosState {
     socios: Socio[]
@@ -57,7 +58,11 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             })
         })
 
-        set({ sociosFiltrados: filtrados, cuotas: false })
+        const ordenados = filtrados.sort((a, b) => {
+            return getRelevanciaDelApellido(b.nombreYApellido, query) - getRelevanciaDelApellido(a.nombreYApellido, query)
+        })
+
+        set({ sociosFiltrados: ordenados, cuotas: false })
     },
 
     seleccionar: async (socio) => {

@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type ChangeEventHandler, type SyntheticEvent } from "react"
+import { useState, type ChangeEvent, type SyntheticEvent } from "react"
 import { useSociosStore } from "../useSociosStore"
 
 export function BuscarSocioForm() {
@@ -12,7 +12,7 @@ export function BuscarSocioForm() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setApellido(e.target.value)
-    buscar(apellido)
+    buscar(e.target.value)
   }
 
   return (
