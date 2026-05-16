@@ -27,13 +27,13 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
       <span className="font-semibold text-lg text-center">{nombre}</span>
       {pagado
         ? <button onClick={handleToggle} disabled={loading} className={cn(
-          "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded disabled:cursor-not-allowed",
+          "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded",
           loading && "btn-disabled"
         )}>
           {loading && <Spinner />}  Pago
         </button>
         : <button onClick={handleToggle} disabled={loading} className={cn(
-          "px-4 pb-1 flex items-center justify-center gap-1.5 bg-[#8cbfb3] rounded disabled:cursor-not-allowed",
+          "flex items-center justify-center gap-1.5 btn",
           loading && "btn-disabled"
         )}>
           {loading && <Spinner />}  Adeuda
