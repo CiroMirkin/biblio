@@ -3,7 +3,7 @@
 @theme {
     --color-white: #f5f3e6;
     --color-black: #2c2b26;
-    --color-accent: #7dc8b8;
+    --color-accent: #8bd3dd;
 
     --color-secondary: #f7dfbe;
 }
@@ -23,7 +23,7 @@ html, body, #root {
     }
 
     .btn {
-        @apply px-4 pb-1 bg-[#7dc8b8] rounded;
+        @apply px-4 pb-1 bg-accent rounded;
     }
 
     .card {
@@ -43,7 +43,7 @@ html, body, #root {
     background: rgba(0,0,0,0);
 }
 .scroll_custom::-webkit-scrollbar-thumb {
-    background-color: #8cbfb3;
+    background-color: #8bd3dd;
     border-radius: 6px;
     border: 1px solid #232e33cd;
     background-clip: content-box;
@@ -51,7 +51,7 @@ html, body, #root {
     min-height: 30px;
 }
 .scroll_custom::-webkit-scrollbar-thumb:hover {
-    background-color: #7dc8b8;
+    background-color: #8cbfb3;
 }
 .scroll_custom::-webkit-scrollbar-track {
     background-color: rgb(234, 233, 225);

@@ -129,7 +129,7 @@ export function Prestamos() {
       <button
         type="button"
         onClick={handleAgregar}
-        className="bg-[#8cbfb3] mt-4 p-1 pb-2 text-lg rounded"
+        className="btn mt-4 p-1 pb-2 text-lg rounded"
       >
         Registrar préstamo
       </button>
