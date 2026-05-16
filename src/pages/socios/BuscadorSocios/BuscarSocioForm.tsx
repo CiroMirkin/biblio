@@ -1,15 +1,13 @@
 import { useState, type SyntheticEvent } from "react"
+import { useSociosStore } from "../useSociosStore"
 
-interface Props {
-  onSearch: (apellido: string) => void
-}
-
-export function BuscarSocioForm({ onSearch }: Props) {
+export function BuscarSocioForm() {
+  const { buscar } = useSociosStore()
   const [apellido, setApellido] = useState('')
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
-    onSearch(apellido)
+    buscar(apellido)
   }
 
   return (

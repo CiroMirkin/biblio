@@ -3,7 +3,7 @@ import type { Socio } from "@/models/Socio"
 import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
-import { levenshtein } from "@/utils"
+import { getApellido, levenshtein } from "@/utils"
 
 interface SociosState {
     socios: Socio[]
@@ -46,10 +46,10 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const query = apellido.toLowerCase().trim()
 
         const filtrados = socios.filter(socio => {
-            const nombre = socio.nombreYApellido.toLowerCase()
-            if (nombre.includes(query)) return true
+            const apellido = getApellido(socio.nombreYApellido)
+            if (apellido.includes(query)) return true
 
-            return nombre.split(' ').some(palabra => {
+            return apellido.split(' ').some(palabra => {
                 if (palabra.startsWith(query)) return true
                 if (query.length < 5) return false
                 if (Math.abs(palabra.length - query.length) > 1) return false
