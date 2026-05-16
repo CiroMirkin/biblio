@@ -2,6 +2,7 @@ import { useState } from "react"
 import { motion } from "motion/react"
 import { Inscripcion, Socios } from "@/pages";
 import { cn } from "./utils";
+import { ZoomControl } from "./components";
 
 const options = {
   CUOTA: "Socios",
@@ -58,6 +59,8 @@ function App() {
         >
           Inscripción
         </motion.button>
+        
+        <ZoomControl />
       </nav>
 
       <main className={cn("p-4 pt-0 rounded-b rounded-r flex-1 overflow-y-auto scroll_custom", bg)}>
