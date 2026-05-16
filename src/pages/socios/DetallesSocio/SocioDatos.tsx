@@ -12,7 +12,7 @@ export function SocioDatos() {
                 <h2 className="text-xl">
                     Datos de <span className="font-semibold">{socio?.nombreYApellido}</span>
                 </h2>
-                { socio?.caracterSocio.trim() == ""
+                { ["regular", ""].includes(socio?.caracterSocio.trim().toLowerCase() || "")
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green-300 rounded-sm">Activo</span> 
                     : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber-300 rounded-sm">Inactivo</span> 
                 }
