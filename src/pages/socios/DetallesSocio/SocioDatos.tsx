@@ -46,7 +46,7 @@ export function SocioDatos() {
                     onClick={() => setExpandido(prev => !prev)}
                     className="text-sm opacity-60 hover:opacity-100 transition-opacity"
                 >
-                    {expandido ? "Mostrar menos" : "Mostrar mas"}
+                    {expandido ? "Mostrar menos datos" : "Mostrar mas datos"}
                 </button>
             </div>
         </div>

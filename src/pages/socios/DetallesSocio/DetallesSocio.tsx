@@ -9,7 +9,7 @@ export function DetalleSocio() {
     if(!cuotas) return
 
     return (
-        <div className="pt-4 grid grid-cols-2 gap-4">
+        <div className="pt-4 grid grid-cols-[3fr_2fr] gap-4">
           <div className="flex flex-col gap-4">
             <SocioDatos />
 
@@ -24,7 +24,7 @@ export function DetalleSocio() {
               <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
               <CalendarioCuotas />
             </div>
-            <div className="mt-2 flex gap-4 card">
+            <div className="flex gap-4 card">
               <button className="px-4 pb-1 rounded bg-sky-200">Dar de baja</button>
               <button className="px-4 pb-1 rounded bg-sky-200">Re inscribir</button>
             </div>
