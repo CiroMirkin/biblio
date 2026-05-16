@@ -9,7 +9,7 @@ export function DetalleSocio() {
     if(!cuotas) return
 
     return (
-        <div className="pt-4 grid grid-cols-[3fr_2fr] gap-4">
+        <div className="pt-4 grid grid-cols-[3.2fr_1.8fr] gap-4">
           <div className="flex flex-col gap-4">
             <SocioDatos />
 
