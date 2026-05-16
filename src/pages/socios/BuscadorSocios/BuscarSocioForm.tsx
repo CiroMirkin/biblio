@@ -1,4 +1,4 @@
-import { useState, type SyntheticEvent } from "react"
+import { useState, type ChangeEvent, type ChangeEventHandler, type SyntheticEvent } from "react"
 import { useSociosStore } from "../useSociosStore"
 
 export function BuscarSocioForm() {
@@ -10,6 +10,11 @@ export function BuscarSocioForm() {
     buscar(apellido)
   }
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setApellido(e.target.value)
+    buscar(apellido)
+  }
+
   return (
     <form className="w-full rounded p-4" onSubmit={handleSubmit}>
       <label className="text-lg">Buscar socio:</label>
@@ -17,7 +22,7 @@ export function BuscarSocioForm() {
         <input
           type="text"
           value={apellido}
-          onChange={e => setApellido(e.target.value)}
+          onChange={handleChange}
           className="w-full border bg-white border-black rounded p-1 px-2"
           placeholder="Apellido del socio"
         />
