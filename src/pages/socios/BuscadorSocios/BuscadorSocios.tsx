@@ -4,7 +4,7 @@ import { useSociosStore } from "../useSociosStore"
 import { cn } from "@/utils"
 
 export function BuscadorSocios() {
-  const { cuotas, sociosFiltrados, seleccionar } = useSociosStore()
+  const { cuotas } = useSociosStore()
 
   return (
     <main className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4">
@@ -16,7 +16,7 @@ export function BuscadorSocios() {
           <div className="h-4 w-full bg-secondary" />
           <BuscarSocioForm />
         </div>
-        {!cuotas && <ListaSocios socios={sociosFiltrados} onSelect={seleccionar} />}
+        {!cuotas && <ListaSocios />}
       </div>
       {!cuotas && (
         <aside className="sticky top-0 h-fit">

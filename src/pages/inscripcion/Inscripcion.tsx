@@ -10,7 +10,7 @@ export function Inscripcion() {
 
   return (
     <>
-      <h2 className="mb-2 text-xl font-semibold">Inscripción de un nuevo socio</h2>
+      <h2 className="pt-4 mb-2 text-xl font-semibold">Inscripción de un nuevo socio</h2>
       <form className="flex flex-col gap-2 rounded py-4" onSubmit={handleSubmit}>
 
         <input type="text" name="" id="" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="DNI" />
