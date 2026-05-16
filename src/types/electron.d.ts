@@ -6,7 +6,7 @@ declare global {
   interface Window {
     electronAPI: {
       getSocios: () => Promise<Record<string, unknown>[]>
-      getLibro: () => Promise<Record<string, unknown>[]>
+      getLibros: () => Promise<LibroEnPrestamo[]>
       addLibroPrestado: (libro: Libro) => Promise<LibroEnPrestamo | null>
       devolverLibro: (numeroInventario: number) => Promise<boolean>
       getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => Promise<Libro[]>

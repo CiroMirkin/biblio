@@ -5,7 +5,7 @@ import ExcelJS from 'exceljs'
 import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio, rowToLibro } from './utils/excelhelpers'
 import type { Libro } from './libro'
 import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from './constants'
-import { addLibroPrestado, devolverLibro } from './handlers'
+import { addLibroPrestado, devolverLibro, getLibros } from './handlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -19,23 +19,7 @@ function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
   return writeQueue
 }
 
-ipcMain.handle('getLibros', async () => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
-  if (!worksheet) return []
-
-  const libros: unknown[] = []
-
-  worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex === 1) return
-
-    libros.push(rowToLibro(row))
-  })
-
-  return libros
-})
-
+ipcMain.handle('getLibros', () => getLibros())
 ipcMain.handle('addLibroPrestado', (_, libro: Libro) => addLibroPrestado(libro))
 ipcMain.handle('devolverLibro', (_, numeroInventario: number) => devolverLibro(numeroInventario))
 
