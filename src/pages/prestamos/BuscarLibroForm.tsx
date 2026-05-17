@@ -11,7 +11,7 @@ export function BuscarLibroForm() {
   }
 
   return (
-    <form className="w-full rounded p-4 card mt-4" onSubmit={handleSubmit}>
+    <form className="w-full rounded p-4 card" onSubmit={handleSubmit}>
       <label className="text-lg">Buscar libro en préstamo:</label>
       <div className="mt-1 w-full flex gap-2">
         <input

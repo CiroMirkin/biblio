@@ -7,7 +7,7 @@ export function ListaLibrosEnPrestamo() {
     if(!librosFiltrados.length) return
     
     return (
-        <ul className="flex flex-col gap-3 p-4">
+        <ul className="flex flex-col gap-3 py-4">
             {librosFiltrados.map(libro => (
                 <LibroEnPrestamo key={libro.numeroInventario} libro={libro} />
             ))}
