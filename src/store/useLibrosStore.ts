@@ -24,14 +24,14 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     const librosVencidos = libros.filter(
       l => l.fechaDePrestamo && calcularDiasDesdePrestamo(l.fechaDePrestamo) > DIAS_LIMITE
     )
-    set({ libros, librosVencidos, librosFiltrados: libros })
+    set({ libros, librosVencidos, librosFiltrados: [] })
   },
 
   buscar: (query) => {
     const { libros } = get()
 
     if (!query.trim()) {
-      set({ librosFiltrados: libros })
+      set({ librosFiltrados: [] })
       return
     }
 

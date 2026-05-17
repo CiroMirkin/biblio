@@ -1,16 +1,13 @@
 import { useLibrosStore } from "@/store"
-import { useEffect, type ChangeEvent, type SyntheticEvent } from "react"
+import { type ChangeEvent, type SyntheticEvent } from "react"
 
 export function BuscarLibroForm() {
-  const { buscar, inicializar } = useLibrosStore()
-
-  useEffect(() => {
-    inicializar()
-  }, [])
+  const { buscar } = useLibrosStore()
 
   const handleSubmit = (e: SyntheticEvent) => e.preventDefault()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if(!e.target.value.trim()) return
     buscar(e.target.value)
   }
 
@@ -22,7 +19,7 @@ export function BuscarLibroForm() {
           type="text"
           onChange={handleChange}
           className="w-full border bg-white border-black rounded p-1 px-2"
-          placeholder="Apellido del socio"
+          placeholder="Nombre del libro"
         />
         <input type="submit" value="Buscar" className="btn" />
       </div>

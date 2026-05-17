@@ -7,6 +7,8 @@ type Props = {
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
+    if(libro.fechaDePrestamo === null) return
+    
     const dias = calcularDiasDesdePrestamo(libro.fechaDePrestamo!)
 
     const { socios } = useSociosStore()
