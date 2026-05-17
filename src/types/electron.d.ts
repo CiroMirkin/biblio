@@ -1,8 +1,10 @@
-import type { LibroEnPrestamo } from "@/models"
+import type { Libro, LibroEnPrestamo } from "@/models"
 
 export {}
 
+
 declare global {
+  type ArchivoKey = 'socios' | 'cuotas' | 'libros'
   interface Window {
     electronAPI: {
       getSocios: () => Promise<Record<string, unknown>[]>
@@ -12,6 +14,7 @@ declare global {
       getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => Promise<Libro[]>
       getCuotasSocio: (nroSocio: number, anio: number) => Promise<Record<string, boolean>[]>
       toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => Promise<boolean>
+      copiarExcel: (key: ArchivoKey) => Promise<boolean>
     }
   }
 }

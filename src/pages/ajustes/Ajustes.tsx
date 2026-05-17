@@ -1,3 +1,4 @@
+import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
 
@@ -9,6 +10,7 @@ export function Ajustes() {
             <div className="flex flex-col gap-4">
                 <MaximoPrestamosForm />
                 <MaximoDiasDelPrestamo />
+                <CopiarExcels />
             </div>
         </div>
         </>

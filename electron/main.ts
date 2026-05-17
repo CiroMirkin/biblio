@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import type { Libro } from './libro'
 import { addLibroPrestado, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, toggleCuota } from './handlers'
+import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -28,6 +29,8 @@ ipcMain.handle(
   'toggleCuota',
   (_event, nroSocio: number, anio: number, mesIndex: number) => toggleCuota(nroSocio, anio, mesIndex)
 )
+
+ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
 
 function createWindow() {
   const win = new BrowserWindow({
