@@ -7,7 +7,6 @@ export function BuscarLibroForm() {
   const handleSubmit = (e: SyntheticEvent) => e.preventDefault()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if(!e.target.value.trim()) return
     buscar(e.target.value)
   }
 
