@@ -1,20 +1,25 @@
 import { create } from "zustand"
-import type { LibroEnPrestamo } from "@/models"
+import type { Libro, LibroEnPrestamo } from "@/models"
 import { cargarLibrosEnPrestamo } from "@/services/cargarLibrosEnPrestamo"
 import { calcularDiasDesdePrestamo, levenshtein } from "@/utils"
 
 interface LibrosState {
   limiteDeDias: number
+  maximoLibrosEnPrestamo: number
   libros: LibroEnPrestamo[]
   librosVencidos: LibroEnPrestamo[]
   librosFiltrados: LibroEnPrestamo[]
 
   inicializar: () => Promise<void>
   buscar: (query: string) => void
+  getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
+  agregarLibroEnPrestamo: (libro: Libro) => Promise<LibroEnPrestamo | null>
+  devolverLibro: (nroInventario: number) => Promise<void>
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
   limiteDeDias: 40,
+  maximoLibrosEnPrestamo: 4,
   libros: [],
   librosVencidos: [],
   librosFiltrados: [],
@@ -63,5 +68,31 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     })
 
     set({ librosFiltrados: ordenados })
+  },
+
+  getLibrosSocio: async (nombreSocio, nroSocio) => {
+    const raw = await window.electronAPI.getLibrosPrestadosSocio(nombreSocio, nroSocio)
+    return (raw as unknown[]).map(l => {
+      const libro = l as Record<string, unknown>
+      return {
+        ...libro,
+        fechaDePrestamo: libro.fechaDePrestamo ? new Date(libro.fechaDePrestamo as string) : null,
+      }
+    }) as LibroEnPrestamo[]
+  },
+
+  agregarLibroEnPrestamo: async (libro) => {
+    const libroEnPrestamo = await window.electronAPI.addLibroPrestado(libro)
+    if (!libroEnPrestamo) return null
+    const { libros } = get()
+    set({ libros: [...libros, libroEnPrestamo] })
+    return libroEnPrestamo
+  },
+
+  devolverLibro: async (nroInventario) => {
+    const ok = await window.electronAPI.devolverLibro(nroInventario)
+    if (!ok) return
+    const { libros } = get()
+    set({ libros: libros.filter(l => l.numeroInventario !== nroInventario) })
   },
 }))

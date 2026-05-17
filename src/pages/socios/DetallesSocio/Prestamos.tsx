@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import type { Libro, LibroEnPrestamo } from "@/models"
 import { cn, formatAutor, formatTitulo } from "@/utils"
 import { useSociosStore } from "../useSociosStore"
+import { useLibrosStore } from "@/store"
 
-const MAX_PRESTAMOS = 4
 const FIELDS = ['autor', 'titulo', 'numeroInventario'] as const
 
 const emptyLibro = () => ({
@@ -19,18 +19,20 @@ const colBtn = "w-[10%]"
 
 export function Prestamos() {
   const { socioSeleccionado: socio } = useSociosStore()
+  const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo } = useLibrosStore()
+
   const nombreSocio = socio!.nombreYApellido || ""
   const nroSocio = socio?.nroSocio
 
   const [libros, setLibros] = useState<LibroEnPrestamo[]>([])
   const [inputs, setInputs] = useState(
-    Array.from({ length: MAX_PRESTAMOS }, emptyLibro)
+    Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro)
   )
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   useEffect(() => {
     if (!nroSocio) return
-    window.electronAPI.getLibrosPrestadosSocio(nombreSocio, nroSocio).then(setLibros)
+    getLibrosSocio(nombreSocio, nroSocio).then(setLibros)
   }, [nroSocio, nombreSocio])
 
   function handleChange(index: number, field: typeof FIELDS[number], value: string) {
@@ -41,7 +43,7 @@ export function Prestamos() {
     if (e.key !== 'Enter') return
     e.preventDefault()
 
-    const slotsLibres = MAX_PRESTAMOS - libros.length
+    const slotsLibres = maximoLibrosEnPrestamo - libros.length
     const totalInputs = slotsLibres * FIELDS.length
     const currentFlat = rowIndex * FIELDS.length + fieldIndex
     const nextFlat = currentFlat + 1
@@ -55,6 +57,7 @@ export function Prestamos() {
     const nuevos = inputs.filter(input => input.titulo || input.numeroInventario)
     if (nuevos.length === 0) return
 
+    const agregados: LibroEnPrestamo[] = []
     for (const input of nuevos) {
       const libro: Libro = {
         autor: formatAutor(input.autor),
@@ -63,20 +66,21 @@ export function Prestamos() {
         numeroSocio: nroSocio ?? null,
         numeroInventario: Number(input.numeroInventario) || 0,
       }
-      const libroEnPrestamo = await window.electronAPI.addLibroPrestado(libro)
-      if (libroEnPrestamo) setLibros(prev => [...prev, libroEnPrestamo])
+      const libroEnPrestamo = await agregarLibroEnPrestamo(libro)
+      if (libroEnPrestamo) agregados.push(libroEnPrestamo)
     }
 
-    setInputs(Array.from({ length: MAX_PRESTAMOS }, emptyLibro))
+    setLibros(prev => [...prev, ...agregados])
+    setInputs(Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro))
   }
 
   async function handleDevolver(nroInventario: number) {
-    const ok = await window.electronAPI.devolverLibro(nroInventario)
-    if (ok) setLibros(libros.filter(libro => libro.numeroInventario !== nroInventario))
+    await devolverLibro(nroInventario)
+    setLibros(prev => prev.filter(l => l.numeroInventario !== nroInventario))
   }
 
   const slotsOcupados = libros.length
-  const slotsLibres = MAX_PRESTAMOS - slotsOcupados
+  const slotsLibres = maximoLibrosEnPrestamo - slotsOcupados
 
   return (
     <form className="w-full flex flex-col rounded">
