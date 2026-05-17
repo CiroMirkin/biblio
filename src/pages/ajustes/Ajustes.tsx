@@ -1,3 +1,4 @@
+import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
 
 export function Ajustes() {
@@ -5,8 +6,9 @@ export function Ajustes() {
         <>
         <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
         <div className="">
-            <div>
+            <div className="flex flex-col gap-4">
                 <MaximoPrestamosForm />
+                <MaximoDiasDelPrestamo />
             </div>
         </div>
         </>
