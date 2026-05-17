@@ -3,9 +3,8 @@ import type { LibroEnPrestamo } from "@/models"
 import { cargarLibrosEnPrestamo } from "@/services/cargarLibrosEnPrestamo"
 import { calcularDiasDesdePrestamo, levenshtein } from "@/utils"
 
-const DIAS_LIMITE = 40
-
 interface LibrosState {
+  limiteDeDias: number
   libros: LibroEnPrestamo[]
   librosVencidos: LibroEnPrestamo[]
   librosFiltrados: LibroEnPrestamo[]
@@ -15,14 +14,16 @@ interface LibrosState {
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
+  limiteDeDias: 40,
   libros: [],
   librosVencidos: [],
   librosFiltrados: [],
 
   inicializar: async () => {
+    const { limiteDeDias } = get()
     const libros = await cargarLibrosEnPrestamo()
     const librosVencidos = libros.filter(
-      l => l.fechaDePrestamo && calcularDiasDesdePrestamo(l.fechaDePrestamo) > DIAS_LIMITE
+      l => l.fechaDePrestamo && calcularDiasDesdePrestamo(l.fechaDePrestamo) > limiteDeDias
     )
     set({ libros, librosVencidos, librosFiltrados: [] })
   },

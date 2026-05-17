@@ -1,14 +1,16 @@
 import type { LibroEnPrestamo } from "@/models"
-import { calcularDiasDesdePrestamo } from "@/utils"
+import { calcularDiasDesdePrestamo, cn } from "@/utils"
 import { useSociosStore } from "../socios/useSociosStore"
+import { useLibrosStore } from "@/store"
 
 type Props = {
   libro: LibroEnPrestamo
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
+    const { limiteDeDias } = useLibrosStore()
     if(libro.fechaDePrestamo === null) return
-    
+
     const dias = calcularDiasDesdePrestamo(libro.fechaDePrestamo!)
 
     const { socios } = useSociosStore()
@@ -23,7 +25,10 @@ export function LibroEnPrestamo({ libro }: Props) {
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base opacity-70">{libro.autor}</p>
                 </div>
-                <span className="flex flex-col items-end text-base font-semibold text-red-600">
+                <span className={cn(
+                    "flex flex-col items-end text-base font-semibold",
+                    dias > limiteDeDias ? "text-red-600" : "text-green-600"
+                )}>
                     <span className="text-lg">{dias} días</span>
                     {libro.fechaDePrestamo!.toLocaleDateString(
                         'es-AR', 
