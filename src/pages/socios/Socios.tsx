@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useSociosStore } from "./useSociosStore"
+import { useSociosStore } from "@/store"
 import { BuscadorSocios } from "./BuscadorSocios/BuscadorSocios"
 import { DetalleSocio } from "./DetallesSocio/DetallesSocio"
 

@@ -1,6 +1,6 @@
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { useSociosStore } from "../useSociosStore";
+import { useSociosStore } from "@/store"
 import { Spinner } from "@/components";
 
 const PAGINA = 10

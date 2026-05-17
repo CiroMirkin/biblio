@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type SyntheticEvent } from "react"
-import { useSociosStore } from "../useSociosStore"
+import { useSociosStore } from "@/store"
 
 export function BuscarSocioForm() {
   const { buscar } = useSociosStore()

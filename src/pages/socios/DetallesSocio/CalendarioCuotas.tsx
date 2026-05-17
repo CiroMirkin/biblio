@@ -1,6 +1,6 @@
 import { cn } from "@/utils"
 import { useState } from "react"
-import { useSociosStore } from "../useSociosStore"
+import { useSociosStore } from "@/store"
 import { Spinner } from "@/components"
 
 type MesProps = {

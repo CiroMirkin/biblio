@@ -1,6 +1,6 @@
 import { BuscarSocioForm } from "./BuscarSocioForm"
 import { ListaSocios } from "./ListaSocios"
-import { useSociosStore } from "../useSociosStore"
+import { useSociosStore } from "@/store"
 import { cn } from "@/utils"
 
 export function BuscadorSocios() {

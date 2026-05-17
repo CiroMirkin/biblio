@@ -1,7 +1,7 @@
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
-import { useSociosStore } from "../useSociosStore"
+import { useSociosStore } from "@/store"
 
 export function DetalleSocio() {
     const { anio, cuotas } = useSociosStore()

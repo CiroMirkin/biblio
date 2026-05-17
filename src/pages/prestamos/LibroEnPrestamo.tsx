@@ -1,7 +1,6 @@
 import type { LibroEnPrestamo } from "@/models"
 import { calcularDiasDesdePrestamo, cn } from "@/utils"
-import { useSociosStore } from "../socios/useSociosStore"
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSociosStore } from "@/store"
 
 type Props = {
   libro: LibroEnPrestamo

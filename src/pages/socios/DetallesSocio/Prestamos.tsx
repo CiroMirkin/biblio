@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import type { Libro, LibroEnPrestamo } from "@/models"
 import { cn, formatAutor, formatTitulo } from "@/utils"
-import { useSociosStore } from "../useSociosStore"
-import { useLibrosStore } from "@/store"
+import { useSociosStore, useLibrosStore } from "@/store"
 
 const FIELDS = ['autor', 'titulo', 'numeroInventario'] as const
 

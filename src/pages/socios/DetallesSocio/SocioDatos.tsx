@@ -1,10 +1,14 @@
 import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
-import { useSociosStore } from "../useSociosStore"
+import { useSociosStore } from "@/store"
 
 export function SocioDatos() {
     const { socioSeleccionado: socio } = useSociosStore()
     const [expandido, setExpandido] = useState(false)
+
+    const caracterSocio = socio?.caracterSocio || ""
+    const fechaNacimiento = socio?.fechaNacimiento
+    const fechaIngresoEgreso = socio?.fechaIngresoEgreso
 
     return (
         <div className="card relative">
@@ -12,7 +16,7 @@ export function SocioDatos() {
                 <h2 className="text-xl">
                     Datos de <span className="font-semibold">{socio?.nombreYApellido}</span>
                 </h2>
-                { ["regular", ""].includes(socio?.caracterSocio.trim().toLowerCase() || "")
+                { ["regular", ""].includes(caracterSocio.trim().toLowerCase() || "")
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green-300 rounded-sm">Activo</span> 
                     : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber-300 rounded-sm">Inactivo</span> 
                 }
@@ -32,8 +36,8 @@ export function SocioDatos() {
                             style={{ overflow: "hidden" }}
                         >
                             <li>Dirección: {socio?.domicilio}</li>
-                            <li>Fecha de nacimiento: {socio?.fechaNacimiento.toLocaleDateString()}</li>
-                            <li>Ingreso: {socio?.fechaIngresoEgreso.toLocaleDateString()}</li>
+                            <li>Fecha de nacimiento: {fechaNacimiento && fechaNacimiento.toLocaleDateString()}</li>
+                            <li>Ingreso: {fechaIngresoEgreso && fechaIngresoEgreso.toLocaleDateString()}</li>
                             <li>Nacionalidad: {socio?.nacionalidad}</li>
                             <li>Observaciones: {socio?.observaciones}</li>
                         </motion.div>
