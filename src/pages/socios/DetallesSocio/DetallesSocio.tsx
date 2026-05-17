@@ -20,7 +20,7 @@ export function DetalleSocio() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="p-4 bg-white rounded">
+            <div className="card">
               <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
               <CalendarioCuotas />
             </div>

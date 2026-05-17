@@ -20,7 +20,7 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
 
   return (
     <li className={cn(
-      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center",
+      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center shadow-xs",
       pagado ? "bg-green-300" : "bg-[#f582ae59]",
       loading && "opacity-60"
     )}>

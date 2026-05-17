@@ -23,11 +23,11 @@ html, body, #root {
     }
 
     .btn {
-        @apply px-4 pb-1 bg-accent rounded;
+        @apply px-4 pb-1 bg-accent rounded shadow-xs transition-all duration-100 ease-in hover:shadow-sm hover:bg-[#5bb8c6];
     }
 
     .card {
-        @apply bg-white rounded p-4;
+        @apply bg-white rounded p-4 shadow-sm;
     }
 }
 
