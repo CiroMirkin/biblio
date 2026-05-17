@@ -79,7 +79,7 @@ export function Prestamos() {
   }
 
   const slotsOcupados = libros.length
-  const slotsLibres = maximoLibrosEnPrestamo - slotsOcupados
+  const slotsLibres = Math.max(0, maximoLibrosEnPrestamo - slotsOcupados)
 
   return (
     <form className="w-full flex flex-col rounded">

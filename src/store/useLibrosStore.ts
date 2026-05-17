@@ -10,6 +10,7 @@ interface LibrosState {
   librosVencidos: LibroEnPrestamo[]
   librosFiltrados: LibroEnPrestamo[]
 
+  setMaximoLibrosEnPrestamo: (max: number) => number
   inicializar: () => Promise<void>
   buscar: (query: string) => void
   getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
@@ -31,6 +32,14 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       l => l.fechaDePrestamo && calcularDiasDesdePrestamo(l.fechaDePrestamo) > limiteDeDias
     )
     set({ libros, librosVencidos, librosFiltrados: [] })
+  },
+
+  setMaximoLibrosEnPrestamo: (max) => {
+    const { maximoLibrosEnPrestamo } = get()
+    if(max <= 0) return maximoLibrosEnPrestamo
+    
+    set({ maximoLibrosEnPrestamo: max })
+    return max
   },
 
   buscar: (query) => {
