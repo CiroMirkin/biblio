@@ -2,10 +2,10 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
-import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio, rowToLibro } from './utils/excelhelpers'
+import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio } from './utils/excelhelpers'
 import type { Libro } from './libro'
-import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from './constants'
-import { addLibroPrestado, devolverLibro, getLibros } from './handlers'
+import { CUOTAS_XLSX_PATH, SOCIOS_XLSX_PATH } from './constants'
+import { addLibroPrestado, devolverLibro, getLibros, getLibrosPrestadosSocio } from './handlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -23,25 +23,10 @@ ipcMain.handle('getLibros', () => getLibros())
 ipcMain.handle('addLibroPrestado', (_, libro: Libro) => addLibroPrestado(libro))
 ipcMain.handle('devolverLibro', (_, numeroInventario: number) => devolverLibro(numeroInventario))
 
-ipcMain.handle('getLibrosPrestadosSocio', async (_, nombreSocio: string, nroSocio?: number) => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
-  if (!worksheet) return []
-
-  const libros: Libro[] = []
-
-  worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex === 1) return
-
-    const libro = rowToLibro(row)
-    if (libro.numeroSocio === nroSocio || libro.nombreSocio === nombreSocio) {
-      libros.push(libro)
-    }
-  })
-
-  return libros
-})
+ipcMain.handle(
+  'getLibrosPrestadosSocio',
+  (_, nombreSocio: string, nroSocio?: number) => getLibrosPrestadosSocio(nombreSocio, nroSocio)
+)
 
 ipcMain.handle('getSocios', async () => {
   const workbook = new ExcelJS.Workbook()
