@@ -34,9 +34,10 @@ export function ListaSocios() {
             "px-4 py-4 flex gap-2 justify-between",
             index % 2 === 0 ? "bg-white" : "bg-white/50"
           )}
+          onClick={() => seleccionar(socio)}
         >
           <span className="w-full text-lg">{socio.nombreYApellido}</span>
-          <button className="btn" onClick={() => seleccionar(socio)}>
+          <button className="btn">
             Ver
           </button>
         </li>
