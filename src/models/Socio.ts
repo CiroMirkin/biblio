@@ -1,12 +1,13 @@
 export interface Socio {
   nroSocio: number
-  nombreYApellido: string
-  domicilio: string
-  dni: number
+  nombreYApellido: string // los apellidos se separan mediante una coma
   telefono: string | null
-  nacionalidad: string
-  fechaNacimiento: Date
-  caracterSocio: string
-  fechaIngresoEgreso: Date
-  observaciones: string
+  dni?: number
+  domicilio?: string
+  nacionalidad?: string
+  fechaNacimiento?: Date
+  caracterSocio?: string
+  email?: string
+  fechaIngresoEgreso?: Date
+  observaciones?: string
 }
