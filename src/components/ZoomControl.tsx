@@ -38,7 +38,7 @@ export function ZoomControl() {
     })
 
     return (
-        <div className="ml-auto mb-1 mr-2 flex items-center gap-2">
+        <div className="ml-auto mr-4 self-center flex items-center gap-2">
             <button
                 onClick={reducir}
                 disabled={escala <= ESCALA_MIN}
@@ -46,7 +46,7 @@ export function ZoomControl() {
             >
                 -
             </button>
-            <span className="text-base w-10 text-center">{Math.round(escala * 100)}%</span>
+            <span className="text-lg w-14 text-center">{Math.round(escala * 100)}%</span>
             <button
                 onClick={aumentar}
                 disabled={escala >= ESCALA_MAX}
