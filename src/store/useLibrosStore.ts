@@ -1,34 +1,66 @@
 import { create } from "zustand"
 import type { LibroEnPrestamo } from "@/models"
 import { cargarLibrosEnPrestamo } from "@/services/cargarLibrosEnPrestamo"
+import { calcularDiasDesdePrestamo, levenshtein } from "@/utils"
 
 const DIAS_LIMITE = 40
-
-function diasDesdePrestamo(fecha: Date): number {
-  const hoy = new Date()
-  const diff = hoy.getTime() - fecha.getTime()
-  return Math.floor(diff / (1000 * 60 * 60 * 24))
-}
 
 interface LibrosState {
   libros: LibroEnPrestamo[]
   librosVencidos: LibroEnPrestamo[]
-  cargando: boolean
+  librosFiltrados: LibroEnPrestamo[]
 
   inicializar: () => Promise<void>
+  buscar: (query: string) => void
 }
 
-export const useLibrosStore = create<LibrosState>((set) => ({
+export const useLibrosStore = create<LibrosState>((set, get) => ({
   libros: [],
   librosVencidos: [],
-  cargando: false,
+  librosFiltrados: [],
 
   inicializar: async () => {
-    set({ cargando: true })
     const libros = await cargarLibrosEnPrestamo()
     const librosVencidos = libros.filter(
-      l => l.fechaDePrestamo && diasDesdePrestamo(l.fechaDePrestamo) > DIAS_LIMITE
+      l => l.fechaDePrestamo && calcularDiasDesdePrestamo(l.fechaDePrestamo) > DIAS_LIMITE
     )
-    set({ libros, librosVencidos, cargando: false })
+    set({ libros, librosVencidos, librosFiltrados: libros })
+  },
+
+  buscar: (query) => {
+    const { libros } = get()
+
+    if (!query.trim()) {
+      set({ librosFiltrados: libros })
+      return
+    }
+
+    const q = query.toLowerCase().trim()
+
+    const filtrados = libros.filter(libro => {
+      if(libro.numeroSocio == 0 || !libro.nombreSocio.trim()) return false
+
+      const titulo = libro.titulo.toLowerCase()
+      if (titulo.includes(q)) return true
+
+      return titulo.split(" ").some(palabra => {
+        if (palabra.startsWith(q)) return true
+        if (q.length < 5) return false
+        if (Math.abs(palabra.length - q.length) > 1) return false
+        return levenshtein(palabra, q) <= 1
+      })
+    })
+
+    const ordenados = filtrados.sort((a, b) => {
+      const ta = a.titulo.toLowerCase()
+      const tb = b.titulo.toLowerCase()
+      if (ta === q) return -1
+      if (tb === q) return 1
+      if (ta.startsWith(q) && !tb.startsWith(q)) return -1
+      if (tb.startsWith(q) && !ta.startsWith(q)) return 1
+      return ta.localeCompare(tb, 'es', { sensitivity: 'base' })
+    })
+
+    set({ librosFiltrados: ordenados })
   },
 }))
