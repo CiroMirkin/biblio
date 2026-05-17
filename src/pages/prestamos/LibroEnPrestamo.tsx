@@ -23,7 +23,8 @@ export function LibroEnPrestamo({ libro }: Props) {
             <div className="flex justify-between items-start">
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
-                    <p className="text-base opacity-70">{libro.autor}</p>
+                    <p className="text-base">{libro.autor}</p>
+                    <p className="text-sm opacity-70 mt-px">N° de Inventario: {libro.numeroInventario}</p>
                 </div>
                 <span className={cn(
                     "flex flex-col items-end text-base font-semibold",
@@ -37,9 +38,9 @@ export function LibroEnPrestamo({ libro }: Props) {
                 </span>
             </div>
             <hr className="opacity-20" />
-            <div className="text-sm">
+            <div className="text-base">
                 <p>
-                    <span className="font-semibold">Socio:</span>
+                    <span className="font-semibold">Socio: </span>
                     {socio?.nombreYApellido ?? libro.nombreSocio}
                 </p>
                 {socio && <>
