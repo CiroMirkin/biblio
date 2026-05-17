@@ -1,43 +1,15 @@
-import { useEffect, useState } from "react"
-import type { LibroEnPrestamo } from "@/models"
-import type { Socio } from "@/models"
+import { useEffect } from "react"
 import { useSociosStore } from "../socios/useSociosStore"
-
-const DIAS_LIMITE = 40
-
-function diasDesdePrestamo(fecha: Date): number {
-    const hoy = new Date()
-    const diff = hoy.getTime() - fecha.getTime()
-    return Math.floor(diff / (1000 * 60 * 60 * 24))
-}
-
-type LibroConSocio = {
-    libro: LibroEnPrestamo
-    socio: Socio | null
-}
+import { useLibrosStore } from "@/store"
+import { calcularDiasDesdePrestamo } from "@/utils"
 
 export function Prestamos() {
     const { socios } = useSociosStore()
-    const [librosVencidos, setLibrosVencidos] = useState<LibroConSocio[]>([])
-    const [cargando, setCargando] = useState(true)
+    const { librosVencidos, cargando, inicializar } = useLibrosStore()
 
     useEffect(() => {
-        window.electronAPI.getLibros().then(raw => {
-            const libros = raw as LibroEnPrestamo[]
-
-            const vencidos = libros
-                .filter(l => l.fechaDePrestamo && diasDesdePrestamo(l.fechaDePrestamo) > DIAS_LIMITE)
-                .map(libro => {
-                    const socio = socios.find(s =>
-                        s.nroSocio === libro.numeroSocio || s.nombreYApellido === libro.nombreSocio
-                    ) ?? null
-                    return { libro, socio }
-                })
-
-            setLibrosVencidos(vencidos)
-            setCargando(false)
-        })
-    }, [socios])
+        inicializar()
+    }, [])
 
     if (cargando) return <p className="p-4">Cargando...</p>
 
@@ -45,23 +17,34 @@ export function Prestamos() {
 
     return (
         <ul className="flex flex-col gap-3 p-4">
-            {librosVencidos.map(({ libro, socio }) => {
-                const dias = diasDesdePrestamo(libro.fechaDePrestamo!)
+            {librosVencidos.map(libro => {
+                const socio = socios.find(s =>
+                    s.nroSocio === libro.numeroSocio || s.nombreYApellido === libro.nombreSocio
+                ) ?? null
+                const dias = calcularDiasDesdePrestamo(libro.fechaDePrestamo!)
+
                 return (
                     <li key={libro.numeroInventario} className="card flex flex-col gap-1">
                         <div className="flex justify-between items-start">
-                            <div>
-                                <p className="font-semibold text-xl">{libro.titulo}</p>
-                                <p className="text-base opacity-70">{libro.autor}</p>
-                            </div>
-                            <span className="flex flex-col items-end text-base font-semibold text-red-600">
-                                <span className="text-lg">{dias} días</span>
-                                {libro.fechaDePrestamo!.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                        <div>
+                            <p className="font-semibold text-xl">{libro.titulo}</p>
+                            <p className="text-base opacity-70">{libro.autor}</p>
+                        </div>
+                        <span className="flex flex-col items-end text-base font-semibold text-red-600">
+                            <span className="text-lg">
+                                {dias} días
                             </span>
+                            {libro.fechaDePrestamo!.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                        </span>
                         </div>
                         <hr className="opacity-20" />
                         <div className="text-sm">
-                            <p><span className="font-semibold">Socio:</span> {socio?.nombreYApellido ?? libro.nombreSocio}</p>
+                            <p>
+                                <span className="font-semibold">
+                                    Socio:
+                                </span>
+                                {socio?.nombreYApellido ?? libro.nombreSocio}
+                            </p>
                             {socio && <>
                                 <p><span className="font-semibold">N° Socio:</span> {socio.nroSocio}</p>
                                 <p><span className="font-semibold">Telefono:</span> {socio.telefono ?? "-"}</p>
