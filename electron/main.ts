@@ -2,10 +2,10 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
-import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago, rowToSocio } from './utils/excelhelpers'
+import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago } from './utils/excelhelpers'
 import type { Libro } from './libro'
-import { CUOTAS_XLSX_PATH, SOCIOS_XLSX_PATH } from './constants'
-import { addLibroPrestado, devolverLibro, getLibros, getLibrosPrestadosSocio } from './handlers'
+import { CUOTAS_XLSX_PATH } from './constants'
+import { addLibroPrestado, devolverLibro, getLibros, getLibrosPrestadosSocio, getSocios } from './handlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -28,22 +28,7 @@ ipcMain.handle(
   (_, nombreSocio: string, nroSocio?: number) => getLibrosPrestadosSocio(nombreSocio, nroSocio)
 )
 
-ipcMain.handle('getSocios', async () => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
-  if (!worksheet) return []
-
-  const socios: unknown[] = []
-
-  worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex === 1) return
-
-    socios.push(rowToSocio(row))
-  })
-
-  return socios
-})
+ipcMain.handle('getSocios', () => getSocios())
 
 ipcMain.handle('getCuotasSocio', async (_event, nroSocio: number, anio: number) => {
   const workbook = new ExcelJS.Workbook()
