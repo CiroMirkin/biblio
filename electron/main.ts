@@ -2,16 +2,14 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import ExcelJS from 'exceljs'
-import { toggleCeldaPago, construirIndiceMeses, migrarCeldaPintadaAPago } from './utils/excelhelpers'
+import { toggleCeldaPago, construirIndiceMeses } from './utils/excelhelpers'
 import type { Libro } from './libro'
 import { CUOTAS_XLSX_PATH } from './constants'
-import { addLibroPrestado, devolverLibro, getLibros, getLibrosPrestadosSocio, getSocios } from './handlers'
+import { addLibroPrestado, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios } from './handlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-
 let writeQueue: Promise<unknown> = Promise.resolve()
 
 function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
@@ -30,36 +28,10 @@ ipcMain.handle(
 
 ipcMain.handle('getSocios', () => getSocios())
 
-ipcMain.handle('getCuotasSocio', async (_event, nroSocio: number, anio: number) => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('original')
-  if (!worksheet) return []
-
-  const headerRow = worksheet.getRow(1)
-  const indiceMeses = construirIndiceMeses(headerRow)
-
-  const columnasSocio = [...indiceMeses.entries()]
-    .filter(([, { anio: a }]) => a === Number(anio))
-    .map(([colIndex, { mes }]) => ({ colIndex, mes }))
-  
-  let meses: Record<string, boolean>[] = []
-
-  worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex === 1) return
-    if (Number(row.getCell(3).value) !== nroSocio) return
-
-    meses = MESES.map((nombre, mesIndex) => {
-      const col = columnasSocio.find(c => c.mes === mesIndex)
-      if (!col) return { [nombre]: false }
-      const cell = row.getCell(col.colIndex)
-      migrarCeldaPintadaAPago(cell)
-      return { [nombre]: cell.value === 'pago' }
-    })
-  })
-
-  return meses
-})
+ipcMain.handle(
+  'getCuotasSocio',
+  (_event, nroSocio: number, anio: number) => getCuotasSocio(nroSocio, anio)
+)
 
 ipcMain.handle('toggleCuota', async (_event, nroSocio: number, anio: number, mesIndex: number) => {
   return enqueueWrite(async () => {
