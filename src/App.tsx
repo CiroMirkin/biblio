@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion } from "motion/react"
-import { Inscripcion, Socios, Prestamos } from "@/pages";
+import { Inscripcion, Socios, Prestamos, Ajustes } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
 
@@ -8,6 +8,7 @@ const options = {
   CUOTA: "Socios",
   INSCRIPCION: "Inscripción",
   LIBROS: "Rastrear Libros",
+  AJUSTES: "Ajustes",
 } as const;
 
 type options = typeof options[keyof typeof options];
@@ -23,10 +24,15 @@ const views = [
     view: <Inscripcion />,
     bgColor: "bg-[#cadbf0]",
   },
-    {
+  {
     id: options.LIBROS,
     view: <Prestamos />,
     bgColor: "bg-[#d9376e95]",
+  },
+  {
+    id: options.AJUSTES,
+    view: <Ajustes />,
+    bgColor: "bg-gray-200",
   },
 ]
 
@@ -76,7 +82,18 @@ function App() {
         >
           Rastrear Libros
         </motion.button>
-        
+        <motion.button
+          onClick={() => setActualView(options.AJUSTES)}
+          animate={{ height: actualView === options.AJUSTES ? 72 : 56 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          className={cn(
+            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-gray-200",
+            actualView === options.AJUSTES && "font-semibold"
+          )}
+        >
+          Ajustes
+        </motion.button>
+
         <ZoomControl />
       </nav>
 
