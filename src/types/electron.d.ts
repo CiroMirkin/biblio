@@ -14,6 +14,8 @@ declare global {
       getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => Promise<Libro[]>
       getCuotasSocio: (nroSocio: number, anio: number) => Promise<Record<string, boolean>[]>
       toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => Promise<boolean>
+      darDeBajaSocio: (nombreSocio: string) => Promise<boolean>
+      reactivarSocio: (nombreSocio: string) => Promise<boolean>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
     }
   }
