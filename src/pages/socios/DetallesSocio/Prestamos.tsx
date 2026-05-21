@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import type { Libro, LibroEnPrestamo } from "@/models"
+import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
 import { cn, formatAutor, formatTitulo } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
 
@@ -20,6 +20,7 @@ export function Prestamos() {
   const { socioSeleccionado: socio } = useSociosStore()
   const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo } = useLibrosStore()
 
+  const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
   const nombreSocio = socio!.nombreYApellido || ""
   const nroSocio = socio?.nroSocio
 
@@ -81,6 +82,10 @@ export function Prestamos() {
   const slotsOcupados = libros.length
   const slotsLibres = Math.max(0, maximoLibrosEnPrestamo - slotsOcupados)
 
+  if (!caracterSocio && libros.length === 0) {
+    return <p className="opacity-50">Este socio esta inactivo.</p>
+  }
+
   return (
     <form className="w-full flex flex-col rounded">
       <div className="flex gap-2 px-2 py-1 text-sm font-semibold text-gray-600">
@@ -108,7 +113,7 @@ export function Prestamos() {
         </div>
       ))}
 
-      {Array.from({ length: slotsLibres }, (_, i) => (
+      {caracterSocio && Array.from({ length: slotsLibres }, (_, i) => (
         <div
           key={i}
           className={`flex items-center gap-2 py-3 px-2 rounded ${(slotsOcupados + i) % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
@@ -129,13 +134,15 @@ export function Prestamos() {
         </div>
       ))}
 
-      <button
-        type="button"
-        onClick={handleAgregar}
-        className="btn mt-4 p-1 pb-2 text-lg rounded"
-      >
-        Registrar préstamo
-      </button>
+      {caracterSocio && (
+        <button
+          type="button"
+          onClick={handleAgregar}
+          className="btn mt-4 p-1 pb-2 text-lg rounded"
+        >
+          Registrar préstamo
+        </button>
+      )}
     </form>
   )
 }
