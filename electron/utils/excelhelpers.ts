@@ -21,6 +21,18 @@ export function rowToSocio(row: ExcelJS.Row): Socio {
   }
 }
 
+export function writeSocio(row: ExcelJS.Row, socio: Socio): void {
+  row.getCell(3).value = socio.nombreYApellido
+  row.getCell(4).value = socio.domicilio
+  row.getCell(5).value = socio.dni
+  row.getCell(6).value = socio.nacionalidad
+  row.getCell(7).value = socio.fechaNacimiento ? new Date(String(socio.fechaNacimiento)) : null
+  row.getCell(9).value = socio.telefono ?? null
+  row.getCell(10).value = socio.caracterSocio
+  row.getCell(11).value = socio.fechaIngresoEgreso ? new Date(String(socio.fechaIngresoEgreso)) : null
+  row.getCell(12).value = socio.observaciones
+}
+
 export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {
   const rawFecha = row.getCell(6).value
   const fechaDePrestamo = rawFecha instanceof Date
