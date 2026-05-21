@@ -1,11 +1,11 @@
 import { cn } from "@/utils"
-import { type ChangeEvent, type HTMLInputTypeAttribute, type SyntheticEvent } from "react"
+import { type ChangeEvent, type HTMLInputTypeAttribute, type SyntheticEvent, useState } from "react"
 
 type Props = {
   label: string
   placeholder?: string
   submitLabel?: string
-  inputType?: HTMLInputTypeAttribute | undefined 
+  inputType?: HTMLInputTypeAttribute | undefined
   defaultValue?: string | number
   onChange: (value: string) => void
   onSubmit?: () => void
@@ -22,12 +22,15 @@ export function Form({
   inputType = "text",
   defaultValue,
 }: Props) {
+  const [value, setValue] = useState(defaultValue ?? "")
+
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
     onSubmit?.()
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
     onChange(e.target.value)
   }
 
@@ -37,7 +40,7 @@ export function Form({
       <div className="mt-1 w-full flex gap-2">
         <input
           type={inputType}
-          value={defaultValue || ""}
+          value={value}
           onChange={handleChange}
           className="w-full border bg-white border-black rounded p-1 px-2"
           placeholder={placeholder}
