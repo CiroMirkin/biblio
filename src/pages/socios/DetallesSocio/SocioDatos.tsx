@@ -1,12 +1,13 @@
 import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { useSociosStore } from "@/store"
+import { getCaracterSocio } from "@/models"
 
 export function SocioDatos() {
     const { socioSeleccionado: socio } = useSociosStore()
     const [expandido, setExpandido] = useState(false)
 
-    const caracterSocio = socio?.caracterSocio || ""
+    const caracterSocio = getCaracterSocio(socio?.caracterSocio)
     const fechaNacimiento = socio?.fechaNacimiento
     const fechaIngresoEgreso = socio?.fechaIngresoEgreso
 
@@ -16,7 +17,7 @@ export function SocioDatos() {
                 <h2 className="text-xl">
                     Datos de <span className="font-semibold">{socio?.nombreYApellido}</span>
                 </h2>
-                { ["regular", ""].includes(caracterSocio.trim().toLowerCase() || "")
+                { caracterSocio.estado
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green-300 rounded-sm">Activo</span> 
                     : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber-300 rounded-sm">Inactivo</span> 
                 }
