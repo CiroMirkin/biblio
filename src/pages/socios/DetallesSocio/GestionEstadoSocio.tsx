@@ -1,0 +1,41 @@
+import { useState } from "react"
+import { useSociosStore } from "@/store"
+import { Spinner } from "@/components"
+import { getCaracterSocio } from "@/models"
+import { cn } from "@/utils"
+
+export function GestionEstadoSocio() {
+    const { socioSeleccionado, darDeBaja, reactivar } = useSociosStore()
+    const [cargando, setCargando] = useState(false)
+
+    const isSocioActivo = getCaracterSocio(socioSeleccionado?.caracterSocio).estado
+
+    const handleEstadoSocio = async () => {
+        setCargando(true)
+        try {
+            if (isSocioActivo) await darDeBaja()
+            else await reactivar()
+        }
+        finally {
+            setCargando(false)
+        }
+    }
+
+    return (
+        <>
+            <button
+                className={cn("px-4 pb-1 rounded btn", cargando && "btn-disabled")}
+                onClick={handleEstadoSocio}
+                disabled={cargando}
+            >
+                { cargando && 
+                    <span className="flex gap-1.5 items-center">
+                        <Spinner /> Estableciendo...
+                    </span> 
+                }
+                { !cargando && (isSocioActivo ? "Dar de baja" : "Reactivar") }
+            </button>
+            <button className="px-4 pb-1 rounded btn">Re inscribir</button>
+        </>
+    )
+}

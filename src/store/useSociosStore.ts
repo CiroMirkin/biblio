@@ -20,6 +20,9 @@ interface SociosState {
     toggleMes: (mesIndex: number) => Promise<void>
     irAnioAnterior: () => void
     irAnioSiguiente: () => void
+
+    darDeBaja: () => Promise<void>
+    reactivar: () => Promise<void>
 }
 
 export const useSociosStore = create<SociosState>((set, get) => ({
@@ -81,6 +84,44 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const key = Object.keys(next[mesIndex])[0]
         next[mesIndex] = { [key]: pagado }
         set({ mesesCuotas: next })
+    },
+
+    darDeBaja: async () => {
+        const { socioSeleccionado, socios, sociosFiltrados } = get()
+        if (!socioSeleccionado) return
+
+        const ok = await window.electronAPI.darDeBajaSocio(socioSeleccionado.nombreYApellido)
+        if (!ok) return
+
+        const actualizado = { ...socioSeleccionado, caracterSocio: 'Inactivo' }
+
+        const actualizarLista = (lista: Socio[]) =>
+            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
+
+        set({
+            socioSeleccionado: actualizado,
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+        })
+    },
+
+    reactivar: async () => {
+        const { socioSeleccionado, socios, sociosFiltrados } = get()
+        if (!socioSeleccionado) return
+
+        const ok = await window.electronAPI.reactivarSocio(socioSeleccionado.nombreYApellido)
+        if (!ok) return
+
+        const actualizado = { ...socioSeleccionado, caracterSocio: 'Regular' }
+
+        const actualizarLista = (lista: Socio[]) =>
+            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
+
+        set({
+            socioSeleccionado: actualizado,
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+        })
     },
 
     irAnioAnterior: async () => {

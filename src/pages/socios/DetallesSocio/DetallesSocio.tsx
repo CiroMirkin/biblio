@@ -2,6 +2,7 @@ import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
 import { useSociosStore } from "@/store"
+import { GestionEstadoSocio } from "./GestionEstadoSocio"
 
 export function DetalleSocio() {
     const { anio, cuotas } = useSociosStore()
@@ -25,8 +26,7 @@ export function DetalleSocio() {
               <CalendarioCuotas />
             </div>
             <div className="flex gap-4 card">
-              <button className="px-4 pb-1 rounded bg-sky-200">Dar de baja</button>
-              <button className="px-4 pb-1 rounded bg-sky-200">Re inscribir</button>
+              <GestionEstadoSocio />
             </div>
           </div>
         </div>
