@@ -35,7 +35,6 @@ export function GestionEstadoSocio() {
                 }
                 { !cargando && (isSocioActivo ? "Dar de baja" : "Reactivar") }
             </button>
-            <button className="px-4 pb-1 rounded btn">Re inscribir</button>
         </>
     )
 }
