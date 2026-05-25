@@ -1,5 +1,5 @@
 
 export * from "./inscripcion/Inscripcion"
 export * from "./socios/Socios"
-export * from "./prestamos/Prestamos"
+export * from "./catalogo/Catalogo"
 export * from "./ajustes/Ajustes"

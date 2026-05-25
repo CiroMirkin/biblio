@@ -4,7 +4,7 @@ import { ListaLibrosVencidos } from "./ListaLibrosVencidos"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 
-export function Prestamos() {
+export function Catalogo() {
     const { inicializar, limiteDeDias } = useLibrosStore()
 
     useEffect(() => {
@@ -20,7 +20,7 @@ export function Prestamos() {
             </section>
             <aside className="sticky top-0 h-fit">
                 <section className="card">
-                    <p>En esta sección puede buscar un libro en préstamo, después de {limiteDeDias} días los libros se marcan en rojo como adeudados.</p>
+                    <p>En esta sección puede buscar un libro, si el libro esta en préstamo puede saber quien lo tiene y después de {limiteDeDias} días el libro en préstamo se marca en rojo como adeudado.</p>
                 </section>
             </aside>
         </div>

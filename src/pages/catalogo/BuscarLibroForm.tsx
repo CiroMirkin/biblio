@@ -6,7 +6,7 @@ export function BuscarLibroForm() {
 
   return (
     <Form
-      label="Buscar libro en préstamo:"
+      label="Buscar libro:"
       placeholder="Nombre del libro"
       onChange={buscar}
     />

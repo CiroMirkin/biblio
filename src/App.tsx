@@ -1,13 +1,13 @@
 import { useState } from "react"
 import { motion } from "motion/react"
-import { Inscripcion, Socios, Prestamos, Ajustes } from "@/pages";
+import { Inscripcion, Socios, Catalogo, Ajustes } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
 
 const options = {
   CUOTA: "Socios",
   INSCRIPCION: "Inscripción",
-  LIBROS: "Rastrear Libros",
+  LIBROS: "Catalogo",
   AJUSTES: "Ajustes",
 } as const;
 
@@ -26,7 +26,7 @@ const views = [
   },
   {
     id: options.LIBROS,
-    view: <Prestamos />,
+    view: <Catalogo />,
     bgColor: "bg-[#d9376e95]",
   },
   {
@@ -80,7 +80,7 @@ function App() {
             actualView === options.LIBROS && "font-semibold"
           )}
         >
-          Rastrear Libros
+          Catalogo
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.AJUSTES)}
