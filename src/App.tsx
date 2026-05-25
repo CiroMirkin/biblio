@@ -22,7 +22,7 @@ const views = [
   {
     id: options.INSCRIPCION,
     view: <Inscripcion />,
-    bgColor: "bg-[#cadbf0]",
+    bgColor: "bg-[#c0d4f4]",
   },
   {
     id: options.LIBROS,
@@ -65,7 +65,7 @@ function App() {
           animate={{ height: actualView === options.INSCRIPCION ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#cadbf0]",
+            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#c0d4f4]",
             actualView === options.INSCRIPCION && "font-semibold"
           )}
         >
@@ -76,7 +76,7 @@ function App() {
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d9376d8d]",
+            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d9376d74]",
             actualView === options.LIBROS && "font-semibold"
           )}
         >

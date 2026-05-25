@@ -98,7 +98,7 @@ export function Prestamos() {
       {libros.map((libro, index) => (
         <div
           key={libro.numeroInventario}
-          className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
+          className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
           <span className={cn("text-lg truncate", colAutor)}>{libro.autor}</span>
           <span className={cn("text-lg truncate", colTitulo)}>{libro.titulo}</span>
@@ -116,7 +116,7 @@ export function Prestamos() {
       {caracterSocio && Array.from({ length: slotsLibres }, (_, i) => (
         <div
           key={i}
-          className={`flex items-center gap-2 py-3 px-2 rounded ${(slotsOcupados + i) % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
+          className={`flex items-center gap-2 py-3 px-2 rounded ${(slotsOcupados + i) % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
           {FIELDS.map((field, fieldIndex) => (
             <input

@@ -21,7 +21,7 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
   return (
     <li className={cn(
       "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center shadow-xs",
-      pagado ? "bg-green-300" : "bg-[#f582ae59]",
+      pagado ? "bg-green" : "bg-[#f582ae59]",
       loading && "opacity-60"
     )}>
       <span className="font-semibold text-lg text-center truncate">{nombre}</span>
@@ -33,7 +33,7 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
           {loading && <Spinner />}  Pago
         </button>
         : <button onClick={handleToggle} disabled={loading} className={cn(
-          "flex items-center justify-center gap-1.5 btn",
+          "flex items-center justify-center gap-1.5 btn bg-[#d9376d74]",
           loading && "btn-disabled"
         )}>
           {loading && <Spinner />}

@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-    --color-white: #f5f3e6;
-    --color-black: #2c2b26;
-    --color-accent: #8bd3dd;
+    --color-white: #fef0c6;
+    --color-white-accent: #fddc87;
 
-    --color-secondary: #f7dfbe;
+    --color-black: #210501;
+    --color-accent: #7ec4ca;
+    --color-secondary: #ffc55c;
+
+    --color-green: #76ccb6;
+    --color-orange: #e48329;
 }
 
 html, body, #root {
@@ -23,7 +27,7 @@ html, body, #root {
     }
 
     .btn {
-        @apply px-4 pb-1 bg-accent rounded shadow-xs transition-all duration-100 ease-in hover:shadow-sm hover:bg-[#5bb8c6];
+        @apply px-4 pb-1 bg-accent rounded shadow-xs transition-all duration-100 ease-in hover:shadow-sm hover:bg-[#5bb8c6] border-b-2 border-r-2;
     }
 
     .card {
