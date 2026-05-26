@@ -11,3 +11,5 @@ export interface Socio {
   fechaIngresoEgreso?: Date
   observaciones?: string
 }
+
+export type NewSocio = Omit<Socio, 'nroSocio'>

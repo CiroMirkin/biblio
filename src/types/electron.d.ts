@@ -1,4 +1,4 @@
-import type { Libro, LibroEnPrestamo } from "@/models"
+import type { Libro, LibroEnPrestamo, NewSocio, Socio } from "@/models"
 
 export {}
 
@@ -16,6 +16,7 @@ declare global {
       toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => Promise<boolean>
       darDeBajaSocio: (nombreSocio: string) => Promise<boolean>
       reactivarSocio: (nombreSocio: string) => Promise<boolean>
+      createSocio: (socio: NewSocio) => Promise<Socio>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
     }
   }

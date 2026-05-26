@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Socio } from "@/models/Socio"
+import type { NewSocio, Socio } from "@/models/Socio"
 import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
@@ -20,6 +20,8 @@ interface SociosState {
     toggleMes: (mesIndex: number) => Promise<void>
     irAnioAnterior: () => void
     irAnioSiguiente: () => void
+    
+    crearSocio: (socioData: NewSocio) => Promise<Socio | null>
 
     darDeBaja: () => Promise<void>
     reactivar: () => Promise<void>
@@ -138,5 +140,25 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const nuevoAnio = anio + 1
         const mesesCuotas = await cargarCuotasSocio(socioSeleccionado.nroSocio, nuevoAnio)
         set({ anio: nuevoAnio, mesesCuotas })
+    },
+
+    crearSocio: async (socioData) => {
+        const { socios, sociosFiltrados } = get()
+
+        const nuevoSocio = await window.electronAPI.createSocio(socioData)
+        if (!nuevoSocio) return null
+
+        const actualizarLista = (lista: Socio[]) =>
+            ordenarSociosAlfabeticamente([...lista, nuevoSocio])
+
+        set({
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+            socioSeleccionado: nuevoSocio,
+            cuotas: true,
+            mesesCuotas: [],
+        })
+
+        return nuevoSocio
     },
 }))

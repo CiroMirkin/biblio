@@ -1,4 +1,5 @@
-import type { Socio } from "@/models"
+import type { NewSocio } from "@/models"
+import { useSociosStore } from "@/store"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 
 const ORDER = ["apellidos", "nombres", "dni", "fechaNacimiento", "telefono", "email", "domicilio", "observaciones"]
@@ -17,11 +18,12 @@ function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
 }
 
 export function Inscripcion() {
+  const { crearSocio } = useSociosStore()
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    const socio: Partial<Socio> = {
+    const socio: NewSocio = {
       dni: Number(form.dni.value),
       nombreYApellido: `${form.apellidos.value}, ${form.nombres.value}`,
       fechaNacimiento: form.fechaNacimiento.value ? new Date(form.fechaNacimiento.value) : undefined,
@@ -32,7 +34,9 @@ export function Inscripcion() {
       caracterSocio: "",
     }
 
-    console.log(socio)
+    const newSocio = await crearSocio(socio)
+    if(!newSocio) console.error("Error en la creación del socio")
+    console.info("Socio creado exitosamente")
   }
 
   return (
@@ -73,7 +77,7 @@ export function Inscripcion() {
 
             <label className="flex flex-col gap-1 text-base">
               Email:
-              <input onKeyDown={handleEnter} type="email" name="email" id="email" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Email" required minLength={10} />
+              <input onKeyDown={handleEnter} type="email" name="email" id="email" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Email" />
             </label>
           </div>
 
