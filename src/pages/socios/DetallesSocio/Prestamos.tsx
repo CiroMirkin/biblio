@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
-import { cn, formatAutor, formatTitulo } from "@/utils"
+import { cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
+import { CheckIcon } from "@/components"
 
-const FIELDS = ['autor', 'titulo', 'numeroInventario'] as const
+const FIELDS = ['numeroInventario', 'autor', 'titulo'] as const
 
 const emptyLibro = () => ({
   autor: '',
@@ -12,9 +13,10 @@ const emptyLibro = () => ({
 })
 
 const colAutor = "w-[35%]"
-const colTitulo = "w-[35%]"
-const colNro = "w-[20%]"
+const colTitulo = "w-[40%]"
+const colNro = "w-[15%]"
 const colBtn = "w-[10%]"
+const colFecha = "w-[10%]"
 
 export function Prestamos() {
   const { socioSeleccionado: socio } = useSociosStore()
@@ -88,11 +90,12 @@ export function Prestamos() {
 
   return (
     <form className="w-full flex flex-col rounded">
-      <div className="flex gap-2 px-2 py-1 text-sm font-semibold text-gray-600">
+      <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
+        <span className={colNro}>N° Inventario</span>
         <span className={colAutor}>Autor</span>
         <span className={colTitulo}>Título</span>
-        <span className={colNro}>N° Inventario</span>
-        <span className={colBtn}>Devolver</span>
+        <span className={colFecha}>Fecha</span>
+        <span className={cn(colBtn, "pl-2.5")}>Devolver</span>
       </div>
 
       {libros.map((libro, index) => (
@@ -100,15 +103,18 @@ export function Prestamos() {
           key={libro.numeroInventario}
           className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
-          <span className={cn("text-lg truncate", colAutor)}>{libro.autor}</span>
-          <span className={cn("text-lg truncate", colTitulo)}>{libro.titulo}</span>
           <span className={cn("text-lg", colNro)}>N° {libro.numeroInventario}</span>
-          <div className={colBtn}>
+          <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
+          <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
+          <span className={cn("text-lg", colFecha)}>{formatFecha(libro.fechaDePrestamo)}</span>
+          <div className={cn(colBtn, "pl-2.5")}>
             <button
               type="button"
-              className="btn w-full overflow-hidden whitespace-nowrap text-ellipsis"
+              className="btn btn-icon"
               onClick={() => handleDevolver(libro.numeroInventario)}
-            >Devuelto</button>
+            >
+              <CheckIcon />
+            </button>
           </div>
         </div>
       ))}
@@ -127,9 +133,10 @@ export function Prestamos() {
               onChange={e => handleChange(i, field, e.target.value)}
               onKeyDown={e => handleKeyDown(e, i, fieldIndex)}
               className={`${field === 'autor' ? colAutor : field === 'titulo' ? colTitulo : colNro} border bg-white border-black rounded p-1 px-2`}
-              placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N° Inventario'}
+              placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N°'}
             />
           ))}
+          <div className={colFecha} />
           <div className={colBtn} />
         </div>
       ))}
