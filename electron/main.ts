@@ -2,8 +2,9 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import type { Libro } from './libro'
-import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota } from './handlers'
+import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, } from './handlers'
 import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
+import type { NewSocioData } from './socio'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -29,6 +30,8 @@ ipcMain.handle(
   'toggleCuota',
   (_event, nroSocio: number, anio: number, mesIndex: number) => toggleCuota(nroSocio, anio, mesIndex)
 )
+
+ipcMain.handle('createSocio', (_event, socioData: NewSocioData) => createSocio(socioData))
 
 ipcMain.handle('darDeBajaSocio', (_event, nombreSocio: string) => darDeBajaSocio(nombreSocio))
 ipcMain.handle('reactivarSocio', (_event, nombreSocio: string) => reactivarSocio(nombreSocio))
