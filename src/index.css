@@ -30,6 +30,10 @@ html, body, #root {
         @apply px-4 pb-1 bg-accent rounded shadow-xs transition-all duration-100 ease-in hover:shadow-sm hover:bg-[#5bb8c6] border-b-2 border-r-2;
     }
 
+    .btn-icon {
+        @apply py-1 flex justify-center items-center;
+    }
+
     .card {
         @apply bg-white rounded p-4 shadow-sm;
     }
