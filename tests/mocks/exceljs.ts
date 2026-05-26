@@ -13,12 +13,9 @@ export function createMockRow(cellValues: Record<number, unknown> = {}) {
 
   return {
     getCell: vi.fn((colIndex: number) => {
-      if (!cells[colIndex]) {
-        cells[colIndex] = createMockCell()
-      }
+      if (!cells[colIndex]) cells[colIndex] = createMockCell()
       return cells[colIndex]
     }) as unknown as ExcelJS.Row['getCell'],
-    
     eachCell: vi.fn(function (
       this: unknown,
       options: { includeEmpty?: boolean },
@@ -34,19 +31,17 @@ export function createMockRow(cellValues: Record<number, unknown> = {}) {
 
 export function createMockWorksheet(
   headerRow?: ExcelJS.Row,
-  dataRows: Array<Record<number, unknown>> = [],
+  dataRows?: ExcelJS.Row[],
 ) {
   const rows: Array<ExcelJS.Row | undefined> = [undefined]
   rows.push(headerRow || (createMockRow() as unknown as ExcelJS.Row))
-  dataRows.forEach((cells) => {
-    rows.push(createMockRow(cells) as unknown as ExcelJS.Row)
-  })
+  if (dataRows) {
+    dataRows.forEach((row) => rows.push(row))
+  }
 
   return {
     getRow: vi.fn((rowIndex: number) => {
-      if (!rows[rowIndex]) {
-        rows[rowIndex] = createMockRow() as unknown as ExcelJS.Row
-      }
+      if (!rows[rowIndex]) rows[rowIndex] = createMockRow() as unknown as ExcelJS.Row
       return rows[rowIndex]!
     }),
     eachRow: vi.fn((callback: (row: ExcelJS.Row, rowIndex: number) => void) => {
@@ -69,5 +64,5 @@ export function createMockWorkbook(worksheet?: ExcelJS.Worksheet) {
 }
 
 export const mockExcelJS = {
-  Workbook: vi.fn(() => createMockWorkbook()),
+  Workbook: vi.fn(function () { return createMockWorkbook() }),
 }
