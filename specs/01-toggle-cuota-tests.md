@@ -1,6 +1,6 @@
 # Tests para toggleCuota con mocks e integración real
 
-**Estado:** Approved
+**Estado:** Implemented
 **Dependencias:** Ninguna
 **Fecha:** 2026-05-26
 **Objetivo:** Refactorizar `tests/toggleCuota.spec.ts` para que use mocks de exceljs en tests unitarios + un test de integración con fixture real que verifique escritura en disco.
