@@ -9,12 +9,14 @@ interface LibrosState {
   libros: LibroEnPrestamo[]
   librosVencidos: LibroEnPrestamo[]
   librosFiltrados: LibroEnPrestamo[]
+  librosDisponiblesFiltrados: Libro[]
 
   setMaximoLibrosEnPrestamo: (max: number) => number
   setLimiteDeDias: (limite: number) => number
 
   inicializar: () => Promise<void>
   buscar: (query: string) => void
+  buscarDisponibles: (query: string) => void
   getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
   agregarLibroEnPrestamo: (libro: Libro) => Promise<LibroEnPrestamo | null>
   devolverLibro: (nroInventario: number) => Promise<void>
@@ -26,6 +28,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   libros: [],
   librosVencidos: [],
   librosFiltrados: [],
+  librosDisponiblesFiltrados: [],
 
   inicializar: async () => {
     const { limiteDeDias } = get()
@@ -87,6 +90,42 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     })
 
     set({ librosFiltrados: ordenados })
+  },
+
+  buscarDisponibles: (query) => {
+    const { libros } = get()
+
+    if (!query.trim()) {
+      set({ librosDisponiblesFiltrados: [] })
+      return
+    }
+    
+    const q = query.toLowerCase().trim()
+    
+    const disponibles = libros.filter(l => l.fechaDePrestamo === null)
+    const filtrados = disponibles.filter(libro => {
+      const titulo = libro.titulo.toLowerCase()
+      if (titulo.includes(q)) return true
+      return titulo.split(" ").some(palabra => {
+          if (palabra.startsWith(q)) return true
+          if (q.length < 5) return false
+          if (Math.abs(palabra.length - q.length) > 1) return false
+          return levenshtein(palabra, q) <= 1
+      })
+    })
+
+    const ordenados = filtrados.sort((a, b) => {
+      const ta = a.titulo.toLowerCase()
+      const tb = b.titulo.toLowerCase()
+      if (ta === q) return -1
+      if (tb === q) return 1
+      if (ta.startsWith(q) && !tb.startsWith(q)) return -1
+      if (tb.startsWith(q) && !ta.startsWith(q)) return 1
+
+      return ta.localeCompare(tb, 'es', { sensitivity: 'base' })
+    })
+
+    set({ librosDisponiblesFiltrados: ordenados })
   },
 
   getLibrosSocio: async (nombreSocio, nroSocio) => {
