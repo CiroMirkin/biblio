@@ -20,7 +20,7 @@ const colFecha = "w-[10%]"
 
 export function Prestamos() {
   const { socioSeleccionado: socio } = useSociosStore()
-  const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo } = useLibrosStore()
+  const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo, getLibroPorInventario } = useLibrosStore()
 
   const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
   const nombreSocio = socio!.nombreYApellido || ""
@@ -29,6 +29,9 @@ export function Prestamos() {
   const [libros, setLibros] = useState<LibroEnPrestamo[]>([])
   const [inputs, setInputs] = useState(
     Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro)
+  )
+  const [lockedRows, setLockedRows] = useState<boolean[]>(
+    Array.from({ length: maximoLibrosEnPrestamo }, () => false)
   )
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -41,9 +44,35 @@ export function Prestamos() {
     setInputs(prev => prev.map((input, i) => i === index ? { ...input, [field]: value } : input))
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number, fieldIndex: number) {
+  async function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number, fieldIndex: number) {
     if (e.key !== 'Enter') return
     e.preventDefault()
+
+    if (fieldIndex === 0) {
+      const nro = Number(inputs[rowIndex].numeroInventario)
+      if (!nro) return
+
+      setLockedRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
+
+      const libro = getLibroPorInventario(nro)
+
+      if (libro) {
+        setInputs(prev => prev.map((input, i) => i === rowIndex
+          ? { numeroInventario: String(libro.numeroInventario), autor: libro.autor, titulo: libro.titulo }
+          : input
+        ))
+
+        const slotsLibres = maximoLibrosEnPrestamo - libros.length
+        const nextRowFlat = (rowIndex + 1) * FIELDS.length
+        if (nextRowFlat < slotsLibres * FIELDS.length) {
+          setTimeout(() => inputRefs.current[nextRowFlat]?.focus(), 0)
+        }
+      } else {
+        setLockedRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
+        setTimeout(() => inputRefs.current[rowIndex * FIELDS.length + 1]?.focus(), 50)
+      }
+      return
+    }
 
     const slotsLibres = maximoLibrosEnPrestamo - libros.length
     const totalInputs = slotsLibres * FIELDS.length
@@ -74,6 +103,7 @@ export function Prestamos() {
 
     setLibros(prev => [...prev, ...agregados])
     setInputs(Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro))
+    setLockedRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
   }
 
   async function handleDevolver(nroInventario: number) {
@@ -132,7 +162,8 @@ export function Prestamos() {
               value={inputs[i][field]}
               onChange={e => handleChange(i, field, e.target.value)}
               onKeyDown={e => handleKeyDown(e, i, fieldIndex)}
-              className={`${field === 'autor' ? colAutor : field === 'titulo' ? colTitulo : colNro} border bg-white border-black rounded p-1 px-2`}
+              disabled={lockedRows[i] && field !== 'numeroInventario'}
+              className={`${field === 'autor' ? colAutor : field === 'titulo' ? colTitulo : colNro} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
               placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N°'}
             />
           ))}

@@ -20,6 +20,7 @@ interface LibrosState {
   getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
   agregarLibroEnPrestamo: (libro: Libro) => Promise<LibroEnPrestamo | null>
   devolverLibro: (nroInventario: number) => Promise<void>
+  getLibroPorInventario: (nroInventario: number) => LibroEnPrestamo | null
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -152,5 +153,10 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     if (!ok) return
     const { libros } = get()
     set({ libros: libros.filter(l => l.numeroInventario !== nroInventario) })
+  },
+
+  getLibroPorInventario: (nroInventario) => {
+    const { libros } = get()
+    return libros.find(l => l.numeroInventario === nroInventario && l.fechaDePrestamo === null) ?? null
   },
 }))
