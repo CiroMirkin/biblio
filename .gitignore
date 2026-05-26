@@ -1,5 +1,6 @@
 # Electron
 dist-electron
+dist-ts
 
 public/*.xlsx
 public/*/*.xlsx
