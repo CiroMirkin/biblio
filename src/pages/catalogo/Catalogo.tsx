@@ -3,6 +3,7 @@ import { useLibrosStore } from "@/store"
 import { ListaLibrosVencidos } from "./ListaLibrosVencidos"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
+import { ListaLibrosDisponibles } from "./ListaLibrosDisponibles"
 
 export function Catalogo() {
     const { inicializar, limiteDeDias } = useLibrosStore()
@@ -17,6 +18,7 @@ export function Catalogo() {
                 <BuscarLibroForm />
                 <ListaLibrosEnPrestamo />
                 <ListaLibrosVencidos />
+                <ListaLibrosDisponibles />
             </section>
             <aside className="sticky top-0 h-fit">
                 <section className="card">
