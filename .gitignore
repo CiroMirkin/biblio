@@ -5,6 +5,16 @@ dist-ts
 public/*.xlsx
 public/*/*.xlsx
 
+tests/*.js
+tests/*.d.ts
+tests/*/*.js
+tests/*/*.d.ts
+
+electron/*.js
+electron/*.d.ts
+electron/*/*.d.ts
+electron/*/*.js
+
 # Logs
 logs
 *.log
