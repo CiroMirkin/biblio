@@ -1,6 +1,6 @@
 # SPEC 02 — Persistencia de ajustes con electron-store (fix)
 
-> **Estado:** Approved · **Dependencias:** Ninguna · **Fecha:** 2026-05-28
+> **Estado:** Implemented · **Dependencias:** Ninguna · **Fecha:** 2026-05-28
 > **Objetivo:** Hacer funcionar la persistencia de ajustes con `electron-store` aplicando los 4 fixes identificados (verificar Electron ≥ 30, external ESM en vite.config, reemplazar `store.store` por `store.get` con claves explícitas, llamar `inicializar()` en `Ajustes.tsx`).
 
 ---
@@ -110,6 +110,12 @@ const store = new Store<SettingsSchema>({
 - [ ] Cambiar un ajuste, cerrar y reabrir la app: el valor persistedo se mantiene
 
 ---
+
+## Decisiones de implementación (post-aprobación)
+
+| Decisión | Justificación |
+|---|---|
+| `registerSettingsHandlers()` en `electron/utils/` en vez de `electron/handlers/` | No es un handler en sí, sino una función que registra handlers en `ipcMain`. Separarlo evita mezclar responsabilidades y simplifica los tests. |
 
 ## Decisions
 
