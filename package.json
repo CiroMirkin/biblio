@@ -28,16 +28,16 @@
     ],
     "extraResources": [
       {
-        "from": "public/socios.xlsx",
-        "to": "plantillas/socios.xlsx"
+        "from": "templates/socios.xlsx",
+        "to": "templates/socios.xlsx"
       },
       {
-        "from": "public/cuotas.xlsx",
-        "to": "plantillas/cuotas.xlsx"
+        "from": "templates/cuotas.xlsx",
+        "to": "templates/cuotas.xlsx"
       },
       {
-        "from": "public/libros.xlsx",
-        "to": "plantillas/libros.xlsx"
+        "from": "templates/libros.xlsx",
+        "to": "templates/libros.xlsx"
       }
     ],
     "directories": {
