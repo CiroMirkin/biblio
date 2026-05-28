@@ -5,7 +5,7 @@ export const MESES = Object.freeze(
   ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 )
 
-const IS_DEV = Boolean(process.env.VITE_DEV_SERVER_URL)
+export const IS_DEV = Boolean(process.env.VITE_DEV_SERVER_URL)
 
 export const SOCIOS_XLSX_PATH = IS_DEV
   ? path.join(process.cwd(), 'public', 'socios.xlsx')

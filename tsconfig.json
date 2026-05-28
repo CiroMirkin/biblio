@@ -12,7 +12,7 @@
       "@/*": ["./src/*"],
     }
   },
-  "include": ["src", "electron"],
+  "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" },

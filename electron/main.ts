@@ -5,6 +5,7 @@ import type { Libro } from './libro'
 import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, } from './handlers'
 import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
 import type { NewSocioData } from './socio'
+import { initializeDataFiles } from './utils/initializeDataFiles'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -56,7 +57,10 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  initializeDataFiles()
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()

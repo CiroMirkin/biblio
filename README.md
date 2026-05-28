@@ -7,3 +7,5 @@
 |npm run build | Compila TS + Vite |
 | npm run dist | Build + empaqueta con electron-builder |
 |npm test| Ejecuta pruebas sobre los handlers de electron|
+
+Ejecutar Git Bash como administrador antes de ejecutar `npm run dist`.

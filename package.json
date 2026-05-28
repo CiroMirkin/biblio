@@ -26,6 +26,20 @@
       "dist/**/*",
       "dist-electron/**/*"
     ],
+    "extraResources": [
+      {
+        "from": "public/socios.xlsx",
+        "to": "plantillas/socios.xlsx"
+      },
+      {
+        "from": "public/cuotas.xlsx",
+        "to": "plantillas/cuotas.xlsx"
+      },
+      {
+        "from": "public/libros.xlsx",
+        "to": "plantillas/libros.xlsx"
+      }
+    ],
     "directories": {
       "output": "release"
     }

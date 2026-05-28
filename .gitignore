@@ -1,9 +1,15 @@
 # Electron
 dist-electron
 dist-ts
+release
 
 public/*.xlsx
 public/*/*.xlsx
+
+*/*.js
+*.js
+*.d.ts
+*/*.d.ts
 
 # Logs
 logs
