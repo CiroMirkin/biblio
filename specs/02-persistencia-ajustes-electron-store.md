@@ -1,7 +1,7 @@
-# ~~SPEC 02 — Persistencia de ajustes con electron-store~~ (ABANDONADO)
+# SPEC 02 — Persistencia de ajustes con electron-store (fix)
 
-> **Estado:** Abandonado · **Dependencias:** Ninguna · **Fecha:** 2026-05-26
-> **Objetivo:** Persistir los ajustes de la aplicación usando `electron-store` con carga automática al inicio y puente IPC entre main y renderer, soportando valores de cualquier tipo serializable.
+> **Estado:** Approved · **Dependencias:** Ninguna · **Fecha:** 2026-05-28
+> **Objetivo:** Hacer funcionar la persistencia de ajustes con `electron-store` aplicando los 4 fixes identificados (verificar Electron ≥ 30, external ESM en vite.config, reemplazar `store.store` por `store.get` con claves explícitas, llamar `inicializar()` en `Ajustes.tsx`).
 
 ---
 
@@ -9,131 +9,105 @@
 
 **Incluido:**
 
-- Instalar y configurar `electron-store` en el main process
-- Crear un bridge IPC con handlers `settings:get`, `settings:set`, `settings:getAll` en el main process
-- Exponer los métodos en `preload.ts` para uso desde el renderer
-- Persistir automáticamente `limiteDeDias` y `maximoLibrosEnPrestamo` cuando cambian via `setLimiteDeDias` / `setMaximoLibrosEnPrestamo`
-- Cargar valores persistedos al llamar `inicializar()` y escribirlos en el store de Zustand
-- Infraestructura genérica: cualquier ajuste futuro (número, booleano, objeto, string) puede usar los mismos métodos IPC
+- Verificar que la versión de Electron sea ≥ 30 (prerrequisito de `electron-store`)
+- Agregar `electron-store` a `external` en la configuración de `electron-vite` (main process)
+- Mover `electron-store` a `dependencies` en `package.json` (no devDependencies)
+- Reemplazar `store.store` en el handler `settings:getAll` por objeto con claves explícitas (`{ limiteDeDias: store.get('limiteDeDias'), maximoLibrosEnPrestamo: store.get('maximoLibrosEnPrestamo') }`)
+- Usar `store.get(key)` en `settings:get` — los defaults del constructor garantizan el valor aunque la clave nunca se haya escrito
+- Simplificar `inicializar()` para que lea valores directamente de `settingsService.getAll()` sin lógica de decisión con `has()`
+- Llamar `inicializar()` en `Ajustes.tsx` via `useEffect`
+- Configurar `vitest.config.ts` con `deps.inline: ['electron-store']` y `external: ['electron']`
+- Actualizar `tests/settings.spec.ts` para mockear `electron-store` en vez de instanciarlo real
+- Crear `tests/ipcHandlers.spec.ts` con tests de los 3 handlers incluyendo el caso `limiteDeDias: 0`
+- Documentar `store.reset(...keys)` y `store.onDidChange(key, callback)` como métodos disponibles (no se implementan)
+- Marcar el contenido anterior de SPEC 02 como obsoleto
 
 **No incluido:**
 
-- UI de ajustes (ya existe, no se modifica)
-- Persistencia de datos de socios, libros o cuotas (solo ajustes de configuración)
-- Cifrado de los valores persistedos
-- Sincronización entre ventanas
+- Botón "Restaurar defaults" en la UI (no se modifica la pantalla de ajustes)
+- `onDidChange` como mecanismo de suscripción en el servicio, ni sincronización entre ventanas (ambos están relacionados: el primero habilita al segundo, y ninguno se implementa en este spec)
+- Cifrado de valores persistedos
 - Migraciones versionadas de schema
 
 ---
 
 ## Data model
 
-### Main process — `electron/settings.ts` (nuevo)
+Este spec no introduce cambios estructurales en el modelo de datos de la versión anterior. Las interfaces de preload y el service `settingsService.ts` se mantienen idénticos.
 
-```js
-import Store from 'electron-store'
+**Constructor de `electron/settings.ts` — corregido:**
 
-interface SettingsSchema {
-  limiteDeDias: number
-  maximoLibrosEnPrestamo: number
-  [key: string]: unknown
-}
-
+```ts
 const store = new Store<SettingsSchema>({
   name: 'settings',
-  projectName: 'biblio',
+  schema: {
+    limiteDeDias: { type: 'number', minimum: 1, maximum: 365 },
+    maximoLibrosEnPrestamo: { type: 'number', minimum: 1, maximum: 20 },
+  },
   defaults: {
     limiteDeDias: 40,
     maximoLibrosEnPrestamo: 4,
   },
-} as Record<string, unknown>)
-
-export default store
+})
 ```
 
-### Preload — `preload.ts`
+`projectName` se elimina (no necesario en versiones actuales), y con él desaparece el cast `as Record<string, unknown>` que el spec original requería.
 
-Se exponen tres métodos en `window.electronAPI`:
+**Cambios de implementación (no afectan la estructura de datos):**
 
-```
-settings.get(key: string): unknown
-settings.set(key: string, value: unknown): void
-settings.getAll(): Record<string, unknown>
-```
-
-### Service — `src/services/settingsService.ts` (nuevo)
-
-```ts
-export const settingsService = {
-  getAll: (): Promise<Record<string, unknown>> =>
-    window.electronAPI.settings.getAll(),
-  get: <T>(key: string): Promise<T> =>
-    window.electronAPI.settings.get(key) as Promise<T>,
-  set: (key: string, value: unknown): Promise<void> =>
-    window.electronAPI.settings.set(key, value),
-}
-```
-
-### Tests — `tests/settingsService.spec.ts` (nuevo)
-
-Mockea `window.electronAPI.settings` y verifica que cada método del service delega correctamente:
-
-- `getAll` → llama a `settings.getAll` y retorna los valores
-- `get(key)` → llama a `settings.get` con la key
-- `set(key, value)` → llama a `settings.set` con key y valor
-
-### Tests — `tests/settings.spec.ts` (nuevo)
-
-Importa `electron/settings.ts` (con `electron-store` real) y verifica que el store se crea con los defaults correctos.
-
-### Store de Zustand — `store/librosStore.ts`
-
-Sin cambios estructurales. Se agrega lógica de persistencia dentro de `setLimiteDeDias` y `setMaximoLibrosEnPrestamo` (llamar a `settingsService.set(...)`) y en `inicializar` (leer valores persistedos vía `settingsService.getAll()`).
+- `handler 'settings:getAll'` → construye objeto con claves explícitas `{ limiteDeDias: store.get('limiteDeDias'), maximoLibrosEnPrestamo: store.get('maximoLibrosEnPrestamo') }` en vez de `store.store`
+- `handler 'settings:get(key)'` → usa `store.get(key)` — los defaults del constructor aplican automáticamente
+- `inicializar()` → lee valores directamente de `settingsService.getAll()`; los defaults del constructor garantizan que nunca retorna `undefined`
+- `Ajustes.tsx` → agrega `useEffect(() => { inicializar() }, [])`
 
 ---
 
 ## Implementation plan
 
-0. **Verificar prerrequisitos:**
-   - `electron-store` compatible con la versión de Electron del proyecto (revisar `electron -v` y docs de `electron-store`)
-   - Asegurar que los handlers IPC se registran después de `app.whenReady()` en el main process
+1. **Verificar Electron ≥ 30.** Ejecutar `npx electron -v` y confirmar que es ≥ 30. Si no, actualizar antes de continuar.
 
-1. **Instalar `electron-store`** con `npm install electron-store` y verificar que compila sin errores.
+2. **Mover `electron-store` a `dependencies`** en `package.json` (no devDependencies) para que el empaquetador lo incluya en `npm run dist`.
 
-2. **Crear `electron/settings.ts`** con el schema y defaults. Exportar la instancia del store.
+3. **Configurar external en vite.config.ts.** Agregar `electron-store` a `external` en `rollupOptions` de la configuración del main process de `electron-vite`.
 
-3. **Registrar handlers IPC en el main process** (en `electron/main.ts` o donde se definan los ipc handlers):
-   - `settings:get(key)` → devuelve `store.get(key)`
-   - `settings:set(key, value)` → ejecuta `store.set(key, value)`
-   - `settings:getAll` → devuelve `store.store`
+4. **Reemplazar `store.store` en `settings:getAll`.** Cambiar el handler IPC a un objeto con claves explícitas: `{ limiteDeDias: store.get('limiteDeDias'), maximoLibrosEnPrestamo: store.get('maximoLibrosEnPrestamo') }`. No usar `store.defaults` ni `store.store`.
 
-4. **Exponer en `preload.ts`** los métodos `settings.get`, `settings.set`, `settings.getAll` via `contextBridge.exposeInMainWorld`.
+5. **Actualizar `settings:get(key)`.** El handler usa `store.get(key)` sin segundo argumento — los defaults del constructor ya garantizan que `limiteDeDias` y `maximoLibrosEnPrestamo` tengan valor aunque nunca se hayan escrito.
 
-5. **Crear `src/services/settingsService.ts`** que encapsula `window.electronAPI.settings.*` con métodos tipados.
+6. **Simplificar `inicializar()` en `useLibrosStore`.** Leer valores directamente de `settingsService.getAll()`. Los defaults del constructor garantizan que nunca retorna `undefined`. Usar `??` (nullish coalescing) en vez de `||` para no ignorar valores falsy válidos como `0`.
 
-6. **Actualizar `inicializar()` en `useLibrosStore`** para que cargue `limiteDeDias` y `maximoLibrosEnPrestamo` desde `settingsService.getAll()` antes de aplicar los defaults del store.
+7. **Agregar `inicializar()` en `Ajustes.tsx`.** Añadir un `useEffect(() => { inicializar() }, [])` al montar el componente.
 
-7. **Actualizar `setLimiteDeDias` y `setMaximoLibrosEnPrestamo`** para que persistan el nuevo valor via `settingsService.set(...)` después de actualizar el estado local.
+8. **Configurar `vitest.config.ts`.** Agregar `deps: { inline: ['electron-store'] }` y `server: { deps: { external: ['electron'] } }`.
 
-8. **Crear `tests/settingsService.spec.ts`** con tests unitarios que mockean `window.electronAPI.settings` y verifican que `settingsService.getAll`, `get` y `set` delegan correctamente.
+9. **Actualizar `tests/settings.spec.ts`.** Mockear `electron-store` completo; verificar que el constructor se llamó con los defaults correctos.
 
-9. **Crear `tests/settings.spec.ts`** con test de integración que importa `electron/settings.ts` y verifica que el store se crea con los defaults correctos.
+10. **Crear `tests/ipcHandlers.spec.ts`.** Testear los handlers `settings:get`, `settings:set`, `settings:getAll` con mock del store, incluyendo el caso `limiteDeDias: 0`.
 
-10. **Ejecutar `npm test`** y verificar que los tests nuevos pasan.
+11. **Ejecutar `npm test`** y verificar que los tests pasan.
 
-11. **Ejecutar `npm run dev`** y verificar que los ajustes persisten entre reinicios de la app.
+12. **Ejecutar `npm run build`** — compila sin errores.
+
+13. **Ejecutar `npm run dist` en directorio limpio** — empaqueta sin errores (valida que `electron-store` está accesible en producción).
+
+14. **Ejecutar `npm run dev`, cambiar un ajuste, cerrar y reabrir: el valor debe persistir.**
 
 ---
 
 ## Acceptance criteria
 
-- [ ] `electron-store` instalado y configurado con defaults (`limiteDeDias: 40`, `maximoLibrosEnPrestamo: 4`)
-- [ ] Handlers IPC `settings:get`, `settings:set`, `settings:getAll` registrados en el main process
-- [ ] Métodos expuestos en `preload.ts` bajo `window.electronAPI.settings.*`
-- [ ] `inicializar()` carga valores persistedos y los escribe en el store de Zustand
-- [ ] `setLimiteDeDias()` y `setMaximoLibrosEnPrestamo()` persisten el nuevo valor al cambiarlo
+- [ ] `electron-store` está en `dependencies` de `package.json` (no devDependencies)
+- [ ] `electron-store` está listado en `external` de `rollupOptions` del main process en `vite.config.ts`
+- [ ] `vitest.config.ts` tiene `deps.inline: ['electron-store']` y `server.deps.external: ['electron']`
+- [ ] `settings:getAll` construye el objeto con claves explícitas (`limiteDeDias`, `maximoLibrosEnPrestamo`), no con `store.store` ni `store.defaults`
+- [ ] `inicializar()` lee valores directamente de `settingsService.getAll()` sin lógica de decisión
+- [ ] `Ajustes.tsx` llama `inicializar()` al montar el componente
+- [ ] `tests/settings.spec.ts` mockea `electron-store` y verifica que el constructor recibe los defaults correctos
+- [ ] `tests/ipcHandlers.spec.ts` cubre los 3 handlers incluyendo `limiteDeDias: 0`
+- [ ] `npm test` pasa sin errores
+- [ ] `npm run build` compila sin errores
+- [ ] `npm run dist` empaqueta sin errores en un directorio limpio
 - [ ] Cambiar un ajuste, cerrar y reabrir la app: el valor persistedo se mantiene
-- [ ] `npm test` pasa incluyendo los 4 tests de `settingsService.spec.ts` y `settings.spec.ts`
 
 ---
 
@@ -141,14 +115,15 @@ Sin cambios estructurales. Se agrega lógica de persistencia dentro de `setLimit
 
 | Decisión | Justificación |
 |---|---|
-| **Sí:** `electron-store` en vez de localStorage | localStorage es volátil (se borra al limpiar caché, por sesión privada, etc.). `electron-store` escribe en disco como JSON, los datos sobreviven a cualquier limpieza del navegador |
-| **Sí:** `name: 'settings'` + `projectName: 'biblio'` | `electron-store` v11+ requiere `projectName` explícito; `name` define el nombre del archivo (`settings.json`) |
-| **Sí:** carga automática en `inicializar()` | Sin fricción para el usuario; los ajustes persisten sin acción manual |
-| **Sí:** bridge IPC (main → preload → renderer) | Arquitectura limpia de Electron; el renderer no accede al FS directamente |
-| **Decidido:** se abandona este enfoque | La implementación reveló problemas de tipado, ESM y persistencia real que hacen que `electron-store` no sea la herramienta adecuada para este caso de uso. Se reemplazará con una solución más simple basada en `fs` directamente |
-| **No:** cifrado de valores | No hay datos sensibles en los ajustes actuales |
-| **No:** sincronización entre ventanas | La app tiene una sola ventana por ahora |
-| **No:** migraciones versionadas | Riesgo de pérdida de datos no justifica la complejidad actual; se agregan en un spec futuro si hacen falta |
+| **Sí:** Reabrir SPEC 02 y marcar su contenido anterior como obsoleto | El spec original documentó problemas que ahora tienen solución conocida; reescribir sobre el mismo archivo mantiene el número secuencial y evita confusión |
+| **Sí:** `defaults` en el constructor + `store.get(key)` por clave explícita en `getAll` | `defaults` del constructor persiste globalmente: cualquier `store.get('limiteDeDias')` sin segundo argumento ya devuelve `40`. `store.get(key, defaultValue)` es un fallback inline por llamada, no un reemplazo de `defaults`. La combinación de ambos elimina la dependencia de `store.store` y `store.defaults` |
+| **Sí:** `getAll()` con claves explícitas en vez de `store.store` o `store.defaults` | `store.defaults` no es propiedad pública documentada; `store.store` solo retorna claves escritas; construir el objeto explícitamente evita ambos problemas y no filtra claves internas de `conf` |
+| **Sí:** Schema JSON en el constructor de `electron-store` | Valida tipos, mínimos y máximos automáticamente sin lógica extra en el handler `settings:set` |
+| **Sí:** External de `electron-store` en vite.config + `dependencies` | Necesario porque `electron-store` es ESM puro; en `dependencies` para que `electron-builder` lo incluya en el paquete distribuido |
+| **No:** `store.has()` como mecanismo en `inicializar()` | `electron-store` escribe defaults al archivo en el primer arranque, haciendo que `has()` devuelva `true` incluso sin intervención del usuario. La distinción entre "valor persistido por el usuario" y "default del constructor" no es posible con `has()`. Leer directamente con `store.get(key)` basta porque los defaults garantizan que nunca retorna `undefined` |
+| **No:** Botón "Restaurar defaults" en UI | `store.reset(...keys)` está disponible pero no se expone en la UI en este spec; puede agregarse después sin cambios de infraestructura |
+| **No:** `onDidChange` como suscripción en el servicio | Queda documentado como disponible; implementarlo requeriría manejo de lifecycle (unsuscribe al desmontar) que no justifica el caso de uso actual |
+| **No:** Sincronización entre ventanas | Relacionado con `onDidChange`; la app tiene una sola ventana por ahora |
 
 ---
 
@@ -156,38 +131,33 @@ Sin cambios estructurales. Se agrega lógica de persistencia dentro de `setLimit
 
 | Riesgo | Mitigación |
 |---|---|
-| `electron-store` incompatible con la versión de Node/Electron | Verificar en paso 0 antes de instalar |
-| Handlers IPC llamados antes de que `app.whenReady()` se resuelva | Registrados explícitamente después de `whenReady()` (paso 0) |
-| `electron-store` ESM puro no compatible con el bundler de `electron-vite` | Requiere external en `vite.config.ts`; aumenta complejidad del build |
-| `store.store` no hace merge con defaults | Usar `store.get(key)` en vez de `store.store` para cada clave, pero `getAll` se vuelve tedioso |
-| Tipado de `projectName` ausente en la definición TS | Mitigado con cast, pero es señal de que la librería no está diseñada para este uso |
+| `external` mal configurado rompe el build de producción | Verificar con `npm run dist` en directorio limpio (no solo `npm run build`). `electron-store` en `dependencies` (no dev) para que el empaquetador lo incluya |
+| `getAll()` con claves explícitas no escala si se agregan ajustes | Risk aceptado: el spec solo tiene dos claves. Cuando haya más, se refactoriza a una lista iterable |
+| `store.get() \|\| default` en cualquier punto del código ignora `0` guardado por el usuario | Test unitario en `ipcHandlers.spec.ts` cubre el caso `limiteDeDias: 0` para detectar regresiones; usar `??` (nullish coalescing) en vez de `\|\|` como convención |
+| Handler `settings:set` no valida entrada | Schema JSON en el constructor (`type`, `minimum`, `maximum`). `electron-store` rechaza valores inválidos automáticamente antes de escribir |
 
 ---
 
-## Implementation attempt — problems found
+## Historical — Implementation attempt (original SPEC 02)
 
-Se implementó completamente el spec pero los tests de persistencia real (cambiar un valor, cerrar y reabrir la app) fallaron. Los problemas detectados:
+La implementación original de este spec encontró los siguientes problemas, que este fix resuelve:
 
-1. **`store.store` no incluye defaults** — `getAll()` devolvía un objeto vacío si ningún valor había sido seteado explícitamente, porque la propiedad `.store` de `electron-store`/`conf` solo retorna las claves escritas, no el merge con `defaults`.
+1. **`store.store` no incluye defaults** — `getAll()` devolvía un objeto vacío si ningún valor había sido seteado explícitamente.
+2. **`projectName` ausente de los tipos TS** — Obligó a un `as Record<string, unknown>` para compilar. Solución: eliminar `projectName` del constructor (no es necesario en las versiones actuales) y remover el cast, dejando solo `name: 'settings'` + `defaults`.
+3. **`inicializar()` nunca se llama en Ajustes** — Solo `Catalogo.tsx` y `Socios.tsx` invocaban `inicializar()`.
+4. **Persistencia real no funciona al reiniciar** — Causa raíz: interacción entre vite.config (external), bundling de Electron y módulo ESM de `electron-store`.
+5. **Problemas de entorno de desarrollo** — `electron-store` ESM puro generaba conflictos con el bundler de Vite.
 
-2. **`projectName` ausente de los tipos TS** — `electron-store` v11 delega en `conf`, cuyos tipos usan `Except<ConfigOptions<T>, 'projectName'>` para omitir `projectName` aunque la opción es requerida en runtime. Obligó a un `as Record<string, unknown>` para compilar.
+**Decisión tomada entonces:** Se abandonó `electron-store`. Este fix la revierte aplicando el conocimiento de la API adquirido posteriormente.
 
-3. **`inicializar()` nunca se llama en Ajustes** — Solo `Catalogo.tsx` y `Socios.tsx` invocan `inicializar()`. La página de ajustes nunca cargaba los valores persistedos al abrirse por primera vez.
-
-4. **Persistencia real no funciona al reiniciar** — Incluso tras solucionar `projectName` y asegurar que los setters llamaban IPC, los valores volvían a los defaults al cerrar y reabrir la app con `npm run dev`. La causa raíz involucraba la interacción entre la configuración de `vite.config.ts` (external), el bundling de Electron y el módulo ESM de `electron-store`.
-
-5. **Problemas de entorno de desarrollo** — `electron-store` al ser ESM puro generaba conflictos con el bundler de Vite en el pipeline de `electron-vite`, requiriendo `external` en la configuración de Vite y trabajo extra para mantener el tipado.
-
-## Decisión
-
-Se abandona `electron-store` como solución de persistencia. Se reemplazará por un enfoque más simple y predecible que no dependa de librerías externas con problemas de tipado y módulos. La experiencia mostró que para persistir dos valores numéricos (limitados por ser ajustes de configuración) una librería con su propia gestión de archivos JSON, esquema y ESM agrega complejidad innecesaria.
+---
 
 ## What is **not** in this spec
 
-- UI de ajustes (ya existe)
-- Persistencia de datos de socios, libros o cuotas
-- Cifrado de valores
-- Sincronización entre ventanas
+- Botón "Restaurar defaults" en la UI (otro spec si llega)
+- `onDidChange` como suscripción en el servicio (otro spec si llega)
+- Sincronización entre ventanas (otro spec si llega)
+- Cifrado de valores persistedos
 - Migraciones versionadas de schema
 
 Cada uno de esos, si llega, va en su propio spec.
