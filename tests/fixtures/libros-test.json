@@ -1,0 +1,18 @@
+[
+  {
+    "titulo": "Cien años de soledad",
+    "autor": "Gabriel García Márquez",
+    "numeroInventario": 1,
+    "nombreSocio": "Juan Pérez",
+    "numeroSocio": 100,
+    "fechaDePrestamo": "2026-05-01T00:00:00.000Z"
+  },
+  {
+    "titulo": "El principito",
+    "autor": "Antoine de Saint-Exupéry",
+    "numeroInventario": 2,
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "fechaDePrestamo": null
+  }
+]
