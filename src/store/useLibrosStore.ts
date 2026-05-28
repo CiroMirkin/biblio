@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import type { Libro, LibroEnPrestamo } from "@/models"
-import { cargarLibrosEnPrestamo } from "@/services/cargarLibrosEnPrestamo"
+import { cargarLibrosEnPrestamo, settingsService } from "@/services"
 import { calcularDiasDesdePrestamo, levenshtein } from "@/utils"
 
 interface LibrosState {
@@ -32,7 +32,14 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosDisponiblesFiltrados: [],
 
   inicializar: async () => {
-    const { limiteDeDias } = get()
+    const settings = await settingsService.getAll()
+    const { limiteDeDias } = settings
+    
+    set({
+      limiteDeDias: settings.limiteDeDias ?? 40,
+      maximoLibrosEnPrestamo: settings.maximoLibrosEnPrestamo ?? 4,
+    })
+
     const libros = await cargarLibrosEnPrestamo()
     const librosVencidos = libros.filter(
       l => l.fechaDePrestamo && calcularDiasDesdePrestamo(l.fechaDePrestamo) > limiteDeDias
@@ -45,6 +52,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     if(max <= 0) return maximoLibrosEnPrestamo
     
     set({ maximoLibrosEnPrestamo: max })
+    settingsService.set('maximoLibrosEnPrestamo', max)
     return max
   },
 
@@ -53,6 +61,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     if(limite <= 0) return limiteDeDias
     
     set({ limiteDeDias: limite })
+    settingsService.set('limiteDeDias', limite)
     return limite
   },
 
