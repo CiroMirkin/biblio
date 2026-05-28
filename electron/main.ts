@@ -6,6 +6,7 @@ import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLib
 import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
 import type { NewSocioData } from './socio'
 import { initializeDataFiles } from './utils/initializeDataFiles'
+import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -58,6 +59,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  registerSettingsHandlers()
   initializeDataFiles()
   createWindow()
 })

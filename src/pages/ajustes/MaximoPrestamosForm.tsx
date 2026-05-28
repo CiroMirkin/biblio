@@ -16,6 +16,7 @@ export function MaximoPrestamosForm() {
             placeholder=""
             defaultValue={maximoLibrosEnPrestamo}
             inputType="number"
+            min={1}
             onChange={setMaximo}
             submitLabel="Establecer"
         />
