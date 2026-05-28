@@ -13,5 +13,11 @@ export default defineConfig({
             include: ['electron/**/*.ts'],
             exclude: ['electron/main.ts', 'electron/preload.ts'],
         },
+        server: {
+            deps: {
+                inline: ['electron-store'],
+                external: ['electron'],
+            },
+        },
     },
 })
