@@ -14,7 +14,8 @@ vi.mock('electron-store', () => ({
 
 const settings = await import('../electron/settings')
 
-it('creates the Store with correct schema and defaults', () => {
+// Verifica que el constructor de electron-store se llamó con el schema y defaults correctos
+it('Constructor de electron-store recibe schema y defaults correctos', () => {
   expect(mockStoreConstructor).toHaveBeenCalledWith({
     name: 'settings',
     schema: {
@@ -33,7 +34,8 @@ describe('electron/settings', () => {
     vi.clearAllMocks()
   })
 
-  it('getAll returns object with explicit keys from store.get', () => {
+  // getAll() construye el objeto con claves explícitas en vez de usar store.store
+  it('getAll construye objeto con claves explícitas', () => {
     mockStoreInstance.get.mockImplementation((key: string) => {
       if (key === 'limiteDeDias') return 30
       if (key === 'maximoLibrosEnPrestamo') return 5
@@ -46,14 +48,16 @@ describe('electron/settings', () => {
     expect(mockStoreInstance.get).toHaveBeenCalledWith('maximoLibrosEnPrestamo')
   })
 
-  it('get returns value for a given key', () => {
+  // get() delega en store.get(key) y retorna el valor del constructor por defecto
+  it('get retorna valor de una clave', () => {
     mockStoreInstance.get.mockReturnValue(25)
     const result = settings.get('limiteDeDias')
     expect(result).toBe(25)
     expect(mockStoreInstance.get).toHaveBeenCalledWith('limiteDeDias')
   })
 
-  it('set stores a value for a given key', () => {
+  // set() delega en store.set(key, value)
+  it('set persiste valor de una clave', () => {
     settings.set('limiteDeDias', 50)
     expect(mockStoreInstance.set).toHaveBeenCalledWith('limiteDeDias', 50)
   })
