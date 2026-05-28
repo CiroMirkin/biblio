@@ -1,0 +1,90 @@
+[
+  {
+    "autor": "Tom Wolfe",
+    "titulo": "Lo que hay que tener",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 17363,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Tobias Wolff",
+    "titulo": "Vieja escuela",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 11111,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Stuart Woods",
+    "titulo": "Secta",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 8176,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Miguel De Asúa",
+    "titulo": "La ciencia de mayo",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 11171,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Thomas Mann",
+    "titulo": "La muerte en venecia",
+    "nombreSocio": "Marcos Marcos",
+    "numeroSocio": 858,
+    "numeroInventario": 6545,
+    "fechaDePrestamo": "2026-05-17T01:42:56.073Z"
+  },
+  {
+    "autor": "Stuart Mill",
+    "titulo": "La libertad",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 10751,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Valeria Edelsztein",
+    "titulo": "Los remedios de la abuela",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 14799,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Nicolas Artusi",
+    "titulo": "manual del cafe",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 18092,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Roberto Bolaño",
+    "titulo": "Llamadas telefonicas",
+    "nombreSocio": "Mirkin, Ciro Mateo",
+    "numeroSocio": 1125,
+    "numeroInventario": 19116,
+    "fechaDePrestamo": "2026-05-21T22:14:17.922Z"
+  },
+  {
+    "autor": "John-Henri Holmberg",
+    "titulo": "El lado negro de suecia",
+    "nombreSocio": "",
+    "numeroSocio": null,
+    "numeroInventario": 19309,
+    "fechaDePrestamo": null
+  },
+  {
+    "autor": "Sun Quianli",
+    "titulo": "Dos tratados de caligrafia china",
+    "nombreSocio": "Bertoldi, María José",
+    "numeroSocio": 1012,
+    "numeroInventario": 19308,
+    "fechaDePrestamo": "2026-05-17T03:12:20.488Z"
+  }
+]
