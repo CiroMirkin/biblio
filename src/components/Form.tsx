@@ -7,6 +7,7 @@ type Props = {
   submitLabel?: string
   inputType?: HTMLInputTypeAttribute | undefined
   defaultValue?: string | number
+  min?: number
   onChange: (value: string) => void
   onSubmit?: () => void
   className?: string
@@ -21,6 +22,7 @@ export function Form({
   className,
   inputType = "text",
   defaultValue,
+  min,
 }: Props) {
   const [value, setValue] = useState(defaultValue ?? "")
   const [prevDefault, setPrevDefault] = useState(defaultValue)
@@ -50,6 +52,7 @@ export function Form({
           onChange={handleChange}
           className="w-full border bg-white border-black rounded p-1 px-2"
           placeholder={placeholder}
+          min={min}
         />
         <input type="submit" value={submitLabel} className="btn" />
       </div>

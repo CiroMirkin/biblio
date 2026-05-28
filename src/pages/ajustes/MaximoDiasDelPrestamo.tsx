@@ -17,6 +17,7 @@ export function MaximoDiasDelPrestamo() {
             defaultValue={limiteDeDias}
             inputType="number"
             onChange={setMaximo}
+            min={1}
             submitLabel="Establecer días"
         />
     )
