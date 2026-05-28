@@ -18,3 +18,7 @@ export const CUOTAS_XLSX_PATH = IS_DEV
 export const LIBROS_XLSX_PATH = IS_DEV
   ? path.join(process.cwd(), 'public', 'libros.xlsx')
   : path.join(app.getPath('userData'), 'libros.xlsx')
+
+export const LIBROS_JSON_PATH = IS_DEV
+  ? path.join(process.cwd(), 'public', 'libros.json')
+  : path.join(app.getPath('userData'), 'libros.json')
