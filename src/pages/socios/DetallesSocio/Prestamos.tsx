@@ -20,7 +20,7 @@ const colFecha = "w-[10%]"
 
 export function Prestamos() {
   const { socioSeleccionado: socio } = useSociosStore()
-  const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo, getLibroPorInventario } = useLibrosStore()
+  const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo, getLibroPorInventario, inicializar } = useLibrosStore()
 
   const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
   const nombreSocio = socio!.nombreYApellido || ""
@@ -34,6 +34,10 @@ export function Prestamos() {
     Array.from({ length: maximoLibrosEnPrestamo }, () => false)
   )
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  useEffect(() => {
+    inicializar()
+  }, [])
 
   useEffect(() => {
     if (!nroSocio) return
