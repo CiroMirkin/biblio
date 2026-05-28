@@ -23,6 +23,12 @@ export function Form({
   defaultValue,
 }: Props) {
   const [value, setValue] = useState(defaultValue ?? "")
+  const [prevDefault, setPrevDefault] = useState(defaultValue)
+
+  if (prevDefault !== defaultValue) {
+    setPrevDefault(defaultValue)
+    setValue(defaultValue ?? "")
+  }
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
