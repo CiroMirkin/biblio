@@ -1,4 +1,3 @@
-
 export * from "./addLibroPrestado"
 export * from "./devolverLibro"
 export * from "./getLibros"
@@ -9,3 +8,4 @@ export * from "./toggleCuota"
 export * from "./darDeBajaSocio"
 export * from "./reactivarSocio"
 export * from "./createSocio"
+export { registerSettingsHandlers } from "./settings"

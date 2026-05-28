@@ -14,4 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   reactivarSocio: (nombreSocio: string) => ipcRenderer.invoke('reactivarSocio', nombreSocio),
   createSocio: (socio: NewSocioData) => ipcRenderer.invoke('createSocio', socio),
   copiarExcel: (key: 'socios' | 'cuotas' | 'libros') => ipcRenderer.invoke('copiarExcel', key),
+  settingsGetAll: () => ipcRenderer.invoke('settings:getAll'),
+  settingsGet: (key: string) => ipcRenderer.invoke('settings:get', key),
+  settingsSet: (key: string, value: unknown) => ipcRenderer.invoke('settings:set', key, value),
 })

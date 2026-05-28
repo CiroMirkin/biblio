@@ -2,6 +2,10 @@ import type { Libro, LibroEnPrestamo, NewSocio, Socio } from "@/models"
 
 export {}
 
+type SettingsSchema = {
+  limiteDeDias: number
+  maximoLibrosEnPrestamo: number
+}
 
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros'
@@ -18,6 +22,9 @@ declare global {
       reactivarSocio: (nombreSocio: string) => Promise<boolean>
       createSocio: (socio: NewSocio) => Promise<Socio>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
+      settingsGetAll: () => Promise<SettingsSchema>
+      settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>
+      settingsSet: <K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]) => Promise<void>
     }
   }
 }
