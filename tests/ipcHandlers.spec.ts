@@ -16,7 +16,7 @@ vi.mock('../electron/settings', () => ({
   set: vi.fn(),
 }))
 
-const { registerSettingsHandlers } = await import('../electron/handlers/settings')
+const { registerSettingsHandlers } = await import('../electron/utils/registerSettingsHandlers')
 const mockSettings = await import('../electron/settings')
 
 describe('Handlers IPC de ajustes (settings)', () => {
