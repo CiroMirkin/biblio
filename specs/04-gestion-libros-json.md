@@ -1,6 +1,6 @@
 # SPEC 04 — Gestión de libros con JSON en vez de Excel
 
-> **Estado:** Draft · **Depende de:** Ninguna · **Fecha:** 2026-05-26
+> **Estado:** Implemented · **Depende de:** Ninguna · **Fecha:** 2026-05-26
 > **Objetivo:** Migrar la gestión de libros de Excel (exceljs) a un archivo JSON plano con lowdb, modificando los cuatro handlers de libros y limpiando el código legacy.
 
 ---
