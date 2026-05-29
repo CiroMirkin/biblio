@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { useSociosStore } from "@/store"
 import { getCaracterSocio } from "@/models"
+import { formatDNI } from "@/utils"
 
 export function SocioDatos() {
     const { socioSeleccionado: socio } = useSociosStore()
@@ -13,47 +14,64 @@ export function SocioDatos() {
 
     return (
         <div className="card relative">
-            <div className="flex justify-between">
-                <h2 className="text-xl">
-                    Datos de <span className="font-semibold">{socio?.nombreYApellido}</span>
+            <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-semibold">
+                    {socio?.nombreYApellido}
                 </h2>
                 { caracterSocio.estado
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green rounded-sm">Activo</span> 
                     : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber-300 rounded-sm">Inactivo</span> 
                 }
             </div>
-            <ul className="list-disc pl-6 text-sm">
-                <li>N° Socio: {socio?.nroSocio}</li>
-                <li>DNI: {socio?.dni}</li>
-                <li>Numero de celular: {socio?.telefono ?? "-"}</li>
-
+            <div className="py-1.5">
+                <span className="font-semibold text-black/70">N° Socio: </span>
+                {socio?.nroSocio}
+            </div>
+            <ul className="list-disc pl-6 text-base">
                 <AnimatePresence>
                     {expandido && (
                         <motion.div
                             className="list-disc"
                             initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
+                            animate={{ opacity: 1, height: "auto", paddingBottom: "5px" }}
                             exit={{ opacity: 0, height: 0 }}
                             style={{ overflow: "hidden" }}
                         >
-                            <li>Dirección: {socio?.domicilio}</li>
-                            <li>Fecha de nacimiento: {fechaNacimiento && fechaNacimiento.toLocaleDateString()}</li>
-                            <li>Ingreso: {fechaIngresoEgreso && fechaIngresoEgreso.toLocaleDateString()}</li>
-                            <li>Nacionalidad: {socio?.nacionalidad}</li>
-                            <li>Observaciones: {socio?.observaciones}</li>
+                            <li>
+                                <span className="font-semibold">DNI: </span>
+                                {socio?.dni && formatDNI(socio.dni)}
+                            </li>
+                            <li>
+                                <span className="font-semibold">Número de celular: </span>
+                                {socio?.telefono ?? "-"}
+                            </li>
+                            <li>
+                                <span className="font-semibold">Dirección: </span>
+                                {socio?.domicilio}
+                            </li>
+                            <li>
+                                <span className="font-semibold">Fecha de nacimiento: </span>
+                                {fechaNacimiento && fechaNacimiento.toLocaleDateString()}
+                            </li>
+                            <li>
+                                <span className="font-semibold">Ingreso: </span>
+                                {fechaIngresoEgreso && fechaIngresoEgreso.toLocaleDateString()}
+                            </li>
+                            <li>
+                                <span className="font-semibold">Nacionalidad: </span>
+                                {socio?.nacionalidad}
+                            </li>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </ul>
 
-            <div className="flex justify-end">
-                <button
-                    onClick={() => setExpandido(prev => !prev)}
-                    className="text-sm opacity-60 hover:opacity-100 transition-opacity"
-                >
-                    {expandido ? "Mostrar menos datos" : "Mostrar mas datos"}
-                </button>
-            </div>
+            <button
+                onClick={() => setExpandido(prev => !prev)}
+                className="text-sm opacity-60 hover:opacity-100 transition-opacity hover:underline"
+            >
+                {expandido ? "Mostrar menos datos" : "Mostrar mas datos  "}
+            </button>
         </div>
     )
 }

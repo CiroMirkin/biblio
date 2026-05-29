@@ -25,9 +25,8 @@ export function DetalleSocio() {
               <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
               <CalendarioCuotas />
             </div>
-            <div className="flex gap-4 card">
-              <GestionEstadoSocio />
-            </div>
+            
+            <GestionEstadoSocio />
           </div>
         </div>
     )

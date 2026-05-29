@@ -11,6 +11,9 @@ type Props = {
   onChange: (value: string) => void
   onSubmit?: () => void
   className?: string
+  classNameInput?: string
+  classNameBtn?: string
+  classNameLabel?: string
 }
 
 export function Form({
@@ -22,6 +25,9 @@ export function Form({
   className,
   inputType = "text",
   defaultValue,
+  classNameBtn,
+  classNameInput,
+  classNameLabel,
   min,
 }: Props) {
   const [value, setValue] = useState(defaultValue ?? "")
@@ -44,17 +50,17 @@ export function Form({
 
   return (
     <form className={cn("w-full rounded p-4 card", className)} onSubmit={handleSubmit}>
-      <label className="text-lg">{label}</label>
+      <label className={cn("text-lg", classNameLabel)}>{label}</label>
       <div className="mt-1 w-full flex gap-2">
         <input
           type={inputType}
           value={value}
           onChange={handleChange}
-          className="w-full border bg-white border-black rounded p-1 px-2"
+          className={cn("w-full border bg-white border-black rounded p-1 px-2", classNameInput)}
           placeholder={placeholder}
           min={min}
         />
-        <input type="submit" value={submitLabel} className="btn" />
+        <input type="submit" value={submitLabel} className={cn("btn", classNameBtn)} />
       </div>
     </form>
   )

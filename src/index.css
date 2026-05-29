@@ -27,7 +27,7 @@ html, body, #root {
     }
 
     .btn {
-        @apply px-4 pb-1 bg-accent rounded shadow-xs transition-all duration-100 ease-in hover:shadow-sm hover:bg-[#5bb8c6] border-b-2 border-r-2;
+        @apply px-4 pb-px bg-accent rounded shadow-xs transition-all duration-100 ease-in hover:shadow-sm hover:bg-[#5bb8c6] border-b-2 border-r-2;
     }
 
     .btn-icon {
