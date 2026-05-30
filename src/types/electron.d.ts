@@ -20,6 +20,7 @@ declare global {
       toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => Promise<boolean>
       darDeBajaSocio: (nombreSocio: string) => Promise<boolean>
       reactivarSocio: (nombreSocio: string) => Promise<boolean>
+      changeObservaciones: (observaciones: string, nombreSocio: string) => Promise<boolean>
       createSocio: (socio: NewSocio) => Promise<Socio>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
       settingsGetAll: () => Promise<SettingsSchema>

@@ -12,6 +12,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => ipcRenderer.invoke('toggleCuota', nroSocio, anio, mesIndex),
   darDeBajaSocio: (nombreSocio: string) => ipcRenderer.invoke('darDeBajaSocio', nombreSocio),
   reactivarSocio: (nombreSocio: string) => ipcRenderer.invoke('reactivarSocio', nombreSocio),
+  changeObservaciones: (observaciones: string, nombreSocio: string) => ipcRenderer.invoke(
+    'changeObservaciones', observaciones, nombreSocio
+  ),
   createSocio: (socio: NewSocioData) => ipcRenderer.invoke('createSocio', socio),
   copiarExcel: (key: 'socios' | 'cuotas' | 'libros') => ipcRenderer.invoke('copiarExcel', key),
   settingsGetAll: () => ipcRenderer.invoke('settings:getAll'),
