@@ -5,6 +5,7 @@ export {}
 type SettingsSchema = {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
+  maximoDeCuotasAdeudadas: number
 }
 
 declare global {

@@ -3,8 +3,10 @@ import type { NewSocio, Socio } from "@/models/Socio"
 import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
-import { getApellido, levenshtein } from "@/utils"
+import { calcularCuotasAdeudadas, getApellido, levenshtein } from "@/utils"
 import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
+import { settingsService } from "@/services"
+import { getCaracterSocio } from "@/models"
 
 interface SociosState {
     socios: Socio[]
@@ -13,6 +15,7 @@ interface SociosState {
     mesesCuotas: Record<string, boolean>[]
     anio: number
     cuotas: boolean
+    maximoDeCuotasAdeudadas: number
 
     inicializar: () => Promise<void>
     buscar: (apellido: string) => void
@@ -26,6 +29,7 @@ interface SociosState {
     darDeBaja: () => Promise<void>
     reactivar: () => Promise<void>
     setObservaciones: (newObservaciones: string) => Promise<void>
+    setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
 }
 
 export const useSociosStore = create<SociosState>((set, get) => ({
@@ -35,11 +39,17 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     mesesCuotas: [],
     anio: new Date().getFullYear(),
     cuotas: false,
+    maximoDeCuotasAdeudadas: 1,
 
     inicializar: async () => {
         const socios = await cargarSocios()
         const ordenados = ordenarSociosAlfabeticamente(socios)
-        set({ socios: ordenados, sociosFiltrados: ordenados })
+        const settings = await settingsService.getAll()
+        set({
+            socios: ordenados,
+            sociosFiltrados: ordenados,
+            maximoDeCuotasAdeudadas: settings.maximoDeCuotasAdeudadas ?? 6,
+        })
     },
 
     buscar: (apellido) => {
@@ -72,8 +82,22 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     seleccionar: async (socio) => {
-        const { anio } = get()
+        const { anio, maximoDeCuotasAdeudadas, darDeBaja, reactivar } = get()
         const mesesCuotas = await cargarCuotasSocio(socio.nroSocio, anio)
+
+        if(getCaracterSocio(socio.caracterSocio).estado) {
+            // baja si 6 >= 6 || 8 >= 6  
+            if(calcularCuotasAdeudadas(mesesCuotas) >= maximoDeCuotasAdeudadas) {
+                darDeBaja()
+            }
+        }
+        else if(!getCaracterSocio(socio.caracterSocio).estado) {
+            // alta si 3 <= 6  
+            if(calcularCuotasAdeudadas(mesesCuotas) <= maximoDeCuotasAdeudadas) {
+                reactivar()
+            }
+        }
+
         set({ socioSeleccionado: socio, cuotas: true, mesesCuotas })
     },
 
@@ -106,6 +130,17 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             socios: actualizarLista(socios),
             sociosFiltrados: actualizarLista(sociosFiltrados),
         })
+    },
+
+    setMaximoDeCuotasAdeudadas: (newMaximo) => {
+        const { maximoDeCuotasAdeudadas } = get()
+        if(newMaximo <= 1) return maximoDeCuotasAdeudadas
+
+        set({
+            maximoDeCuotasAdeudadas: newMaximo
+        })
+        settingsService.set('maximoDeCuotasAdeudadas', newMaximo)
+        return newMaximo
     },
 
     reactivar: async () => {

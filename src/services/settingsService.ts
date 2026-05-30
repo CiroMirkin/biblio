@@ -2,6 +2,7 @@
 export interface Settings {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
+  maximoDeCuotasAdeudadas: number
 }
 
 export async function getAll(): Promise<Settings> {
