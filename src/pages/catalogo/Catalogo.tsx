@@ -1,9 +1,7 @@
 import { useEffect } from "react"
 import { useLibrosStore } from "@/store"
-import { ListaLibrosVencidos } from "./ListaLibrosVencidos"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
-import { ListaLibrosDisponibles } from "./ListaLibrosDisponibles"
 
 export function Catalogo() {
     const { inicializar, limiteDeDias } = useLibrosStore()
@@ -17,12 +15,11 @@ export function Catalogo() {
             <section>
                 <BuscarLibroForm />
                 <ListaLibrosEnPrestamo />
-                <ListaLibrosVencidos />
-                <ListaLibrosDisponibles />
             </section>
-            <aside className="sticky top-0 h-fit">
-                <section className="card">
-                    <p>En esta sección puede buscar un libro, si el libro esta en préstamo puede saber quien lo tiene y después de {limiteDeDias} días el libro en préstamo se marca en rojo como adeudado.</p>
+            <aside className="sticky top-0 h-fit flex flex-col gap-4">
+                <section className="card flex flex-col gap-2">
+                    <p>En esta sección puede buscar un libro por su titulo, si el libro esta en préstamo puede saber quien lo tiene.</p>
+                    <p>Si un libro esta prestado hace mas de {limiteDeDias} días se marca en rojo como adeudado.</p>
                 </section>
             </aside>
         </div>

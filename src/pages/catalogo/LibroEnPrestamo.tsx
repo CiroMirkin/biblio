@@ -1,6 +1,7 @@
 import type { LibroEnPrestamo } from "@/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
 import { useLibrosStore, useSociosStore } from "@/store"
+import { LibroDisponible } from "./LibroDisponible"
 
 type Props = {
   libro: LibroEnPrestamo
@@ -8,7 +9,10 @@ type Props = {
 
 export function LibroEnPrestamo({ libro }: Props) {
     const { limiteDeDias } = useLibrosStore()
-    if(libro.fechaDePrestamo === null) return
+
+    if(libro.fechaDePrestamo === null) {
+        return <LibroDisponible libro={libro} />
+    }
 
     const dias = calcularDiasDesdePrestamo(libro.fechaDePrestamo!)
 
