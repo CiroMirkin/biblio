@@ -3,6 +3,7 @@ import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
 import { useSociosStore } from "@/store"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
+import { Observaciones } from "./Observaciones"
 
 export function DetalleSocio() {
     const { anio, cuotas } = useSociosStore()
@@ -25,7 +26,7 @@ export function DetalleSocio() {
               <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
               <CalendarioCuotas />
             </div>
-            
+            <Observaciones />
             <GestionEstadoSocio />
           </div>
         </div>

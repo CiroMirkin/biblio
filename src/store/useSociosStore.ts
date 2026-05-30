@@ -25,6 +25,7 @@ interface SociosState {
 
     darDeBaja: () => Promise<void>
     reactivar: () => Promise<void>
+    setObservaciones: (newObservaciones: string) => Promise<void>
 }
 
 export const useSociosStore = create<SociosState>((set, get) => ({
@@ -115,6 +116,28 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         if (!ok) return
 
         const actualizado = { ...socioSeleccionado, caracterSocio: 'Regular' }
+
+        const actualizarLista = (lista: Socio[]) =>
+            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
+
+        set({
+            socioSeleccionado: actualizado,
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+        })
+    },
+
+    setObservaciones: async (newObservaciones: string) => {
+        const { socioSeleccionado, socios, sociosFiltrados } = get()
+        if (!socioSeleccionado) return
+
+        const ok = await window.electronAPI.changeObservaciones(
+            newObservaciones,
+            socioSeleccionado.nombreYApellido,
+        )
+        if (!ok) return
+
+        const actualizado = { ...socioSeleccionado, observaciones: newObservaciones }
 
         const actualizarLista = (lista: Socio[]) =>
             lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
