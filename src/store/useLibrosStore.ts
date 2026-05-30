@@ -145,6 +145,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   setAreaBusqueda: (areaBusqueda) => {
     set({ areaBusqueda })
+    get().buscar("")
   },
 
   getLibrosSocio: async (nombreSocio, nroSocio) => {
