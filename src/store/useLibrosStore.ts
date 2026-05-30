@@ -3,22 +3,28 @@ import type { Libro, LibroEnPrestamo } from "@/models"
 import { cargarLibrosEnPrestamo, settingsService } from "@/services"
 import { calcularDiasDesdePrestamo, levenshtein } from "@/utils"
 
+export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
+
 interface LibrosState {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
   
   libros: LibroEnPrestamo[]
 
-  librosFiltrados: LibroEnPrestamo[]
+  librosFiltrados: LibroEnPrestamo[] | Libro[]
+  libroEnBusqueda?: string
+  areaBusqueda: AreasDeBusqueda
+
   librosVencidos: LibroEnPrestamo[]
   librosDisponibles: Libro[]
   librosPrestados: LibroEnPrestamo[]
 
   setMaximoLibrosEnPrestamo: (max: number) => number
   setLimiteDeDias: (limite: number) => number
+  setAreaBusqueda: (area: AreasDeBusqueda) => void
 
   inicializar: () => Promise<void>
-  buscar: (query: string) => void
+  buscar: (query: string, fromInput?: boolean) => void
   getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
   agregarLibroEnPrestamo: (libro: Libro) => Promise<LibroEnPrestamo | null>
   devolverLibro: (nroInventario: number) => Promise<void>
@@ -33,6 +39,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
+  areaBusqueda: "all",
+  libroEnBusqueda: "",
 
   inicializar: async () => {
     const settings = await settingsService.getAll()
@@ -82,15 +90,32 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     return limite
   },
 
-  buscar: (query) => {
-    const { libros } = get()
+  buscar: (query, fromInput) => {
+    const {
+      libros: todosLoslibros,
+      areaBusqueda,
+      librosDisponibles,
+      librosPrestados,
+      librosVencidos,
+      libroEnBusqueda
+    } = get()
 
-    if (!query.trim()) {
-      set({ librosFiltrados: [] })
+    if (!query.trim() && fromInput) {
+      set({ librosFiltrados: [...librosVencidos], libroEnBusqueda: "", areaBusqueda: "all" })
+      return
+    }
+    
+    if (!query.trim() && !libroEnBusqueda) {
+      set({ librosFiltrados: [...librosVencidos], libroEnBusqueda: "" })
       return
     }
 
-    const q = query.toLowerCase().trim()
+    const q = libroEnBusqueda ? libroEnBusqueda : query.toLowerCase().trim()
+
+    let libros: LibroEnPrestamo[] | Libro[] = todosLoslibros
+    if(areaBusqueda === "disponibles") libros = librosDisponibles
+    if(areaBusqueda === "prestados") libros = librosPrestados
+    if(areaBusqueda === "vencidos") libros = librosVencidos
 
     const filtrados = libros.filter(libro => {
 
@@ -115,7 +140,11 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       return ta.localeCompare(tb, 'es', { sensitivity: 'base' })
     })
 
-    set({ librosFiltrados: ordenados })
+    set({ librosFiltrados: ordenados, libroEnBusqueda: q })
+  },
+
+  setAreaBusqueda: (areaBusqueda) => {
+    set({ areaBusqueda })
   },
 
   getLibrosSocio: async (nombreSocio, nroSocio) => {
