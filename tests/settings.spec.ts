@@ -21,10 +21,12 @@ it('Constructor de electron-store recibe schema y defaults correctos', () => {
     schema: {
       limiteDeDias: { type: 'number', minimum: 1, maximum: 365 },
       maximoLibrosEnPrestamo: { type: 'number', minimum: 1, maximum: 20 },
+      maximoDeCuotasAdeudadas: { type: 'number', minimum: 1, maximum: 12 },
     },
     defaults: {
       limiteDeDias: 40,
       maximoLibrosEnPrestamo: 4,
+      maximoDeCuotasAdeudadas: 6,
     },
   })
 })
@@ -39,13 +41,15 @@ describe('electron/settings', () => {
     mockStoreInstance.get.mockImplementation((key: string) => {
       if (key === 'limiteDeDias') return 30
       if (key === 'maximoLibrosEnPrestamo') return 5
+      if (key === 'maximoDeCuotasAdeudadas') return 3
       return undefined
     })
 
     const result = settings.getAll()
-    expect(result).toEqual({ limiteDeDias: 30, maximoLibrosEnPrestamo: 5 })
+    expect(result).toEqual({ limiteDeDias: 30, maximoLibrosEnPrestamo: 5, maximoDeCuotasAdeudadas: 3 })
     expect(mockStoreInstance.get).toHaveBeenCalledWith('limiteDeDias')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('maximoLibrosEnPrestamo')
+    expect(mockStoreInstance.get).toHaveBeenCalledWith('maximoDeCuotasAdeudadas')
   })
 
   // get() delega en store.get(key) y retorna el valor del constructor por defecto

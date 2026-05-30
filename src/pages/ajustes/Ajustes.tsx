@@ -3,6 +3,7 @@ import { useLibrosStore } from "@/store"
 import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
+import { MaximoDeCuotasAdeudadas } from "./MaximoDeCuotasAdeudadas";
 
 export function Ajustes() {
     const inicializar = useLibrosStore(s => s.inicializar)
@@ -16,6 +17,7 @@ export function Ajustes() {
             <div className="flex flex-col gap-4">
                 <MaximoPrestamosForm />
                 <MaximoDiasDelPrestamo />
+                <MaximoDeCuotasAdeudadas />
                 <CopiarExcels />
             </div>
         </div>
