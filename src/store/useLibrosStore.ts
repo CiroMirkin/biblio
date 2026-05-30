@@ -11,7 +11,7 @@ interface LibrosState {
   
   libros: LibroEnPrestamo[]
 
-  librosFiltrados: LibroEnPrestamo[] | Libro[]
+  librosFiltrados: LibroEnPrestamo[]
   libroEnBusqueda?: string
   areaBusqueda: AreasDeBusqueda
 
@@ -112,8 +112,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
     const q = libroEnBusqueda ? libroEnBusqueda : query.toLowerCase().trim()
 
-    let libros: LibroEnPrestamo[] | Libro[] = todosLoslibros
-    if(areaBusqueda === "disponibles") libros = librosDisponibles
+    let libros: LibroEnPrestamo[] = todosLoslibros
+    if(areaBusqueda === "disponibles") libros = librosDisponibles as LibroEnPrestamo[]
     if(areaBusqueda === "prestados") libros = librosPrestados
     if(areaBusqueda === "vencidos") libros = librosVencidos
 
