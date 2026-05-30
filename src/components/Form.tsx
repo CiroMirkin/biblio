@@ -11,7 +11,7 @@ type Props = {
   withSubmit?: boolean
   textarea?: boolean
   onChange: (value: string) => void
-  onSubmit?: () => void
+  onSubmit?: (value: string) => void
   className?: string
   classNameInput?: string
   classNameBtn?: string
@@ -32,7 +32,7 @@ export function Form({
   classNameLabel,
   min,
   textarea = false,
-  withSubmit = false,
+  withSubmit = true,
 }: Props) {
   const [value, setValue] = useState(defaultValue ?? "")
   const [prevDefault, setPrevDefault] = useState(defaultValue)
@@ -52,7 +52,7 @@ export function Form({
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
-    onSubmit?.()
+    onSubmit?.(value.toString())
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
