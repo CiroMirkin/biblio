@@ -6,15 +6,30 @@ export const MESES = Object.freeze(
 )
 
 export const IS_DEV = Boolean(process.env.VITE_DEV_SERVER_URL)
+export const IS_TEST = Boolean(process.env.IS_TEST)
 
-export const SOCIOS_XLSX_PATH = IS_DEV
-  ? path.join(process.cwd(), 'templates', 'socios.xlsx')
-  : path.join(app.getPath('userData'), 'socios.xlsx')
+const FIXTURES_PATH = path.join(process.cwd(), 'tests', 'fixtures')
 
-export const CUOTAS_XLSX_PATH = IS_DEV
-  ? path.join(process.cwd(), 'templates', 'cuotas.xlsx')
-  : path.join(app.getPath('userData'), 'cuotas.xlsx')
+const SOCIOS_XLSX_DEFAULT = IS_DEV
+    ? path.join(process.cwd(), 'templates', 'socios.xlsx')
+    : path.join(app.getPath('userData'), 'socios.xlsx')
 
-export const LIBROS_XLSX_PATH = IS_DEV
-  ? path.join(process.cwd(), 'templates', 'libros.xlsx')
-  : path.join(app.getPath('userData'), 'libros.xlsx')
+export const SOCIOS_XLSX_PATH = IS_TEST
+  ? path.join(FIXTURES_PATH, 'socios-test.xlsx')
+  : SOCIOS_XLSX_DEFAULT
+
+const CUOTAS_XLSX_DEFAULT = IS_DEV
+    ? path.join(process.cwd(), 'templates', 'cuotas.xlsx')
+    : path.join(app.getPath('userData'), 'cuotas.xlsx')
+
+export const CUOTAS_XLSX_PATH = IS_TEST
+  ? path.join(FIXTURES_PATH, 'cuotas-test.xlsx')
+  : CUOTAS_XLSX_DEFAULT
+
+const LIBROS_XLSX_DEFAULT = IS_DEV
+    ? path.join(process.cwd(), 'templates', 'libros.xlsx')
+    : path.join(app.getPath('userData'), 'libros.xlsx')
+
+export const LIBROS_XLSX_PATH = IS_TEST
+  ? path.join(FIXTURES_PATH, 'libros-test.xlsx')
+  : LIBROS_XLSX_DEFAULT
