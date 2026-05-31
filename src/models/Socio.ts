@@ -1,3 +1,6 @@
+
+export type CaracterSocio = "Inactivo" | "inactivo-automatico" | "regular-automatico" | "Regular" | ""
+
 export interface Socio {
   nroSocio: number
   nombreYApellido: string // los apellidos se separan mediante una coma
@@ -6,7 +9,7 @@ export interface Socio {
   domicilio?: string
   nacionalidad?: string
   fechaNacimiento?: Date
-  caracterSocio?: string
+  caracterSocio?: CaracterSocio
   email?: string
   fechaIngresoEgreso?: Date
   observaciones?: string

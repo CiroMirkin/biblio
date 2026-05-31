@@ -1,15 +1,32 @@
+import type { CaracterSocio } from "./Socio"
 
 interface Data {
     estado: boolean
-    caracter: "Regular" | "Inactivo"
+    caracter: CaracterSocio
+    permiteCambioAutomatico: boolean
 }
 
 export const getCaracterSocio = (caracter: string | undefined): Data => {
     const caracterSocio: string = caracter || ""
-    const estado = ["regular", ""].includes(caracterSocio.trim().toLowerCase() || "")
 
+    // El string vacio se toma como regular, 
+    // por cuestiones de migracion, en el archivo original solo especificaba si estaba dado de baja
+    
+    const estado = [
+        "regular",
+        "",
+        "regular-automatico"
+    ].includes(caracterSocio.trim().toLowerCase())
+
+    const permiteCambioAutomatico = [
+        "regular-automatico",
+        "inactivo-automatico",
+        "",
+    ].includes(caracterSocio.trim())
+    
     return ({
         estado,
+        permiteCambioAutomatico,
         caracter: estado ? "Regular" : "Inactivo",
     })
 }
