@@ -3,6 +3,7 @@ import { motion } from "motion/react"
 import { Inscripcion, Socios, Catalogo, Ajustes } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
+import { useSociosStore } from "./store";
 
 const options = {
   CUOTA: "Socios",
@@ -37,6 +38,7 @@ const views = [
 ]
 
 function App() {
+  const { showListaSocios } = useSociosStore()
   const [ actualView, setActualView ] = useState<options>(options.CUOTA)
   const [ bg, setbg ] = useState("bg-secondary")
 
@@ -47,10 +49,13 @@ function App() {
   })
 
   return (
-    <div className="h-full bg-white flex flex-col scroll-smooth">
+    <div className="h-full bg-white flex flex-col scroll-smooth tracking-wide">
       <nav className="h-18 flex justify-start items-end gap-1">
         <motion.button
-          onClick={() => setActualView(options.CUOTA)}
+          onClick={() => {
+            setActualView(options.CUOTA)
+            showListaSocios()
+          }}
           animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(

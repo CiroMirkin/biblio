@@ -4,13 +4,21 @@ import { SocioDatos } from "./SocioDatos"
 import { useSociosStore } from "@/store"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
+import { ChevronLeftIcon } from "@/components"
 
 export function DetalleSocio() {
-    const { anio, cuotas } = useSociosStore()
-    
-    if(!cuotas) return
+    const { anio, showListaSocios } = useSociosStore()
 
     return (
+      <>
+        <p
+          className="w-70 mt-2 px-2 pt-1 pb-1.5 flex items-center gap-2  opacity-90 rounded bg-white/40 hover:bg-white transition-colors duration-75 ease-in cursor-pointer"
+          onClick={showListaSocios}
+        >
+          <ChevronLeftIcon />
+          <span className="text-lg">Volver a la lista de socios</span>
+        </p>
+
         <div className="pt-4 grid grid-cols-[3.2fr_1.8fr] gap-4">
           <div className="flex flex-col gap-4">
             <SocioDatos />
@@ -27,8 +35,11 @@ export function DetalleSocio() {
               <CalendarioCuotas />
             </div>
             <Observaciones />
-            <GestionEstadoSocio />
+            <div className="flex gap-4 card">
+              <GestionEstadoSocio />
+            </div>
           </div>
         </div>
+      </>
     )
 }

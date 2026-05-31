@@ -14,7 +14,7 @@ interface SociosState {
     socioSeleccionado: Socio | null
     mesesCuotas: Calendario
     anio: number
-    cuotas: boolean
+    showDetallesSocio: boolean
     maximoDeCuotasAdeudadas: number
     sociosActivos: number,
     sociosInactivos: number,
@@ -29,7 +29,8 @@ interface SociosState {
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
 
     darDeBaja: (socio: Socio, options?: { newCaracter?: CaracterSocio, esSocioSeleccionado?: boolean }) => Promise<void>
-reactivar: (socio: Socio, options?: { newCaracter?: CaracterSocio, esSocioSeleccionado?: boolean }) => Promise<void>
+    reactivar: (socio: Socio, options?: { newCaracter?: CaracterSocio, esSocioSeleccionado?: boolean }) => Promise<void>
+
     darDeBajaSocioSeleccionado: () => Promise<void>
     reactivarSocioSeleccionado: () => Promise<void>
     aplicarCambioAutomaticoDeCaracter: (socio: Socio, mesesCuotas: Calendario) => Promise<void>
@@ -37,6 +38,7 @@ reactivar: (socio: Socio, options?: { newCaracter?: CaracterSocio, esSocioSelecc
 
     setObservaciones: (newObservaciones: string) => Promise<void>
     setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
+    showListaSocios: () => void,
 }
 
 export const useSociosStore = create<SociosState>((set, get) => ({
@@ -45,7 +47,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     socioSeleccionado: null,
     mesesCuotas: [],
     anio: new Date().getFullYear(),
-    cuotas: false,
+    showDetallesSocio: false,
     maximoDeCuotasAdeudadas: 1,
     sociosActivos: 0,
     sociosInactivos: 0,
@@ -74,7 +76,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const { socios } = get()
 
         if (!apellido.trim()) {
-            set({ sociosFiltrados: socios, cuotas: false })
+            set({ sociosFiltrados: socios, showDetallesSocio: false })
             return
         }
 
@@ -96,7 +98,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             return getRelevanciaDelApellido(b.nombreYApellido, query) - getRelevanciaDelApellido(a.nombreYApellido, query)
         })
 
-        set({ sociosFiltrados: ordenados, cuotas: false })
+        set({ sociosFiltrados: ordenados, showDetallesSocio: false })
     },
 
     seleccionar: async (socio) => {
@@ -105,7 +107,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
         set({
             socioSeleccionado: socio,
-            cuotas: true,
+            showDetallesSocio: true,
             mesesCuotas
         })
         await get().aplicarCambioAutomaticoDeCaracter(socio, mesesCuotas)
@@ -240,7 +242,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             socios: actualizarLista(socios),
             sociosFiltrados: actualizarLista(sociosFiltrados),
             socioSeleccionado: nuevoSocio,
-            cuotas: true,
+            showDetallesSocio: true,
             mesesCuotas: [],
         })
 
@@ -272,5 +274,14 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         else if (cuotasAdeudadas <= maximoDeCuotasAdeudadas) {
             await get().reactivar(socio, { newCaracter: "regular-automatico" })
         }
+    },
+
+    showListaSocios: () => {
+        const { showDetallesSocio } = get()
+        if(!showDetallesSocio) return
+        
+        set({
+            showDetallesSocio: false,
+        })
     },
 }))

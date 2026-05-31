@@ -6,6 +6,7 @@ import { DetalleSocio } from "./DetallesSocio/DetallesSocio"
 export function Socios() {
   const {
     inicializar,
+    showDetallesSocio,
   } = useSociosStore()
 
   useEffect(() => {
@@ -14,8 +15,10 @@ export function Socios() {
 
   return (
     <>
-      <BuscadorSocios />
-      <DetalleSocio />
+      { showDetallesSocio
+        ? <DetalleSocio />
+        : <BuscadorSocios />
+      }
     </>
   )
 }

@@ -22,19 +22,17 @@ export function GestionEstadoSocio() {
     }
 
     return (
-        <div className="flex gap-4 card">
-            <button
-                className={cn("px-4 pb-1 rounded btn", cargando && "btn-disabled")}
-                onClick={handleEstadoSocio}
-                disabled={cargando}
-                >
-                { cargando && 
-                    <span className="flex gap-1.5 items-center">
-                        <Spinner /> Estableciendo...
-                    </span> 
-                }
-                { !cargando && (isSocioActivo ? "Dar de baja" : "Reactivar") }
-            </button>
-        </div>
+        <button
+            className={cn("px-4 pb-1 rounded btn", cargando && "btn-disabled")}
+            onClick={handleEstadoSocio}
+            disabled={cargando}
+            >
+            { cargando && 
+                <span className="flex gap-1.5 items-center">
+                    <Spinner /> Estableciendo...
+                </span> 
+            }
+            { !cargando && (isSocioActivo ? "Dar de baja" : "Reactivar") }
+        </button>
     )
 }
