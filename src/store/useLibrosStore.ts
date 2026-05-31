@@ -12,8 +12,6 @@ interface LibrosState {
   libros: LibroEnPrestamo[]
 
   librosFiltrados: LibroEnPrestamo[]
-  libroEnBusqueda?: string
-  areaBusqueda: AreasDeBusqueda
 
   librosVencidos: LibroEnPrestamo[]
   librosDisponibles: Libro[]
@@ -21,10 +19,9 @@ interface LibrosState {
 
   setMaximoLibrosEnPrestamo: (max: number) => number
   setLimiteDeDias: (limite: number) => number
-  setAreaBusqueda: (area: AreasDeBusqueda) => void
 
   inicializar: () => Promise<void>
-  buscar: (query: string, fromInput?: boolean) => void
+  buscar: (query: string) => void
   getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
   agregarLibroEnPrestamo: (libro: Libro) => Promise<LibroEnPrestamo | null>
   devolverLibro: (nroInventario: number) => Promise<void>
@@ -39,8 +36,6 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
-  areaBusqueda: "all",
-  libroEnBusqueda: "",
 
   inicializar: async () => {
     const settings = await settingsService.getAll()
@@ -90,32 +85,18 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     return limite
   },
 
-  buscar: (query, fromInput) => {
+  buscar: (query) => {
     const {
-      libros: todosLoslibros,
-      areaBusqueda,
-      librosDisponibles,
-      librosPrestados,
+      libros,
       librosVencidos,
-      libroEnBusqueda
     } = get()
 
-    if (!query.trim() && fromInput) {
-      set({ librosFiltrados: [...librosVencidos], libroEnBusqueda: "", areaBusqueda: "all" })
-      return
-    }
-    
-    if (!query.trim() && !libroEnBusqueda) {
-      set({ librosFiltrados: [...librosVencidos], libroEnBusqueda: "" })
+    if (!query.trim()) {
+      set({ librosFiltrados: [...librosVencidos], })
       return
     }
 
-    const q = libroEnBusqueda ? libroEnBusqueda : query.toLowerCase().trim()
-
-    let libros: LibroEnPrestamo[] = todosLoslibros
-    if(areaBusqueda === "disponibles") libros = librosDisponibles as LibroEnPrestamo[]
-    if(areaBusqueda === "prestados") libros = librosPrestados
-    if(areaBusqueda === "vencidos") libros = librosVencidos
+    const q = query.toLowerCase().trim()
 
     const filtrados = libros.filter(libro => {
 
@@ -140,12 +121,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       return ta.localeCompare(tb, 'es', { sensitivity: 'base' })
     })
 
-    set({ librosFiltrados: ordenados, libroEnBusqueda: q })
-  },
-
-  setAreaBusqueda: (areaBusqueda) => {
-    set({ areaBusqueda })
-    get().buscar("")
+    set({ librosFiltrados: ordenados, })
   },
 
   getLibrosSocio: async (nombreSocio, nroSocio) => {

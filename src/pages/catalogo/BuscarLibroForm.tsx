@@ -5,7 +5,7 @@ export function BuscarLibroForm() {
   const { buscar } = useLibrosStore()
 
   const handleBusqueda = (nombreLibro: string) => {
-    buscar(nombreLibro, true)
+    buscar(nombreLibro)
   }
 
   return (

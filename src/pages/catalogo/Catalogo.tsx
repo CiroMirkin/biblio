@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useLibrosStore } from "@/store"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
-import { Filtros } from "./Filtros"
+import { RecuentoLibros } from "./RecuentoLibros"
 
 export function Catalogo() {
     const { inicializar, limiteDeDias } = useLibrosStore()
@@ -23,7 +23,7 @@ export function Catalogo() {
                     <p>Si un libro esta prestado hace mas de {limiteDeDias} días se marca en rojo como adeudado.</p>
                 </section>
 
-                <Filtros />
+                <RecuentoLibros />
             </aside>
         </div>
     )
