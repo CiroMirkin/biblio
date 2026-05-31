@@ -14,7 +14,7 @@ export function Filtros() {
     }
 
     return (
-        <section className="card">
+        <section className="card bg-white/90">
             <p className="mb-2 font-semibold text-lg">Ver solo: </p>
             <ul className="flex flex-col gap-1">
                 <li className="flex items-center gap-1.5" onClick={() => handleCheck("vencidos")}>
