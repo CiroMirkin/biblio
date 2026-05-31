@@ -14,6 +14,15 @@ En la raiz del proyecto debe existir una carpeta llamada `templates` con tres ar
 
 ---
 
+Para agregar nuevas funcion IPC de Electron:
+
+1. Agregar la funcion dentro del directorio `electron\handlers`
+2. Agregar la funcion como ipc en `electron\main.ts`
+2. Agrega la funcion dentro del preload en `electron\preload.ts`
+3. Agrega el tipado de la funcion para React en `src\types\electron.d.ts`
+
+Opcional: puede ser necesario crear o actualizar algun servicio dentro de `src\services`
+
 Para agregar nuevos ajustes al sistema modificar:
 
 1. *SettingsSchema* y el *store* en `electron\settings.ts`
