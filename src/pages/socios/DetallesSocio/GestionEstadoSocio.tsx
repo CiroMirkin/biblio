@@ -5,7 +5,7 @@ import { getCaracterSocio } from "@/models"
 import { cn } from "@/utils"
 
 export function GestionEstadoSocio() {
-    const { socioSeleccionado, darDeBaja, reactivar } = useSociosStore()
+    const { socioSeleccionado, darDeBajaSocioSeleccionado, reactivarSocioSeleccionado } = useSociosStore()
     const [cargando, setCargando] = useState(false)
 
     const isSocioActivo = getCaracterSocio(socioSeleccionado?.caracterSocio).estado
@@ -13,8 +13,8 @@ export function GestionEstadoSocio() {
     const handleEstadoSocio = async () => {
         setCargando(true)
         try {
-            if (isSocioActivo) await darDeBaja()
-            else await reactivar()
+            if (isSocioActivo) await darDeBajaSocioSeleccionado()
+            else await reactivarSocioSeleccionado()
         }
         finally {
             setCargando(false)

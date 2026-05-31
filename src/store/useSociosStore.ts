@@ -6,13 +6,13 @@ import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
 import { calcularCuotasAdeudadas, getApellido, levenshtein } from "@/utils"
 import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
 import { settingsService } from "@/services"
-import { getCaracterSocio } from "@/models"
+import { getCaracterSocio, type Calendario } from "@/models"
 
 interface SociosState {
     socios: Socio[]
     sociosFiltrados: Socio[]
     socioSeleccionado: Socio | null
-    mesesCuotas: Record<string, boolean>[]
+    mesesCuotas: Calendario
     anio: number
     cuotas: boolean
     maximoDeCuotasAdeudadas: number
@@ -28,8 +28,13 @@ interface SociosState {
     
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
 
-    darDeBaja: (caracter?: CaracterSocio) => Promise<void>
-    reactivar: (caracter?: CaracterSocio) => Promise<void>
+    darDeBaja: (socio: Socio, options?: { newCaracter?: CaracterSocio, esSocioSeleccionado?: boolean }) => Promise<void>
+reactivar: (socio: Socio, options?: { newCaracter?: CaracterSocio, esSocioSeleccionado?: boolean }) => Promise<void>
+    darDeBajaSocioSeleccionado: () => Promise<void>
+    reactivarSocioSeleccionado: () => Promise<void>
+    aplicarCambioAutomaticoDeCaracter: (socio: Socio, mesesCuotas: Calendario) => Promise<void>
+    actualizarCaracterSocios: () => Promise<void>
+
     setObservaciones: (newObservaciones: string) => Promise<void>
     setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
 }
@@ -95,23 +100,17 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     seleccionar: async (socio) => {
-        const { anio, maximoDeCuotasAdeudadas } = get()
+        const { anio } = get()
         const mesesCuotas = await cargarCuotasSocio(socio.nroSocio, anio)
 
-        set({ socioSeleccionado: socio, cuotas: true, mesesCuotas })
-
-        const caracterSocio = getCaracterSocio(socio.caracterSocio)
-        if(caracterSocio.permiteCambioAutomatico) {
-            if (caracterSocio.caracter) {
-                if (calcularCuotasAdeudadas(mesesCuotas) >= maximoDeCuotasAdeudadas)  {
-                    await get().darDeBaja("inactivo-automatico")
-                }
-            } 
-            else if (calcularCuotasAdeudadas(mesesCuotas) <= maximoDeCuotasAdeudadas) {
-                await get().reactivar("regular-automatico")
-            }
-        }
+        set({
+            socioSeleccionado: socio,
+            cuotas: true,
+            mesesCuotas
+        })
+        await get().aplicarCambioAutomaticoDeCaracter(socio, mesesCuotas)
     },
+
 
     toggleMes: async (mesIndex) => {
         const { socioSeleccionado, anio, mesesCuotas } = get()
@@ -125,26 +124,58 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         set({ mesesCuotas: next })
     },
 
-    darDeBaja: async (newCaracter) => {
-        const { socioSeleccionado, socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
-        if (!socioSeleccionado) return
+    darDeBaja: async (socio, { newCaracter, esSocioSeleccionado } = {}) => {
+        const { socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
 
-        const ok = await window.electronAPI.darDeBajaSocio(socioSeleccionado.nombreYApellido)
+        const ok = await window.electronAPI.darDeBajaSocio(socio.nombreYApellido)
         if (!ok) return
 
-        const caracterSocio: CaracterSocio = newCaracter ? newCaracter : 'Inactivo'
-        const actualizado = { ...socioSeleccionado, caracterSocio }
+        const caracterSocio: CaracterSocio = newCaracter ?? 'Inactivo'
+        const actualizado = { ...socio, caracterSocio }
 
         const actualizarLista = (lista: Socio[]) =>
             lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
 
         set({
-            socioSeleccionado: actualizado,
+            ...(esSocioSeleccionado && { socioSeleccionado: actualizado }),
             socios: actualizarLista(socios),
             sociosFiltrados: actualizarLista(sociosFiltrados),
             sociosInactivos: sociosInactivos + 1,
             sociosActivos: sociosActivos - 1,
         })
+    },
+
+    reactivar: async (socio, { newCaracter, esSocioSeleccionado } = {}) => {
+        const { socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
+
+        const ok = await window.electronAPI.reactivarSocio(socio.nombreYApellido)
+        if (!ok) return
+
+        const caracterSocio: CaracterSocio = newCaracter ?? 'Regular'
+        const actualizado = { ...socio, caracterSocio }
+
+        const actualizarLista = (lista: Socio[]) =>
+            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
+
+        set({
+            ...(esSocioSeleccionado && { socioSeleccionado: actualizado }),
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+            sociosActivos: sociosActivos + 1,
+            sociosInactivos: sociosInactivos - 1,
+        })
+    },
+
+    darDeBajaSocioSeleccionado: async () => {
+        const { socioSeleccionado } = get()
+        if (!socioSeleccionado) return
+        await get().darDeBaja(socioSeleccionado, { esSocioSeleccionado: true })
+    },
+
+    reactivarSocioSeleccionado: async () => {
+        const { socioSeleccionado } = get()
+        if (!socioSeleccionado) return
+        await get().reactivar(socioSeleccionado, { esSocioSeleccionado: true })
     },
 
     setMaximoDeCuotasAdeudadas: (newMaximo) => {
@@ -157,29 +188,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         settingsService.set('maximoDeCuotasAdeudadas', newMaximo)
         return newMaximo
     },
-
-    reactivar: async (newCaracter) => {
-        const { socioSeleccionado, socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
-        if (!socioSeleccionado) return
-
-        const ok = await window.electronAPI.reactivarSocio(socioSeleccionado.nombreYApellido)
-        if (!ok) return
-
-        const caracterSocio: CaracterSocio = newCaracter ? newCaracter : 'Regular'
-        const actualizado = { ...socioSeleccionado, caracterSocio }
-
-        const actualizarLista = (lista: Socio[]) =>
-            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
-
-        set({
-            socioSeleccionado: actualizado,
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
-            sociosActivos: sociosActivos + 1,
-            sociosInactivos: sociosInactivos - 1,
-        })
-    },
-
+    
     setObservaciones: async (newObservaciones: string) => {
         const { socioSeleccionado, socios, sociosFiltrados } = get()
         if (!socioSeleccionado) return
@@ -236,5 +245,32 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         })
 
         return nuevoSocio
+    },
+
+    actualizarCaracterSocios: async () => {
+        const { socios, anio } = get()
+
+        for (const socio of socios) {
+            const mesesCuotas = await cargarCuotasSocio(socio.nroSocio, anio)
+            await get().aplicarCambioAutomaticoDeCaracter(socio, mesesCuotas)
+        }
+    },
+
+    aplicarCambioAutomaticoDeCaracter: async (socio: Socio, mesesCuotas: Calendario) => {
+        const { maximoDeCuotasAdeudadas } = get()
+
+        const caracterSocio = getCaracterSocio(socio.caracterSocio)
+
+        if (!caracterSocio.permiteCambioAutomatico) return
+
+        const cuotasAdeudadas = calcularCuotasAdeudadas(mesesCuotas)
+        if (caracterSocio.caracter) {
+            if (cuotasAdeudadas >= maximoDeCuotasAdeudadas) {
+                await get().darDeBaja(socio, { newCaracter: "inactivo-automatico" })
+            }
+        }
+        else if (cuotasAdeudadas <= maximoDeCuotasAdeudadas) {
+            await get().reactivar(socio, { newCaracter: "regular-automatico" })
+        }
     },
 }))
