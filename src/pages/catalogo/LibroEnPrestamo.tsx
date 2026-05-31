@@ -28,7 +28,10 @@ export function LibroEnPrestamo({ libro }: Props) {
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base">{libro.autor}</p>
-                    <p className="text-sm opacity-70 mt-px">N° de Inventario: {libro.numeroInventario}</p>
+                    <p className="text-sm opacity-70 mt-px">
+                        N° de Inventario: 
+                        {libro.numeroInventario || " S/N"}
+                    </p>
                 </div>
                 <span className={cn(
                     "flex flex-col items-end text-base font-semibold",

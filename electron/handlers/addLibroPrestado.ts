@@ -13,6 +13,7 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
+    
     if (Number(row.getCell(3).value) === libro.numeroInventario) {
       targetRow = row
     }
@@ -25,11 +26,12 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
     (targetRow as ExcelJS.Row).getCell(5).value = libro.numeroSocio ?? null;
     (targetRow as ExcelJS.Row).getCell(6).value = date;
     (targetRow as ExcelJS.Row).commit()
-  } else {
+  }
+  else {
     const newRow = worksheet.addRow([
-      libro.autor,
+      libro.autor || "",
       libro.titulo,
-      libro.numeroInventario,
+      libro.numeroInventario || "S/N",
       libro.nombreSocio,
       libro.numeroSocio ?? null,
       date,

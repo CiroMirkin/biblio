@@ -65,7 +65,12 @@ export function Prestamos() {
 
       if (libro) {
         setInputs(prev => prev.map((input, i) => i === rowIndex
-          ? { numeroInventario: String(libro.numeroInventario), autor: libro.autor, titulo: libro.titulo, fechaDePrestamo: input.fechaDePrestamo }
+          ? { 
+              numeroInventario: String(libro.numeroInventario || ""),
+              autor: libro.autor || "",
+              titulo: libro.titulo,
+              fechaDePrestamo: input.fechaDePrestamo
+            }
           : input
         ))
         setTimeout(() => fechaRefs.current[rowIndex]?.focus(), 0)
@@ -145,7 +150,9 @@ export function Prestamos() {
           key={libro.numeroInventario}
           className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
-          <span className={cn("text-lg", colNro)}>N° {libro.numeroInventario}</span>
+          <span className={cn("text-lg", colNro)}>
+            { libro.numeroInventario ? `N° ${libro.numeroInventario}` : 'S/N' }
+          </span>
           <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
           <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
           <span className={cn("text-lg", colFecha)}>{formatFecha(libro.fechaDePrestamo)}</span>
@@ -153,7 +160,7 @@ export function Prestamos() {
             <button
               type="button"
               className="btn btn-icon"
-              onClick={() => handleDevolver(libro.numeroInventario)}
+              onClick={() => handleDevolver(libro.numeroInventario || 0)}
             >
               <CheckIcon className="w-5" />
             </button>
