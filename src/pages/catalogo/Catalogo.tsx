@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { useLibrosStore } from "@/store"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
+import { Filtros } from "./Filtros"
 
 export function Catalogo() {
     const { inicializar, limiteDeDias } = useLibrosStore()
@@ -21,6 +22,8 @@ export function Catalogo() {
                     <p>En esta sección puede buscar un libro por su titulo, si el libro esta en préstamo puede saber quien lo tiene.</p>
                     <p>Si un libro esta prestado hace mas de {limiteDeDias} días se marca en rojo como adeudado.</p>
                 </section>
+
+                <Filtros />
             </aside>
         </div>
     )

@@ -2,6 +2,7 @@ import { BuscarSocioForm } from "./BuscarSocioForm"
 import { ListaSocios } from "./ListaSocios"
 import { useSociosStore } from "@/store"
 import { cn } from "@/utils"
+import { RecuentoSocios } from "./RecuentoSocios"
 
 export function BuscadorSocios() {
   const { cuotas } = useSociosStore()
@@ -19,8 +20,9 @@ export function BuscadorSocios() {
         {!cuotas && <ListaSocios />}
       </div>
       {!cuotas && (
-        <aside className="sticky top-0 h-fit">
+        <aside className="sticky top-0 flex flex-col h-fit">
           <div className="h-4 w-full bg-secondary" />
+
           <section className="p-4 rounded bg-white text-base">
             <p>Dentro de esta sección puedes:</p>
             <ul className="pl-4 pt-1 ml-1 list-disc">
@@ -31,6 +33,8 @@ export function BuscadorSocios() {
               <li>darlo de baja o reincribirlo.</li>
             </ul>
           </section>
+
+          <RecuentoSocios />
         </aside>
       )}
     </main>

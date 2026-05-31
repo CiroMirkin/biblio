@@ -16,6 +16,8 @@ interface SociosState {
     anio: number
     cuotas: boolean
     maximoDeCuotasAdeudadas: number
+    sociosActivos: number,
+    sociosInactivos: number,
 
     inicializar: () => Promise<void>
     buscar: (apellido: string) => void
@@ -40,15 +42,26 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     anio: new Date().getFullYear(),
     cuotas: false,
     maximoDeCuotasAdeudadas: 1,
+    sociosActivos: 0,
+    sociosInactivos: 0,
 
     inicializar: async () => {
         const socios = await cargarSocios()
         const ordenados = ordenarSociosAlfabeticamente(socios)
         const settings = await settingsService.getAll()
+
+        let [ sociosActivos, sociosInactivos ] = [ 0, 0 ]
+        socios.forEach(s => {
+            if(getCaracterSocio(s.caracterSocio).estado) sociosActivos++
+            else sociosInactivos++
+        })
+
         set({
             socios: ordenados,
             sociosFiltrados: ordenados,
             maximoDeCuotasAdeudadas: settings.maximoDeCuotasAdeudadas ?? 6,
+            sociosActivos,
+            sociosInactivos,
         })
     },
 
@@ -82,23 +95,20 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     seleccionar: async (socio) => {
-        const { anio, maximoDeCuotasAdeudadas, darDeBaja, reactivar } = get()
+        const { anio, maximoDeCuotasAdeudadas } = get()
         const mesesCuotas = await cargarCuotasSocio(socio.nroSocio, anio)
 
-        if(getCaracterSocio(socio.caracterSocio).estado) {
-            // baja si 6 >= 6 || 8 >= 6  
-            if(calcularCuotasAdeudadas(mesesCuotas) >= maximoDeCuotasAdeudadas) {
-                darDeBaja()
-            }
-        }
-        else if(!getCaracterSocio(socio.caracterSocio).estado) {
-            // alta si 3 <= 6  
-            if(calcularCuotasAdeudadas(mesesCuotas) <= maximoDeCuotasAdeudadas) {
-                reactivar()
-            }
-        }
-
         set({ socioSeleccionado: socio, cuotas: true, mesesCuotas })
+
+        if (getCaracterSocio(socio.caracterSocio).estado) {
+            if (calcularCuotasAdeudadas(mesesCuotas) >= maximoDeCuotasAdeudadas) {
+                await get().darDeBaja()
+            }
+        } else {
+            if (calcularCuotasAdeudadas(mesesCuotas) <= maximoDeCuotasAdeudadas) {
+                await get().reactivar()
+            }
+        }
     },
 
     toggleMes: async (mesIndex) => {
@@ -114,7 +124,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     darDeBaja: async () => {
-        const { socioSeleccionado, socios, sociosFiltrados } = get()
+        const { socioSeleccionado, socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
         if (!socioSeleccionado) return
 
         const ok = await window.electronAPI.darDeBajaSocio(socioSeleccionado.nombreYApellido)
@@ -129,6 +139,8 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             socioSeleccionado: actualizado,
             socios: actualizarLista(socios),
             sociosFiltrados: actualizarLista(sociosFiltrados),
+            sociosInactivos: sociosInactivos + 1,
+            sociosActivos: sociosActivos - 1,
         })
     },
 
@@ -144,7 +156,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     reactivar: async () => {
-        const { socioSeleccionado, socios, sociosFiltrados } = get()
+        const { socioSeleccionado, socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
         if (!socioSeleccionado) return
 
         const ok = await window.electronAPI.reactivarSocio(socioSeleccionado.nombreYApellido)
@@ -159,6 +171,8 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             socioSeleccionado: actualizado,
             socios: actualizarLista(socios),
             sociosFiltrados: actualizarLista(sociosFiltrados),
+            sociosActivos: sociosActivos + 1,
+            sociosInactivos: sociosInactivos - 1,
         })
     },
 
