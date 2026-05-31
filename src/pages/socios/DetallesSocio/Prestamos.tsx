@@ -3,6 +3,7 @@ import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
 import { cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
 import { CheckIcon } from "@/components"
+import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
 const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
 
@@ -126,7 +127,7 @@ export function Prestamos() {
   const slotsLibres = Math.max(0, maximoLibrosEnPrestamo - slotsOcupados)
 
   if (!caracterSocio && libros.length === 0) {
-    return <p className="opacity-50">Este socio esta inactivo.</p>
+    return <ExplicacionSocioInactivo />
   }
 
   return (
