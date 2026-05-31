@@ -2,6 +2,7 @@ import type { LibroEnPrestamo } from "@/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
 import { useLibrosStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
+import { format } from "@formkit/tempo"
 
 type Props = {
   libro: LibroEnPrestamo
@@ -34,10 +35,7 @@ export function LibroEnPrestamo({ libro }: Props) {
                     dias > limiteDeDias ? "text-red-600" : "text-green-600"
                 )}>
                     <span className="text-lg">{ formatDiasRelativo(dias) }</span>
-                    {libro.fechaDePrestamo!.toLocaleDateString(
-                        'es-AR', 
-                        { weekday: 'long', day: 'numeric', month: 'long' }
-                    )}
+                    { format(libro.fechaDePrestamo!, "long") }
                 </span>
             </div>
             <hr className="opacity-20" />
