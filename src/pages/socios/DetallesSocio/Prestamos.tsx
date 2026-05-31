@@ -4,12 +4,13 @@ import { cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
 import { CheckIcon } from "@/components"
 
-const FIELDS = ['numeroInventario', 'autor', 'titulo'] as const
+const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
 
 const emptyLibro = () => ({
   autor: '',
   titulo: '',
   numeroInventario: '',
+  fechaDePrestamo: '',
 })
 
 const colAutor = "w-[35%]"
@@ -34,6 +35,7 @@ export function Prestamos() {
     Array.from({ length: maximoLibrosEnPrestamo }, () => false)
   )
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const fechaRefs = useRef<(HTMLInputElement | null)[]>([])
 
   useEffect(() => {
     inicializar()
@@ -44,7 +46,7 @@ export function Prestamos() {
     getLibrosSocio(nombreSocio, nroSocio).then(setLibros)
   }, [nroSocio, nombreSocio])
 
-  function handleChange(index: number, field: typeof FIELDS[number], value: string) {
+  function handleChange(index: number, field: keyof ReturnType<typeof emptyLibro>, value: string) {
     setInputs(prev => prev.map((input, i) => i === index ? { ...input, [field]: value } : input))
   }
 
@@ -62,16 +64,12 @@ export function Prestamos() {
 
       if (libro) {
         setInputs(prev => prev.map((input, i) => i === rowIndex
-          ? { numeroInventario: String(libro.numeroInventario), autor: libro.autor, titulo: libro.titulo }
+          ? { numeroInventario: String(libro.numeroInventario), autor: libro.autor, titulo: libro.titulo, fechaDePrestamo: input.fechaDePrestamo }
           : input
         ))
-
-        const slotsLibres = maximoLibrosEnPrestamo - libros.length
-        const nextRowFlat = (rowIndex + 1) * FIELDS.length
-        if (nextRowFlat < slotsLibres * FIELDS.length) {
-          setTimeout(() => inputRefs.current[nextRowFlat]?.focus(), 0)
-        }
-      } else {
+        setTimeout(() => fechaRefs.current[rowIndex]?.focus(), 0)
+      }
+      else {
         setLockedRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
         setTimeout(() => inputRefs.current[rowIndex * FIELDS.length + 1]?.focus(), 50)
       }
@@ -101,7 +99,16 @@ export function Prestamos() {
         numeroSocio: nroSocio ?? null,
         numeroInventario: Number(input.numeroInventario) || 0,
       }
-      const libroEnPrestamo = await agregarLibroEnPrestamo(libro)
+
+      // Se hardcodea (UTC explícito con offset) la hora como 10:30 AM 
+      // porque sino las fecha se atrasaba 1 dia
+      const fecha = input.fechaDePrestamo 
+        ? new Date(`${input.fechaDePrestamo}T10:30:45.789+00:00`)
+        : undefined
+      const libroEnPrestamo = await agregarLibroEnPrestamo(libro, {
+        fechaDePrestamo: fecha,
+      })
+      
       if (libroEnPrestamo) agregados.push(libroEnPrestamo)
     }
 
@@ -126,8 +133,8 @@ export function Prestamos() {
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
         <span className={colNro}>N° Inventario</span>
-        <span className={colAutor}>Autor</span>
         <span className={colTitulo}>Título</span>
+        <span className={colAutor}>Autor</span>
         <span className={colFecha}>Fecha</span>
         <span className={cn(colBtn, "pl-2.5")}>Devolver</span>
       </div>
@@ -138,8 +145,8 @@ export function Prestamos() {
           className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
           <span className={cn("text-lg", colNro)}>N° {libro.numeroInventario}</span>
-          <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
           <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
+          <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
           <span className={cn("text-lg", colFecha)}>{formatFecha(libro.fechaDePrestamo)}</span>
           <div className={cn(colBtn, "pl-2.5")}>
             <button
@@ -147,7 +154,7 @@ export function Prestamos() {
               className="btn btn-icon"
               onClick={() => handleDevolver(libro.numeroInventario)}
             >
-              <CheckIcon />
+              <CheckIcon className="w-5" />
             </button>
           </div>
         </div>
@@ -171,8 +178,13 @@ export function Prestamos() {
               placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N°'}
             />
           ))}
-          <div className={colFecha} />
-          <div className={colBtn} />
+          <input
+            type="date"
+            ref={el => { fechaRefs.current[i] = el }}
+            value={inputs[i].fechaDePrestamo}
+            onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
+            className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
+          />
         </div>
       ))}
 

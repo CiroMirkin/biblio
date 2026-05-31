@@ -23,7 +23,11 @@ interface LibrosState {
   inicializar: () => Promise<void>
   buscar: (query: string) => void
   getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
-  agregarLibroEnPrestamo: (libro: Libro) => Promise<LibroEnPrestamo | null>
+  agregarLibroEnPrestamo: (
+    libro: Libro,
+    options?: { fechaDePrestamo?: Date },
+  ) => Promise<LibroEnPrestamo | null>
+
   devolverLibro: (nroInventario: number) => Promise<void>
   getLibroPorInventario: (nroInventario: number) => LibroEnPrestamo | null
 }
@@ -135,8 +139,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     }) as LibroEnPrestamo[]
   },
 
-  agregarLibroEnPrestamo: async (libro) => {
-    const libroEnPrestamo = await window.electronAPI.addLibroPrestado(libro)
+  agregarLibroEnPrestamo: async (libro, { fechaDePrestamo } = {}) => {
+    const libroEnPrestamo = await window.electronAPI.addLibroPrestado(libro, fechaDePrestamo)
     if (!libroEnPrestamo) return null
     const { libros } = get()
     set({ libros: [...libros, libroEnPrestamo] })

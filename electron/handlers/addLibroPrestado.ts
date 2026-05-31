@@ -2,14 +2,14 @@ import ExcelJS from 'exceljs'
 import type { Libro, LibroEnPrestamo } from '../libro'
 import { LIBROS_XLSX_PATH } from '../constants'
 
-export async function addLibroPrestado(libro: Libro): Promise<LibroEnPrestamo | null> {
+export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<LibroEnPrestamo | null> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('Hoja1')
   if (!worksheet) return null
 
   let targetRow: ExcelJS.Row | null = null
-  const date = new Date()
+  const date = fecha ? fecha : new Date()
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
