@@ -28,10 +28,14 @@ describe('Handlers IPC de ajustes (settings)', () => {
 
   // El handler settings:getAll delega en settings.getAll()
   it('settings:getAll retorna todos los ajustes', async () => {
-    vi.mocked(mockSettings.getAll).mockReturnValue({ limiteDeDias: 40, maximoLibrosEnPrestamo: 4 })
+    vi.mocked(mockSettings.getAll).mockReturnValue({ 
+      limiteDeDias: 40,
+      maximoLibrosEnPrestamo: 4,
+      maximoDeCuotasAdeudadas: 3,
+    })
     const handler = handlers.get('settings:getAll')!
     const result = await handler()
-    expect(result).toEqual({ limiteDeDias: 40, maximoLibrosEnPrestamo: 4 })
+    expect(result).toEqual({ limiteDeDias: 40, maximoLibrosEnPrestamo: 4, maximoDeCuotasAdeudadas: 3, })
     expect(mockSettings.getAll).toHaveBeenCalledOnce()
   })
 
