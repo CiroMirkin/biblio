@@ -20,7 +20,7 @@
     "productName": "biblio",
     "win": {
       "target": "nsis",
-      "icon": "icon.ico"
+      "icon": "public/icon.ico"
     },
     "files": [
       "dist/**/*",
