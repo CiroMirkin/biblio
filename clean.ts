@@ -8,7 +8,7 @@ const ignore = [
     "src/types/electron.d.ts",
 ]
 
-const searchDirs = ["electron", "src", "test"]
+const searchDirs = ["electron", "src", "tests"]
 
 for (const dir of dirs) {
     rmSync(dir, { recursive: true, force: true })
