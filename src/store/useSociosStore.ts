@@ -10,6 +10,7 @@ import { getCaracterSocio, type Calendario } from "@/models"
 
 interface SociosState {
     socios: Socio[]
+    sociosConLibros: Socio[]
     sociosFiltrados: Socio[]
     socioSeleccionado: Socio | null
     mesesCuotas: Calendario
@@ -43,6 +44,7 @@ interface SociosState {
 
 export const useSociosStore = create<SociosState>((set, get) => ({
     socios: [],
+    sociosConLibros: [],
     sociosFiltrados: [],
     socioSeleccionado: null,
     mesesCuotas: [],
@@ -54,6 +56,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
     inicializar: async () => {
         const socios = await cargarSocios()
+        const sociosRegistradosConLibros = await window.electronAPI.getSociosConLibros()
         const ordenados = ordenarSociosAlfabeticamente(socios)
         const settings = await settingsService.getAll()
 
@@ -63,9 +66,13 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             else sociosInactivos++
         })
 
+        const sociosConLibros = ordenados.filter(s =>
+            sociosRegistradosConLibros.some(sl => sl.nroSocio === s.nroSocio)
+        )
+
         set({
             socios: ordenados,
-            sociosFiltrados: ordenados,
+            sociosConLibros,
             maximoDeCuotasAdeudadas: settings.maximoDeCuotasAdeudadas ?? 6,
             sociosActivos,
             sociosInactivos,
@@ -76,7 +83,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const { socios } = get()
 
         if (!apellido.trim()) {
-            set({ sociosFiltrados: socios, showDetallesSocio: false })
+            set({ sociosFiltrados: [], showDetallesSocio: false })
             return
         }
 

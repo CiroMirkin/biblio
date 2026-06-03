@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addLibroPrestado: (libro: Libro, fecha?: Date) => ipcRenderer.invoke('addLibroPrestado', libro, fecha),
   
   getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nombreSocio, nroSocio),
+  getSociosConLibros: () => ipcRenderer.invoke('getSociosConLibros'),
   getCuotasSocio: (nroSocio: number, anio: number) => ipcRenderer.invoke('getCuotasSocio', nroSocio, anio),
   toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => ipcRenderer.invoke('toggleCuota', nroSocio, anio, mesIndex),
   darDeBajaSocio: (nombreSocio: string) => ipcRenderer.invoke('darDeBajaSocio', nombreSocio),

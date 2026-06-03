@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import type { Libro } from './libro'
-import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, } from './handlers'
+import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, } from './handlers'
 import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
 import type { NewSocioData } from './socio'
 import { initializeDataFiles } from './utils/initializeDataFiles'
@@ -20,6 +20,8 @@ ipcMain.handle(
   'getLibrosPrestadosSocio',
   (_, nombreSocio: string, nroSocio?: number) => getLibrosPrestadosSocio(nombreSocio, nroSocio)
 )
+
+ipcMain.handle('getSociosConLibros', () => getSociosConLibros())
 
 ipcMain.handle('getSocios', () => getSocios())
 

@@ -6,9 +6,11 @@ import { Spinner } from "@/components";
 const PAGINA = 10
 
 export function ListaSocios() {
-  const { sociosFiltrados: socios, seleccionar } = useSociosStore()
+  const { sociosFiltrados, sociosConLibros, seleccionar } = useSociosStore()
   const [cantidad, setCantidad] = useState(PAGINA)
   const loaderRef = useRef<HTMLDivElement>(null)
+
+  const socios = sociosFiltrados.length ? sociosFiltrados : sociosConLibros
 
   useEffect(() => {
     setCantidad(PAGINA)
