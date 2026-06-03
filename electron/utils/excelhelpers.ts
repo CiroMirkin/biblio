@@ -41,12 +41,12 @@ export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {
       ? new Date(String(rawFecha))
       : null
 
-  const numeroInventario = row.getCell(3).value || 0
+  const numeroInventario = String(row.getCell(3).value ?? '')
 
   return {
-    autor: String(row.getCell(1).value ?? ''),
+    autor: String(row.getCell(1).value),
     titulo: String(row.getCell(2).value ?? ''),
-    numeroInventario: numeroInventario === 'S/N' ? 0 : Number(numeroInventario),
+    numeroInventario: numeroInventario,
     nombreSocio: String(row.getCell(4).value ?? ''),
     numeroSocio: Number(row.getCell(5).value ?? null),
     fechaDePrestamo,

@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import type { Libro, LibroEnPrestamo } from '../libro'
 import { LIBROS_XLSX_PATH } from '../constants'
+import { generarIdSinInventariar } from '../utils/libroSinInventariar'
 
 export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<LibroEnPrestamo | null> {
   const workbook = new ExcelJS.Workbook()
@@ -31,7 +32,7 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
     const newRow = worksheet.addRow([
       libro.autor || "",
       libro.titulo,
-      libro.numeroInventario || "S/N",
+      libro.numeroInventario || generarIdSinInventariar(),
       libro.nombreSocio,
       libro.numeroSocio ?? null,
       date,

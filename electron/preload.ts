@@ -5,7 +5,7 @@ import type { NewSocioData } from './socio'
 contextBridge.exposeInMainWorld('electronAPI', {
   getSocios: () => ipcRenderer.invoke('getSocios'),
   getLibros: () => ipcRenderer.invoke('getLibros'),
-  devolverLibro: (numeroInventario: number) => ipcRenderer.invoke('devolverLibro', numeroInventario),
+  devolverLibro: (numeroInventario: number | string) => ipcRenderer.invoke('devolverLibro', numeroInventario),
   
   addLibroPrestado: (libro: Libro, fecha?: Date) => ipcRenderer.invoke('addLibroPrestado', libro, fecha),
   

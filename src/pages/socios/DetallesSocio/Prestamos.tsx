@@ -131,7 +131,7 @@ export function Prestamos() {
     setLockedRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
   }
 
-  async function handleDevolver(nroInventario: number) {
+  async function handleDevolver(nroInventario: number | string) {
     await devolverLibro(nroInventario)
     setLibros(prev => prev.filter(l => l.numeroInventario !== nroInventario))
   }
@@ -159,7 +159,7 @@ export function Prestamos() {
           className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
           <span className={cn("text-lg", colNro)}>
-            { libro.numeroInventario ? `N° ${libro.numeroInventario}` : 'S/N' }
+            { libro.numeroInventario!.toString().startsWith('SN-') ? 'S/N' : libro.numeroInventario }
           </span>
           <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
           <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>

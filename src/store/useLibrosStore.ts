@@ -30,7 +30,7 @@ interface LibrosState {
     options?: { fechaDePrestamo?: Date },
   ) => Promise<LibroEnPrestamo | null>
 
-  devolverLibro: (nroInventario: number) => Promise<void>
+  devolverLibro: (nroInventario: number | string) => Promise<void>
   getLibroPorInventario: (nroInventario: number) => LibroEnPrestamo | null
 }
 

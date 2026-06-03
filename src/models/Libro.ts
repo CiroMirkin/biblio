@@ -2,7 +2,7 @@
 export interface Libro {
     titulo: string
     autor?: string
-    numeroInventario?: number
+    numeroInventario?: number | string
     nombreSocio: string
     numeroSocio?: number | null
 }
