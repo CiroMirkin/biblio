@@ -56,7 +56,12 @@ export function Prestamos() {
   }, [nroSocio, nombreSocio])
 
   function handleChange(index: number, field: keyof ReturnType<typeof emptyLibro>, value: string) {
-    setInputs(prev => prev.map((input, i) => i === index ? { ...input, [field]: value } : input))
+    if (field === 'numeroInventario') {
+      setLockedRows(prev => prev.map((v, j) => j === index ? false : v))
+      setInputs(prev => prev.map((input, i) => i !== index ? input : { ...input, numeroInventario: value, titulo: '', autor: '' }))
+      return
+    }
+    setInputs(prev => prev.map((input, i) => i !== index ? input : { ...input, [field]: value }))
   }
 
   async function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number, fieldIndex: number) {
@@ -67,13 +72,11 @@ export function Prestamos() {
       const nro = Number(inputs[rowIndex].numeroInventario)
       if (!nro) return
 
-      setLockedRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
-
       const libro = getLibroPorInventario(nro)
 
       if (libro) {
         setInputs(prev => prev.map((input, i) => i === rowIndex
-          ? { 
+          ? {
               numeroInventario: String(libro.numeroInventario || ""),
               autor: libro.autor || "",
               titulo: libro.titulo,
@@ -81,7 +84,15 @@ export function Prestamos() {
             }
           : input
         ))
-        setTimeout(() => fechaRefs.current[rowIndex]?.focus(), 0)
+        setLockedRows(prev => prev.map((v, i) => i === rowIndex ? true : v))
+        setTimeout(() => {
+          if (!fechaDePrestamoAutomatica) {
+            fechaRefs.current[rowIndex]?.focus()
+          }
+          else {
+            inputRefs.current[(rowIndex + 1) * FIELDS.length]?.focus()
+          }
+        }, 50)
       }
       else {
         setLockedRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
@@ -114,15 +125,13 @@ export function Prestamos() {
         numeroInventario: Number(input.numeroInventario) || 0,
       }
 
-      // Se hardcodea (UTC explícito con offset) la hora como 10:30 AM 
-      // porque sino las fecha se atrasaba 1 dia
-      const fecha = input.fechaDePrestamo 
+      const fecha = input.fechaDePrestamo
         ? new Date(`${input.fechaDePrestamo}T10:30:45.789+00:00`)
         : undefined
       const libroEnPrestamo = await agregarLibroEnPrestamo(libro, {
         fechaDePrestamo: fecha,
       })
-      
+
       if (libroEnPrestamo) agregados.push(libroEnPrestamo)
     }
 
@@ -159,7 +168,7 @@ export function Prestamos() {
           className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
           <span className={cn("text-lg", colNro)}>
-            { libro.numeroInventario!.toString().startsWith('SN-') ? 'S/N' : libro.numeroInventario }
+            {libro.numeroInventario!.toString().startsWith('SN-') ? 'S/N' : libro.numeroInventario}
           </span>
           <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
           <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
@@ -195,18 +204,23 @@ export function Prestamos() {
             />
           ))}
 
-          {!fechaDePrestamoAutomatica 
+          {!fechaDePrestamoAutomatica
             ? <input
-              type="date"
-              ref={el => { fechaRefs.current[i] = el }}
-              value={inputs[i].fechaDePrestamo}
-              onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
-              className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
-            />
+                type="date"
+                ref={el => { fechaRefs.current[i] = el }}
+                value={inputs[i].fechaDePrestamo}
+                onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
+                className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
+                onKeyDown={e => {
+                  if (e.key !== 'Enter') return
+                  e.preventDefault()
+                  inputRefs.current[(i + 1) * FIELDS.length]?.focus()
+                }}
+              />
             : <>
-              <div className={colFecha} />
-              <div className={colBtn} />
-            </>
+                <div className={colFecha} />
+                <div className={colBtn} />
+              </>
           }
         </div>
       ))}

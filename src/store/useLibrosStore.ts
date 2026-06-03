@@ -31,7 +31,7 @@ interface LibrosState {
   ) => Promise<LibroEnPrestamo | null>
 
   devolverLibro: (nroInventario: number | string) => Promise<void>
-  getLibroPorInventario: (nroInventario: number) => LibroEnPrestamo | null
+  getLibroPorInventario: (nroInventario: number | string) => LibroEnPrestamo | null
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -174,6 +174,6 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   getLibroPorInventario: (nroInventario) => {
     const { libros } = get()
-    return libros.find(l => l.numeroInventario === nroInventario && l.fechaDePrestamo === null) ?? null
+    return libros.find(l => l.numeroInventario === nroInventario.toString().trim() && l.fechaDePrestamo === null) ?? null
   },
 }))
