@@ -4,6 +4,7 @@ import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
 import { MaximoDeCuotasAdeudadas } from "./MaximoDeCuotasAdeudadas";
+import { ComoEstablecerFechaPrestamo } from "./ComoEstablecerFechaPrestamo";
 
 export function Ajustes() {
     const inicializar = useLibrosStore(s => s.inicializar)
@@ -18,6 +19,7 @@ export function Ajustes() {
                 <MaximoPrestamosForm />
                 <MaximoDiasDelPrestamo />
                 <MaximoDeCuotasAdeudadas />
+                <ComoEstablecerFechaPrestamo />
                 <CopiarExcels />
             </div>
         </div>

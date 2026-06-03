@@ -22,7 +22,15 @@ const colFecha = "w-[10%]"
 
 export function Prestamos() {
   const { socioSeleccionado: socio } = useSociosStore()
-  const { getLibrosSocio, agregarLibroEnPrestamo, devolverLibro, maximoLibrosEnPrestamo, getLibroPorInventario, inicializar } = useLibrosStore()
+  const {
+    getLibrosSocio,
+    agregarLibroEnPrestamo,
+    devolverLibro,
+    maximoLibrosEnPrestamo,
+    getLibroPorInventario,
+    inicializar,
+    fechaDePrestamoAutomatica,
+  } = useLibrosStore()
 
   const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
   const nombreSocio = socio!.nombreYApellido || ""
@@ -186,13 +194,20 @@ export function Prestamos() {
               placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N°'}
             />
           ))}
-          <input
-            type="date"
-            ref={el => { fechaRefs.current[i] = el }}
-            value={inputs[i].fechaDePrestamo}
-            onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
-            className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
-          />
+
+          {!fechaDePrestamoAutomatica 
+            ? <input
+              type="date"
+              ref={el => { fechaRefs.current[i] = el }}
+              value={inputs[i].fechaDePrestamo}
+              onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
+              className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
+            />
+            : <>
+              <div className={colFecha} />
+              <div className={colBtn} />
+            </>
+          }
         </div>
       ))}
 
