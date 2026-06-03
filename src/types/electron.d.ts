@@ -6,6 +6,7 @@ type SettingsSchema = {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
   maximoDeCuotasAdeudadas: number
+  fechaDePrestamoAutomatica: boolean
 }
 
 declare global {

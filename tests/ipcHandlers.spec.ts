@@ -32,10 +32,16 @@ describe('Handlers IPC de ajustes (settings)', () => {
       limiteDeDias: 40,
       maximoLibrosEnPrestamo: 4,
       maximoDeCuotasAdeudadas: 3,
+      fechaDePrestamoAutomatica: true,
     })
     const handler = handlers.get('settings:getAll')!
     const result = await handler()
-    expect(result).toEqual({ limiteDeDias: 40, maximoLibrosEnPrestamo: 4, maximoDeCuotasAdeudadas: 3, })
+    expect(result).toEqual({
+      limiteDeDias: 40,
+      maximoLibrosEnPrestamo: 4,
+      maximoDeCuotasAdeudadas: 3,
+      fechaDePrestamoAutomatica: true,
+    })
     expect(mockSettings.getAll).toHaveBeenCalledOnce()
   })
 

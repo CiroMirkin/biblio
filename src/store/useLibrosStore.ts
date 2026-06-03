@@ -8,6 +8,7 @@ export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
 interface LibrosState {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
+  fechaDePrestamoAutomatica: boolean
   
   libros: LibroEnPrestamo[]
 
@@ -19,6 +20,7 @@ interface LibrosState {
 
   setMaximoLibrosEnPrestamo: (max: number) => number
   setLimiteDeDias: (limite: number) => number
+  toggleFechaDePrestamoAutomatica: () => boolean
 
   inicializar: () => Promise<void>
   buscar: (query: string) => void
@@ -40,6 +42,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
+  fechaDePrestamoAutomatica: true,
 
   inicializar: async () => {
     const settings = await settingsService.getAll()
@@ -48,6 +51,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     set({
       limiteDeDias: settings.limiteDeDias ?? 40,
       maximoLibrosEnPrestamo: settings.maximoLibrosEnPrestamo ?? 4,
+      fechaDePrestamoAutomatica: settings.fechaDePrestamoAutomatica ?? true,
     })
 
     const librosVencidos: LibroEnPrestamo[] = [] 
@@ -87,6 +91,20 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     set({ limiteDeDias: limite })
     settingsService.set('limiteDeDias', limite)
     return limite
+  },
+
+  toggleFechaDePrestamoAutomatica: () => {
+    const { fechaDePrestamoAutomatica } = get()
+
+    if(fechaDePrestamoAutomatica) {
+      set({ fechaDePrestamoAutomatica: false })
+      settingsService.set('fechaDePrestamoAutomatica', false)
+      return false
+    }
+
+    set({ fechaDePrestamoAutomatica: true })
+    settingsService.set('fechaDePrestamoAutomatica', true)
+    return true
   },
 
   buscar: (query) => {
