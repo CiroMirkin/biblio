@@ -13,7 +13,7 @@ export function initializeDataFiles() {
 
   for (const { origen, destino } of plantillas) {
     if (!fs.existsSync(destino)) {
-      const rutaPlantilla = path.join(process.resourcesPath, 'plantillas', origen)
+      const rutaPlantilla = path.join(process.resourcesPath, 'templates', origen)
       fs.copyFileSync(rutaPlantilla, destino)
     }
   }

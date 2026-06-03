@@ -7,6 +7,7 @@ import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
 import type { NewSocioData } from './socio'
 import { initializeDataFiles } from './utils/initializeDataFiles'
 import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
+import { IS_DEV } from './constants'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -47,7 +48,9 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
-    icon: path.join(__dirname, 'public/icon.ico'),
+    icon: IS_DEV
+      ? path.join(process.cwd(), 'public/icon.ico')
+      : path.join(process.resourcesPath, 'icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

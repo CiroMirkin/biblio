@@ -29,6 +29,10 @@
     ],
     "extraResources": [
       {
+        "from": "public/icon.ico",
+        "to": "icon.ico"
+      },
+      {
         "from": "templates/socios.xlsx",
         "to": "templates/socios.xlsx"
       },
