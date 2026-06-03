@@ -198,6 +198,23 @@ export function Prestamos() {
               value={inputs[i][field]}
               onChange={e => handleChange(i, field, e.target.value)}
               onKeyDown={e => handleKeyDown(e, i, fieldIndex)}
+              onFocus={() => {
+                if (field === 'numeroInventario') return
+                const nro = Number(inputs[i].numeroInventario)
+                if (!nro || lockedRows[i]) return
+                const libro = getLibroPorInventario(nro)
+                if (!libro) return
+                setInputs(prev => prev.map((input, idx) => idx === i
+                  ? {
+                      numeroInventario: String(libro.numeroInventario || ""),
+                      autor: libro.autor || "",
+                      titulo: libro.titulo,
+                      fechaDePrestamo: input.fechaDePrestamo,
+                    }
+                  : input
+                ))
+                setLockedRows(prev => prev.map((v, idx) => idx === i ? true : v))
+              }}
               disabled={lockedRows[i] && field !== 'numeroInventario'}
               className={`${field === 'autor' ? colAutor : field === 'titulo' ? colTitulo : colNro} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
               placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N°'}
