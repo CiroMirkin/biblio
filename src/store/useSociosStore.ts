@@ -122,8 +122,13 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
 
     toggleMes: async (mesIndex) => {
-        const { socioSeleccionado, anio, mesesCuotas } = get()
+        const { socioSeleccionado, anio, mesesCuotas, reactivar } = get()
         if (!socioSeleccionado) return
+
+        // PARA MIGRACION: permite que luego de actualizar las cuotas el caracter se defina automaticamente
+        if(getCaracterSocio(socioSeleccionado.caracterSocio).tieneCuotasDesactualizadas) {
+            await reactivar(socioSeleccionado, { newCaracter: "" })
+        }
 
         const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, anio, mesIndex)
 

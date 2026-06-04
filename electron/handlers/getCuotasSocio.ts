@@ -31,7 +31,5 @@ export const getCuotasSocio = async (nroSocio: number, anio: number) => {
     })
   })
 
-  console.log(meses)
-
   return meses
 }

@@ -4,6 +4,7 @@ interface Data {
     estado: boolean
     caracter: CaracterSocio
     permiteCambioAutomatico: boolean
+    tieneCuotasDesactualizadas: boolean
 }
 
 export const getCaracterSocio = (caracter: string | undefined): Data => {
@@ -16,6 +17,7 @@ export const getCaracterSocio = (caracter: string | undefined): Data => {
         "regular",
         "",
         "regular-automatico",
+        "cuotas-desactualizadas",
     ].includes(caracterSocio.trim().toLowerCase())
 
     const permiteCambioAutomatico = [
@@ -25,6 +27,7 @@ export const getCaracterSocio = (caracter: string | undefined): Data => {
     ].includes(caracterSocio.trim())
     
     return ({
+        tieneCuotasDesactualizadas: caracterSocio === "cuotas-desactualizadas",
         estado,
         permiteCambioAutomatico,
         caracter: estado ? "Regular" : "Inactivo",
