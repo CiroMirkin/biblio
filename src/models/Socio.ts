@@ -1,5 +1,5 @@
 
-export type CaracterSocio = "Inactivo" | "inactivo-automatico" | "regular-automatico" | "Regular" | ""
+export type CaracterSocio = "Inactivo" | "inactivo-automatico" | "regular-automatico" | "Regular" | "" | "cuotas-desactualizadas"
 
 export interface Socio {
   nroSocio: number

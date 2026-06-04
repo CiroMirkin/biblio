@@ -15,7 +15,8 @@ export const getCaracterSocio = (caracter: string | undefined): Data => {
     const estado = [
         "regular",
         "",
-        "regular-automatico"
+        "regular-automatico",
+        "cuotas-desactualizadas",
     ].includes(caracterSocio.trim().toLowerCase())
 
     const permiteCambioAutomatico = [

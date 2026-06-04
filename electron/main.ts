@@ -40,7 +40,8 @@ ipcMain.handle('createSocio', (_event, socioData: NewSocioData) => createSocio(s
 
 ipcMain.handle('darDeBajaSocio', (_event, nombreSocio: string) => darDeBajaSocio(nombreSocio))
 ipcMain.handle('reactivarSocio', (_event, nombreSocio: string) => reactivarSocio(nombreSocio))
-ipcMain.handle('changeObservaciones', (_event, obs: string, nombreSocio: string) => changeObservaciones(obs, nombreSocio))
+
+ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) => changeObservaciones(obs, nroSocio))
 
 ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
 

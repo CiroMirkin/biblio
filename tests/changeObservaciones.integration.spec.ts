@@ -21,10 +21,10 @@ describe('changeObservaciones (integration)', () => {
     })
 
     it('Modifica las observaciones de un socio existente en disco', async () => {
-        const nombreSocio = 'Prueba,Ignacio'
+        const nroSocio = 8
         const nuevasObs = 'Observacion de prueba'
 
-        const result = await changeObservaciones(nuevasObs, nombreSocio)
+        const result = await changeObservaciones(nuevasObs, nroSocio)
 
         expect(result).toBe(true)
 
@@ -35,7 +35,7 @@ describe('changeObservaciones (integration)', () => {
         let obsEncontrada: string | undefined
         ws!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (row.getCell(2).value === nombreSocio) {
+            if (row.getCell(1).value === nroSocio) {
                 obsEncontrada = row.getCell(10).value as string
             }
         })
@@ -46,7 +46,7 @@ describe('changeObservaciones (integration)', () => {
     it('Retorna false y no modifica el archivo si el socio no existe', async () => {
         const statBefore = fs.statSync(SOCIOS_XLSX_PATH).mtimeMs
 
-        const result = await changeObservaciones('obs nueva', 'Socio Inexistente')
+        const result = await changeObservaciones('obs nueva', 999000001)
 
         expect(result).toBe(false)
 

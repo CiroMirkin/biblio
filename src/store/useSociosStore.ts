@@ -204,7 +204,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
         const ok = await window.electronAPI.changeObservaciones(
             newObservaciones,
-            socioSeleccionado.nombreYApellido,
+            socioSeleccionado.nroSocio,
         )
         if (!ok) return
 

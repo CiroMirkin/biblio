@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { CUOTAS_XLSX_PATH, MESES } from '../constants'
-import { construirIndiceMeses, migrarCeldaPintadaAPago } from '../utils/excelhelpers'
+import { construirIndiceMeses, migrarFaltaDeTextoEnCuota } from '../utils/excelhelpers'
 
 export const getCuotasSocio = async (nroSocio: number, anio: number) => {
   const workbook = new ExcelJS.Workbook()
@@ -20,15 +20,18 @@ export const getCuotasSocio = async (nroSocio: number, anio: number) => {
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
     if (Number(row.getCell(3).value) !== nroSocio) return
-
     meses = MESES.map((nombre, mesIndex) => {
       const col = columnasSocio.find(c => c.mes === mesIndex)
       if (!col) return { [nombre]: false }
+
       const cell = row.getCell(col.colIndex)
-      migrarCeldaPintadaAPago(cell)
+      migrarFaltaDeTextoEnCuota(cell)
+
       return { [nombre]: cell.value === 'pago' }
     })
   })
+
+  console.log(meses)
 
   return meses
 }

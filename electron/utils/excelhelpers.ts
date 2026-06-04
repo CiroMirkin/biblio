@@ -58,17 +58,10 @@ export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {
   }
 }
 
-export function celdaEstaPintada(cell: ExcelJS.Cell): boolean {
-  const fill = cell.fill
-  if (!fill || fill.type !== 'pattern') return false
-  const pattern = fill as ExcelJS.FillPattern
-  return pattern.pattern !== 'none'
-}
-
-export function migrarCeldaPintadaAPago(cell: ExcelJS.Cell): void {
+export function migrarFaltaDeTextoEnCuota(cell: ExcelJS.Cell): void {
   if (cell.value === 'pago' || cell.value === 'adeuda') return
-  if (celdaEstaPintada(cell)) {
-    cell.value = 'pago'
+  if (cell.value === null || String(cell.value).trim() === '') {
+    cell.value = 'adeuda'
   }
 }
 
