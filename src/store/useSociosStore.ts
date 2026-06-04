@@ -62,7 +62,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
         let [ sociosActivos, sociosInactivos ] = [ 0, 0 ]
         socios.forEach(s => {
-            if(getCaracterSocio(s.caracterSocio).estado) sociosActivos++
+            if(getCaracterSocio(s.caracterSocio).estado && !getCaracterSocio(s.caracterSocio).tieneCuotasDesactualizadas) sociosActivos++
             else sociosInactivos++
         })
 
