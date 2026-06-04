@@ -59,8 +59,9 @@ function App() {
           animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-secondary",
-            actualView === options.CUOTA && "font-semibold"
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-secondary transition-colors duration-75 ease-in",
+            actualView === options.CUOTA && "font-semibold",
+            actualView !== options.CUOTA && "opacity-80",
           )}
         >
           Socios y cuotas
@@ -70,8 +71,9 @@ function App() {
           animate={{ height: actualView === options.INSCRIPCION ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#c0d4f4]",
-            actualView === options.INSCRIPCION && "font-semibold"
+            "text-lg tracking-wider hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#c0d4f4] transition-colors duration-75 ease-in",
+            actualView === options.INSCRIPCION && "font-semibold",
+            actualView !== options.INSCRIPCION && "opacity-80"
           )}
         >
           Inscripción
@@ -81,8 +83,9 @@ function App() {
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d9376d74]",
-            actualView === options.LIBROS && "font-semibold"
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d9376e95] transition-colors duration-75 ease-in",
+            actualView === options.LIBROS && "font-semibold",
+            actualView !== options.LIBROS && "opacity-80",
           )}
         >
           Catalogo
@@ -92,8 +95,9 @@ function App() {
           animate={{ height: actualView === options.AJUSTES ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:underline py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-gray-200",
-            actualView === options.AJUSTES && "font-semibold"
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-gray-200 transition-colors duration-75 ease-in",
+            actualView === options.AJUSTES && "font-semibold",
+            actualView !== options.AJUSTES && "opacity-80",
           )}
         >
           Ajustes
