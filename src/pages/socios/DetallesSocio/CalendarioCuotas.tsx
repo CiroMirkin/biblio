@@ -13,26 +13,28 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
   const [loading, setLoading] = useState(false)
 
   const handleToggle = async () => {
-    setLoading(true)
-    await onToggle()
-    setLoading(false)
+    if(!loading) {
+      setLoading(true)
+      await onToggle()
+      setLoading(false)
+    }
   }
 
   return (
-    <li className={cn(
-      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center shadow-xs",
+    <li onClick={handleToggle} className={cn(
+      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs",
       pagado ? "bg-green" : "bg-[#f582ae59]",
       loading && "opacity-60"
     )}>
       <span className="font-semibold text-lg text-center truncate">{nombre}</span>
       {pagado
-        ? <button onClick={handleToggle} disabled={loading} className={cn(
+        ? <button disabled={loading} className={cn(
           "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded",
           loading && "btn-disabled"
         )}>
           {loading && <Spinner />}  Pago
         </button>
-        : <button onClick={handleToggle} disabled={loading} className={cn(
+        : <button disabled={loading} className={cn(
           "flex items-center justify-center gap-1.5 btn bg-[#d9376d74]",
           loading && "btn-disabled"
         )}>
@@ -61,7 +63,7 @@ export function CalendarioCuotas() {
         <button onClick={irAnioAnterior} className="btn">
           {anio - 1}
         </button>
-        <span className="font-semibold text-lg">{anio}</span>
+        <span className="font-semibold text-lg opacity-70">{anio}</span>
         <button
           onClick={irAnioSiguiente}
           className={cn("btn", anio >= anioActual ? "opacity-35 pointer-events-none" : "")}
