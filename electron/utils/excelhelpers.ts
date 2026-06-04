@@ -4,33 +4,38 @@ import type { Socio } from '../socio'
 import type { LibroEnPrestamo } from '../libro'
 
 export function rowToSocio(row: ExcelJS.Row): Socio {
-  const telefonoRaw = row.getCell(9).value
+  const telefonoRaw = row.getCell(6).value
   const telefono = telefonoRaw && telefonoRaw !== 0 ? String(telefonoRaw) : null
 
+  const [ fechaIngreso, fechaEgreso ] = parseFecha(row.getCell(8).value, row.getCell(9).value)
+
+  const nroSocio = Number(row.getCell(1).value) || 0
   return {
-    nroSocio: Number(row.getCell(2).value) || 0,
-    nombreYApellido: String(row.getCell(3).value ?? ''),
-    domicilio: String(row.getCell(4).value ?? ''),
-    dni: Number(row.getCell(5).value) || 0,
-    nacionalidad: String(row.getCell(6).value ?? ''),
-    fechaNacimiento: parseFecha(row.getCell(7).value),
-    caracterSocio: String(row.getCell(10).value ?? ''),
-    fechaIngresoEgreso: parseFecha(row.getCell(11).value),
-    observaciones: String(row.getCell(12).value ?? ''),
+    nroSocio,
+    nombreYApellido: String(row.getCell(2).value ?? ''),
+    domicilio: String(row.getCell(3).value ?? ''),
+    dni: Number(row.getCell(4).value) || 0,
+    fechaNacimiento: String(row.getCell(5).value ?? ''),
     telefono,
+    caracterSocio: String(row.getCell(7).value ?? ''),
+    fechaIngreso,
+    fechaEgreso,
+    observaciones: String(row.getCell(10).value ?? ''),
+    email: String(row.getCell(11).value ?? ''),
   }
 }
 
 export function writeSocio(row: ExcelJS.Row, socio: Socio): void {
-  row.getCell(3).value = socio.nombreYApellido
-  row.getCell(4).value = socio.domicilio
-  row.getCell(5).value = socio.dni
-  row.getCell(6).value = socio.nacionalidad
-  row.getCell(7).value = socio.fechaNacimiento ? new Date(String(socio.fechaNacimiento)) : null
-  row.getCell(9).value = socio.telefono ?? null
-  row.getCell(10).value = socio.caracterSocio
-  row.getCell(11).value = socio.fechaIngresoEgreso ? new Date(String(socio.fechaIngresoEgreso)) : null
-  row.getCell(12).value = socio.observaciones
+  row.getCell(2).value = socio.nombreYApellido ?? ""
+  row.getCell(3).value = socio.domicilio ?? ""
+  row.getCell(4).value = socio.dni ?? ""
+  row.getCell(5).value = socio.fechaNacimiento ? String(socio.fechaNacimiento) : ""
+  row.getCell(6).value = socio.telefono ?? ""
+  row.getCell(7).value = socio.caracterSocio ?? ""
+  row.getCell(8).value = socio.fechaIngreso ? String(socio.fechaIngreso) : ""
+  row.getCell(9).value = socio.fechaEgreso ? String(socio.fechaEgreso) : ""
+  row.getCell(10).value = socio.observaciones ?? ""
+  row.getCell(11).value = socio.email ?? ""
 }
 
 export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {

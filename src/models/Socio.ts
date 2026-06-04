@@ -7,12 +7,12 @@ export interface Socio {
   telefono: string | null
   dni?: number
   domicilio?: string
-  nacionalidad?: string
-  fechaNacimiento?: Date
-  caracterSocio?: CaracterSocio
-  email?: string
-  fechaIngresoEgreso?: Date
+  fechaNacimiento?: String | null
+  caracterSocio: string
+  fechaIngreso?: String | null
+  fechaEgreso?: String | null
   observaciones?: string
+  email: string
 }
 
 export type NewSocio = Omit<Socio, 'nroSocio'>

@@ -35,8 +35,8 @@ describe('changeObservaciones (integration)', () => {
         let obsEncontrada: string | undefined
         ws!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (row.getCell(3).value === nombreSocio) {
-                obsEncontrada = row.getCell(12).value as string
+            if (row.getCell(2).value === nombreSocio) {
+                obsEncontrada = row.getCell(10).value as string
             }
         })
 

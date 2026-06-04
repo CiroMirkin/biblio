@@ -26,7 +26,7 @@ export function Inscripcion() {
     const socio: NewSocio = {
       dni: Number(form.dni.value),
       nombreYApellido: `${form.apellidos.value}, ${form.nombres.value}`,
-      fechaNacimiento: form.fechaNacimiento.value ? new Date(form.fechaNacimiento.value) : undefined,
+      fechaNacimiento: form.fechaNacimiento.value ? form.fechaNacimiento.value : undefined,
       telefono: form.telefono.value,
       domicilio: form.domicilio.value || undefined,
       observaciones: form.observaciones.value || "",

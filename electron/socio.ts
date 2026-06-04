@@ -4,11 +4,12 @@ export interface Socio {
   domicilio: string
   dni: number
   telefono: string | null
-  nacionalidad: string
   fechaNacimiento: String | null
   caracterSocio: string
-  fechaIngresoEgreso: String | null
+  fechaIngreso: String | null
+  fechaEgreso: String | null
   observaciones: string
+  email: string
 }
 
 export type NewSocioData = Omit<Socio, 'nroSocio'>

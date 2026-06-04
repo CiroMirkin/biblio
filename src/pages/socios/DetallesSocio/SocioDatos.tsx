@@ -10,7 +10,6 @@ export function SocioDatos() {
 
     const caracterSocio = getCaracterSocio(socio?.caracterSocio)
     const fechaNacimiento = socio?.fechaNacimiento
-    const fechaIngresoEgreso = socio?.fechaIngresoEgreso
 
     return (
         <div className="card relative">
@@ -50,16 +49,20 @@ export function SocioDatos() {
                                 {socio?.domicilio}
                             </li>
                             <li>
+                                <span className="font-semibold">Email: </span>
+                                {socio?.email}
+                            </li>
+                            <li>
                                 <span className="font-semibold">Fecha de nacimiento: </span>
-                                {fechaNacimiento && fechaNacimiento.toLocaleDateString()}
+                                {fechaNacimiento && fechaNacimiento}
                             </li>
                             <li>
                                 <span className="font-semibold">Ingreso: </span>
-                                {fechaIngresoEgreso && fechaIngresoEgreso.toLocaleDateString()}
+                                {socio?.fechaIngreso && socio?.fechaIngreso}
                             </li>
                             <li>
-                                <span className="font-semibold">Nacionalidad: </span>
-                                {socio?.nacionalidad}
+                                <span className="font-semibold">Egreso: </span>
+                                {socio?.fechaEgreso && socio?.fechaEgreso}
                             </li>
                         </motion.div>
                     )}
