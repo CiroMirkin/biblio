@@ -6,22 +6,13 @@ import { Spinner } from "@/components"
 type MesProps = {
   nombre: string
   pagado: boolean
+  loading: boolean
   onToggle: () => void
 }
 
-function Mes({ nombre, pagado, onToggle }: MesProps) {
-  const [loading, setLoading] = useState(false)
-
-  const handleToggle = async () => {
-    if(!loading) {
-      setLoading(true)
-      await onToggle()
-      setLoading(false)
-    }
-  }
-
+function Mes({ nombre, pagado, loading, onToggle }: MesProps) {
   return (
-    <li onClick={handleToggle} className={cn(
+    <li onClick={!loading ? onToggle : undefined} className={cn(
       "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs",
       pagado ? "bg-green" : "bg-[#f582ae59]",
       loading && "opacity-60"
@@ -32,7 +23,7 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
           "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded",
           loading && "btn-disabled"
         )}>
-          {loading && <Spinner />}  Pago
+          {loading && <Spinner />} Pago
         </button>
         : <button disabled={loading} className={cn(
           "flex items-center justify-center gap-1.5 btn bg-[#d9376d74]",
@@ -48,26 +39,42 @@ function Mes({ nombre, pagado, onToggle }: MesProps) {
 
 export function CalendarioCuotas() {
   const { mesesCuotas, anio, toggleMes, irAnioAnterior, irAnioSiguiente } = useSociosStore()
+  const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const anioActual = new Date().getFullYear()
+
+  const handleToggle = async (i: number) => {
+    if (loadingIndex !== null) return
+    setLoadingIndex(i)
+    await toggleMes(i)
+    setLoadingIndex(null)
+  }
 
   return (
     <>
       <ul className="grid sm:grid-cols-3 grid-cols-2 gap-2">
         {mesesCuotas.map((mes, i) => {
           const [nombre, pagado] = Object.entries(mes)[0]
-          return <Mes key={nombre} nombre={nombre} pagado={pagado} onToggle={() => toggleMes(i)} />
+          return (
+            <Mes
+              key={nombre}
+              nombre={nombre}
+              pagado={pagado}
+              loading={loadingIndex === i}
+              onToggle={() => handleToggle(i)}
+            />
+          )
         })}
       </ul>
 
       <footer className="w-full pt-4 flex gap-6 justify-center items-center">
-        <button onClick={irAnioAnterior} className="btn">
+        <button onClick={irAnioAnterior} disabled={loadingIndex !== null} className={cn("btn", loadingIndex !== null && "opacity-35 pointer-events-none")}>
           {anio - 1}
         </button>
         <span className="font-semibold text-lg opacity-70">{anio}</span>
         <button
           onClick={irAnioSiguiente}
-          className={cn("btn", anio >= anioActual ? "opacity-35 pointer-events-none" : "")}
-          disabled={anio >= anioActual}
+          className={cn("btn", (anio >= anioActual || loadingIndex !== null) ? "opacity-35 pointer-events-none" : "")}
+          disabled={anio >= anioActual || loadingIndex !== null}
         >
           {anio + 1}
         </button>
