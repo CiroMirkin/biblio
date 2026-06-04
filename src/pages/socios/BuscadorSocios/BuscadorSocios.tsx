@@ -13,6 +13,7 @@ export function BuscadorSocios() {
         )}>
           <div className="h-4 w-full bg-secondary" />
           <BuscarSocioForm /> 
+          <div className="h-2 w-full bg-secondary" />
         </div>
         
         <ListaSocios />
