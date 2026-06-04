@@ -117,12 +117,17 @@ export function Prestamos() {
 
     const agregados: LibroEnPrestamo[] = []
     for (const input of nuevos) {
+      
+      const numeroInventario = isNaN(Number(input.numeroInventario.toString()))
+        ? ""
+        : input.numeroInventario
+
       const libro: Libro = {
         autor: formatAutor(input.autor),
         titulo: formatTitulo(input.titulo),
         nombreSocio,
         numeroSocio: nroSocio ?? null,
-        numeroInventario: input.numeroInventario,
+        numeroInventario,
       }
 
       const fecha = input.fechaDePrestamo
