@@ -22,10 +22,16 @@ declare global {
       devolverLibro: (numeroInventario: number | string) => Promise<boolean>
       getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => Promise<Libro[]>
       getSociosConLibros: () => Promise<SocioConLibros[]>
-      getCuotasSocio: (nroSocio: number, anio: number) => Promise<Record<string, boolean>[]>
+      
+      getCuotasSocio: (nroSocio: number, anio?: number) => Promise<{
+        meses: Record<string, boolean>[],
+        anio: number
+      }>
+      
       toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => Promise<boolean>
-      darDeBajaSocio: (nombreSocio: string) => Promise<boolean>
-      reactivarSocio: (nombreSocio: string) => Promise<boolean>
+      
+      darDeBajaSocio: (nroSocio: number) => Promise<boolean>
+      reactivarSocio: (nroSocio: number) => Promise<boolean>
       
       changeObservaciones: (observaciones: string, nroSocio: number) => Promise<boolean>
       

@@ -17,7 +17,7 @@ export function rowToSocio(row: ExcelJS.Row): Socio {
     dni: Number(row.getCell(4).value) || 0,
     fechaNacimiento: String(row.getCell(5).value ?? ''),
     telefono,
-    caracterSocio: String(row.getCell(7).value ?? ''),
+    caracterSocio: String(row.getCell(7).value || ''),
     fechaIngreso,
     fechaEgreso,
     observaciones: String(row.getCell(10).value ?? ''),
@@ -34,8 +34,8 @@ export function writeSocio(row: ExcelJS.Row, socio: Socio): void {
   row.getCell(7).value = socio.caracterSocio ?? ""
   row.getCell(8).value = socio.fechaIngreso ? String(socio.fechaIngreso) : ""
   row.getCell(9).value = socio.fechaEgreso ? String(socio.fechaEgreso) : ""
-  row.getCell(10).value = socio.observaciones ?? ""
-  row.getCell(11).value = socio.email ?? ""
+  row.getCell(10).value = String(socio.observaciones?? "")
+  row.getCell(11).value = String(socio.email ?? "")
 }
 
 export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {

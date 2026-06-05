@@ -28,7 +28,7 @@ ipcMain.handle('getSocios', () => getSocios())
 
 ipcMain.handle(
   'getCuotasSocio',
-  (_event, nroSocio: number, anio: number) => getCuotasSocio(nroSocio, anio)
+  (_event, nroSocio: number, anio?: number) => getCuotasSocio(nroSocio, anio)
 )
 
 ipcMain.handle(
@@ -38,8 +38,8 @@ ipcMain.handle(
 
 ipcMain.handle('createSocio', (_event, socioData: NewSocioData) => createSocio(socioData))
 
-ipcMain.handle('darDeBajaSocio', (_event, nombreSocio: string) => darDeBajaSocio(nombreSocio))
-ipcMain.handle('reactivarSocio', (_event, nombreSocio: string) => reactivarSocio(nombreSocio))
+ipcMain.handle('darDeBajaSocio', (_event, nroSocio: number) => darDeBajaSocio(nroSocio))
+ipcMain.handle('reactivarSocio', (_event, nroSocio: number) => reactivarSocio(nroSocio))
 
 ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) => changeObservaciones(obs, nroSocio))
 
