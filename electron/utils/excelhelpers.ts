@@ -3,6 +3,19 @@ import { parseFecha } from './parseFecha'
 import type { Socio } from '../socio'
 import type { LibroEnPrestamo } from '../libro'
 
+function getCellString(cell: ExcelJS.Cell): string {
+  const val = cell.value
+  if (!val) return ''
+  
+  if (typeof val === 'object' && 'text' in val) {
+    return String((val as { text: unknown }).text ?? '')
+  }
+  if (typeof val === 'object' && 'result' in val) {
+    return String((val as { result: unknown }).result ?? '')
+  }
+  return String(val)
+}
+
 export function rowToSocio(row: ExcelJS.Row): Socio {
   const telefonoRaw = row.getCell(6).value
   const telefono = telefonoRaw && telefonoRaw !== 0 ? String(telefonoRaw) : null
@@ -21,7 +34,7 @@ export function rowToSocio(row: ExcelJS.Row): Socio {
     fechaIngreso,
     fechaEgreso,
     observaciones: String(row.getCell(10).value ?? ''),
-    email: String(row.getCell(11).value ?? ''),
+    email: getCellString(row.getCell(11)),
   }
 }
 
