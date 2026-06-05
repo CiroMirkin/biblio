@@ -1,24 +1,16 @@
-import { useState } from "react"
+import { useSociosStore } from "@/store"
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
-import { useSociosStore } from "@/store"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
-import { cn } from "@/utils"
 import { getCaracterSocio } from "@/models"
 
 export function DetalleSocio() {
   const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
-  const [success, setSuccess] = useState(false)
 
   const cuotasDesactualizadas = getCaracterSocio(socioSeleccionado?.caracterSocio).tieneCuotasDesactualizadas
-
-  function handleSuccess() {
-    setSuccess(true)
-    setTimeout(() => setSuccess(false), 1800)
-  }
 
   return (
     <>
@@ -34,19 +26,16 @@ export function DetalleSocio() {
         <div className="flex flex-col gap-4">
           <SocioDatos />
 
-          <div className={cn(
-            "flex flex-col gap-4 card transition-colors duration-500",
-            success ? "bg-[#91bf8f]" : "bg-white"
-          )}>
+          <div className="flex flex-col gap-4 card">
             <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
-            <Prestamos onSuccess={handleSuccess} />
+            <Prestamos onSuccess={() => {}} />
           </div>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="card">
-            <h2 className="pb-4 text-xl flex justify-between items-center"> Cuotas {anio}
-              { cuotasDesactualizadas && (<span className="font-2xl font-semibold bg-sky-300 px-4">ACTUALIZAR CUOTAS</span>)}
+            <h2 className="pb-4 text-xl flex justify-between items-center">Cuotas {anio}
+              {cuotasDesactualizadas && (<span className="font-2xl font-semibold bg-sky-300 px-4">ACTUALIZAR CUOTAS</span>)}
             </h2>
             <CalendarioCuotas />
           </div>

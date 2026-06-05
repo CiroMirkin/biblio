@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
+import { motion } from "motion/react"
 import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
-import { cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
+import { calcularDiasDesdePrestamo, cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
 import { CheckIcon } from "@/components"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
@@ -31,6 +32,7 @@ export function Prestamos({ onSuccess }: Props) {
     agregarLibroEnPrestamo,
     devolverLibro,
     maximoLibrosEnPrestamo,
+    limiteDeDias,
     getLibroPorInventario,
     inicializar,
     fechaDePrestamoAutomatica,
@@ -47,6 +49,7 @@ export function Prestamos({ onSuccess }: Props) {
   const [lockedRows, setLockedRows] = useState<boolean[]>(
     Array.from({ length: maximoLibrosEnPrestamo }, () => false)
   )
+  const [newlyAdded, setNewlyAdded] = useState<Set<number | string>>(new Set())
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const fechaRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -148,7 +151,12 @@ export function Prestamos({ onSuccess }: Props) {
     setInputs(Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro))
     setLockedRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
 
-    if (agregados.length > 0) onSuccess()
+    if (agregados.length > 0) {
+      const ids = new Set(agregados.map(l => l.numeroInventario!))
+      setNewlyAdded(ids)
+      setTimeout(() => setNewlyAdded(new Set()), 1500)
+      onSuccess()
+    }
   }
 
   async function handleDevolver(nroInventario: number | string) {
@@ -173,28 +181,43 @@ export function Prestamos({ onSuccess }: Props) {
         <span className={cn(colBtn, "pl-2.5", !libros.length && "opacity-0")}>Devolver</span>
       </div>
 
-      {libros.map((libro, index) => (
-        <div
-          key={libro.numeroInventario}
-          className={`flex items-center gap-2 rounded py-3 px-2 ${index % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
-        >
-          <span className={cn("text-lg", colNro)}>
-            {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
-          </span>
-          <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
-          <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
-          <span className={cn("text-lg", colFecha)}>{formatFecha(libro.fechaDePrestamo)}</span>
-          <div className={cn(colBtn, "pl-2.5")}>
-            <button
-              type="button"
-              className="btn btn-icon"
-              onClick={() => handleDevolver(libro.numeroInventario || "")}
+      {libros.map((libro, index) => {
+        const isNew = newlyAdded.has(libro.numeroInventario!)
+        const baseBg = index % 2 === 0
+          ? "#fddc87"
+          : "#fef0c6"
+        return (
+          <motion.div
+            key={libro.numeroInventario}
+            className="flex items-center gap-2 rounded py-3 px-2"
+            animate={{ backgroundColor: isNew ? "#91bf8f" : baseBg }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <span className={cn("text-lg", colNro)}>
+              {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
+            </span>
+            <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
+            <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
+            <span className={cn(
+              "text-lg", colFecha,
+              calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1°! rounded"
+            )}
+            title={`${calcularDiasDesdePrestamo(libro.fechaDePrestamo!)} dias`}
             >
-              <CheckIcon className="w-5" />
-            </button>
-          </div>
-        </div>
-      ))}
+              {formatFecha(libro.fechaDePrestamo)}
+            </span>
+            <div className={cn(colBtn, "pl-2.5")}>
+              <button
+                type="button"
+                className="btn btn-icon"
+                onClick={() => handleDevolver(libro.numeroInventario || "")}
+              >
+                <CheckIcon className="w-5" />
+              </button>
+            </div>
+          </motion.div>
+        )
+      })}
 
       {caracterSocio && Array.from({ length: slotsLibres }, (_, i) => (
         <div
