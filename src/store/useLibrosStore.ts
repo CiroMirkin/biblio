@@ -169,7 +169,13 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     const ok = await window.electronAPI.devolverLibro(nroInventario)
     if (!ok) return
     const { libros } = get()
-    set({ libros: libros.filter(l => l.numeroInventario !== nroInventario) })
+    set({
+      libros: libros.map(l =>
+        l.numeroInventario !== nroInventario
+          ? l
+          : { ...l, fechaDePrestamo: null, nombreSocio: "", numeroSocio: null }
+      )
+    })
   },
 
   getLibroPorInventario: (nroInventario) => {

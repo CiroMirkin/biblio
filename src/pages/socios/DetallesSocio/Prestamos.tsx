@@ -20,7 +20,11 @@ const colNro = "w-[15%]"
 const colBtn = "w-[10%]"
 const colFecha = "w-[10%]"
 
-export function Prestamos() {
+interface Props {
+  onSuccess: () => void
+}
+
+export function Prestamos({ onSuccess }: Props) {
   const { socioSeleccionado: socio } = useSociosStore()
   const {
     getLibrosSocio,
@@ -143,6 +147,8 @@ export function Prestamos() {
     setLibros(prev => [...prev, ...agregados])
     setInputs(Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro))
     setLockedRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
+
+    if (agregados.length > 0) onSuccess()
   }
 
   async function handleDevolver(nroInventario: number | string) {
@@ -163,8 +169,8 @@ export function Prestamos() {
         <span className={colNro}>N° Inventario</span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
-        <span className={colFecha}>Fecha</span>
-        <span className={cn(colBtn, "pl-2.5")}>Devolver</span>
+        <span className={cn(colFecha, !libros.length && "opacity-0")}>Fecha</span>
+        <span className={cn(colBtn, "pl-2.5", !libros.length && "opacity-0")}>Devolver</span>
       </div>
 
       {libros.map((libro, index) => (

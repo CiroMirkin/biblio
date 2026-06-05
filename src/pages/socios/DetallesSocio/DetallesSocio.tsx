@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
@@ -5,41 +6,51 @@ import { useSociosStore } from "@/store"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
+import { cn } from "@/utils"
 
 export function DetalleSocio() {
-    const { anio, showListaSocios } = useSociosStore()
+  const { anio, showListaSocios } = useSociosStore()
+  const [success, setSuccess] = useState(false)
 
-    return (
-      <>
-        <p
-          className="w-70 mt-2 px-2 pt-1 pb-1.5 flex items-center gap-2  opacity-90 rounded bg-white/40 hover:bg-white transition-colors duration-75 ease-in cursor-pointer"
-          onClick={showListaSocios}
-        >
-          <ChevronLeftIcon />
-          <span className="text-lg">Volver a la lista de socios</span>
-        </p>
+  function handleSuccess() {
+    setSuccess(true)
+    setTimeout(() => setSuccess(false), 1800)
+  }
 
-        <div className="pt-4 grid grid-cols-[3.2fr_1.8fr] gap-4">
-          <div className="flex flex-col gap-4">
-            <SocioDatos />
+  return (
+    <>
+      <p
+        className="w-70 mt-2 px-2 pt-1 pb-1.5 flex items-center gap-2 opacity-90 rounded bg-white/40 hover:bg-white transition-colors duration-75 ease-in cursor-pointer"
+        onClick={showListaSocios}
+      >
+        <ChevronLeftIcon />
+        <span className="text-lg">Volver a la lista de socios</span>
+      </p>
 
-            <div className="flex flex-col gap-4 card">
-              <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
-              <Prestamos />
-            </div>
-          </div>
+      <div className="pt-4 grid grid-cols-[3.2fr_1.8fr] gap-4">
+        <div className="flex flex-col gap-4">
+          <SocioDatos />
 
-          <div className="flex flex-col gap-4">
-            <div className="card">
-              <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
-              <CalendarioCuotas />
-            </div>
-            <Observaciones />
-            <div className="flex gap-4 card">
-              <GestionEstadoSocio />
-            </div>
+          <div className={cn(
+            "flex flex-col gap-4 card transition-colors duration-500",
+            success ? "bg-[#91bf8f]" : "bg-white"
+          )}>
+            <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
+            <Prestamos onSuccess={handleSuccess} />
           </div>
         </div>
-      </>
-    )
+
+        <div className="flex flex-col gap-4">
+          <div className="card">
+            <h2 className="pb-4 text-xl">Cuotas {anio}</h2>
+            <CalendarioCuotas />
+          </div>
+          <Observaciones />
+          <div className="flex gap-4 card">
+            <GestionEstadoSocio />
+          </div>
+        </div>
+      </div>
+    </>
+  )
 }
