@@ -21,7 +21,7 @@ describe('toggleCuota (integration)', () => {
   })
 
   it('Modifica el archivo en disco al togglear una cuota existente (null -> pago)', async () => {
-    const colIndex = 127
+    const colIndex = 31
     const socioRow = 21
 
     const workbookBefore = new ExcelJS.Workbook()
