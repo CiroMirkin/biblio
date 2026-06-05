@@ -1,9 +1,11 @@
 import { useState, type ChangeEvent, type SyntheticEvent } from "react"
 import { useSociosStore } from "@/store"
 
+const SESSION_KEY = "buscar-socio-apellido"
+
 export function BuscarSocioForm() {
   const { buscar } = useSociosStore()
-  const [apellido, setApellido] = useState('')
+  const [apellido, setApellido] = useState(() => sessionStorage.getItem(SESSION_KEY) ?? '')
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
@@ -12,6 +14,7 @@ export function BuscarSocioForm() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setApellido(e.target.value)
+    sessionStorage.setItem(SESSION_KEY, e.target.value)
     buscar(e.target.value)
   }
 

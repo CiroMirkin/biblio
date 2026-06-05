@@ -38,7 +38,7 @@ const views = [
 ]
 
 function App() {
-  const { showListaSocios } = useSociosStore()
+  const { showListaSocios, buscar } = useSociosStore()
   const [ actualView, setActualView ] = useState<options>(options.CUOTA)
   const [ bg, setbg ] = useState("bg-secondary")
 
@@ -55,6 +55,7 @@ function App() {
           onClick={() => {
             setActualView(options.CUOTA)
             showListaSocios()
+            buscar("")
           }}
           animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
