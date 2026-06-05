@@ -13,18 +13,22 @@ export const createSocio = async (socioData: NewSocioData): Promise<Socio> => {
 
   sociosSheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
-    const nro = Number(row.getCell(2).value)
+    const nro = Number(row.getCell(1).value)
     if (nro > lastNroSocio) lastNroSocio = nro
   })
 
   const newNroSocio = lastNroSocio + 1
   const newSocio: Socio = { nroSocio: newNroSocio, ...socioData }
 
+  // INSERTA SOCIO EN REGISTRO DE SOCIOS
+
   const newRow = sociosSheet.addRow([])
-  newRow.getCell(2).value = newNroSocio
+  newRow.getCell(1).value = newNroSocio
   writeSocio(newRow, newSocio)
 
   await sociosWorkbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
+
+  // INSERTA SOCIO EN REGISTRO DE CUOTAS
 
   const cuotasWorkbook = new ExcelJS.Workbook()
   await cuotasWorkbook.xlsx.readFile(CUOTAS_XLSX_PATH)
@@ -32,8 +36,6 @@ export const createSocio = async (socioData: NewSocioData): Promise<Socio> => {
   if (!cuotasSheet) throw new Error('No se encontró la hoja "original"')
 
   const newCuotasRow = cuotasSheet.addRow([])
-  newCuotasRow.getCell(1).value = new Date()
-  newCuotasRow.getCell(2).value = socioData.caracterSocio
   newCuotasRow.getCell(3).value = newNroSocio
   newCuotasRow.getCell(4).value = socioData.nombreYApellido
 
