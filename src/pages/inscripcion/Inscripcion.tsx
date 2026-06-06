@@ -1,6 +1,9 @@
+import { CheckIcon } from "@/components"
 import type { NewSocio } from "@/models"
 import { useSociosStore } from "@/store"
+import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
+import { AnimatePresence, motion } from "motion/react"
 
 const ORDER = ["apellidos", "nombres", "dni", "fechaNacimiento", "telefono", "email", "domicilio", "observaciones"]
 
@@ -19,6 +22,8 @@ function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
 
 export function Inscripcion() {
   const { crearSocio } = useSociosStore()
+  const formRef = useRef<HTMLFormElement>(null)
+  const [exito, setExito] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
@@ -35,16 +40,37 @@ export function Inscripcion() {
     }
 
     const newSocio = await crearSocio(socio)
-    if(!newSocio) console.error("Error en la creación del socio")
-    console.info("Socio creado exitosamente")
+    if (!newSocio) {
+      console.error("Error en la creación del socio")
+      return
+    }
+
+    formRef.current?.reset()
+    setExito(true)
+    setTimeout(() => setExito(false), 1200)
   }
 
   return (
     <>
-      <h2 className="pt-4 mb-2 text-xl font-semibold">Inscripción de un nuevo socio</h2>
+      <h2 className="pt-4 mb-2 flex items-center gap-4 text-xl font-semibold">
+        Inscripción de un nuevo socio
+        <AnimatePresence>
+          {exito && (
+            <motion.span
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="pt-1 pb-1.5 px-1.5 flex gap-1.5 items-center rounded text-green-600 bg-white"
+            >
+              <CheckIcon size={22} /> Socio creado exitosamente
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </h2>
       
       <div className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
-        <form className="flex flex-col gap-2 card" onSubmit={handleSubmit}>
+        <form ref={formRef} className="flex flex-col gap-2 card" onSubmit={handleSubmit}>
           <div className="w-full grid grid-cols-2 gap-4">
             <label className="flex flex-col gap-1 text-base">
               Apellidos: *
