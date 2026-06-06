@@ -35,7 +35,6 @@ interface SociosState {
     darDeBajaSocioSeleccionado: () => Promise<void>
     reactivarSocioSeleccionado: () => Promise<void>
     aplicarCambioAutomaticoDeCaracter: (socio: Socio, mesesCuotas: Calendario) => Promise<void>
-    actualizarCaracterSocios: () => Promise<void>
 
     setObservaciones: (newObservaciones: string) => Promise<void>
     setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
@@ -270,15 +269,6 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         })
 
         return nuevoSocio
-    },
-
-    actualizarCaracterSocios: async () => {
-        const { socios } = get()
-
-        for (const socio of socios) {
-            const mesesCuotas = await cargarCuotasSocio(socio.nroSocio, new Date().getFullYear())
-            await get().aplicarCambioAutomaticoDeCaracter(socio, mesesCuotas.meses)
-        }
     },
 
     aplicarCambioAutomaticoDeCaracter: async (socio: Socio, mesesCuotas: Calendario) => {
