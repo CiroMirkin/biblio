@@ -12,7 +12,7 @@ export function SocioDatos() {
     const fechaNacimiento = socio?.fechaNacimiento
 
     return (
-        <div className="card relative">
+        <div className="card relative" onClick={() => setExpandido(prev => !prev)}>
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-semibold">
                     {socio?.nombreYApellido}
@@ -70,7 +70,6 @@ export function SocioDatos() {
             </ul>
 
             <button
-                onClick={() => setExpandido(prev => !prev)}
                 className="text-sm opacity-60 hover:opacity-100 transition-opacity hover:underline"
             >
                 {expandido ? "Mostrar menos datos" : "Mostrar mas datos  "}
