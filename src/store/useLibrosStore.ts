@@ -180,6 +180,11 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   getLibroPorInventario: (nroInventario) => {
     const { libros } = get()
-    return libros.find(l => l.numeroInventario === nroInventario.toString().trim() && l.fechaDePrestamo === null) ?? null
+
+    const libro = libros.find(l => 
+      l.numeroInventario?.toString() === nroInventario.toString().trim()
+    ) ?? null
+
+    return libro
   },
 }))

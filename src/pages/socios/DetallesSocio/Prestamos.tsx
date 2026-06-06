@@ -49,6 +49,9 @@ export function Prestamos({ onSuccess }: Props) {
   const [lockedRows, setLockedRows] = useState<boolean[]>(
     Array.from({ length: maximoLibrosEnPrestamo }, () => false)
   )
+  const [libroEnPrestamoRows, setLibroEnPrestamoRows] = useState<boolean[]>(
+    Array.from({ length: maximoLibrosEnPrestamo }, () => false)
+  )
   const [newlyAdded, setNewlyAdded] = useState<Set<number | string>>(new Set())
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const fechaRefs = useRef<(HTMLInputElement | null)[]>([])
@@ -65,6 +68,7 @@ export function Prestamos({ onSuccess }: Props) {
   function handleChange(index: number, field: keyof ReturnType<typeof emptyLibro>, value: string) {
     if (field === 'numeroInventario') {
       setLockedRows(prev => prev.map((v, j) => j === index ? false : v))
+      setLibroEnPrestamoRows(prev => prev.map((v, j) => j === index ? false : v))
       setInputs(prev => prev.map((input, i) => i !== index ? input : { ...input, numeroInventario: value, titulo: '', autor: '' }))
       return
     }
@@ -80,6 +84,13 @@ export function Prestamos({ onSuccess }: Props) {
       if (!nro) return
 
       const libro = getLibroPorInventario(nro)
+      console.log(libro, libro?.fechaDePrestamo ? true : false)
+      if (libro?.fechaDePrestamo) {
+        setLibroEnPrestamoRows(prev => prev.map((v, i) => i === rowIndex ? true : v))
+        return
+      }
+
+      setLibroEnPrestamoRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
 
       if (libro) {
         setInputs(prev => prev.map((input, i) => i === rowIndex
@@ -150,6 +161,7 @@ export function Prestamos({ onSuccess }: Props) {
     setLibros(prev => [...prev, ...agregados])
     setInputs(Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro))
     setLockedRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
+    setLibroEnPrestamoRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
 
     if (agregados.length > 0) {
       const ids = new Set(agregados.map(l => l.numeroInventario!))
@@ -224,54 +236,74 @@ export function Prestamos({ onSuccess }: Props) {
           key={i}
           className={`flex items-center gap-2 py-3 px-2 rounded ${(slotsOcupados + i) % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
         >
-          {FIELDS.map((field, fieldIndex) => (
-            <input
-              key={field}
-              ref={el => { inputRefs.current[i * FIELDS.length + fieldIndex] = el }}
-              type="text"
-              value={inputs[i][field]}
-              onChange={e => handleChange(i, field, e.target.value)}
-              onKeyDown={e => handleKeyDown(e, i, fieldIndex)}
-              onFocus={() => {
-                if (field === 'numeroInventario') return
-                const nro = Number(inputs[i].numeroInventario)
-                if (!nro || lockedRows[i]) return
-                const libro = getLibroPorInventario(nro)
-                if (!libro) return
-                setInputs(prev => prev.map((input, idx) => idx === i
-                  ? {
-                      numeroInventario: String(libro.numeroInventario || ""),
-                      autor: libro.autor || "",
-                      titulo: libro.titulo,
-                      fechaDePrestamo: input.fechaDePrestamo,
-                    }
-                  : input
-                ))
-                setLockedRows(prev => prev.map((v, idx) => idx === i ? true : v))
-              }}
-              disabled={lockedRows[i] && field !== 'numeroInventario'}
-              className={`${field === 'autor' ? colAutor : field === 'titulo' ? colTitulo : colNro} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
-              placeholder={field === 'autor' ? 'Autor' : field === 'titulo' ? 'Título' : 'N°'}
-            />
-          ))}
+          <input
+            ref={el => { inputRefs.current[i * FIELDS.length + 0] = el }}
+            type="text"
+            value={inputs[i].numeroInventario}
+            onChange={e => handleChange(i, 'numeroInventario', e.target.value)}
+            onKeyDown={e => handleKeyDown(e, i, 0)}
+            className={`${colNro} border bg-white border-black rounded p-1 px-2`}
+            placeholder="N°"
+          />
 
-          {!fechaDePrestamoAutomatica
-            ? <input
-                type="date"
-                ref={el => { fechaRefs.current[i] = el }}
-                value={inputs[i].fechaDePrestamo}
-                onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
-                className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
-                onKeyDown={e => {
-                  if (e.key !== 'Enter') return
-                  e.preventDefault()
-                  inputRefs.current[(i + 1) * FIELDS.length]?.focus()
-                }}
-              />
-            : <>
-                <div className={colFecha} />
-                <div className={colBtn} />
+          {libroEnPrestamoRows[i]
+            ? (
+              <span className={cn("text-lg font-semibold text-red-600", colTitulo, colAutor)}>
+                El libro ya está en préstamo, verificá el N° de inventario
+              </span>
+            )
+            : (
+              <>
+                {FIELDS.filter(f => f !== 'numeroInventario').map((field, fieldIndex) => (
+                  <input
+                    key={field}
+                    ref={el => { inputRefs.current[i * FIELDS.length + fieldIndex + 1] = el }}
+                    type="text"
+                    value={inputs[i][field]}
+                    onChange={e => handleChange(i, field, e.target.value)}
+                    onKeyDown={e => handleKeyDown(e, i, fieldIndex + 1)}
+                    onFocus={() => {
+                      const nro = Number(inputs[i].numeroInventario)
+                      if (!nro || lockedRows[i]) return
+                      const libro = getLibroPorInventario(nro)
+                      if (!libro) return
+                      setInputs(prev => prev.map((input, idx) => idx === i
+                        ? {
+                            numeroInventario: String(libro.numeroInventario || ""),
+                            autor: libro.autor || "",
+                            titulo: libro.titulo,
+                            fechaDePrestamo: input.fechaDePrestamo,
+                          }
+                        : input
+                      ))
+                      setLockedRows(prev => prev.map((v, idx) => idx === i ? true : v))
+                    }}
+                    disabled={lockedRows[i]}
+                    className={`${field === 'autor' ? colAutor : colTitulo} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    placeholder={field === 'autor' ? 'Autor' : 'Título'}
+                  />
+                ))}
+
+                {!fechaDePrestamoAutomatica
+                  ? <input
+                      type="date"
+                      ref={el => { fechaRefs.current[i] = el }}
+                      value={inputs[i].fechaDePrestamo}
+                      onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
+                      className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
+                      onKeyDown={e => {
+                        if (e.key !== 'Enter') return
+                        e.preventDefault()
+                        inputRefs.current[(i + 1) * FIELDS.length]?.focus()
+                      }}
+                    />
+                  : <>
+                      <div className={colFecha} />
+                      <div className={colBtn} />
+                    </>
+                }
               </>
+            )
           }
         </div>
       ))}

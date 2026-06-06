@@ -13,7 +13,7 @@ type MesProps = {
 function Mes({ nombre, pagado, loading, onToggle }: MesProps) {
   return (
     <li onClick={!loading ? onToggle : undefined} className={cn(
-      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs",
+      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs select-none",
       pagado ? "bg-green" : "bg-[#f582ae59]",
       loading && "opacity-60"
     )}>
