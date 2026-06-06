@@ -2,6 +2,7 @@ import { cn } from "@/utils"
 import { useState } from "react"
 import { useSociosStore } from "@/store"
 import { Spinner } from "@/components"
+import { AnimatePresence, motion } from "motion/react"
 
 type MesProps = {
   nombre: string
@@ -58,22 +59,33 @@ export function CalendarioCuotas() {
 
   return (
     <>
-      <ul className="grid sm:grid-cols-3 grid-cols-2 gap-2">
-        {mesesCuotas.map((mes, i) => {
-          const [nombre, pagado] = Object.entries(mes)[0]
-          return (
-            <Mes
-              key={nombre}
-              year={anio}
-              nombre={nombre}
-              pagado={pagado}
-              loading={loadingIndex === i}
-              anyLoading={loadingIndex !== null}
-              onToggle={() => handleToggle(i)}
-            />
-          )
-        })}
-      </ul>
+      <div className="overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.ul
+            key={anio}
+            className="grid sm:grid-cols-3 grid-cols-2 gap-2"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            {mesesCuotas.map((mes, i) => {
+              const [nombre, pagado] = Object.entries(mes)[0]
+              return (
+                <Mes
+                  key={nombre}
+                  year={anio}
+                  nombre={nombre}
+                  pagado={pagado}
+                  loading={loadingIndex === i}
+                  anyLoading={loadingIndex !== null}
+                  onToggle={() => handleToggle(i)}
+                />
+              )
+            })}
+          </motion.ul>
+        </AnimatePresence>
+      </div>
 
       <footer className="w-full pt-4 flex gap-6 justify-center items-center">
         <button onClick={irAnioAnterior} disabled={loadingIndex !== null} className={cn("btn", loadingIndex !== null && "opacity-35 pointer-events-none")}>
