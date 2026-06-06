@@ -62,7 +62,7 @@ export function Prestamos({ onSuccess }: Props) {
     if (!nroSocio) return
     getLibrosSocio(nroSocio).then(libros => {
       const libroSlots: SlotLibro[] = libros.map(l => ({ type: 'libro', data: l }))
-      const inputsNeeded = Math.max(0, maximoLibrosEnPrestamo - libros.length)
+      const inputsNeeded = caracterSocio ? Math.max(0, maximoLibrosEnPrestamo - libros.length) : 0
       const inputSlots: SlotInput[] = Array.from({ length: inputsNeeded }, (_, i) => ({
         type: 'input',
         id: `init-${i}`,
@@ -73,7 +73,7 @@ export function Prestamos({ onSuccess }: Props) {
       inputSlots.forEach(s => { newInputs[s.id] = emptyInput() })
       setInputs(newInputs)
     })
-  }, [nroSocio, nombreSocio])
+  }, [nroSocio, nombreSocio, caracterSocio])
 
   function getInputSlots(): SlotInput[] {
     return slots.filter((s): s is SlotInput => s.type === 'input')
@@ -98,7 +98,7 @@ export function Prestamos({ onSuccess }: Props) {
       if (!nro) return
 
       const libro = getLibroPorInventario(nro)
- 
+
       if (libro?.fechaDePrestamo) {
         setLibroEnPrestamoInputs(prev => ({ ...prev, [id]: true }))
         return
@@ -210,12 +210,12 @@ export function Prestamos({ onSuccess }: Props) {
 
   async function handleDevolver(slotIndex: number, nroInventario: number | string) {
     await devolverLibro(nroInventario)
-    const newId = `devuelto-${Date.now()}`
-    setSlots(prev => prev.map((slot, i) => {
-      if (i !== slotIndex) return slot
-      return { type: 'input', id: newId } satisfies SlotInput
-    }))
-    setInputs(prev => ({ ...prev, [newId]: emptyInput() }))
+    setSlots(prev => prev.filter((_, i) => i !== slotIndex))
+    if (caracterSocio) {
+      const newId = `devuelto-${Date.now()}`
+      setSlots(prev => [...prev, { type: 'input', id: newId } satisfies SlotInput])
+      setInputs(prev => ({ ...prev, [newId]: emptyInput() }))
+    }
   }
 
   const libroSlots = slots.filter(s => s.type === 'libro')
