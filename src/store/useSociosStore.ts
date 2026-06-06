@@ -3,10 +3,10 @@ import type { CaracterSocio, NewSocio, Socio } from "@/models/Socio"
 import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
-import { calcularCuotasAdeudadas, getApellido, levenshtein } from "@/utils"
-import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
+import { calcularCuotasAdeudadas } from "@/utils"
 import { settingsService } from "@/services"
 import { getCaracterSocio, type Calendario } from "@/models"
+import { buscarSocio } from "./buscarSocio"
 
 interface SociosState {
     socios: Socio[]
@@ -88,26 +88,10 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         }
 
         const query = apellido.toLowerCase().trim()
-
         if(!query) set({ sociosFiltrados: [] })
 
-        const filtrados = socios.filter(socio => {
-            const apellido = getApellido(socio.nombreYApellido)
-            if (apellido.includes(query)) return true
-
-            return apellido.split(' ').some(palabra => {
-                if (palabra.startsWith(query)) return true
-                if (query.length < 5) return false
-                if (Math.abs(palabra.length - query.length) > 1) return false
-                return levenshtein(palabra, query) <= 1
-            })
-        })
-
-        const ordenados = filtrados.sort((a, b) => {
-            return getRelevanciaDelApellido(b.nombreYApellido, query) - getRelevanciaDelApellido(a.nombreYApellido, query)
-        })
-
-        set({ sociosFiltrados: ordenados, showDetallesSocio: false })
+        const filtrados = buscarSocio({ dato: query, socios })
+        set({ sociosFiltrados: filtrados, showDetallesSocio: false })
     },
 
     seleccionar: async (socio) => {
