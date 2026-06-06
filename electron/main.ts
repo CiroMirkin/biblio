@@ -19,7 +19,7 @@ ipcMain.handle('devolverLibro', (_, numeroInventario: number | string) => devolv
 
 ipcMain.handle(
   'getLibrosPrestadosSocio',
-  (_, nombreSocio: string, nroSocio?: number) => getLibrosPrestadosSocio(nombreSocio, nroSocio)
+  (_,nroSocio: number) => getLibrosPrestadosSocio(nroSocio)
 )
 
 ipcMain.handle('getSociosConLibros', () => getSociosConLibros())

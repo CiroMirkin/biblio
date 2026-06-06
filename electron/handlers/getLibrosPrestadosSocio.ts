@@ -3,7 +3,7 @@ import { LIBROS_XLSX_PATH } from '../constants'
 import type { Libro } from '../libro'
 import { rowToLibro } from '../utils/excelhelpers'
 
-export const getLibrosPrestadosSocio =  async (nombreSocio: string, nroSocio?: number) => {
+export const getLibrosPrestadosSocio =  async (nroSocio: number) => {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('Hoja1')
@@ -15,7 +15,7 @@ export const getLibrosPrestadosSocio =  async (nombreSocio: string, nroSocio?: n
     if (rowIndex === 1) return
 
     const libro = rowToLibro(row)
-    if (libro.numeroSocio === nroSocio || libro.nombreSocio === nombreSocio) {
+    if (Number(libro.numeroSocio) === Number(nroSocio)) {
       libros.push(libro)
     }
   })

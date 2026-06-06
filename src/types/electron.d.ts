@@ -20,7 +20,7 @@ declare global {
       addLibroPrestado: (libro: Libro, fecha?: Date) => Promise<LibroEnPrestamo | null>
       
       devolverLibro: (numeroInventario: number | string) => Promise<boolean>
-      getLibrosPrestadosSocio: (nombreSocio: string, nroSocio: number) => Promise<Libro[]>
+      getLibrosPrestadosSocio: (nroSocio: number) => Promise<Libro[]>
       getSociosConLibros: () => Promise<SocioConLibros[]>
       
       getCuotasSocio: (nroSocio: number, anio?: number) => Promise<{

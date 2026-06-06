@@ -24,7 +24,7 @@ interface LibrosState {
 
   inicializar: () => Promise<void>
   buscar: (query: string) => void
-  getLibrosSocio: (nombreSocio: string, nroSocio: number) => Promise<LibroEnPrestamo[]>
+  getLibrosSocio: (nroSocio: number) => Promise<LibroEnPrestamo[]>
   agregarLibroEnPrestamo: (
     libro: Libro,
     options?: { fechaDePrestamo?: Date },
@@ -146,8 +146,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     set({ librosFiltrados: ordenados, })
   },
 
-  getLibrosSocio: async (nombreSocio, nroSocio) => {
-    const raw = await window.electronAPI.getLibrosPrestadosSocio(nombreSocio, nroSocio)
+  getLibrosSocio: async (nroSocio) => {
+    const raw = await window.electronAPI.getLibrosPrestadosSocio(nroSocio)
     return (raw as unknown[]).map(l => {
       const libro = l as Record<string, unknown>
       return {

@@ -59,7 +59,7 @@ export function Prestamos({ onSuccess }: Props) {
 
   useEffect(() => {
     if (!nroSocio) return
-    getLibrosSocio(nombreSocio, nroSocio).then(setLibros)
+    getLibrosSocio(nroSocio).then(setLibros)
   }, [nroSocio, nombreSocio])
 
   function handleChange(index: number, field: keyof ReturnType<typeof emptyLibro>, value: string) {
