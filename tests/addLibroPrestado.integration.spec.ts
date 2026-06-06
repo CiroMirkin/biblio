@@ -116,4 +116,31 @@ describe('addLibroPrestado (integration)', () => {
         const statAfter = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
         expect(statAfter).toBe(statBefore)
     }, 30000)
+
+    it('Retorna null y no modifica el archivo si el libro ya esta en prestamo', async () => {
+        const workbook = new ExcelJS.Workbook()
+        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+        const ws = workbook.getWorksheet('Hoja1')
+
+        const inventarioExistente = ws!.getRow(2).getCell(3).value as number
+
+        const libro = {
+            titulo: 'Cualquier Titulo',
+            autor: 'Cualquier Autor',
+            numeroInventario: inventarioExistente,
+            nombreSocio: 'Socio Nuevo',
+            numeroSocio: 99,
+        }
+
+        await addLibroPrestado(libro, new Date('2024-01-01'))
+
+        const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
+
+        const result = await addLibroPrestado(libro, new Date('2024-06-01'))
+
+        expect(result).toBeNull()
+
+        const statAfter = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
+        expect(statAfter).toBe(statBefore)
+    })
 })

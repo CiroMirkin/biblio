@@ -22,8 +22,12 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
       targetRow = row
     }
   })
-
+  
   if (targetRow) {
+    if ((targetRow as ExcelJS.Row).getCell(6).value) {
+      return null
+    }
+
     (targetRow as ExcelJS.Row).getCell(4).value = libro.nombreSocio;
     (targetRow as ExcelJS.Row).getCell(5).value = libro.numeroSocio ?? null;
     (targetRow as ExcelJS.Row).getCell(6).value = date;
