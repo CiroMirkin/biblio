@@ -71,6 +71,10 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
         librosPrestados.push(libro)
       }
     })
+
+    librosVencidos.sort((a, b) =>
+      calcularDiasDesdePrestamo(b.fechaDePrestamo!) - calcularDiasDesdePrestamo(a.fechaDePrestamo!)
+    )
     const librosFiltrados = [...librosVencidos]
 
     set({ libros, librosVencidos, librosDisponibles, librosPrestados, librosFiltrados })
