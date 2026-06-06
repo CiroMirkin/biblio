@@ -3,7 +3,7 @@ import { motion } from "motion/react"
 import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
 import { calcularDiasDesdePrestamo, cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
-import { CheckIcon } from "@/components"
+import { CheckIcon, Spinner } from "@/components"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
 const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
@@ -51,6 +51,7 @@ export function Prestamos({ onSuccess }: Props) {
   const [lockedInputs, setLockedInputs] = useState<Record<string, boolean>>({})
   const [libroEnPrestamoInputs, setLibroEnPrestamoInputs] = useState<Record<string, boolean>>({})
   const [newlyAdded, setNewlyAdded] = useState<Set<number | string>>(new Set())
+  const [loadingAgregar, setLoadingAgregar] = useState(false)
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({})
   const fechaRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
@@ -149,10 +150,13 @@ export function Prestamos({ onSuccess }: Props) {
   }
 
   async function handleAgregar() {
+    if(loadingAgregar) return
+
     const inputSlots = getInputSlots()
     const nuevos = inputSlots.filter(s => inputs[s.id]?.titulo || inputs[s.id]?.numeroInventario)
     if (nuevos.length === 0) return
 
+    setLoadingAgregar(true)
     const agregados: Array<{ slotId: string; libro: LibroEnPrestamo }> = []
 
     for (const slot of nuevos) {
@@ -176,6 +180,8 @@ export function Prestamos({ onSuccess }: Props) {
       const libroEnPrestamo = await agregarLibroEnPrestamo(libro, { fechaDePrestamo: fecha })
       if (libroEnPrestamo) agregados.push({ slotId: slot.id, libro: libroEnPrestamo })
     }
+
+    setLoadingAgregar(false)
 
     if (agregados.length > 0) {
       setSlots(prev => prev.map(slot => {
@@ -367,9 +373,10 @@ export function Prestamos({ onSuccess }: Props) {
         <button
           type="button"
           onClick={handleAgregar}
-          className="btn mt-4 p-1 pb-2 text-lg rounded"
+          disabled={loadingAgregar}
+          className={cn("btn mt-4 p-1 pb-2 flex items-center justify-center gap-2 text-lg rounded", loadingAgregar && "btn-disabled")}
         >
-          Registrar préstamo
+          { loadingAgregar && <Spinner />} Registrar préstamo
         </button>
       )}
     </form>
