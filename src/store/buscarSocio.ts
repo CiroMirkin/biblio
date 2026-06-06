@@ -8,6 +8,10 @@ interface Params {
 }
 
 export function buscarSocio({ socios, dato }: Params): Socio[] {
+    if(!isNaN(Number(dato))) {
+        return socios.filter(s => Number(s.nroSocio) === Number(dato))
+    }
+
     const filtrados = socios.filter(socio => {
         const apellido = getApellido(socio.nombreYApellido)
         if (apellido.includes(dato)) return true
@@ -23,5 +27,9 @@ export function buscarSocio({ socios, dato }: Params): Socio[] {
         return getRelevanciaDelApellido(b.nombreYApellido, dato) - getRelevanciaDelApellido(a.nombreYApellido, dato)
     })
 
-    return ordenados
+    if(ordenados.length){
+        return ordenados
+    }
+    
+    return socios.filter(socio => socio.nombreYApellido.toLocaleLowerCase().includes(dato))
 }
