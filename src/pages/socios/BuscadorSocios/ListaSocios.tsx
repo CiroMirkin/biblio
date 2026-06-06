@@ -33,7 +33,7 @@ export function ListaSocios() {
         <li
           key={`${socio.nroSocio}-${socio.nombreYApellido}`}
           className={cn(
-            "px-4 py-4 flex gap-2 justify-between",
+            "px-4 py-4 flex gap-2 justify-between hover:pl-6 border-l-2 border-transparent hover:border-l-black transition-all ease-in duration-100",
             index % 2 === 0 ? "bg-white" : "bg-white/50"
           )}
           onClick={() => seleccionar(socio)}
