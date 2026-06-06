@@ -9,8 +9,11 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
   const worksheet = workbook.getWorksheet('Hoja1')
   if (!worksheet) return null
 
+  if(!libro.titulo) return null
+
   let targetRow: ExcelJS.Row | null = null
   const date = fecha ? fecha : new Date()
+  const numeroInventario = libro.numeroInventario || generarIdSinInventariar()
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
@@ -21,8 +24,6 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
   })
 
   if (targetRow) {
-    (targetRow as ExcelJS.Row).getCell(1).value = libro.autor;
-    (targetRow as ExcelJS.Row).getCell(2).value = libro.titulo;
     (targetRow as ExcelJS.Row).getCell(4).value = libro.nombreSocio;
     (targetRow as ExcelJS.Row).getCell(5).value = libro.numeroSocio ?? null;
     (targetRow as ExcelJS.Row).getCell(6).value = date;
@@ -32,7 +33,7 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
     const newRow = worksheet.addRow([
       libro.autor || "",
       libro.titulo,
-      libro.numeroInventario || generarIdSinInventariar(),
+      numeroInventario,
       libro.nombreSocio,
       libro.numeroSocio ?? null,
       date,
@@ -44,6 +45,7 @@ export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<Libr
 
   return {
     ...libro,
+    numeroInventario,
     fechaDePrestamo: date,
   }
 }
