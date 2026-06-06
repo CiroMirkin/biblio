@@ -8,12 +8,16 @@ import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
 const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
 
-const emptyLibro = () => ({
+const emptyInput = () => ({
   autor: '',
   titulo: '',
   numeroInventario: '',
   fechaDePrestamo: '',
 })
+
+type SlotLibro = { type: 'libro'; data: LibroEnPrestamo }
+type SlotInput = { type: 'input'; id: string }
+type Slot = SlotLibro | SlotInput
 
 const colAutor = "w-[35%]"
 const colTitulo = "w-[40%]"
@@ -42,19 +46,13 @@ export function Prestamos({ onSuccess }: Props) {
   const nombreSocio = socio!.nombreYApellido || ""
   const nroSocio = socio?.nroSocio
 
-  const [libros, setLibros] = useState<LibroEnPrestamo[]>([])
-  const [inputs, setInputs] = useState(
-    Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro)
-  )
-  const [lockedRows, setLockedRows] = useState<boolean[]>(
-    Array.from({ length: maximoLibrosEnPrestamo }, () => false)
-  )
-  const [libroEnPrestamoRows, setLibroEnPrestamoRows] = useState<boolean[]>(
-    Array.from({ length: maximoLibrosEnPrestamo }, () => false)
-  )
+  const [slots, setSlots] = useState<Slot[]>([])
+  const [inputs, setInputs] = useState<Record<string, ReturnType<typeof emptyInput>>>({})
+  const [lockedInputs, setLockedInputs] = useState<Record<string, boolean>>({})
+  const [libroEnPrestamoInputs, setLibroEnPrestamoInputs] = useState<Record<string, boolean>>({})
   const [newlyAdded, setNewlyAdded] = useState<Set<number | string>>(new Set())
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-  const fechaRefs = useRef<(HTMLInputElement | null)[]>([])
+  const inputRefs = useRef<Record<string, HTMLInputElement | null>>({})
+  const fechaRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
     inicializar()
@@ -62,80 +60,103 @@ export function Prestamos({ onSuccess }: Props) {
 
   useEffect(() => {
     if (!nroSocio) return
-    getLibrosSocio(nroSocio).then(setLibros)
+    getLibrosSocio(nroSocio).then(libros => {
+      const libroSlots: SlotLibro[] = libros.map(l => ({ type: 'libro', data: l }))
+      const inputsNeeded = Math.max(0, maximoLibrosEnPrestamo - libros.length)
+      const inputSlots: SlotInput[] = Array.from({ length: inputsNeeded }, (_, i) => ({
+        type: 'input',
+        id: `init-${i}`,
+      }))
+      const newSlots = [...libroSlots, ...inputSlots]
+      setSlots(newSlots)
+      const newInputs: Record<string, ReturnType<typeof emptyInput>> = {}
+      inputSlots.forEach(s => { newInputs[s.id] = emptyInput() })
+      setInputs(newInputs)
+    })
   }, [nroSocio, nombreSocio])
 
-  function handleChange(index: number, field: keyof ReturnType<typeof emptyLibro>, value: string) {
-    if (field === 'numeroInventario') {
-      setLockedRows(prev => prev.map((v, j) => j === index ? false : v))
-      setLibroEnPrestamoRows(prev => prev.map((v, j) => j === index ? false : v))
-      setInputs(prev => prev.map((input, i) => i !== index ? input : { ...input, numeroInventario: value, titulo: '', autor: '' }))
-      return
-    }
-    setInputs(prev => prev.map((input, i) => i !== index ? input : { ...input, [field]: value }))
+  function getInputSlots(): SlotInput[] {
+    return slots.filter((s): s is SlotInput => s.type === 'input')
   }
 
-  async function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number, fieldIndex: number) {
+  function handleChange(id: string, field: keyof ReturnType<typeof emptyInput>, value: string) {
+    if (field === 'numeroInventario') {
+      setLockedInputs(prev => ({ ...prev, [id]: false }))
+      setLibroEnPrestamoInputs(prev => ({ ...prev, [id]: false }))
+      setInputs(prev => ({ ...prev, [id]: { ...prev[id], numeroInventario: value, titulo: '', autor: '' } }))
+      return
+    }
+    setInputs(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }))
+  }
+
+  async function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, id: string, fieldIndex: number) {
     if (e.key !== 'Enter') return
     e.preventDefault()
 
     if (fieldIndex === 0) {
-      const nro = Number(inputs[rowIndex].numeroInventario)
+      const nro = Number(inputs[id]?.numeroInventario)
       if (!nro) return
 
       const libro = getLibroPorInventario(nro)
-      console.log(libro, libro?.fechaDePrestamo ? true : false)
+ 
       if (libro?.fechaDePrestamo) {
-        setLibroEnPrestamoRows(prev => prev.map((v, i) => i === rowIndex ? true : v))
+        setLibroEnPrestamoInputs(prev => ({ ...prev, [id]: true }))
         return
       }
 
-      setLibroEnPrestamoRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
+      setLibroEnPrestamoInputs(prev => ({ ...prev, [id]: false }))
 
       if (libro) {
-        setInputs(prev => prev.map((input, i) => i === rowIndex
-          ? {
-              numeroInventario: String(libro.numeroInventario || ""),
-              autor: libro.autor || "",
-              titulo: libro.titulo,
-              fechaDePrestamo: input.fechaDePrestamo
-            }
-          : input
-        ))
-        setLockedRows(prev => prev.map((v, i) => i === rowIndex ? true : v))
+        setInputs(prev => ({
+          ...prev,
+          [id]: {
+            numeroInventario: String(libro.numeroInventario || ""),
+            autor: libro.autor || "",
+            titulo: libro.titulo,
+            fechaDePrestamo: prev[id].fechaDePrestamo,
+          }
+        }))
+        setLockedInputs(prev => ({ ...prev, [id]: true }))
         setTimeout(() => {
           if (!fechaDePrestamoAutomatica) {
-            fechaRefs.current[rowIndex]?.focus()
+            fechaRefs.current[id]?.focus()
           }
           else {
-            inputRefs.current[(rowIndex + 1) * FIELDS.length]?.focus()
+            const inputSlots = getInputSlots()
+            const idx = inputSlots.findIndex(s => s.id === id)
+            const nextSlot = inputSlots[idx + 1]
+            if (nextSlot) inputRefs.current[`${nextSlot.id}-0`]?.focus()
           }
         }, 50)
       }
       else {
-        setLockedRows(prev => prev.map((v, i) => i === rowIndex ? false : v))
-        setTimeout(() => inputRefs.current[rowIndex * FIELDS.length + 1]?.focus(), 50)
+        setLockedInputs(prev => ({ ...prev, [id]: false }))
+        setTimeout(() => inputRefs.current[`${id}-1`]?.focus(), 50)
       }
       return
     }
 
-    const slotsLibres = maximoLibrosEnPrestamo - libros.length
-    const totalInputs = slotsLibres * FIELDS.length
-    const currentFlat = rowIndex * FIELDS.length + fieldIndex
-    const nextFlat = currentFlat + 1
+    const inputSlots = getInputSlots()
+    const slotIdx = inputSlots.findIndex(s => s.id === id)
+    const nextFieldIndex = fieldIndex + 1
 
-    if (nextFlat < totalInputs) {
-      inputRefs.current[nextFlat]?.focus()
+    if (nextFieldIndex < FIELDS.length) {
+      inputRefs.current[`${id}-${nextFieldIndex}`]?.focus()
+    } else {
+      const nextSlot = inputSlots[slotIdx + 1]
+      if (nextSlot) inputRefs.current[`${nextSlot.id}-0`]?.focus()
     }
   }
 
   async function handleAgregar() {
-    const nuevos = inputs.filter(input => input.titulo || input.numeroInventario)
+    const inputSlots = getInputSlots()
+    const nuevos = inputSlots.filter(s => inputs[s.id]?.titulo || inputs[s.id]?.numeroInventario)
     if (nuevos.length === 0) return
 
-    const agregados: LibroEnPrestamo[] = []
-    for (const input of nuevos) {
-      
+    const agregados: Array<{ slotId: string; libro: LibroEnPrestamo }> = []
+
+    for (const slot of nuevos) {
+      const input = inputs[slot.id]
       const numeroInventario = isNaN(Number(input.numeroInventario.toString()))
         ? ""
         : input.numeroInventario
@@ -151,35 +172,56 @@ export function Prestamos({ onSuccess }: Props) {
       const fecha = input.fechaDePrestamo
         ? new Date(`${input.fechaDePrestamo}T10:30:45.789+00:00`)
         : undefined
-      const libroEnPrestamo = await agregarLibroEnPrestamo(libro, {
-        fechaDePrestamo: fecha,
-      })
 
-      if (libroEnPrestamo) agregados.push(libroEnPrestamo)
+      const libroEnPrestamo = await agregarLibroEnPrestamo(libro, { fechaDePrestamo: fecha })
+      if (libroEnPrestamo) agregados.push({ slotId: slot.id, libro: libroEnPrestamo })
     }
 
-    setLibros(prev => [...prev, ...agregados])
-    setInputs(Array.from({ length: maximoLibrosEnPrestamo }, emptyLibro))
-    setLockedRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
-    setLibroEnPrestamoRows(Array.from({ length: maximoLibrosEnPrestamo }, () => false))
-
     if (agregados.length > 0) {
-      const ids = new Set(agregados.map(l => l.numeroInventario!))
+      setSlots(prev => prev.map(slot => {
+        if (slot.type !== 'input') return slot
+        const agregado = agregados.find(a => a.slotId === slot.id)
+        if (!agregado) return slot
+        return { type: 'libro', data: agregado.libro } satisfies SlotLibro
+      }))
+
+      setInputs(prev => {
+        const next = { ...prev }
+        agregados.forEach(a => { delete next[a.slotId] })
+        return next
+      })
+      setLockedInputs(prev => {
+        const next = { ...prev }
+        agregados.forEach(a => { delete next[a.slotId] })
+        return next
+      })
+      setLibroEnPrestamoInputs(prev => {
+        const next = { ...prev }
+        agregados.forEach(a => { delete next[a.slotId] })
+        return next
+      })
+
+      const ids = new Set(agregados.map(a => a.libro.numeroInventario!))
       setNewlyAdded(ids)
       setTimeout(() => setNewlyAdded(new Set()), 1500)
       onSuccess()
     }
   }
 
-  async function handleDevolver(nroInventario: number | string) {
+  async function handleDevolver(slotIndex: number, nroInventario: number | string) {
     await devolverLibro(nroInventario)
-    setLibros(prev => prev.filter(l => l.numeroInventario !== nroInventario))
+    const newId = `devuelto-${Date.now()}`
+    setSlots(prev => prev.map((slot, i) => {
+      if (i !== slotIndex) return slot
+      return { type: 'input', id: newId } satisfies SlotInput
+    }))
+    setInputs(prev => ({ ...prev, [newId]: emptyInput() }))
   }
 
-  const slotsOcupados = libros.length
-  const slotsLibres = Math.max(0, maximoLibrosEnPrestamo - slotsOcupados)
+  const libroSlots = slots.filter(s => s.type === 'libro')
+  const hasLibros = libroSlots.length > 0
 
-  if (!caracterSocio && libros.length === 0) {
+  if (!caracterSocio && !hasLibros) {
     return <ExplicacionSocioInactivo />
   }
 
@@ -189,124 +231,137 @@ export function Prestamos({ onSuccess }: Props) {
         <span className={colNro}>N° Inventario</span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
-        <span className={cn(colFecha, !libros.length && "opacity-0")}>Fecha</span>
-        <span className={cn(colBtn, "pl-2.5", !libros.length && "opacity-0")}>Devolver</span>
+        <span className={cn(colFecha, !hasLibros && "opacity-0")}>Fecha</span>
+        <span className={cn(colBtn, "pl-2.5", !hasLibros && "opacity-0")}>Devolver</span>
       </div>
 
-      {libros.map((libro, index) => {
-        const isNew = newlyAdded.has(libro.numeroInventario!)
-        const baseBg = index % 2 === 0
-          ? "#fddc87"
-          : "#fef0c6"
-        return (
-          <motion.div
-            key={libro.numeroInventario}
-            className="flex items-center gap-2 rounded py-3 px-2"
-            animate={{ backgroundColor: isNew ? "#91bf8f" : baseBg }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <span className={cn("text-lg", colNro)}>
-              {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
-            </span>
-            <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
-            <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
-            <span className={cn(
-              "text-lg", colFecha,
-              calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1°! rounded"
-            )}
-            title={`${calcularDiasDesdePrestamo(libro.fechaDePrestamo!)} dias`}
+      {slots.map((slot, slotIndex) => {
+        if (slot.type === 'libro') {
+          const libro = slot.data
+          const isNew = newlyAdded.has(libro.numeroInventario!)
+          const baseBg = slotIndex % 2 === 0 ? "#fddc87" : "#fef0c6"
+          return (
+            <motion.div
+              key={libro.numeroInventario}
+              className="flex items-center gap-2 rounded py-3 px-2"
+              animate={{ backgroundColor: isNew ? "#91bf8f" : baseBg }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {formatFecha(libro.fechaDePrestamo)}
-            </span>
-            <div className={cn(colBtn, "pl-2.5")}>
-              <button
-                type="button"
-                className="btn btn-icon"
-                onClick={() => handleDevolver(libro.numeroInventario || "")}
-              >
-                <CheckIcon className="w-5" />
-              </button>
-            </div>
-          </motion.div>
-        )
-      })}
-
-      {caracterSocio && Array.from({ length: slotsLibres }, (_, i) => (
-        <div
-          key={i}
-          className={`flex items-center gap-2 py-3 px-2 rounded ${(slotsOcupados + i) % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
-        >
-          <input
-            ref={el => { inputRefs.current[i * FIELDS.length + 0] = el }}
-            type="text"
-            value={inputs[i].numeroInventario}
-            onChange={e => handleChange(i, 'numeroInventario', e.target.value)}
-            onKeyDown={e => handleKeyDown(e, i, 0)}
-            className={`${colNro} border bg-white border-black rounded p-1 px-2`}
-            placeholder="N°"
-          />
-
-          {libroEnPrestamoRows[i]
-            ? (
-              <span className={cn("text-lg font-semibold text-red-600", colTitulo, colAutor)}>
-                El libro ya está en préstamo, verificá el N° de inventario
+              <span className={cn("text-lg", colNro)}>
+                {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
               </span>
-            )
-            : (
-              <>
-                {FIELDS.filter(f => f !== 'numeroInventario').map((field, fieldIndex) => (
-                  <input
-                    key={field}
-                    ref={el => { inputRefs.current[i * FIELDS.length + fieldIndex + 1] = el }}
-                    type="text"
-                    value={inputs[i][field]}
-                    onChange={e => handleChange(i, field, e.target.value)}
-                    onKeyDown={e => handleKeyDown(e, i, fieldIndex + 1)}
-                    onFocus={() => {
-                      const nro = Number(inputs[i].numeroInventario)
-                      if (!nro || lockedRows[i]) return
-                      const libro = getLibroPorInventario(nro)
-                      if (!libro) return
-                      setInputs(prev => prev.map((input, idx) => idx === i
-                        ? {
+              <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
+              <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
+              <span
+                className={cn(
+                  "text-lg", colFecha,
+                  calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1°! rounded"
+                )}
+                title={`${calcularDiasDesdePrestamo(libro.fechaDePrestamo!)} dias`}
+              >
+                {formatFecha(libro.fechaDePrestamo)}
+              </span>
+              <div className={cn(colBtn, "pl-2.5")}>
+                <button
+                  type="button"
+                  className="btn btn-icon"
+                  onClick={() => handleDevolver(slotIndex, libro.numeroInventario || "")}
+                >
+                  <CheckIcon className="w-5" />
+                </button>
+              </div>
+            </motion.div>
+          )
+        }
+
+        const { id } = slot
+        const input = inputs[id] ?? emptyInput()
+        const enPrestamo = libroEnPrestamoInputs[id] ?? false
+
+        return (
+          <div
+            key={id}
+            className={`flex items-center gap-2 py-3 px-2 rounded ${slotIndex % 2 === 0 ? "bg-white-accent" : "bg-white"}`}
+          >
+            <input
+              ref={el => { inputRefs.current[`${id}-0`] = el }}
+              type="text"
+              value={input.numeroInventario}
+              onChange={e => handleChange(id, 'numeroInventario', e.target.value)}
+              onKeyDown={e => handleKeyDown(e, id, 0)}
+              className={`${colNro} border bg-white border-black rounded p-1 px-2`}
+              placeholder="N°"
+            />
+
+            {enPrestamo
+              ? (
+                <span className={cn("text-lg font-semibold text-red-600", colTitulo, colAutor)}>
+                  El libro ya está en préstamo, verificá el N° de inventario
+                </span>
+              )
+              : (
+                <>
+                  {FIELDS.filter(f => f !== 'numeroInventario').map((field, fieldIndex) => (
+                    <input
+                      key={field}
+                      ref={el => { inputRefs.current[`${id}-${fieldIndex + 1}`] = el }}
+                      type="text"
+                      value={input[field]}
+                      onChange={e => handleChange(id, field, e.target.value)}
+                      onKeyDown={e => handleKeyDown(e, id, fieldIndex + 1)}
+                      onFocus={() => {
+                        const nro = Number(input.numeroInventario)
+                        if (!nro || lockedInputs[id]) return
+                        const libro = getLibroPorInventario(nro)
+                        if (!libro) return
+                        if (libro?.fechaDePrestamo) {
+                          setLibroEnPrestamoInputs(prev => ({ ...prev, [id]: true }))
+                          return
+                        }
+                        setInputs(prev => ({
+                          ...prev,
+                          [id]: {
                             numeroInventario: String(libro.numeroInventario || ""),
                             autor: libro.autor || "",
                             titulo: libro.titulo,
-                            fechaDePrestamo: input.fechaDePrestamo,
+                            fechaDePrestamo: prev[id].fechaDePrestamo,
                           }
-                        : input
-                      ))
-                      setLockedRows(prev => prev.map((v, idx) => idx === i ? true : v))
-                    }}
-                    disabled={lockedRows[i]}
-                    className={`${field === 'autor' ? colAutor : colTitulo} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
-                    placeholder={field === 'autor' ? 'Autor' : 'Título'}
-                  />
-                ))}
-
-                {!fechaDePrestamoAutomatica
-                  ? <input
-                      type="date"
-                      ref={el => { fechaRefs.current[i] = el }}
-                      value={inputs[i].fechaDePrestamo}
-                      onChange={e => handleChange(i, 'fechaDePrestamo', e.target.value)}
-                      className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
-                      onKeyDown={e => {
-                        if (e.key !== 'Enter') return
-                        e.preventDefault()
-                        inputRefs.current[(i + 1) * FIELDS.length]?.focus()
+                        }))
+                        setLockedInputs(prev => ({ ...prev, [id]: true }))
                       }}
+                      disabled={lockedInputs[id]}
+                      className={`${field === 'autor' ? colAutor : colTitulo} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      placeholder={field === 'autor' ? 'Autor' : 'Título'}
                     />
-                  : <>
-                      <div className={colFecha} />
-                      <div className={colBtn} />
-                    </>
-                }
-              </>
-            )
-          }
-        </div>
-      ))}
+                  ))}
+
+                  {!fechaDePrestamoAutomatica
+                    ? <input
+                        type="date"
+                        ref={el => { fechaRefs.current[id] = el }}
+                        value={input.fechaDePrestamo}
+                        onChange={e => handleChange(id, 'fechaDePrestamo', e.target.value)}
+                        className={cn(colBtn, "w-35 border bg-white border-black rounded p-1 px-2")}
+                        onKeyDown={e => {
+                          if (e.key !== 'Enter') return
+                          e.preventDefault()
+                          const inputSlots = getInputSlots()
+                          const idx = inputSlots.findIndex(s => s.id === id)
+                          const nextSlot = inputSlots[idx + 1]
+                          if (nextSlot) inputRefs.current[`${nextSlot.id}-0`]?.focus()
+                        }}
+                      />
+                    : <>
+                        <div className={colFecha} />
+                        <div className={colBtn} />
+                      </>
+                  }
+                </>
+              )
+            }
+          </div>
+        )
+      })}
 
       {caracterSocio && (
         <button
