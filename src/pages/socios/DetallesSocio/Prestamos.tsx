@@ -231,7 +231,7 @@ export function Prestamos({ onSuccess }: Props) {
         <span className={colNro}>N° Inventario</span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
-        <span className={cn(colFecha, !hasLibros && "opacity-0")}>Fecha</span>
+        <span className={cn(colFecha, !hasLibros && "opacity-0", !fechaDePrestamoAutomatica && "opacity-100")}>Fecha</span>
         <span className={cn(colBtn, "pl-2.5", !hasLibros && "opacity-0")}>Devolver</span>
       </div>
 
