@@ -1,15 +1,21 @@
 import type ExcelJS from 'exceljs'
 
 export function parseFecha(value1: ExcelJS.CellValue, value2: ExcelJS.CellValue): [string, string] {
-  const raw1 = value1 instanceof Date ? value1.toISOString().split('T')[0] : String(value1 ?? '')
-  const raw2 = value2 instanceof Date ? value2.toISOString().split('T')[0] : String(value2 ?? '')
+  const toRaw = (value: ExcelJS.CellValue): string => {
+    if (!value) return ''
+    
+    if (value instanceof Date) return value.toLocaleDateString('es-AR')
+    if (typeof value === 'object' && 'text' in value) return ''
 
-  const fixAnio = (fecha: string) => fecha.replace(/^(\d{2,3})-/, (_, y) => `${y.padStart(4, '2')}-`)
-
+    return String(value)
+  }
+  
+  const raw1 = toRaw(value1)
+  const raw2 = toRaw(value2)
   if (raw1.includes('-') && !raw2) {
-    const [f1, f2] = raw1.split('-').map(f => fixAnio(f.trim()))
-    return [f1 ?? '', f2 ?? '']
+      const [f1, f2] = raw1.split('-')
+      return [f1?.trim() ?? '', f2?.trim() ?? '']
   }
 
-  return [fixAnio(raw1), fixAnio(raw2)]
+  return [raw1, raw2]
 }

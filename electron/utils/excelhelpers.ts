@@ -28,7 +28,7 @@ export function rowToSocio(row: ExcelJS.Row): Socio {
     nombreYApellido: String(row.getCell(2).value ?? ''),
     domicilio: String(row.getCell(3).value ?? ''),
     dni: Number(row.getCell(4).value) || 0,
-    fechaNacimiento: String(row.getCell(5).value ?? ''),
+    fechaNacimiento: parseFecha(row.getCell(5).value, null)[0],
     telefono,
     caracterSocio: String(row.getCell(7).value || ''),
     fechaIngreso,
