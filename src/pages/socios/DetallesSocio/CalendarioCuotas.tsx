@@ -7,17 +7,24 @@ type MesProps = {
   nombre: string
   pagado: boolean
   loading: boolean
+  anyLoading: boolean
   onToggle: () => void
+  year: number
 }
 
-function Mes({ nombre, pagado, loading, onToggle }: MesProps) {
+function Mes({ nombre, pagado, loading, anyLoading, onToggle, year }: MesProps) {
   return (
-    <li onClick={!loading ? onToggle : undefined} className={cn(
+    <li onClick={!anyLoading ? onToggle : undefined} className={cn(
       "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs select-none",
       pagado ? "bg-green" : "bg-[#f582ae59]",
-      loading && "opacity-60"
+      anyLoading && "opacity-80"
     )}>
-      <span className="font-semibold text-lg text-center truncate">{nombre}</span>
+      <div className="flex flex-col justify-center items-center">
+        <span className="pt-px text-xs opacity-70 font-semibold">{year}</span>
+        <span className="font-semibold text-lg text-center truncate">
+          {nombre}
+        </span>
+      </div>
       {pagado
         ? <button disabled={loading} className={cn(
           "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded",
@@ -57,9 +64,11 @@ export function CalendarioCuotas() {
           return (
             <Mes
               key={nombre}
+              year={anio}
               nombre={nombre}
               pagado={pagado}
               loading={loadingIndex === i}
+              anyLoading={loadingIndex !== null}
               onToggle={() => handleToggle(i)}
             />
           )
