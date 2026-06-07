@@ -261,7 +261,7 @@ export function Prestamos({ onSuccess }: Props) {
               <span
                 className={cn(
                   "text-lg", colFecha,
-                  calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1°! rounded"
+                  calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1.5! self-center rounded"
                 )}
                 title={`${calcularDiasDesdePrestamo(libro.fechaDePrestamo!)} dias`}
               >
