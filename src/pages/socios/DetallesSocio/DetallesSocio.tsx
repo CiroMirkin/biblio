@@ -10,7 +10,8 @@ import { getCaracterSocio } from "@/models"
 export function DetalleSocio() {
   const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
 
-  const cuotasDesactualizadas = getCaracterSocio(socioSeleccionado?.caracterSocio).tieneCuotasDesactualizadas
+  const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
+  const cuotasDesactualizadas = caracterSocio.tieneCuotasDesactualizadas
 
   return (
     <>
@@ -30,6 +31,8 @@ export function DetalleSocio() {
             <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
             <Prestamos onSuccess={() => {}} />
           </div>
+          
+          { !caracterSocio.estado && <Observaciones /> }
         </div>
 
         <div className="flex flex-col gap-4">
@@ -39,7 +42,9 @@ export function DetalleSocio() {
             </h2>
             <CalendarioCuotas />
           </div>
-          <Observaciones />
+
+          { caracterSocio.estado && <Observaciones /> }
+          
           <div className="flex gap-4 card">
             <GestionEstadoSocio />
           </div>
