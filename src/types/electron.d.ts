@@ -22,7 +22,8 @@ declare global {
       devolverLibro: (numeroInventario: number | string) => Promise<boolean>
       getLibrosPrestadosSocio: (nroSocio: number) => Promise<Libro[]>
       getSociosConLibros: () => Promise<SocioConLibros[]>
-      
+
+      editarDatosSocio: (nroSocio: number, datos: Partial<Socio>) => Promise<boolean>
       getCuotasSocio: (nroSocio: number, anio?: number) => Promise<{
         meses: Record<string, boolean>[],
         anio: number

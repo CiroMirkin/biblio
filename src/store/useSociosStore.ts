@@ -28,6 +28,7 @@ interface SociosState {
     irAnioSiguiente: () => void
     
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
+    editarDatos: (datos: Partial<Socio>) => Promise<void>
 
     darDeBaja: (socio: Socio, options?: { esSocioSeleccionado?: boolean }) => Promise<void>
     reactivar: (socio: Socio, options?: { esSocioSeleccionado?: boolean }) => Promise<void>
@@ -114,6 +115,24 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         }
     },
 
+    editarDatos: async (datos) => {
+        const { socioSeleccionado, socios, sociosFiltrados } = get()
+        if (!socioSeleccionado || !socioSeleccionado.nroSocio) return
+
+        const ok = await window.electronAPI.editarDatosSocio(socioSeleccionado.nroSocio, datos)
+        if (!ok) return
+
+        const actualizado = { ...socioSeleccionado, ...datos }
+
+        const actualizarLista = (lista: Socio[]) =>
+            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
+
+        set({
+            socioSeleccionado: actualizado,
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+        })
+    },
 
     toggleMes: async (mesIndex) => {
         const { socioSeleccionado, anio, mesesCuotas, reactivar } = get()
@@ -197,27 +216,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         return newMaximo
     },
     
-    setObservaciones: async (newObservaciones: string) => {
-        const { socioSeleccionado, socios, sociosFiltrados } = get()
-        if (!socioSeleccionado) return
-
-        const ok = await window.electronAPI.changeObservaciones(
-            newObservaciones,
-            socioSeleccionado.nroSocio,
-        )
-        if (!ok) return
-
-        const actualizado = { ...socioSeleccionado, observaciones: newObservaciones }
-
-        const actualizarLista = (lista: Socio[]) =>
-            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
-
-        set({
-            socioSeleccionado: actualizado,
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
-        })
-    },
+    setObservaciones: async (newObservaciones: string) => get().editarDatos({ observaciones: newObservaciones }),
 
     irAnioAnterior: async () => {
         const { socioSeleccionado, anio } = get()
