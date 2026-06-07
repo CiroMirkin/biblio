@@ -30,7 +30,7 @@ export function LibroEnPrestamo({ libro }: Props) {
                     <p className="text-base">{libro.autor}</p>
                     <p className="text-sm opacity-70 mt-px">
                         N° de Inventario: 
-                        {libro.numeroInventario || " S/N"}
+                        { libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
                     </p>
                 </div>
                 <span className={cn(
