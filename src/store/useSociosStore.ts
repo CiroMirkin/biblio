@@ -35,7 +35,7 @@ interface SociosState {
 
     darDeBajaSocioSeleccionado: () => Promise<void>
     reactivarSocioSeleccionado: () => Promise<void>
-    aplicarCambioAutomaticoDeCaracter: (socio: Socio, mesesCuotas: Calendario) => Promise<void>
+    aplicarCambioAutomaticoDeCaracter: (socio: Socio) => Promise<void>
 
     setObservaciones: (newObservaciones: string) => Promise<void>
     setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
@@ -97,22 +97,14 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
     seleccionar: async (socio) => {
         const { anio, meses: mesesCuotas } = await cargarCuotasSocio(socio.nroSocio)
-
+        await get().aplicarCambioAutomaticoDeCaracter(socio)
+        
         set({
             socioSeleccionado: socio,
             showDetallesSocio: true,
             mesesCuotas,
             anio,
-        })
-        
-        const anioActual = new Date().getFullYear()
-        if(anio !== anioActual) {
-            const { meses: mesesAnioActual } = await cargarCuotasSocio(socio.nroSocio, anioActual)
-            await get().aplicarCambioAutomaticoDeCaracter(socio, mesesAnioActual)
-        }
-        else {
-            await get().aplicarCambioAutomaticoDeCaracter(socio, mesesCuotas)
-        }
+        })        
     },
 
     editarDatos: async (datos) => {
@@ -254,14 +246,14 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         return nuevoSocio
     },
 
-    aplicarCambioAutomaticoDeCaracter: async (socio: Socio, mesesCuotas: Calendario) => {
+    aplicarCambioAutomaticoDeCaracter: async (socio: Socio) => {
         const { maximoDeCuotasAdeudadas } = get()
 
         const caracterSocio = getCaracterSocio(socio.caracterSocio)
 
         if (caracterSocio.tieneCuotasDesactualizadas) return
 
-        const cuotasAdeudadas = calcularCuotasAdeudadas(mesesCuotas)
+        const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio)
         if (caracterSocio.caracter) {
             if (cuotasAdeudadas > maximoDeCuotasAdeudadas) {
                 await get().darDeBaja(socio)
