@@ -238,7 +238,7 @@ export function Prestamos({ onSuccess }: Props) {
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
         <span className={cn(colFecha, !hasLibros && "opacity-0", !fechaDePrestamoAutomatica && "opacity-100")}>Fecha</span>
-        <span className={cn(colBtn, "pl-2.5", !hasLibros && "opacity-0")}>Devolver</span>
+        <span className={cn(colBtn, "pl-2.5 truncate md:truncate-none!", !hasLibros && "opacity-0")}>Devolver</span>
       </div>
 
       {slots.map((slot, slotIndex) => {
@@ -270,10 +270,10 @@ export function Prestamos({ onSuccess }: Props) {
               <div className={cn(colBtn, "pl-2.5")}>
                 <button
                   type="button"
-                  className="btn btn-icon"
+                  className="btn btn-icon p-2 md:px-4"
                   onClick={() => handleDevolver(slotIndex, libro.numeroInventario || "")}
                 >
-                  <CheckIcon className="w-5" />
+                  <CheckIcon className="w-4 md:w-5" />
                 </button>
               </div>
             </motion.div>

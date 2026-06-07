@@ -69,7 +69,7 @@ export function Inscripcion() {
         </AnimatePresence>
       </h2>
       
-      <div className="w-full grid grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
+      <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
         <form ref={formRef} className="flex flex-col gap-2 card" onSubmit={handleSubmit}>
           <div className="w-full grid grid-cols-2 gap-4">
             <label className="flex flex-col gap-1 text-base">
@@ -120,7 +120,7 @@ export function Inscripcion() {
           <input type="submit" value="Inscribir" className="px-4 py-2 btn mt-2" />
         </form>
 
-        <aside className="sticky top-0 h-fit">
+        <aside className="sticky top-0 h-fit hidden md:block">
           <section className="p-4 rounded bg-white text-base">
             <p>El apellido, nombre y numero de celular son los únicos datos 100% necesarios.</p>
           </section>

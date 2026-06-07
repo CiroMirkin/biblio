@@ -65,7 +65,8 @@ function App() {
             actualView !== options.CUOTA && "opacity-80",
           )}
         >
-          Socios y cuotas
+          <span className="hidden md:block">Socios y cuotas</span>
+          <span className="block md:hidden">Socios</span>
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.INSCRIPCION)}

@@ -22,7 +22,7 @@ export function DetalleSocio() {
         <span className="text-lg">Volver a la lista de socios</span>
       </p>
 
-      <div className="pt-4 grid grid-cols-[3.2fr_1.8fr] gap-4">
+      <div className="pt-4 grid grid-cols-1 md:grid-cols-[3.2fr_1.8fr] gap-4">
         <div className="flex flex-col gap-4">
           <SocioDatos />
 
