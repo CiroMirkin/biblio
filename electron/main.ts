@@ -2,9 +2,9 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import type { Libro } from './libro'
-import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, } from './handlers'
+import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, } from './handlers'
 import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
-import type { NewSocioData } from './socio'
+import type { NewSocioData, Socio } from './socio'
 import { initializeDataFiles } from './utils/initializeDataFiles'
 import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
 import { IS_DEV } from './constants'
@@ -40,6 +40,8 @@ ipcMain.handle('createSocio', (_event, socioData: NewSocioData) => createSocio(s
 
 ipcMain.handle('darDeBajaSocio', (_event, nroSocio: number) => darDeBajaSocio(nroSocio))
 ipcMain.handle('reactivarSocio', (_event, nroSocio: number) => reactivarSocio(nroSocio))
+
+ipcMain.handle('editarDatosSocio', (_event, nroSocio: number, datos: Partial<Socio>) => editarDatosSocio(nroSocio, datos))
 
 ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) => changeObservaciones(obs, nroSocio))
 

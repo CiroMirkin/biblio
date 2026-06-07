@@ -82,6 +82,7 @@ describe('editarDatosSocio (integration)', () => {
         })
 
         expect(socioDespues).toBeDefined()
+    expect(socioDespues!.nroSocio).toBe(socioAntes!.nroSocio)
         expect(socioDespues!.telefono).toBe(nuevoTelefono)
         expect(socioDespues!.nombreYApellido).toBe(socioAntes!.nombreYApellido)
         expect(socioDespues!.dni).toBe(socioAntes!.dni)

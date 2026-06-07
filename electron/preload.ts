@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   getSociosConLibros: () => ipcRenderer.invoke('getSociosConLibros'),
   
+  editarDatosSocio: (nroSocio: number, datos: Partial<import('./socio').Socio>) => 
+    ipcRenderer.invoke('editarDatosSocio', nroSocio, datos),
+
   getCuotasSocio: (nroSocio: number, anio?: number) => 
     anio !== undefined
       ? ipcRenderer.invoke('getCuotasSocio', nroSocio, anio)
