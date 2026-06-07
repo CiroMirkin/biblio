@@ -23,17 +23,17 @@ const views = [
   {
     id: options.INSCRIPCION,
     view: <Inscripcion />,
-    bgColor: "bg-[#c0d4f4]",
+    bgColor: "bg-[#a3c2f3]",
   },
   {
     id: options.LIBROS,
     view: <Catalogo />,
-    bgColor: "bg-[#d9376e95]",
+    bgColor: "bg-[#a36a96]",
   },
   {
     id: options.AJUSTES,
     view: <Ajustes />,
-    bgColor: "bg-gray-200",
+    bgColor: "bg-[#b6d4d4]",
   },
 ]
 
@@ -73,7 +73,7 @@ function App() {
           animate={{ height: actualView === options.INSCRIPCION ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg tracking-wider hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#c0d4f4] transition-colors duration-75 ease-in",
+            "text-lg tracking-wider hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#a3c2f3] transition-colors duration-75 ease-in",
             actualView === options.INSCRIPCION && "font-semibold",
             actualView !== options.INSCRIPCION && "opacity-80"
           )}
@@ -85,7 +85,7 @@ function App() {
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d9376e95] transition-colors duration-75 ease-in",
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#e856c6cb] transition-colors duration-75 ease-in",
             actualView === options.LIBROS && "font-semibold",
             actualView !== options.LIBROS && "opacity-80",
           )}
@@ -97,7 +97,7 @@ function App() {
           animate={{ height: actualView === options.AJUSTES ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-gray-200 transition-colors duration-75 ease-in",
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#b6d4d4] transition-colors duration-75 ease-in",
             actualView === options.AJUSTES && "font-semibold",
             actualView !== options.AJUSTES && "opacity-80",
           )}

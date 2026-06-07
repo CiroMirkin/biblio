@@ -15,7 +15,7 @@ export function Catalogo() {
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
             <section>
                 <div className="sticky inset-y-0 z-50 bg-white">
-                    <div className="bg-[#d9376e95]">
+                    <div className="bg-[#a36a96]">
                         <div className="h-4 w-full bg-transparent" />
                         <BuscarLibroForm />
                         <div className="h-4 w-full bg-transparent" />
