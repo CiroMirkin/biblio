@@ -6,6 +6,9 @@ import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
 import { getCaracterSocio } from "@/models"
+import { cn } from "@/utils"
+
+const anioActual: number = new Date().getFullYear()
 
 export function DetalleSocio() {
   const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
@@ -37,7 +40,17 @@ export function DetalleSocio() {
 
         <div className="flex flex-col gap-4">
           <div className="card">
-            <h2 className="pb-4 text-xl flex justify-between items-center">Cuotas {anio}
+            <h2 className="pb-4 text-2xl flex justify-between items-center">
+              <span className="flex gap-2">
+                Cuotas 
+                <span
+                  className={cn(
+                    "rounded",
+                    anio !== anioActual && "bg-amber-300 px-1",
+                    !caracterSocio.estado && "bg-amber-300 px-1 font-bold",
+                  )}
+                >{anio}</span>
+              </span>
               {cuotasDesactualizadas && (<span className="font-2xl font-semibold bg-sky-300 px-4">ACTUALIZAR CUOTAS</span>)}
             </h2>
             <CalendarioCuotas />

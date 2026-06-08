@@ -1,7 +1,7 @@
 import { cn } from "@/utils"
 import { useState } from "react"
 import { useSociosStore } from "@/store"
-import { Spinner } from "@/components"
+import { Spinner, ChevronsLeftIcon, ChevronsRightICon } from "@/components"
 import { AnimatePresence, motion } from "motion/react"
 
 type MesProps = {
@@ -87,17 +87,21 @@ export function CalendarioCuotas() {
         </AnimatePresence>
       </div>
 
-      <footer className="w-full pt-4 flex gap-6 justify-center items-center">
-        <button onClick={irAnioAnterior} disabled={loadingIndex !== null} className={cn("btn", loadingIndex !== null && "opacity-35 pointer-events-none")}>
-          {anio - 1}
+      <footer className="w-full pt-4 flex gap-5 justify-center items-center">
+        <button onClick={irAnioAnterior} disabled={loadingIndex !== null} className={cn("btn py-1", loadingIndex !== null && "opacity-35 pointer-events-none")}>
+          <ChevronsLeftIcon />
         </button>
-        <span className="font-semibold text-lg opacity-70">{anio}</span>
+        <span
+          className={cn("px-1.5 font-semibold text-lg opacity-70 rounded", anio !== anioActual && "bg-amber-300")}
+        >
+          {anio}
+        </span>
         <button
           onClick={irAnioSiguiente}
-          className={cn("btn", (anio >= anioActual || loadingIndex !== null) ? "opacity-35 pointer-events-none" : "")}
+          className={cn("btn py-1", (anio >= anioActual || loadingIndex !== null) ? "opacity-35 pointer-events-none" : "")}
           disabled={anio >= anioActual || loadingIndex !== null}
         >
-          {anio + 1}
+          <ChevronsRightICon />
         </button>
       </footer>
     </>
