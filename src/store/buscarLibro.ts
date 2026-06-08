@@ -1,5 +1,5 @@
 import type { LibroEnPrestamo } from "@/models"
-import { levenshtein } from "@/utils"
+import { levenshtein, normailzarTexto } from "@/utils"
 
 interface Params {
   libros: LibroEnPrestamo[]
@@ -36,22 +36,3 @@ export function buscarLibro({ libros, dato}: Params): LibroEnPrestamo[] {
 
   return libros.filter(libro => normailzarTexto(libro.autor || '').includes(dato))
 }
-
-const normailzarTexto = (text: string) => text
-  .toUpperCase()
-  .replace(/[ÁÀÄÂ]/g, "A")
-  .replace(/[ÉÈËÊ]/g, "E")
-  .replace(/[ÍÌÏÎ]/g, "I")
-  .replace(/[ÓÒÖÔ]/g, "O")
-  .replace(/[ÚÙÜÛ]/g, "U")
-  .replace(/[áàäâ]/g, "A")
-  .replace(/[éèëê]/g, "E")
-  .replace(/[íìïî]/g, "I")
-  .replace(/[óòöô]/g, "O")
-  .replace(/[úùüû]/g, "U")
-  .replace(/\*.*/g, "")
-  .replace(/\?.*/g, "")
-  .replace(/\(.*/g, "")
-  .replace(/[,;]/g, " ")
-  .replace(/\s+/g, " ")
-  .trim().toLowerCase()
