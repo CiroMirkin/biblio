@@ -1,5 +1,5 @@
 import type { Socio } from "@/models"
-import { getApellido, levenshtein } from "@/utils"
+import { getApellido, levenshtein, normailzarTexto } from "@/utils"
 import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
 
 interface Params {
@@ -8,28 +8,44 @@ interface Params {
 }
 
 export function buscarSocio({ socios, dato }: Params): Socio[] {
-    if(!isNaN(Number(dato))) {
+    if (!isNaN(Number(dato))) {
         return socios.filter(s => Number(s.nroSocio) === Number(dato))
     }
 
+    const datoNormalizado = normailzarTexto(dato)
+    const palabrasDato = datoNormalizado.split(' ').filter(Boolean)
+
     const filtrados = socios.filter(socio => {
-        const apellido = getApellido(socio.nombreYApellido)
-        if (apellido.includes(dato)) return true
-        return apellido.split(' ').some(palabra => {
-            if (palabra.startsWith(dato)) return true
-            if (dato.length < 5) return false
-            if (Math.abs(palabra.length - dato.length) > 1) return false
-            return levenshtein(palabra, dato) <= 1
-        })
+        const apellido = normailzarTexto(getApellido(socio.nombreYApellido))
+        const nombreCompleto = normailzarTexto(socio.nombreYApellido.split(',').join(' '))
+
+        if (nombreCompleto.includes(datoNormalizado)) return true
+        if (apellido.includes(datoNormalizado)) return true
+
+        return palabrasDato.every(palabraDato =>
+            apellido.split(' ').some(palabraApellido => {
+                if (palabraApellido.startsWith(palabraDato)) return true
+                if (palabraDato.length < 5) return false
+                if (Math.abs(palabraApellido.length - palabraDato.length) > 1) return false
+                return levenshtein(palabraApellido, palabraDato) <= 1
+            }) || nombreCompleto.split(' ').some(palabraNombre => {
+                if (palabraNombre.startsWith(palabraDato)) return true
+                if (palabraDato.length < 5) return false
+                if (Math.abs(palabraNombre.length - palabraDato.length) > 1) return false
+                return levenshtein(palabraNombre, palabraDato) <= 1
+            })
+        )
     })
 
-    const ordenados = filtrados.sort((a, b) => {
-        return getRelevanciaDelApellido(b.nombreYApellido, dato) - getRelevanciaDelApellido(a.nombreYApellido, dato)
-    })
+    const ordenados = filtrados.sort((a, b) =>
+        getRelevanciaDelApellido(b.nombreYApellido, dato) - getRelevanciaDelApellido(a.nombreYApellido, dato)
+    )
 
-    if(ordenados.length){
+    if (ordenados.length) {
         return ordenados
     }
-    
-    return socios.filter(socio => socio.nombreYApellido.toLocaleLowerCase().includes(dato))
+
+    return socios.filter(socio =>
+        normailzarTexto(socio.nombreYApellido).includes(datoNormalizado)
+    )
 }
