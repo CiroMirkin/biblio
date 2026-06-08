@@ -13,6 +13,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 
+const singleInstanceLock = app.requestSingleInstanceLock()
+if (!singleInstanceLock) app.quit()
+
+let mainWindow: BrowserWindow | null = null
+app.on('second-instance', () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+  }
+})
+
 ipcMain.handle('getLibros', () => getLibros())
 ipcMain.handle('addLibroPrestado', (_, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha))
 ipcMain.handle('devolverLibro', (_, numeroInventario: number | string) => devolverLibro(numeroInventario))
@@ -48,7 +59,7 @@ ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) =>
 ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
 
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     icon: IS_DEV
@@ -61,10 +72,14 @@ function createWindow() {
     },
   })
 
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
+
   if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
+    mainWindow.loadURL(VITE_DEV_SERVER_URL)
   } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'))
+    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   }
 }
 
