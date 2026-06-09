@@ -11,11 +11,17 @@ export const editarDatosSocio = async (nroSocio: number, datos: Partial<Socio>):
 
     let found = false
 
+    const {
+        nroSocio: _,
+        nombreYApellido: __,
+        ...datosSeguros
+    } = datos as Partial<Socio>
+
     worksheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return
         const socio = rowToSocio(row)
         if (socio.nroSocio === nroSocio) {
-            writeSocio(row, { ...socio, ...datos })
+            writeSocio(row, { ...socio, ...datosSeguros })
             found = true
         }
     })
