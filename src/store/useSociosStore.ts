@@ -29,6 +29,7 @@ interface SociosState {
     
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
     editarDatos: (datos: Partial<Socio>) => Promise<void>
+    cambiarNombre: (newName: string) => Promise<void>
 
     darDeBaja: (socio: Socio, options?: { esSocioSeleccionado?: boolean }) => Promise<void>
     reactivar: (socio: Socio, options?: { esSocioSeleccionado?: boolean }) => Promise<void>
@@ -209,6 +210,26 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
     
     setObservaciones: async (newObservaciones: string) => get().editarDatos({ observaciones: newObservaciones }),
+    
+    cambiarNombre: async (newName: string) => {
+        const { socioSeleccionado: socio, socios, sociosFiltrados } = get()
+        if(!socio || !socio.nroSocio || !newName.trim()) return
+
+        const ok = await window.electronAPI.cambiarNombreSocio(
+            socio.nroSocio, newName,
+        )
+        if(!ok) return 
+        
+        const actualizado = { ...socio, nombreYApellido: newName, }
+        const actualizarLista = (lista: Socio[]) =>
+            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
+
+        set({
+            socioSeleccionado: { ...actualizado },    
+            socios: actualizarLista(socios),
+            sociosFiltrados: actualizarLista(sociosFiltrados),
+        })
+    },
 
     irAnioAnterior: async () => {
         const { socioSeleccionado, anio } = get()

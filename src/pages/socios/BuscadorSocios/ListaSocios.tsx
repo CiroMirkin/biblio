@@ -38,7 +38,7 @@ export function ListaSocios() {
           )}
           onClick={() => seleccionar(socio)}
         >
-          <span className="w-full text-lg">{socio.nombreYApellido}</span>
+          <span className="w-full text-lg cursor-default select-none">{socio.nombreYApellido}</span>
           <button className="btn">
             Ver
           </button>

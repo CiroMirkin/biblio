@@ -8,10 +8,12 @@ import { PencilIcon } from "@/components/PencilIcon"
 type CampoEditable = "dni" | "telefono" | "domicilio" | "email" | "fechaNacimiento" | "fechaIngreso" | "fechaEgreso"
 
 export function SocioDatos() {
-    const { socioSeleccionado: socio, editarDatos } = useSociosStore()
+    const { socioSeleccionado: socio, editarDatos, cambiarNombre } = useSociosStore()
     const [expandido, setExpandido] = useState(false)
     const [campoEditando, setCampoEditando] = useState<CampoEditable | null>(null)
     const [valorEdicion, setValorEdicion] = useState("")
+    const [editandoNombre, setEditandoNombre] = useState(false)
+    const [nombreEdicion, setNombreEdicion] = useState("")
 
     const caracterSocio = getCaracterSocio(socio?.caracterSocio)
 
@@ -24,6 +26,16 @@ export function SocioDatos() {
         if (!campoEditando) return
         await editarDatos({ [campoEditando]: valorEdicion })
         setCampoEditando(null)
+    }
+
+    const iniciarEdicionNombre = () => {
+        setNombreEdicion(socio?.nombreYApellido ?? "")
+        setEditandoNombre(true)
+    }
+
+    const guardarNombre = async () => {
+        await cambiarNombre(nombreEdicion)
+        setEditandoNombre(false)
     }
 
     function CampoEditable({ campo, label, valor }: { campo: CampoEditable; label: string; valor: string | undefined }) {
@@ -92,6 +104,48 @@ export function SocioDatos() {
                             exit={{ opacity: 0, height: 0 }}
                             style={{ overflow: "hidden" }}
                         >
+                            <li className="group flex items-center justify-start">
+                                <span className="font-semibold cursor-default mr-1">Nombre:</span>
+                                {editandoNombre ? (
+                                    <>
+                                        <input
+                                            autoFocus
+                                            className="font-normal border-b border-black/40 bg-transparent outline-none px-0.5"
+                                            value={nombreEdicion}
+                                            onChange={e => setNombreEdicion(e.target.value)}
+                                            onKeyDown={e => e.key === "Enter" && guardarNombre()}
+                                        />
+                                        <button
+                                            className="ml-2 text-xs font-semibold cursor-pointer hover:underline"
+                                            onClick={guardarNombre}
+                                        >
+                                            Guardar
+                                        </button>
+                                        <button
+                                            className="ml-4 text-xs opacity-60 cursor-pointer hover:underline"
+                                            onClick={() => setEditandoNombre(false)}
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span
+                                            className="font-normal cursor-pointer hover:font-semibold"
+                                            onClick={iniciarEdicionNombre}
+                                        >
+                                            {socio?.nombreYApellido ?? "-"}
+                                        </span>
+                                        <button
+                                            className="hidden group-hover:inline cursor-pointer"
+                                            onClick={iniciarEdicionNombre}
+                                        >
+                                            <PencilIcon size={20} className="pb-1 ml-px" />
+                                        </button>
+                                    </>
+                                )}
+                            </li>
+
                             <CampoEditable campo="dni" label="DNI:" valor={socio?.dni ? formatDNI(socio.dni) : undefined} />
                             <CampoEditable campo="telefono" label="Número de celular:" valor={socio?.telefono || ''} />
                             <CampoEditable campo="domicilio" label="Dirección:" valor={socio?.domicilio} />

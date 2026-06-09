@@ -13,6 +13,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   getSociosConLibros: () => ipcRenderer.invoke('getSociosConLibros'),
   
+  cambiarNombreSocio: (nroSocio: number, nombre: string) => ipcRenderer.invoke(
+    'cambiarNombreSocio', 
+    nroSocio,
+    nombre,
+  ),
+  
   editarDatosSocio: (nroSocio: number, datos: Partial<import('./socio').Socio>) => 
     ipcRenderer.invoke('editarDatosSocio', nroSocio, datos),
 
