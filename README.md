@@ -5,7 +5,10 @@
 |----|----|
 |npm run dev | Dev server con hot-reload (Vite + Electron) |
 |npm run build | Compila TS + Vite |
-| npm run dist | Build + empaqueta con electron-builder |
+| npm run dist | Build + empaqueta con electron-builder (Electron 41, main) |
+| npm run dist:win10 | Compila para Windows 10 (x64 + ia32, Electron 41, main) |
+| npm run dist:win7 | Compila para Windows 7 (solo ia32, Electron 22, win7-support) |
+| npm run dist:all | Ejecuta win10 y win7 en secuencia |
 |npm test| Ejecuta pruebas sobre los handlers de electron|
 
 Ejecutar Git Bash como administrador antes de ejecutar `npm run dist`.
@@ -53,7 +56,25 @@ Luego si se usa el componente `Form` en conjunto con el store, el action dentro 
 npm run dist:win7
 ```
 
-Este comando cambia automaticamente a la rama `win7-support`, instala dependencias, compila y empaqueta. El instalador se genera en `release/biblio Setup X.X.X.exe` (solo ia32).
+Este comando cambia automaticamente a la rama `win7-support`, instala dependencias, compila y empaqueta. El instalador se genera en `release/biblio Setup X.X.X.exe` (solo ia32, Electron 22).
+
+> **Importante:** el instalador de win7 es el generado por `npm run dist:win7` (no el de `npm run dist:win10`). Ambos comandos producen un archivo con el mismo nombre pero distinto contenido. Verificar que se ejecuta el comando correcto segun el destino.
+
+### Compilacion para Windows 10 (x64 + ia32)
+
+```bash
+npm run dist:win10
+```
+
+Genera `release/biblio Setup X.X.X.exe` con soporte para x64 e ia32 (Electron 41, rama `main`).
+
+### Compilacion para ambos (secuencial)
+
+```bash
+npm run dist:all
+```
+
+Ejecuta `dist:win10` seguido de `dist:win7`.
 
 ### Mantenimiento (sincronizacion con main)
 
