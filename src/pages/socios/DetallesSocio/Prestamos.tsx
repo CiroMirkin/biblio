@@ -96,7 +96,7 @@ export function Prestamos({ onSuccess }: Props) {
 
     if (fieldIndex === 0) {
       const nro = Number(inputs[id]?.numeroInventario)
-      if (!nro) return
+      if (!nro || !caracterSocio) return
 
       const libro = getLibroPorInventario(nro)
 
@@ -216,11 +216,16 @@ export function Prestamos({ onSuccess }: Props) {
 
   async function handleDevolver(slotIndex: number, nroInventario: number | string) {
     await devolverLibro(nroInventario)
-    setSlots(prev => prev.filter((_, i) => i !== slotIndex))
-    if (caracterSocio) {
-      const newId = `devuelto-${Date.now()}`
-      setSlots(prev => [...prev, { type: 'input', id: newId } satisfies SlotInput])
-      setInputs(prev => ({ ...prev, [newId]: emptyInput() }))
+    const newId = `devuelto-${Date.now()}`
+    
+    setSlots(prev => prev.map((slot, i) => {
+      if (i !== slotIndex) return slot
+      return { type: 'input', id: newId } satisfies SlotInput
+    }))
+
+    setInputs(prev => ({ ...prev, [newId]: emptyInput() }))
+    if (!caracterSocio) {
+      setLockedInputs(prev => ({ ...prev, [newId]: true }))
     }
   }
 
@@ -295,7 +300,8 @@ export function Prestamos({ onSuccess }: Props) {
               value={input.numeroInventario}
               onChange={e => handleChange(id, 'numeroInventario', e.target.value)}
               onKeyDown={e => handleKeyDown(e, id, 0)}
-              className={`${colNro} border bg-white border-black rounded p-1 px-2`}
+              className={`${colNro} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+              disabled={!caracterSocio}
               placeholder="N°"
             />
 
@@ -319,7 +325,7 @@ export function Prestamos({ onSuccess }: Props) {
                         const nro = Number(input.numeroInventario)
                         if (!nro || lockedInputs[id]) return
                         const libro = getLibroPorInventario(nro)
-                        if (!libro) return
+                        if (!libro || !caracterSocio) return
                         if (libro?.fechaDePrestamo) {
                           setLibroEnPrestamoInputs(prev => ({ ...prev, [id]: true }))
                           return
