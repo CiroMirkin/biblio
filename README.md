@@ -35,3 +35,36 @@ Para agregar nuevos ajustes al sistema modificar:
 4. Actualiza las pruebas en `tests\settings.spec.ts` y en `tests\ipcHandlers.spec.ts`.
 
 Luego si se usa el componente `Form` en conjunto con el store, el action dentro del store debe devolver el valor luego de ser actualizado, esto permite que `Form` se mantenga actualizado y no sobreescriba los valores.
+
+---
+
+## Compilacion para Windows 7 (32 bits)
+
+### Requisitos
+
+- Rama: `win7-support`
+- Electron 22, electron-builder 24, `"type": "commonjs"` (CJS)
+- Salida CJS en `vite.config.ts` para los procesos main y preload
+- `electron-store@7` (CJS)
+
+### Compilar
+
+```bash
+git checkout win7-support
+npm install
+npm run dist:win7
+```
+
+El instalador se genera en `release/biblio Setup X.X.X.exe` (solo ia32).
+
+### Mantenimiento (sincronizacion con main)
+
+1. `git checkout win7-support`
+2. `git fetch origin main`
+3. `git rebase origin/main`
+4. Resolver conflictos si los hay (prestar atencion a `package.json`, `vite.config.ts`, `package-lock.json`)
+5. `git push origin win7-support --force-with-lease`
+6. `npm install` (actualiza dependencias)
+7. `npm run build` y `npm run dist:win7` para verificar
+
+La sincronizacion se recomienda al menos una vez por sprint o tras cambios significativos en dependencias o configuracion de compilacion en `main`.
