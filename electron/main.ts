@@ -67,7 +67,7 @@ function createWindow() {
       ? path.join(process.cwd(), 'public/icon.ico')
       : path.join(process.resourcesPath, 'icon.ico'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       sandbox: false,
     },
