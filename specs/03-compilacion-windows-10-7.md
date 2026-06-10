@@ -1,6 +1,6 @@
 # SPEC 03 — Compilación para Windows 10 x64 y Windows 7 x32
 
-**Estado:** Draft · **Dependencias:** SPEC 02 (persistencia electron-store) · **Fecha:** 2026-06-10
+**Estado:** Implemented · **Dependencias:** SPEC 02 (persistencia electron-store) · **Fecha:** 2026-06-10
 **Objetivo:** Poder compilar y distribuir Biblio como instalador NSIS para Windows 10 x64 (Electron 41, rama `main`) y Windows 7 x32 (Electron 22, rama `win7-support`), con scripts de automatización.
 
 ---
@@ -80,6 +80,20 @@ Este spec no introduce cambios estructurales en el modelo de datos del proyecto.
 | **No:** Soporte para Windows 7 x64 | Windows 7 x64 es muy poco común; el guide menciona solo x32 |
 
 ---
+
+## Sync process (rebase periódico de `win7-support` contra `main`)
+
+1. Asegurarse de tener un working tree limpio en ambas ramas (`git status`).
+2. `git checkout win7-support`
+3. `git fetch origin main`
+4. `git rebase origin/main`
+5. Resolver conflictos si los hay (prestar atención a `package.json`, `vite.config.ts`, `package-lock.json`).
+6. `git push origin win7-support --force-with-lease` (si el rebase reescribe historia compartida).
+7. `npm install` para actualizar dependencias si `package-lock.json` cambió.
+8. `npm run build` para verificar que compila correctamente.
+9. Si hay cambios en configuraciones de compilación, ejecutar `npm run dist:win7` para verificar que el instalador sigue generándose.
+
+> **Frecuencia:** A criterio del desarrollador. Se recomienda hacerlo al menos una vez por sprint o después de cambios significativos en `main` que afecten dependencias o configuración de compilación.
 
 ## Identified risks
 

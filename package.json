@@ -10,6 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "dist": "npm run build && electron-builder --win",
+    "dist:win10": "npm run dist",
+    "dist:win7": "git stash && git checkout win7-support && npm install && npm run build && electron-builder --win --ia32 && git checkout spec-03-compilacion-windows-10-7 && git stash pop",
+    "dist:all": "npm run dist:win10 && npm run dist:win7",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
@@ -20,7 +23,12 @@
     "appId": "com.tuusuario.biblio",
     "productName": "biblio",
     "win": {
-      "target": "nsis",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        }
+      ],
       "icon": "public/icon.ico"
     },
     "files": [
@@ -54,7 +62,7 @@
     "@tailwindcss/vite": "^4.2.4",
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
-    "electron-store": "^11.0.2",
+    "electron-store": "^8.2.0",
     "exceljs": "^4.4.0",
     "motion": "^12.38.0",
     "react": "^19.2.5",
