@@ -20,7 +20,6 @@ export default defineConfig({
             rollupOptions: {
               output: {
                 format: 'cjs',
-                entryFileNames: '[name].cjs',
               },
               external: ['electron', 'exceljs', 'electron-store'],
             },
@@ -38,7 +37,6 @@ export default defineConfig({
             rollupOptions: {
               output: {
                 format: 'cjs',
-                entryFileNames: '[name].cjs',
               },
               external: ['electron'],
             },

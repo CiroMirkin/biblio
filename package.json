@@ -2,8 +2,8 @@
   "name": "biblio",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "main": "dist-electron/main.cjs",
+  "type": "commonjs",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev vite",
     "build": "tsc -b && vite build",
