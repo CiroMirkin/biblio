@@ -10,6 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "dist": "npm run build && electron-builder --win",
+    "dist:win10": "npm run dist",
+    "dist:win7": "npm run build && electron-builder --win --ia32",
+    "dist:all": "npm run dist:win10",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
@@ -20,7 +23,12 @@
     "appId": "com.tuusuario.biblio",
     "productName": "biblio",
     "win": {
-      "target": "nsis",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["ia32"]
+        }
+      ],
       "icon": "public/icon.ico"
     },
     "files": [
@@ -71,8 +79,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.7",
-    "electron": "^41.2.2",
-    "electron-builder": "^26.8.1",
+    "electron": "^22.3.27",
+    "electron-builder": "^24.13.3",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
