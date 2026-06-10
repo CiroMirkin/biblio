@@ -18,9 +18,6 @@ export default defineConfig({
           build: {
             outDir: 'dist-electron',
             rollupOptions: {
-              output: {
-                format: 'cjs',
-              },
               external: ['electron', 'exceljs', 'electron-store'],
             },
           },
@@ -35,9 +32,6 @@ export default defineConfig({
           build: {
             outDir: 'dist-electron',
             rollupOptions: {
-              output: {
-                format: 'cjs',
-              },
               external: ['electron'],
             },
           },

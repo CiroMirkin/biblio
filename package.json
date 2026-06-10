@@ -2,7 +2,7 @@
   "name": "biblio",
   "private": true,
   "version": "0.0.0",
-  "type": "commonjs",
+  "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev vite",
@@ -26,7 +26,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["ia32"]
+          "arch": [
+            "ia32"
+          ]
         }
       ],
       "icon": "public/icon.ico"
@@ -62,7 +64,7 @@
     "@tailwindcss/vite": "^4.2.4",
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
-    "electron-store": "^8.2.0",
+    "electron-store": "^7.0.3",
     "exceljs": "^4.4.0",
     "motion": "^12.38.0",
     "react": "^19.2.5",
