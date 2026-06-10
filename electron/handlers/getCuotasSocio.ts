@@ -17,7 +17,7 @@ export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
       anio,
     }
   }
-  
+
   const anioActual = new Date().getFullYear()
   const LIMITE_BUSQUEDA = 3
 
@@ -26,9 +26,19 @@ export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
     const meses = extraerMesesDeAnio(worksheet, indiceMeses, nroSocio, anioCandiato)
     const tienePagos = meses.some(mes => Object.values(mes)[0] === true)
 
-    if (tienePagos) return {
-      meses,
-      anio: anioCandiato,
+    if (tienePagos) {
+      if (anioCandiato < anioActual) {
+        
+        // Si el ultimo mes abonado es diciembre entonces se retorna el anio actual
+        const ultimoMesPago = [...meses].reverse().findIndex(mes => Object.values(mes)[0] === true)
+        const esUltimoMes = ultimoMesPago === 0
+        if (esUltimoMes) return {
+          meses: extraerMesesDeAnio(worksheet, indiceMeses, nroSocio, anioActual),
+          anio: anioActual,
+        }
+      }
+
+      return { meses, anio: anioCandiato }
     }
   }
 
