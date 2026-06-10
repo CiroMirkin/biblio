@@ -2,13 +2,15 @@ import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { useSociosStore } from "@/store"
 import { getCaracterSocio } from "@/models"
-import { formatDNI } from "@/utils"
+import { formatAutor, formatDNI } from "@/utils"
 import { PencilIcon } from "@/components/PencilIcon"
+import { Spinner } from "@/components"
 
 type CampoEditable = "dni" | "telefono" | "domicilio" | "email" | "fechaNacimiento" | "fechaIngreso" | "fechaEgreso"
 
 export function SocioDatos() {
     const { socioSeleccionado: socio, editarDatos, cambiarNombre } = useSociosStore()
+    const [ loading, setLoading ] = useState(false)
     const [expandido, setExpandido] = useState(false)
     const [campoEditando, setCampoEditando] = useState<CampoEditable | null>(null)
     const [valorEdicion, setValorEdicion] = useState("")
@@ -18,24 +20,30 @@ export function SocioDatos() {
     const caracterSocio = getCaracterSocio(socio?.caracterSocio)
 
     const iniciarEdicion = (campo: CampoEditable, valorActual: string | undefined) => {
+        if(loading) return
         setCampoEditando(campo)
         setValorEdicion(valorActual ?? "")
     }
 
     const guardar = async () => {
         if (!campoEditando) return
+        setLoading(true)
         await editarDatos({ [campoEditando]: valorEdicion })
         setCampoEditando(null)
+        setLoading(false)
     }
 
     const iniciarEdicionNombre = () => {
+        if(loading) return
         setNombreEdicion(socio?.nombreYApellido ?? "")
         setEditandoNombre(true)
     }
 
     const guardarNombre = async () => {
-        await cambiarNombre(nombreEdicion)
+        setLoading(true)
+        await cambiarNombre(formatAutor(nombreEdicion))
         setEditandoNombre(false)
+        setLoading(false)
     }
 
     function CampoEditable({ campo, label, valor }: { campo: CampoEditable; label: string; valor: string | undefined }) {
@@ -51,10 +59,12 @@ export function SocioDatos() {
                             value={valorEdicion}
                             onChange={e => setValorEdicion(e.target.value)}
                             onKeyDown={e => e.key === "Enter" && guardar()}
+                            disabled={loading}
                         />
                         <button
-                            className="ml-2 text-xs font-semibold cursor-pointer hover:underline"
+                            className="ml-2 text-xs font-semibold cursor-pointer hover:underline disabled:opacity-60"
                             onClick={guardar}
+                            disabled={loading}
                         >
                             Guardar
                         </button>
@@ -83,7 +93,10 @@ export function SocioDatos() {
         <div className="card relative">
             <div className="flex justify-between items-center" onClick={() => setExpandido(prev => !prev)}>
                 <h2 className="text-2xl font-semibold">
-                    {socio?.nombreYApellido}
+                    {socio?.nombreYApellido} 
+                    { loading && <span className="ml-1.5">
+                        <Spinner /> <span className="text-sm opacity-60">Editando...</span>
+                    </span>}
                 </h2>
                 { caracterSocio.estado
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green rounded-sm">Activo</span> 
@@ -114,16 +127,19 @@ export function SocioDatos() {
                                             value={nombreEdicion}
                                             onChange={e => setNombreEdicion(e.target.value)}
                                             onKeyDown={e => e.key === "Enter" && guardarNombre()}
-                                        />
+                                            disabled={loading}
+                                            />
                                         <button
-                                            className="ml-2 text-xs font-semibold cursor-pointer hover:underline"
+                                            className="ml-2 text-xs font-semibold cursor-pointer hover:underline disabled:opacity-60"
                                             onClick={guardarNombre}
-                                        >
+                                            disabled={loading}
+                                            >
                                             Guardar
                                         </button>
                                         <button
                                             className="ml-4 text-xs opacity-60 cursor-pointer hover:underline"
                                             onClick={() => setEditandoNombre(false)}
+                                            disabled={loading}
                                         >
                                             Cancelar
                                         </button>
