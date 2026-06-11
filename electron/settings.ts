@@ -5,6 +5,7 @@ interface SettingsSchema {
   maximoLibrosEnPrestamo: number
   maximoDeCuotasAdeudadas: number
   fechaDePrestamoAutomatica: boolean
+  precioCuota: number
 }
 
 const store = new Store<SettingsSchema>({
@@ -14,12 +15,14 @@ const store = new Store<SettingsSchema>({
     maximoLibrosEnPrestamo: { type: 'number', minimum: 1, maximum: 20 },
     maximoDeCuotasAdeudadas: { type: 'number', minimum: 1, maximum: 12 },
     fechaDePrestamoAutomatica: { type: 'boolean' },
+    precioCuota: { type: 'number', minimum: 1, maximum: 10000, }
   },
   defaults: {
     limiteDeDias: 40,
     maximoLibrosEnPrestamo: 4,
     maximoDeCuotasAdeudadas: 6,
     fechaDePrestamoAutomatica: true,
+    precioCuota: 1000,
   },
 })
 
@@ -29,6 +32,7 @@ export function getAll(): SettingsSchema {
     maximoLibrosEnPrestamo: store.get('maximoLibrosEnPrestamo'),
     maximoDeCuotasAdeudadas: store.get('maximoDeCuotasAdeudadas'),
     fechaDePrestamoAutomatica: store.get('fechaDePrestamoAutomatica'),
+    precioCuota: store.get('precioCuota'),
   }
 }
 

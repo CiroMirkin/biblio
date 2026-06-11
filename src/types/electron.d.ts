@@ -7,6 +7,7 @@ type SettingsSchema = {
   maximoLibrosEnPrestamo: number
   maximoDeCuotasAdeudadas: number
   fechaDePrestamoAutomatica: boolean
+  precioCuota: number
 }
 
 declare global {
