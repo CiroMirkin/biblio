@@ -2,7 +2,7 @@
   "name": "biblio",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev vite",
@@ -11,8 +11,8 @@
     "preview": "vite preview",
     "dist": "npm run build && electron-builder --win",
     "dist:win10": "npm run dist",
-    "dist:win7": "git stash && git checkout win7-support && npm install && npm run build && electron-builder --win --ia32 && git checkout spec-03-compilacion-windows-10-7 && git stash pop",
-    "dist:all": "npm run dist:win10 && npm run dist:win7",
+    "dist:win7": "npm run build && electron-builder --win --ia32",
+    "dist:all": "npm run dist:win10",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
@@ -26,7 +26,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64", "ia32"]
+          "arch": [
+            "ia32"
+          ]
         }
       ],
       "icon": "public/icon.ico"
@@ -62,7 +64,7 @@
     "@tailwindcss/vite": "^4.2.4",
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
-    "electron-store": "^8.2.0",
+    "electron-store": "^7.0.3",
     "exceljs": "^4.4.0",
     "motion": "^12.38.0",
     "react": "^19.2.5",
@@ -79,8 +81,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.7",
-    "electron": "^41.2.2",
-    "electron-builder": "^26.8.1",
+    "electron": "^22.3.27",
+    "electron-builder": "^24.13.3",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

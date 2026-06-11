@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import type { Libro } from './libro'
 import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, cambiarNombreSocio, } from './handlers'
@@ -9,7 +8,7 @@ import { initializeDataFiles } from './utils/initializeDataFiles'
 import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
 import { IS_DEV } from './constants'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(__filename)
 
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 
