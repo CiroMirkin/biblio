@@ -61,7 +61,7 @@ export function Inscripcion() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2 }}
-              className="pt-1 pb-1.5 px-1.5 flex gap-1.5 items-center rounded text-green-600 bg-white"
+              className="pt-1 pb-1.5 px-1.5 flex gap-1.5 items-center rounded text-greem bg-white"
             >
               <CheckIcon size={22} /> Socio creado exitosamente
             </motion.span>

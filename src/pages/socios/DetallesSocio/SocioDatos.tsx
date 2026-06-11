@@ -100,7 +100,7 @@ export function SocioDatos() {
                 </h2>
                 { caracterSocio.estado
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green rounded-sm">Activo</span> 
-                    : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber-300 rounded-sm">Inactivo</span> 
+                    : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber border rounded-sm">Inactivo</span> 
                 }
             </div>
             <div className="py-1.5">

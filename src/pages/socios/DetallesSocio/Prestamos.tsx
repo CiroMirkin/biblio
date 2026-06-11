@@ -307,7 +307,7 @@ export function Prestamos({ onSuccess }: Props) {
 
             {enPrestamo
               ? (
-                <span className={cn("text-lg font-semibold text-red-600", colTitulo, colAutor)}>
+                <span className={cn("text-lg font-semibold text-red", colTitulo, colAutor)}>
                   El libro ya está en préstamo, verificá el N° de inventario
                 </span>
               )

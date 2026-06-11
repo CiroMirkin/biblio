@@ -15,7 +15,7 @@ export function LibroDisponible({ libro }: Props) {
                     {libro.numeroInventario || " S/N"}
                 </p>
             </div>
-            <span className="text-base font-semibold text-green-600">Disponible</span>
+            <span className="text-base font-semibold text-greem">Disponible</span>
         </li>
     )
 }

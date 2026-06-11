@@ -92,7 +92,7 @@ export function CalendarioCuotas() {
           <ChevronsLeftIcon />
         </button>
         <span
-          className={cn("px-1.5 font-semibold text-lg opacity-70 rounded", anio !== anioActual && "bg-amber-300")}
+          className={cn("px-1.5 font-semibold text-lg opacity-70 rounded", anio !== anioActual && "bg-amber")}
         >
           {anio}
         </span>

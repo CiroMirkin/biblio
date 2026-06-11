@@ -46,8 +46,8 @@ export function DetalleSocio() {
                 <span
                   className={cn(
                     "rounded",
-                    anio !== anioActual && "bg-amber-300 px-1",
-                    !caracterSocio.estado && "bg-amber-300 px-1 font-bold",
+                    anio !== anioActual && "bg-amber px-1",
+                    !caracterSocio.estado && "bg-amber px-1 font-bold",
                   )}
                 >{anio}</span>
               </span>
