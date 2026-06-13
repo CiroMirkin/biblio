@@ -13,18 +13,24 @@ export function Ajustes() {
     useEffect(() => { inicializar() }, [inicializar])
 
     return (
-        <>
-        <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
-        <div className="">
-            <div className="flex flex-col gap-4">
-                <PrecioCuota />
-                <MaximoPrestamosForm />
-                <MaximoDiasDelPrestamo />
-                <MaximoDeCuotasAdeudadas />
-                <ComoEstablecerFechaPrestamo />
-                <CopiarExcels />
+        <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
+            <div>
+                <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
+                <div className="flex flex-col gap-4">
+                    <PrecioCuota />
+                    <MaximoPrestamosForm />
+                    <MaximoDiasDelPrestamo />
+                    <MaximoDeCuotasAdeudadas />
+                    <ComoEstablecerFechaPrestamo />
+                    <CopiarExcels />
+                </div>
             </div>
+            <aside className="sticky top-0 h-fit hidden md:flex flex-col">
+                <div className="h-4 w-full bg-transparent" />
+                <section className="card mb-4 flex flex-col gap-2">
+                    <p>Dentro de esta sección puedes ajustar el sistema según sus necesidades y preferencias.</p>
+                </section>
+            </aside>
         </div>
-        </>
     )
 }
