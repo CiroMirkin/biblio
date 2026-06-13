@@ -50,7 +50,7 @@ export function Prestamos({ onSuccess }: Props) {
   const [inputs, setInputs] = useState<Record<string, ReturnType<typeof emptyInput>>>({})
   const [lockedInputs, setLockedInputs] = useState<Record<string, boolean>>({})
   const [libroEnPrestamoInputs, setLibroEnPrestamoInputs] = useState<Record<string, boolean>>({})
-  const [newlyAdded, setNewlyAdded] = useState<Set<number | string>>(new Set())
+  const [successAgregar, setSuccessAgregar] = useState(false)
   const [loadingAgregar, setLoadingAgregar] = useState(false)
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({})
   const fechaRefs = useRef<Record<string, HTMLInputElement | null>>({})
@@ -207,9 +207,8 @@ export function Prestamos({ onSuccess }: Props) {
         return next
       })
 
-      const ids = new Set(agregados.map(a => a.libro.numeroInventario!))
-      setNewlyAdded(ids)
-      setTimeout(() => setNewlyAdded(new Set()), 1500)
+      setSuccessAgregar(true)
+      setTimeout(() => setSuccessAgregar(false), 1500)
       onSuccess()
     }
   }
@@ -249,14 +248,12 @@ export function Prestamos({ onSuccess }: Props) {
       {slots.map((slot, slotIndex) => {
         if (slot.type === 'libro') {
           const libro = slot.data
-          const isNew = newlyAdded.has(libro.numeroInventario!)
-          const baseBg = slotIndex % 2 === 0 ? "#fddc87" : "#fef0c6"
+          const bg = slotIndex % 2 === 0 ? "#fddc87" : "#fef0c6"
           return (
-            <motion.div
+            <div
               key={libro.numeroInventario}
               className="flex items-center gap-2 rounded py-3 px-2"
-              animate={{ backgroundColor: isNew ? "#91bf8f" : baseBg }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              style={{ backgroundColor: bg }}
             >
               <span className={cn("text-lg", colNro)}>
                 {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
@@ -281,7 +278,7 @@ export function Prestamos({ onSuccess }: Props) {
                   <CheckIcon className="w-4 md:w-5" />
                 </button>
               </div>
-            </motion.div>
+            </div>
           )
         }
 
@@ -376,14 +373,20 @@ export function Prestamos({ onSuccess }: Props) {
       })}
 
       {caracterSocio && (
-        <button
+        <motion.button
           type="button"
           onClick={handleAgregar}
           disabled={loadingAgregar}
+          animate={{
+            backgroundColor: successAgregar ? "#00a63e" : "",
+            color: successAgregar ? "#fff" : "",
+          }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className={cn("btn mt-4 p-1 pb-2 flex items-center justify-center gap-2 text-lg rounded", loadingAgregar && "btn-disabled")}
         >
-          { loadingAgregar && <Spinner />} Registrar préstamo
-        </button>
+          {successAgregar && <CheckIcon size={24} className="pt-1 text-[#fff]" />}
+          {loadingAgregar && <Spinner />} Registrar préstamo
+        </motion.button>
       )}
     </form>
   )
