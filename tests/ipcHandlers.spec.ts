@@ -33,6 +33,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       maximoLibrosEnPrestamo: 4,
       maximoDeCuotasAdeudadas: 3,
       fechaDePrestamoAutomatica: true,
+      precioCuota: 1500,
     })
     const handler = handlers.get('settings:getAll')!
     const result = await handler()
@@ -41,6 +42,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       maximoLibrosEnPrestamo: 4,
       maximoDeCuotasAdeudadas: 3,
       fechaDePrestamoAutomatica: true,
+      precioCuota: 1500,
     })
     expect(mockSettings.getAll).toHaveBeenCalledOnce()
   })

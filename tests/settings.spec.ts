@@ -22,13 +22,15 @@ it('Constructor de electron-store recibe schema y defaults correctos', () => {
       limiteDeDias: { type: 'number', minimum: 1, maximum: 365 },
       maximoLibrosEnPrestamo: { type: 'number', minimum: 1, maximum: 20 },
       maximoDeCuotasAdeudadas: { type: 'number', minimum: 1, maximum: 12 },
-      fechaDePrestamoAutomatica: { type: 'boolean' }
+      fechaDePrestamoAutomatica: { type: 'boolean' },
+      precioCuota: { type: 'number', minimum: 1, maximum: 10000, },
     },
     defaults: {
       limiteDeDias: 40,
       maximoLibrosEnPrestamo: 4,
       maximoDeCuotasAdeudadas: 6,
       fechaDePrestamoAutomatica: true,
+      precioCuota: 1000,
     },
   })
 })
@@ -45,6 +47,8 @@ describe('electron/settings', () => {
       if (key === 'maximoLibrosEnPrestamo') return 5
       if (key === 'maximoDeCuotasAdeudadas') return 3
       if (key === 'fechaDePrestamoAutomatica') return true
+      if (key === 'precioCuota') return 1000
+
       return undefined
     })
 
@@ -54,11 +58,13 @@ describe('electron/settings', () => {
       maximoLibrosEnPrestamo: 5,
       maximoDeCuotasAdeudadas: 3,
       fechaDePrestamoAutomatica: true,
+      precioCuota: 1000,
     })
     expect(mockStoreInstance.get).toHaveBeenCalledWith('limiteDeDias')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('maximoLibrosEnPrestamo')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('maximoDeCuotasAdeudadas')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('fechaDePrestamoAutomatica')
+    expect(mockStoreInstance.get).toHaveBeenCalledWith('precioCuota')
   })
 
   // get() delega en store.get(key) y retorna el valor del constructor por defecto

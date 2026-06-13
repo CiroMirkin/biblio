@@ -41,6 +41,9 @@ interface SociosState {
     setObservaciones: (newObservaciones: string) => Promise<void>
     setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
     
+    precioCuota: number
+    setPrecioCuota: (newPrice: number) => number
+    
     showListaSocios: () => void,
 }
 
@@ -55,6 +58,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     maximoDeCuotasAdeudadas: 1,
     sociosActivos: 0,
     sociosInactivos: 0,
+    precioCuota: 100,
 
     inicializar: async () => {
         const socios = await cargarSocios()
@@ -76,6 +80,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             socios: ordenados,
             sociosConLibros,
             maximoDeCuotasAdeudadas: settings.maximoDeCuotasAdeudadas ?? 6,
+            precioCuota: settings.precioCuota ?? 1000,
             sociosActivos,
             sociosInactivos,
         })
@@ -207,6 +212,17 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         })
         settingsService.set('maximoDeCuotasAdeudadas', newMaximo)
         return newMaximo
+    },
+
+    setPrecioCuota: (newPrice: number) =>  {
+        const { precioCuota } = get()
+        if(newPrice <= 1) return precioCuota
+
+        set({
+            precioCuota: newPrice
+        })
+        settingsService.set('precioCuota', newPrice)
+        return newPrice
     },
     
     setObservaciones: async (newObservaciones: string) => get().editarDatos({ observaciones: newObservaciones }),

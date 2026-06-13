@@ -6,12 +6,12 @@ import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
 import { getCaracterSocio } from "@/models"
-import { cn } from "@/utils"
+import { cn, formatPrice } from "@/utils"
 
 const anioActual: number = new Date().getFullYear()
 
 export function DetalleSocio() {
-  const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
+  const { anio, showListaSocios, socioSeleccionado, precioCuota } = useSociosStore()
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
   const cuotasDesactualizadas = caracterSocio.tieneCuotasDesactualizadas
@@ -51,6 +51,9 @@ export function DetalleSocio() {
                   )}
                 >{anio}</span>
               </span>
+
+              <span className="text-base opacity-75 self-end">{ formatPrice(precioCuota) }</span>
+              
               {cuotasDesactualizadas && (<span className="font-2xl font-semibold bg-sky-300 px-4">ACTUALIZAR CUOTAS</span>)}
             </h2>
             <CalendarioCuotas />

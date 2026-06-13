@@ -5,6 +5,7 @@ import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
 import { MaximoDeCuotasAdeudadas } from "./MaximoDeCuotasAdeudadas";
 import { ComoEstablecerFechaPrestamo } from "./ComoEstablecerFechaPrestamo";
+import { PrecioCuota } from "./PrecioCuotas";
 
 export function Ajustes() {
     const inicializar = useLibrosStore(s => s.inicializar)
@@ -16,6 +17,7 @@ export function Ajustes() {
         <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
         <div className="">
             <div className="flex flex-col gap-4">
+                <PrecioCuota />
                 <MaximoPrestamosForm />
                 <MaximoDiasDelPrestamo />
                 <MaximoDeCuotasAdeudadas />
