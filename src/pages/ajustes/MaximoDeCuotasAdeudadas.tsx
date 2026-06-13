@@ -1,4 +1,4 @@
-import { Form } from "@/components";
+import { CheckIcon, Form } from "@/components";
 import { useSettingsStore } from "@/store";
 
 /** Establece la cantidad maxima de cuotas (meses) adeudadas, cuando se supera dicha cantidad  el socio se da de baja automáticamente. */
@@ -20,7 +20,8 @@ export function MaximoDeCuotasAdeudadas() {
                 inputType="number"
                 onChange={setMaximo}
                 min={1}
-                submitLabel="Establecer meses"
+                submitLabel={<CheckIcon size={20} />}
+                classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
             />
         </section>
     )

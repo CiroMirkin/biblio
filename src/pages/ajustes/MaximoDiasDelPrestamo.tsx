@@ -1,4 +1,4 @@
-import { Form } from "@/components";
+import { CheckIcon, Form } from "@/components";
 import { useSettingsStore } from "@/store";
 
 export function MaximoDiasDelPrestamo() {
@@ -18,7 +18,8 @@ export function MaximoDiasDelPrestamo() {
             inputType="number"
             onChange={setMaximo}
             min={1}
-            submitLabel="Establecer días"
+            submitLabel={<CheckIcon size={20} />}
+            classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
         />
     )
 }
