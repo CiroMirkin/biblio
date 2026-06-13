@@ -1,7 +1,34 @@
 # SPEC 03 — Compilación para Windows 10 x64 y Windows 7 x32
 
-**Estado:** Implemented · **Dependencias:** SPEC 02 (persistencia electron-store) · **Fecha:** 2026-06-10
+**Estado:** Deprecated · **Dependencias:** SPEC 02 (persistencia electron-store) · **Fecha:** 2026-06-10
 **Objetivo:** Poder compilar y distribuir Biblio como instalador NSIS para Windows 10 x64 (Electron 41, rama `main`) y Windows 7 x32 (Electron 22, rama `win7-support`), con scripts de automatización.
+
+> **Actualización 2026-06-13:** Se unificaron las ramas. `win7-support` pasó a ser `main`.
+> Ya no hay compilación para Windows 10 x64. Ver `README.md` para documentación actualizada.
+
+### Cambios realizados
+
+| Aspecto | Antes | Después |
+|---------|-------|---------|
+| **Rama principal** | `main` (Electron 41, ESM, x64+ia32) | `main` (Electron 22, CJS, ia32) — era `win7-support` |
+| **Segunda rama** | `win7-support` (Electron 22, CJS, ia32) | Eliminada (remote). El contenido local se conserva como referencia |
+| **Backup main anterior** | No existía | `win10-main-copy` preserva el antiguo `main` en remote |
+| **Compilación activa** | `dist` → x64+ia32 (Electron 41), `dist:win7` → ia32 (Electron 22) | Solo `dist` → ia32 (Electron 22). Los alias `dist:win10`, `dist:win7`, `dist:all` existen pero son redundantes |
+| **Documentación** | README con tabla de 4 comandos, secciones separadas para Win10 y Win7, proceso de rebase para sincronizar ramas | README simplificado: un solo comando `dist`, sección única de compilación, sin proceso de sync |
+
+**Operación git realizada:**
+
+1. `git checkout win7-support`
+2. `git merge main` — incorporó a `win7-support` los commits que `main` tenía y `win7-support` no: `feat: agrega el ajuste precio cuota` y `feat: muestra el precio de las cuotas`
+3. `git checkout main`
+4. `git reset --hard win7-support` — `main` pasó a apuntar al mismo commit que `win7-support`
+5. `git push origin main --force-with-lease` — actualizó `main` en remote
+6. `git push origin win10-main-copy` — preservó el antiguo `main` como `win10-main-copy`
+7. `git push origin --delete win7-support` — eliminó la rama `win7-support` del remote
+8. Se eliminaron archivos `.js` compilados obsoletos (`npm run clean`) que el pre-push hook detectó como tests fallidos
+9. Se actualizó `README.md` y se limpió `package.json` (script `dist:all` ahora apunta a `dist`)
+
+**Razón del cambio:** El proyecto solo se distribuye para Windows 7 (32 bits). Mantener dos ramas paralelas con distintos Electron, build config y sistema de módulos agregaba complejidad innecesaria (sincronización mediante rebase, conflictos en `package.json` y `vite.config.ts`, scripts npm con lógica de cambio de rama). Unificar en una sola rama elimina esa carga sin pérdida de funcionalidad, ya que el instalador ia32 con Electron 22 funciona también en Windows 10 y 11.
 
 ---
 

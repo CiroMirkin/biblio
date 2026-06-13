@@ -12,7 +12,7 @@
     "dist": "npm run build && electron-builder --win",
     "dist:win10": "npm run dist",
     "dist:win7": "npm run build && electron-builder --win --ia32",
-    "dist:all": "npm run dist:win10",
+    "dist:all": "npm run dist",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
