@@ -7,6 +7,10 @@ interface Params {
 }
 
 export function buscarLibro({ libros, dato}: Params): LibroEnPrestamo[] {
+  if (!isNaN(Number(dato))) {
+    return libros.filter(s => Number(s.numeroInventario) === Number(dato))
+  }
+
   const filtrados = libros.filter(libro => {
     const titulo = normailzarTexto(libro.titulo)
     if (titulo.includes(dato)) return true
