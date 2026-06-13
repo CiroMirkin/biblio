@@ -4,6 +4,8 @@ import { useSociosStore } from "@/store"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
+import { formatFecha, formatName } from "@/utils"
+import { format } from "@formkit/tempo"
 
 const ORDER = ["apellidos", "nombres", "dni", "fechaNacimiento", "telefono", "email", "domicilio", "observaciones"]
 
@@ -30,8 +32,9 @@ export function Inscripcion() {
     const form = e.target as HTMLFormElement
     const socio: NewSocio = {
       dni: Number(form.dni.value),
-      nombreYApellido: `${form.apellidos.value}, ${form.nombres.value}`,
-      fechaNacimiento: form.fechaNacimiento.value ? form.fechaNacimiento.value : undefined,
+      nombreYApellido: `${formatName(form.apellidos.value)}, ${formatName(form.nombres.value)}`,
+      fechaNacimiento: form.fechaNacimiento.value ? format(form.fechaNacimiento.value, "D/M/YYYY", "es") : undefined,
+      fechaIngreso: formatFecha(new Date()),
       telefono: form.telefono.value,
       domicilio: form.domicilio.value || undefined,
       observaciones: form.observaciones.value || "",

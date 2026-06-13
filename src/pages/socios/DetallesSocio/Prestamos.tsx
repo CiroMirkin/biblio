@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
 import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
-import { calcularDiasDesdePrestamo, cn, formatAutor, formatFecha, formatTitulo, getDia } from "@/utils"
+import { calcularDiasDesdePrestamo, cn, formatName, formatFecha, formatTitulo, getDia } from "@/utils"
 import { useSociosStore, useLibrosStore, useSettingsStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
@@ -164,7 +164,7 @@ export function Prestamos({ onSuccess }: Props) {
         : input.numeroInventario
 
       const libro: Libro = {
-        autor: formatAutor(input.autor),
+        autor: formatName(input.autor),
         titulo: formatTitulo(input.titulo),
         nombreSocio,
         numeroSocio: nroSocio ?? null,

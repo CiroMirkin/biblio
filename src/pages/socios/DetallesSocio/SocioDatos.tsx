@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
 import { useSociosStore } from "@/store"
 import { getCaracterSocio } from "@/models"
-import { formatAutor, formatDNI } from "@/utils"
+import { formatName, formatDNI } from "@/utils"
 import { PencilIcon } from "@/components/PencilIcon"
 import { Spinner } from "@/components"
 
@@ -41,7 +41,7 @@ export function SocioDatos() {
 
     const guardarNombre = async () => {
         setLoading(true)
-        await cambiarNombre(formatAutor(nombreEdicion))
+        await cambiarNombre(formatName(nombreEdicion))
         setEditandoNombre(false)
         setLoading(false)
     }
