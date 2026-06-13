@@ -5,6 +5,7 @@ export interface Settings {
   maximoDeCuotasAdeudadas: number
   fechaDePrestamoAutomatica: boolean
   precioCuota: number
+  gestionDeCuotas: boolean
 }
 
 export async function getAll(): Promise<Settings> {

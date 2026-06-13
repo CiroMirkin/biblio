@@ -8,6 +8,7 @@ type SettingsSchema = {
   maximoDeCuotasAdeudadas: number
   fechaDePrestamoAutomatica: boolean
   precioCuota: number
+  gestionDeCuotas: boolean
 }
 
 declare global {
