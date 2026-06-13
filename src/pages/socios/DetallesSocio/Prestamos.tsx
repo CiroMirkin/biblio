@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
 import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
-import { calcularDiasDesdePrestamo, cn, formatAutor, formatFecha, formatTitulo } from "@/utils"
+import { calcularDiasDesdePrestamo, cn, formatAutor, formatFecha, formatTitulo, getDia } from "@/utils"
 import { useSociosStore, useLibrosStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
@@ -268,7 +268,7 @@ export function Prestamos({ onSuccess }: Props) {
                   "text-lg", colFecha,
                   calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1.5! self-center rounded"
                 )}
-                title={`${calcularDiasDesdePrestamo(libro.fechaDePrestamo!)} dias`}
+                title={`${ getDia(libro.fechaDePrestamo) } hace ${ calcularDiasDesdePrestamo(libro.fechaDePrestamo!) } dias`}
               >
                 {formatFecha(libro.fechaDePrestamo)}
               </span>
