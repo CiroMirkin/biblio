@@ -62,6 +62,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    autoHideMenuBar: true,
     icon: IS_DEV
       ? path.join(process.cwd(), 'public/icon.ico')
       : path.join(process.resourcesPath, 'icon.ico'),
@@ -82,7 +83,6 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   }
 }
-
 app.whenReady().then(() => {
   registerSettingsHandlers()
   initializeDataFiles()
