@@ -4,9 +4,9 @@ import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
 import { calcularCuotasAdeudadas } from "@/utils"
-import { settingsService } from "@/services"
 import { getCaracterSocio, type Calendario } from "@/models"
 import { buscarSocio } from "./buscarSocio"
+import { useSettingsStore } from "./useSettingsStore"
 
 interface SociosState {
     socios: Socio[]
@@ -16,9 +16,8 @@ interface SociosState {
     mesesCuotas: Calendario
     anio: number
     showDetallesSocio: boolean
-    maximoDeCuotasAdeudadas: number
-    sociosActivos: number,
-    sociosInactivos: number,
+    sociosActivos: number
+    sociosInactivos: number
 
     inicializar: () => Promise<void>
     buscar: (apellido: string) => void
@@ -26,7 +25,7 @@ interface SociosState {
     toggleMes: (mesIndex: number) => Promise<void>
     irAnioAnterior: () => void
     irAnioSiguiente: () => void
-    
+
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
     editarDatos: (datos: Partial<Socio>) => Promise<void>
     cambiarNombre: (newName: string) => Promise<void>
@@ -39,15 +38,8 @@ interface SociosState {
     aplicarCambioAutomaticoDeCaracter: (socio: Socio) => Promise<void>
 
     setObservaciones: (newObservaciones: string) => Promise<void>
-    setMaximoDeCuotasAdeudadas: (newMaximo: number) => number
-    
-    precioCuota: number
-    setPrecioCuota: (newPrice: number) => number
 
-    gestionDeCuotas: boolean
-    toggleGestionDeCuotas: () => boolean
-    
-    showListaSocios: () => void,
+    showListaSocios: () => void
 }
 
 export const useSociosStore = create<SociosState>((set, get) => ({
@@ -58,17 +50,13 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     mesesCuotas: [],
     anio: new Date().getFullYear(),
     showDetallesSocio: false,
-    maximoDeCuotasAdeudadas: 1,
     sociosActivos: 0,
     sociosInactivos: 0,
-    precioCuota: 100,
-    gestionDeCuotas: true,
 
     inicializar: async () => {
         const socios = await cargarSocios()
         const sociosRegistradosConLibros = await window.electronAPI.getSociosConLibros()
         const ordenados = ordenarSociosAlfabeticamente(socios)
-        const settings = await settingsService.getAll()
 
         let [ sociosActivos, sociosInactivos ] = [ 0, 0 ]
         socios.forEach(s => {
@@ -83,11 +71,8 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         set({
             socios: ordenados,
             sociosConLibros,
-            maximoDeCuotasAdeudadas: settings.maximoDeCuotasAdeudadas ?? 6,
-            precioCuota: settings.precioCuota ?? 1000,
             sociosActivos,
             sociosInactivos,
-            gestionDeCuotas: settings.gestionDeCuotas ?? true,
         })
     },
 
@@ -160,7 +145,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const ok = await window.electronAPI.darDeBajaSocio(socio.nroSocio)
         if (!ok) return
 
-        const caracterSocio: CaracterSocio =  'Inactivo'
+        const caracterSocio: CaracterSocio = 'Inactivo'
         const actualizado = { ...socio, caracterSocio }
 
         const actualizarLista = (lista: Socio[]) =>
@@ -181,7 +166,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const ok = await window.electronAPI.reactivarSocio(socio.nroSocio)
         if (!ok) return
 
-        const caracterSocio: CaracterSocio =  'Regular'
+        const caracterSocio: CaracterSocio = 'Regular'
         const actualizado = { ...socio, caracterSocio }
 
         const actualizarLista = (lista: Socio[]) =>
@@ -208,45 +193,9 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         await get().reactivar(socioSeleccionado, { esSocioSeleccionado: true })
     },
 
-    setMaximoDeCuotasAdeudadas: (newMaximo) => {
-        const { maximoDeCuotasAdeudadas } = get()
-        if(newMaximo <= 1) return maximoDeCuotasAdeudadas
+    setObservaciones: async (newObservaciones) => get().editarDatos({ observaciones: newObservaciones }),
 
-        set({
-            maximoDeCuotasAdeudadas: newMaximo
-        })
-        settingsService.set('maximoDeCuotasAdeudadas', newMaximo)
-        return newMaximo
-    },
-
-    setPrecioCuota: (newPrice: number) =>  {
-        const { precioCuota } = get()
-        if(newPrice <= 1) return precioCuota
-
-        set({
-            precioCuota: newPrice
-        })
-        settingsService.set('precioCuota', newPrice)
-        return newPrice
-    },
-
-    toggleGestionDeCuotas: () => {
-        const { gestionDeCuotas } = get()
-
-        if(gestionDeCuotas) {
-            set({ gestionDeCuotas: false })
-            settingsService.set('gestionDeCuotas', false)
-            return false
-        }
-
-        set({ gestionDeCuotas: true })
-        settingsService.set('gestionDeCuotas', true)
-        return true
-    },
-    
-    setObservaciones: async (newObservaciones: string) => get().editarDatos({ observaciones: newObservaciones }),
-    
-    cambiarNombre: async (newName: string) => {
+    cambiarNombre: async (newName) => {
         const { socioSeleccionado: socio, socios, sociosFiltrados } = get()
         if(!socio || !socio.nroSocio || !newName.trim()) return
 
@@ -270,8 +219,8 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const { socioSeleccionado, anio } = get()
         if (!socioSeleccionado) return
         const nuevoAnio = anio - 1
-        const mesesCuotas = await cargarCuotasSocio(socioSeleccionado.nroSocio, nuevoAnio)
-        set({ anio: nuevoAnio, mesesCuotas: mesesCuotas.meses })
+        const { meses } = await cargarCuotasSocio(socioSeleccionado.nroSocio, nuevoAnio)
+        set({ anio: nuevoAnio, mesesCuotas: meses })
     },
 
     irAnioSiguiente: async () => {
@@ -303,11 +252,11 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     aplicarCambioAutomaticoDeCaracter: async (socio: Socio) => {
-        const { maximoDeCuotasAdeudadas, gestionDeCuotas } = get()
+        const { maximoDeCuotasAdeudadas, gestionDeCuotas } = useSettingsStore.getState()
+
+        if (!gestionDeCuotas) return
 
         const caracterSocio = getCaracterSocio(socio.caracterSocio)
-
-        if(!gestionDeCuotas) return
         if (caracterSocio.tieneCuotasDesactualizadas) return
 
         const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio)
