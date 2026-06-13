@@ -1,5 +1,4 @@
-import { useEffect } from "react"
-import { useSettingsStore, useLibrosStore } from "@/store"
+import { useSettingsStore } from "@/store"
 import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
@@ -10,9 +9,6 @@ import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 
 export function Ajustes() {
     const { gestionDeCuotas } = useSettingsStore()
-    const inicializar = useLibrosStore(s => s.inicializar)
-
-    useEffect(() => { inicializar() }, [inicializar])
 
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">

@@ -1,16 +1,10 @@
-import { useEffect } from "react"
-import { useSettingsStore, useLibrosStore } from "@/store"
+import { useSettingsStore } from "@/store"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 import { RecuentoLibros } from "./RecuentoLibros"
 
 export function Catalogo() {
-    const { inicializar } = useLibrosStore()
     const { limiteDeDias } = useSettingsStore()
-
-    useEffect(() => {
-        inicializar()
-    }, [])
 
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">

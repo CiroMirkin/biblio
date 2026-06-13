@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "motion/react"
 import { Inscripcion, Socios, Catalogo, Ajustes } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
-import { useSociosStore } from "./store";
+import { useSociosStore, useLibrosStore, useSettingsStore } from "./store";
 
 const options = {
   CUOTA: "Socios",
@@ -38,9 +38,19 @@ const views = [
 ]
 
 function App() {
-  const { showListaSocios, buscar } = useSociosStore()
+  const { showListaSocios, buscar, inicializar: inicializarSocios } = useSociosStore()
+  const { inicializar: inicializarLibros } = useLibrosStore()
+  const { inicializar: inicializarSettings } = useSettingsStore()
+
   const [ actualView, setActualView ] = useState<options>(options.CUOTA)
   const [ bg, setbg ] = useState("bg-secondary")
+
+  useEffect(() => {
+    inicializarSettings().then(() => {
+      inicializarSocios().catch(console.error)
+      inicializarLibros().catch(console.error)
+    })
+  }, [])
 
   views.forEach(view => {
     if(view.id === actualView && bg !== view.bgColor) {

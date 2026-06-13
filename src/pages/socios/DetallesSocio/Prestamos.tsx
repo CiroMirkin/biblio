@@ -36,7 +36,6 @@ export function Prestamos({ onSuccess }: Props) {
     agregarLibroEnPrestamo,
     devolverLibro,
     getLibroPorInventario,
-    inicializar,
   } = useLibrosStore()
   const {
     maximoLibrosEnPrestamo,
@@ -56,10 +55,6 @@ export function Prestamos({ onSuccess }: Props) {
   const [loadingAgregar, setLoadingAgregar] = useState(false)
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({})
   const fechaRefs = useRef<Record<string, HTMLInputElement | null>>({})
-
-  useEffect(() => {
-    inicializar()
-  }, [])
 
   useEffect(() => {
     if (!nroSocio) return
