@@ -43,6 +43,9 @@ interface SociosState {
     
     precioCuota: number
     setPrecioCuota: (newPrice: number) => number
+
+    gestionDeCuotas: boolean
+    toggleGestionDeCuotas: () => boolean
     
     showListaSocios: () => void,
 }
@@ -59,6 +62,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     sociosActivos: 0,
     sociosInactivos: 0,
     precioCuota: 100,
+    gestionDeCuotas: true,
 
     inicializar: async () => {
         const socios = await cargarSocios()
@@ -83,6 +87,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             precioCuota: settings.precioCuota ?? 1000,
             sociosActivos,
             sociosInactivos,
+            gestionDeCuotas: settings.gestionDeCuotas ?? true,
         })
     },
 
@@ -224,6 +229,20 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         settingsService.set('precioCuota', newPrice)
         return newPrice
     },
+
+    toggleGestionDeCuotas: () => {
+        const { gestionDeCuotas } = get()
+
+        if(gestionDeCuotas) {
+            set({ gestionDeCuotas: false })
+            settingsService.set('gestionDeCuotas', false)
+            return false
+        }
+
+        set({ gestionDeCuotas: true })
+        settingsService.set('gestionDeCuotas', true)
+        return true
+    },
     
     setObservaciones: async (newObservaciones: string) => get().editarDatos({ observaciones: newObservaciones }),
     
@@ -284,10 +303,11 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     },
 
     aplicarCambioAutomaticoDeCaracter: async (socio: Socio) => {
-        const { maximoDeCuotasAdeudadas } = get()
+        const { maximoDeCuotasAdeudadas, gestionDeCuotas } = get()
 
         const caracterSocio = getCaracterSocio(socio.caracterSocio)
 
+        if(!gestionDeCuotas) return
         if (caracterSocio.tieneCuotasDesactualizadas) return
 
         const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio)

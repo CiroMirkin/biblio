@@ -11,7 +11,7 @@ import { cn, formatPrice } from "@/utils"
 const anioActual: number = new Date().getFullYear()
 
 export function DetalleSocio() {
-  const { anio, showListaSocios, socioSeleccionado, precioCuota } = useSociosStore()
+  const { anio, showListaSocios, socioSeleccionado, precioCuota, gestionDeCuotas } = useSociosStore()
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
   const cuotasDesactualizadas = caracterSocio.tieneCuotasDesactualizadas
@@ -39,7 +39,8 @@ export function DetalleSocio() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="card">
+          { gestionDeCuotas
+          ? <div className="card">
             <h2 className="pb-4 text-2xl flex justify-between items-center">
               <span className="flex gap-2">
                 Cuotas 
@@ -58,6 +59,8 @@ export function DetalleSocio() {
             </h2>
             <CalendarioCuotas />
           </div>
+          : <div className="card hidden md:block">Aqui estan los datos del socio y sus prestamos registrados.</div>
+          }
 
           { caracterSocio.estado && <Observaciones /> }
           

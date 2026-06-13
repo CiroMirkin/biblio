@@ -1,13 +1,15 @@
 import { useEffect } from "react"
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSociosStore } from "@/store"
 import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
 import { MaximoDeCuotasAdeudadas } from "./MaximoDeCuotasAdeudadas";
 import { ComoEstablecerFechaPrestamo } from "./ComoEstablecerFechaPrestamo";
 import { PrecioCuota } from "./PrecioCuotas";
+import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 
 export function Ajustes() {
+    const { gestionDeCuotas } = useSociosStore()
     const inicializar = useLibrosStore(s => s.inicializar)
 
     useEffect(() => { inicializar() }, [inicializar])
@@ -17,10 +19,11 @@ export function Ajustes() {
             <div>
                 <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
                 <div className="flex flex-col gap-4">
-                    <PrecioCuota />
+                    <EstablecerUsoDeCuotas />
+                    { gestionDeCuotas && <PrecioCuota /> }
+                    { gestionDeCuotas && <MaximoDeCuotasAdeudadas /> }
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
-                    <MaximoDeCuotasAdeudadas />
                     <ComoEstablecerFechaPrestamo />
                     <CopiarExcels />
                 </div>

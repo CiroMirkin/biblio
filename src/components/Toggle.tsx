@@ -3,6 +3,7 @@ interface props {
     onChange: (value: boolean) => void
     labelOn: string
     labelOff: string
+    name?: string
 }
 
 export function Toggle({
@@ -10,13 +11,14 @@ export function Toggle({
     onChange,
     labelOn,
     labelOff,
+    name = "toggle",
 }: props) {
     return (
         <div className="flex flex-col gap-2">
             <label className="flex items-center gap-3 cursor-pointer">
                 <input
                     type="radio"
-                    name="automatico"
+                    name={name}
                     checked={value === true}
                     onChange={() => onChange(true)}
                     className="accent-accent w-4 h-4 shadow-none"
@@ -27,7 +29,7 @@ export function Toggle({
             <label className="flex items-center gap-3 cursor-pointer">
                 <input
                     type="radio"
-                    name="automatico"
+                    name={name}
                     checked={value === false}
                     onChange={() => onChange(false)}
                     className="accent-accent w-4 h-4 shadow-none"
