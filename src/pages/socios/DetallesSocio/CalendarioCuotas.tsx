@@ -7,22 +7,24 @@ import { AnimatePresence, motion } from "motion/react"
 type MesProps = {
   nombre: string
   pagado: boolean
+  gris: boolean
   loading: boolean
   anyLoading: boolean
   onToggle: () => void
   year: number
 }
 
-function Mes({ nombre, pagado, loading, anyLoading, onToggle, year }: MesProps) {
+function Mes({ nombre, pagado, gris, loading, anyLoading, onToggle, year }: MesProps) {
+  const color = pagado ? "bg-green" : "bg-[#f582ae59]"
   return (
     <li onClick={!anyLoading ? onToggle : undefined} className={cn(
       "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs select-none",
-      pagado ? "bg-green" : "bg-[#f582ae59]",
+      gris ? "bg-gray" : color,
       anyLoading && "opacity-80"
     )}>
       <div className="flex flex-col justify-center items-center">
         <span className="pt-px text-xs opacity-70 font-semibold">{year}</span>
-        <span className="font-semibold text-lg text-center truncate">
+        <span className={cn("font-semibold text-lg text-center truncate", gris && "opacity-80")}>
           {nombre}
         </span>
       </div>
@@ -34,7 +36,8 @@ function Mes({ nombre, pagado, loading, anyLoading, onToggle, year }: MesProps) 
           {loading && <Spinner />} Pago
         </button>
         : <button disabled={loading} className={cn(
-          "flex items-center justify-center gap-1.5 btn bg-[#d9376d74]",
+          "flex items-center justify-center gap-1.5 btn ",
+          gris ? "opacity-0" : "bg-[#d9376d74]",
           loading && "btn-disabled"
         )}>
           {loading && <Spinner />}
@@ -49,6 +52,11 @@ export function CalendarioCuotas() {
   const { mesesCuotas, anio, toggleMes, irAnioAnterior, irAnioSiguiente } = useSociosStore()
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const anioActual = new Date().getFullYear()
+
+  const ultimoPagoIndex = mesesCuotas.reduce((last, mes, i) => {
+    const pagado = Object.values(mes)[0]
+    return pagado ? i : last
+  }, -1)
 
   const handleToggle = async (i: number) => {
     if (loadingIndex !== null) return
@@ -71,12 +79,14 @@ export function CalendarioCuotas() {
           >
             {mesesCuotas.map((mes, i) => {
               const [nombre, pagado] = Object.entries(mes)[0]
+              const gris = anio === anioActual ? (!pagado && i < ultimoPagoIndex) : !pagado
               return (
                 <Mes
                   key={nombre}
                   year={anio}
                   nombre={nombre}
                   pagado={pagado}
+                  gris={gris}
                   loading={loadingIndex === i}
                   anyLoading={loadingIndex !== null}
                   onToggle={() => handleToggle(i)}
