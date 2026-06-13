@@ -9,6 +9,7 @@ type SettingsSchema = {
   fechaDePrestamoAutomatica: boolean
   precioCuota: number
   gestionDeCuotas: boolean
+  numerosDeInventarioExternos: boolean
 }
 
 declare global {

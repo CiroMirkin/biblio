@@ -6,6 +6,7 @@ import { MaximoDeCuotasAdeudadas } from "./MaximoDeCuotasAdeudadas";
 import { ComoEstablecerFechaPrestamo } from "./ComoEstablecerFechaPrestamo";
 import { PrecioCuota } from "./PrecioCuotas";
 import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
+import { UsarNumeroDeInventarioExternos } from "./UsarNumeroDeInventarioExternos";
 
 export function Ajustes() {
     const { gestionDeCuotas } = useSettingsStore()
@@ -20,6 +21,7 @@ export function Ajustes() {
                     { gestionDeCuotas && <MaximoDeCuotasAdeudadas /> }
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
+                    <UsarNumeroDeInventarioExternos />
                     <ComoEstablecerFechaPrestamo />
                     <CopiarExcels />
                 </div>

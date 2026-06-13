@@ -35,6 +35,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       fechaDePrestamoAutomatica: true,
       precioCuota: 1500,
       gestionDeCuotas: true,
+      numerosDeInventarioExternos: true,
     })
     const handler = handlers.get('settings:getAll')!
     const result = await handler()
@@ -45,6 +46,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       fechaDePrestamoAutomatica: true,
       precioCuota: 1500,
       gestionDeCuotas: true,
+      numerosDeInventarioExternos: true,
     })
     expect(mockSettings.getAll).toHaveBeenCalledOnce()
   })

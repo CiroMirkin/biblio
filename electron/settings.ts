@@ -7,6 +7,7 @@ interface SettingsSchema {
   fechaDePrestamoAutomatica: boolean
   precioCuota: number
   gestionDeCuotas: boolean
+  numerosDeInventarioExternos: boolean
 }
 
 const store = new Store<SettingsSchema>({
@@ -18,6 +19,7 @@ const store = new Store<SettingsSchema>({
     fechaDePrestamoAutomatica: { type: 'boolean' },
     precioCuota: { type: 'number', minimum: 1, maximum: 10000, },
     gestionDeCuotas: { type: 'boolean', },
+    numerosDeInventarioExternos: { type: 'boolean', },
   },
   defaults: {
     limiteDeDias: 40,
@@ -26,6 +28,7 @@ const store = new Store<SettingsSchema>({
     fechaDePrestamoAutomatica: true,
     precioCuota: 1000,
     gestionDeCuotas: true,
+    numerosDeInventarioExternos: true,
   },
 })
 
@@ -37,6 +40,7 @@ export function getAll(): SettingsSchema {
     fechaDePrestamoAutomatica: store.get('fechaDePrestamoAutomatica'),
     precioCuota: store.get('precioCuota'),
     gestionDeCuotas: store.get('gestionDeCuotas'),
+    numerosDeInventarioExternos: store.get('numerosDeInventarioExternos'),
   }
 }
 

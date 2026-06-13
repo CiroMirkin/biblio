@@ -41,6 +41,7 @@ export function Prestamos({ onSuccess }: Props) {
     maximoLibrosEnPrestamo,
     limiteDeDias,
     fechaDePrestamoAutomatica,
+    numerosDeInventarioExternos,
   } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
@@ -235,7 +236,7 @@ export function Prestamos({ onSuccess }: Props) {
   return (
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
-        <span className={colNro}>N° Inventario</span>
+        <span className={cn(colNro, !numerosDeInventarioExternos && "hidden",)}>N° Inventario</span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
         <span className={cn(colFecha, !hasLibros && "opacity-0", !fechaDePrestamoAutomatica && "opacity-100")}>Fecha</span>
@@ -252,7 +253,7 @@ export function Prestamos({ onSuccess }: Props) {
               className="flex items-center gap-2 rounded py-3 px-2"
               style={{ backgroundColor: bg }}
             >
-              <span className={cn("text-lg", colNro)}>
+              <span className={cn("text-lg", colNro, !numerosDeInventarioExternos && "hidden", )}>
                 {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
               </span>
               <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
@@ -294,7 +295,11 @@ export function Prestamos({ onSuccess }: Props) {
               value={input.numeroInventario}
               onChange={e => handleChange(id, 'numeroInventario', e.target.value)}
               onKeyDown={e => handleKeyDown(e, id, 0)}
-              className={`${colNro} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+              className={cn(
+                "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                colNro,
+                !numerosDeInventarioExternos && "hidden",
+              )}
               disabled={!caracterSocio}
               placeholder="N°"
             />
@@ -336,7 +341,10 @@ export function Prestamos({ onSuccess }: Props) {
                         setLockedInputs(prev => ({ ...prev, [id]: true }))
                       }}
                       disabled={lockedInputs[id]}
-                      className={`${field === 'autor' ? colAutor : colTitulo} border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      className={cn(
+                        "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                        field === 'autor' ? colAutor : colTitulo,
+                      )}
                       placeholder={field === 'autor' ? 'Autor' : 'Título'}
                     />
                   ))}

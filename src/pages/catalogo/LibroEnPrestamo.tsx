@@ -9,7 +9,7 @@ type Props = {
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
-    const { limiteDeDias } = useSettingsStore()
+    const { limiteDeDias, numerosDeInventarioExternos } = useSettingsStore()
 
     if(libro.fechaDePrestamo === null) {
         return <LibroDisponible libro={libro} />
@@ -28,10 +28,10 @@ export function LibroEnPrestamo({ libro }: Props) {
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base font-semibold">{libro.autor}</p>
-                    <p className="text-base mt-px">
+                    {numerosDeInventarioExternos && <p className="text-base mt-px">
                         <span className="mr-1 font-semibold">N°</span>
                         { libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
-                    </p>
+                    </p> }
                 </div>
                 <span className={cn(
                     "flex flex-col items-end text-base font-semibold",
