@@ -1,27 +1,18 @@
 import { create } from "zustand"
 import type { Libro, LibroEnPrestamo } from "@/models"
-import { cargarLibrosEnPrestamo, settingsService } from "@/services"
+import { cargarLibrosEnPrestamo } from "@/services"
 import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
+import { useSettingsStore } from "./useSettingsStore"
 
 export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
 
 interface LibrosState {
-  limiteDeDias: number
-  maximoLibrosEnPrestamo: number
-  fechaDePrestamoAutomatica: boolean
-  
   libros: LibroEnPrestamo[]
-
   librosFiltrados: LibroEnPrestamo[]
-
   librosVencidos: LibroEnPrestamo[]
   librosDisponibles: Libro[]
   librosPrestados: LibroEnPrestamo[]
-
-  setMaximoLibrosEnPrestamo: (max: number) => number
-  setLimiteDeDias: (limite: number) => number
-  toggleFechaDePrestamoAutomatica: () => boolean
 
   inicializar: () => Promise<void>
   buscar: (query: string) => void
@@ -30,41 +21,30 @@ interface LibrosState {
     libro: Libro,
     options?: { fechaDePrestamo?: Date },
   ) => Promise<LibroEnPrestamo | null>
-
   devolverLibro: (nroInventario: number | string) => Promise<void>
   getLibroPorInventario: (nroInventario: number | string) => LibroEnPrestamo | null
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
-  limiteDeDias: 40,
-  maximoLibrosEnPrestamo: 4,
   libros: [],
   librosVencidos: [],
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
-  fechaDePrestamoAutomatica: true,
 
   inicializar: async () => {
-    const settings = await settingsService.getAll()
-    const { limiteDeDias } = settings
-    
-    set({
-      limiteDeDias: settings.limiteDeDias ?? 40,
-      maximoLibrosEnPrestamo: settings.maximoLibrosEnPrestamo ?? 4,
-      fechaDePrestamoAutomatica: settings.fechaDePrestamoAutomatica ?? true,
-    })
+    const { limiteDeDias } = useSettingsStore.getState()
 
-    const librosVencidos: LibroEnPrestamo[] = [] 
+    const librosVencidos: LibroEnPrestamo[] = []
     const librosDisponibles: Libro[] = []
     const librosPrestados: LibroEnPrestamo[] = []
 
     const libros = await cargarLibrosEnPrestamo()
     libros.forEach(libro => {
-      if(libro.fechaDePrestamo === null) {
+      if (libro.fechaDePrestamo === null) {
         librosDisponibles.push(libro)
       }
-      else if(calcularDiasDesdePrestamo(libro.fechaDePrestamo) > limiteDeDias) {
+      else if (calcularDiasDesdePrestamo(libro.fechaDePrestamo) > limiteDeDias) {
         librosVencidos.push(libro)
       }
       else {
@@ -75,51 +55,15 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     librosVencidos.sort((a, b) =>
       calcularDiasDesdePrestamo(b.fechaDePrestamo!) - calcularDiasDesdePrestamo(a.fechaDePrestamo!)
     )
-    const librosFiltrados = [...librosVencidos]
 
-    set({ libros, librosVencidos, librosDisponibles, librosPrestados, librosFiltrados })
-  },
-
-  setMaximoLibrosEnPrestamo: (max) => {
-    const { maximoLibrosEnPrestamo } = get()
-    if(max <= 0) return maximoLibrosEnPrestamo
-    
-    set({ maximoLibrosEnPrestamo: max })
-    settingsService.set('maximoLibrosEnPrestamo', max)
-    return max
-  },
-
-  setLimiteDeDias: (limite: number) => {
-    const { limiteDeDias } = get()
-    if(limite <= 0) return limiteDeDias
-    
-    set({ limiteDeDias: limite })
-    settingsService.set('limiteDeDias', limite)
-    return limite
-  },
-
-  toggleFechaDePrestamoAutomatica: () => {
-    const { fechaDePrestamoAutomatica } = get()
-
-    if(fechaDePrestamoAutomatica) {
-      set({ fechaDePrestamoAutomatica: false })
-      settingsService.set('fechaDePrestamoAutomatica', false)
-      return false
-    }
-
-    set({ fechaDePrestamoAutomatica: true })
-    settingsService.set('fechaDePrestamoAutomatica', true)
-    return true
+    set({ libros, librosVencidos, librosDisponibles, librosPrestados, librosFiltrados: [...librosVencidos] })
   },
 
   buscar: (query) => {
-    const {
-      libros,
-      librosVencidos,
-    } = get()
+    const { libros, librosVencidos } = get()
 
     if (!query.trim()) {
-      set({ librosFiltrados: [...librosVencidos], })
+      set({ librosFiltrados: [...librosVencidos] })
       return
     }
 
@@ -127,7 +71,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       libros,
       dato: query.toLowerCase().trim(),
     })
-    set({ librosFiltrados: filtrados, })
+    set({ librosFiltrados: filtrados })
   },
 
   getLibrosSocio: async (nroSocio) => {
@@ -164,11 +108,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   getLibroPorInventario: (nroInventario) => {
     const { libros } = get()
-
-    const libro = libros.find(l => 
+    return libros.find(l =>
       l.numeroInventario?.toString() === nroInventario.toString().trim()
     ) ?? null
-
-    return libro
   },
 }))
