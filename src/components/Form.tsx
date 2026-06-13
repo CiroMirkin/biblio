@@ -1,4 +1,5 @@
 import { cn } from "@/utils"
+import { motion } from "motion/react"
 import { type ChangeEvent, type HTMLInputTypeAttribute, type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from "react"
 
 type Props = {
@@ -36,6 +37,7 @@ export function Form({
 }: Props) {
   const [value, setValue] = useState(defaultValue ?? "")
   const [prevDefault, setPrevDefault] = useState(defaultValue)
+  const [success, setSuccess] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
@@ -53,6 +55,8 @@ export function Form({
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
     onSubmit?.(value.toString())
+    setSuccess(true)
+    setTimeout(() => setSuccess(false), 1500)
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -89,9 +93,14 @@ export function Form({
           />
         )}
         { withSubmit && (
-          <button type="submit"className={cn("btn", classNameBtn)}>
+          <motion.button
+            type="submit"
+            animate={{ backgroundColor: success ? "#00a63e" : "", color: success ? "#fff" : "" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className={cn("btn", classNameBtn)}
+          >
             { submitLabel }
-          </button>
+          </motion.button>
         ) }
       </div>
     </form>
