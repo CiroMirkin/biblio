@@ -1,11 +1,12 @@
 import { useEffect } from "react"
-import { useLibrosStore } from "@/store"
+import { useSettingsStore, useLibrosStore } from "@/store"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 import { RecuentoLibros } from "./RecuentoLibros"
 
 export function Catalogo() {
-    const { inicializar, limiteDeDias } = useLibrosStore()
+    const { inicializar } = useLibrosStore()
+    const { limiteDeDias } = useSettingsStore()
 
     useEffect(() => {
         inicializar()

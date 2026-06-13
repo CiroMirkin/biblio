@@ -1,13 +1,13 @@
 import { Form } from "@/components";
-import { useLibrosStore } from "@/store";
+import { useSettingsStore } from "@/store";
 
 export function MaximoDiasDelPrestamo() {
-    const { limiteDeDias, setLimiteDeDias } = useLibrosStore()
+    const { limiteDeDias, updateSetting } = useSettingsStore()
 
     const setMaximo = (max: string) => {
         const newMax = Number(max)
         if(newMax <= 0) return
-        setLimiteDeDias(newMax)
+        updateSetting('limiteDeDias', newMax)
     }
 
     return (

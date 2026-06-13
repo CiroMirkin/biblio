@@ -1,6 +1,6 @@
 import type { LibroEnPrestamo } from "@/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
-import { useLibrosStore, useSociosStore } from "@/store"
+import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
 import { format } from "@formkit/tempo"
 
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
-    const { limiteDeDias } = useLibrosStore()
+    const { limiteDeDias } = useSettingsStore()
 
     if(libro.fechaDePrestamo === null) {
         return <LibroDisponible libro={libro} />

@@ -1,8 +1,10 @@
 import { Toggle } from "@/components"
-import { useLibrosStore } from "@/store"
+import { useSettingsStore } from "@/store"
 
 export function ComoEstablecerFechaPrestamo() {
-    const { fechaDePrestamoAutomatica, toggleFechaDePrestamoAutomatica } = useLibrosStore()
+    const { fechaDePrestamoAutomatica, toggleSetting } = useSettingsStore()
+
+    const toggle = () => toggleSetting('fechaDePrestamoAutomatica')
 
     return (
         <section className="card">
@@ -11,7 +13,7 @@ export function ComoEstablecerFechaPrestamo() {
                 labelOn="Quiero que sea automático"
                 labelOff="No quiero que sea automático"
                 value={fechaDePrestamoAutomatica}
-                onChange={toggleFechaDePrestamoAutomatica}
+                onChange={toggle}
             />
         </section>
     )

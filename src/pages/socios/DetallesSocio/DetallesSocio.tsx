@@ -1,4 +1,4 @@
-import { useSociosStore } from "@/store"
+import { useSettingsStore, useSociosStore } from "@/store"
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { SocioDatos } from "./SocioDatos"
@@ -11,7 +11,8 @@ import { cn, formatPrice } from "@/utils"
 const anioActual: number = new Date().getFullYear()
 
 export function DetalleSocio() {
-  const { anio, showListaSocios, socioSeleccionado, precioCuota, gestionDeCuotas } = useSociosStore()
+  const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
+  const { precioCuota, gestionDeCuotas } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
   const cuotasDesactualizadas = caracterSocio.tieneCuotasDesactualizadas

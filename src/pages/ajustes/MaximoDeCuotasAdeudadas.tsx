@@ -1,17 +1,14 @@
 import { Form } from "@/components";
-import { useSociosStore } from "@/store";
+import { useSettingsStore } from "@/store";
 
 /** Establece la cantidad maxima de cuotas (meses) adeudadas, cuando se supera dicha cantidad  el socio se da de baja automáticamente. */
 export function MaximoDeCuotasAdeudadas() {
-    const {
-        maximoDeCuotasAdeudadas,
-        setMaximoDeCuotasAdeudadas,
-    } = useSociosStore()
+    const { maximoDeCuotasAdeudadas, updateSetting, } = useSettingsStore()
 
     const setMaximo = (value: string) => {
         const newMax = Number(value)
         if(newMax <= 1) return
-        setMaximoDeCuotasAdeudadas(newMax)
+        updateSetting('maximoDeCuotasAdeudadas', newMax)
     }
 
     return (

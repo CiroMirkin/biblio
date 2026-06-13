@@ -1,8 +1,10 @@
 import { Toggle } from "@/components"
-import { useSociosStore } from "@/store"
+import { useSettingsStore } from "@/store"
 
 export function EstablecerUsoDeCuotas() {
-    const { gestionDeCuotas, toggleGestionDeCuotas } = useSociosStore()
+    const { gestionDeCuotas, toggleSetting } = useSettingsStore()
+
+    const toggle = () => toggleSetting('gestionDeCuotas')
 
     return (
         <section className="card">
@@ -12,7 +14,7 @@ export function EstablecerUsoDeCuotas() {
                 labelOff="No requiero gestionar cuotas"
                 value={gestionDeCuotas}
                 name="gestion-cuotas"
-                onChange={toggleGestionDeCuotas}
+                onChange={toggle}
             />
         </section>
     )

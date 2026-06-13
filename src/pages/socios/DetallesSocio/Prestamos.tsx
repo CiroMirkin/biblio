@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
 import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
 import { calcularDiasDesdePrestamo, cn, formatAutor, formatFecha, formatTitulo, getDia } from "@/utils"
-import { useSociosStore, useLibrosStore } from "@/store"
+import { useSociosStore, useLibrosStore, useSettingsStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
@@ -35,12 +35,14 @@ export function Prestamos({ onSuccess }: Props) {
     getLibrosSocio,
     agregarLibroEnPrestamo,
     devolverLibro,
-    maximoLibrosEnPrestamo,
-    limiteDeDias,
     getLibroPorInventario,
     inicializar,
-    fechaDePrestamoAutomatica,
   } = useLibrosStore()
+  const {
+    maximoLibrosEnPrestamo,
+    limiteDeDias,
+    fechaDePrestamoAutomatica,
+  } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
   const nombreSocio = socio!.nombreYApellido || ""

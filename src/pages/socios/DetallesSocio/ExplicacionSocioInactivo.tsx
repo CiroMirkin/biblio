@@ -1,8 +1,9 @@
-import { useSociosStore } from "@/store"
+import { useSettingsStore, useSociosStore } from "@/store"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
 
 export function ExplicacionSocioInactivo() {
-    const { maximoDeCuotasAdeudadas, socioSeleccionado } = useSociosStore()
+    const { socioSeleccionado } = useSociosStore()
+    const { maximoDeCuotasAdeudadas } = useSettingsStore()
     const nombre = socioSeleccionado?.nombreYApellido || ""
     return (
         <>

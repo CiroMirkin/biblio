@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useLibrosStore, useSociosStore } from "@/store"
+import { useSettingsStore, useLibrosStore } from "@/store"
 import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
@@ -9,7 +9,7 @@ import { PrecioCuota } from "./PrecioCuotas";
 import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 
 export function Ajustes() {
-    const { gestionDeCuotas } = useSociosStore()
+    const { gestionDeCuotas } = useSettingsStore()
     const inicializar = useLibrosStore(s => s.inicializar)
 
     useEffect(() => { inicializar() }, [inicializar])

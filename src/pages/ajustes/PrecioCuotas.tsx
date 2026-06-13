@@ -1,13 +1,13 @@
 import { Form } from "@/components";
-import { useSociosStore } from "@/store";
+import { useSettingsStore } from "@/store";
 
 export function PrecioCuota() {
-    const { precioCuota, setPrecioCuota } = useSociosStore()
+    const { precioCuota, updateSetting } = useSettingsStore()
 
     const setPrice = (price: string) => {
         const newPrice = Number(price)
         if(newPrice <= 0) return
-        setPrecioCuota(newPrice)
+        updateSetting('precioCuota', newPrice)
     }
 
     return (
