@@ -8,12 +8,13 @@ export function ComoEstablecerFechaPrestamo() {
 
     return (
         <section className="card">
-            <h2 className="text-lg mb-2">Establecer fecha de préstamo automáticamente</h2>
+            <h2 className="text-lg mb-2">Fecha de préstamo:</h2>
             <Toggle
-                labelOn="Quiero que sea automático"
-                labelOff="No quiero que sea automático"
+                labelOn="Quiero que la fecha de préstamo se establezca automáticamente."
+                labelOff="Quiero establecer la fecha de préstamo manualmente."
                 value={fechaDePrestamoAutomatica}
                 onChange={toggle}
+                name="fecha-de-prestamo"
             />
         </section>
     )
