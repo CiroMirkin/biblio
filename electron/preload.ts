@@ -41,3 +41,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
   settingsGet: (key: string) => ipcRenderer.invoke('settings:get', key),
   settingsSet: (key: string, value: unknown) => ipcRenderer.invoke('settings:set', key, value),
 })
+
+contextBridge.exposeInMainWorld('updater', {
+  onAvailable: (callback: (info: unknown) => void) => {
+    ipcRenderer.on('update-available', (_event, info) => callback(info))
+  },
+  onProgress: (callback: (percent: number) => void) => {
+    ipcRenderer.on('download-progress', (_event, percent) => callback(percent))
+  },
+  onDownloaded: (callback: () => void) => {
+    ipcRenderer.on('update-downloaded', () => callback())
+  },
+  download: () => ipcRenderer.invoke('start-download'),
+  install: () => ipcRenderer.invoke('install-update'),
+})

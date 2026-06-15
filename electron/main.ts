@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
+import { autoUpdater } from 'electron-updater'
 import path from 'node:path'
 import type { Libro } from './libro'
 import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, cambiarNombreSocio, } from './handlers'
@@ -58,6 +59,32 @@ ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) =>
 
 ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
 
+function setupUpdater(win: BrowserWindow) {
+  autoUpdater.autoDownload = false
+
+  autoUpdater.on('update-available', (info) => {
+    win.webContents.send('update-available', info)
+  })
+
+  autoUpdater.on('download-progress', (progress) => {
+    win.webContents.send('download-progress', progress.percent)
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    win.webContents.send('update-downloaded')
+  })
+
+  ipcMain.handle('start-download', () => {
+    autoUpdater.downloadUpdate()
+  })
+
+  ipcMain.handle('install-update', () => {
+    autoUpdater.quitAndInstall()
+  })
+
+  autoUpdater.checkForUpdates()
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -72,6 +99,8 @@ function createWindow() {
       sandbox: false,
     },
   })
+
+  setupUpdater(mainWindow)
 
   mainWindow.on('closed', () => {
     mainWindow = null
