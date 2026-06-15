@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
+import log from 'electron-log'
 import path from 'node:path'
 import type { Libro } from './libro'
 import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, cambiarNombreSocio, } from './handlers'
@@ -60,6 +61,8 @@ ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) =>
 ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
 
 function setupUpdater(win: BrowserWindow) {
+  autoUpdater.logger = log
+  log.transports.file.level = 'debug'
   autoUpdater.autoDownload = false
   autoUpdater.setFeedURL({
     provider: 'github',
@@ -91,8 +94,6 @@ function setupUpdater(win: BrowserWindow) {
   ipcMain.handle('install-update', () => {
     autoUpdater.quitAndInstall()
   })
-
-  autoUpdater.checkForUpdates()
 }
 
 function createWindow() {
@@ -120,7 +121,11 @@ function createWindow() {
     mainWindow.loadURL(VITE_DEV_SERVER_URL)
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
-  }
+  } 
+  
+  mainWindow.webContents.once('did-finish-load', () => {
+    autoUpdater.checkForUpdates()
+  })
 }
 app.whenReady().then(() => {
   registerSettingsHandlers()
