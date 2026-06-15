@@ -26,7 +26,9 @@ export function ListaLibrosEnPrestamo() {
         return () => observer.disconnect()
     }, [librosFiltrados.length, cantidad])
 
-    if (!librosFiltrados.length) return
+    if (!librosFiltrados.length) return (
+        <p>No se encontraron resultados, pero aún puedes probar buscando por autor o por N° de inventario.</p>
+    )
 
     return (
         <ul className="flex flex-col gap-3 pb-4">

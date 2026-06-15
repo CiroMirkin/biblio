@@ -1,4 +1,5 @@
 import { useSettingsStore } from "@/store"
+import { ActualizarApp } from "./ActualizarApp";
 import { CopiarExcels } from "./CopiarExcels";
 import { MaximoDiasDelPrestamo } from "./MaximoDiasDelPrestamo";
 import { MaximoPrestamosForm } from "./MaximoPrestamosForm";
@@ -24,6 +25,7 @@ export function Ajustes() {
                     <UsarNumeroDeInventarioExternos />
                     <ComoEstablecerFechaPrestamo />
                     <CopiarExcels />
+                    <ActualizarApp />
                 </div>
             </div>
             <aside className="sticky top-0 h-fit hidden md:flex flex-col">

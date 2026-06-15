@@ -82,7 +82,7 @@ Este spec no introduce cambios estructurales en el modelo de datos del proyecto.
 
 ## Acceptance criteria
 
-- [ ] `npm run dist:win10` genera `release/biblio Setup X.X.X.exe` (x64) y `release/biblio Setup X.X.X ia32.exe` sin errores
+- [ ] `npm run dist:win10` genera `release/Biblio Setup X.X.X.exe` (x64) y `release/biblio Setup X.X.X ia32.exe` sin errores
 - [ ] `npm run dist:win7` genera `release/biblio Setup X.X.X ia32.exe` sin errores
 - [ ] El instalador x64 se instala y ejecuta correctamente en Windows 10 x64
 - [ ] Rama `win7-support` existe y compila con Electron 22 + output CJS
@@ -127,6 +127,6 @@ Este spec no introduce cambios estructurales en el modelo de datos del proyecto.
 | Riesgo | Mitigación |
 |---|---|
 | Dependencias incompatibles con Electron 22 (ej. `electron-store` ESM puro) | Se resuelve durante implementación fuera del spec; si alguna dependencia no tiene versión compatible, se evalúa reemplazo o workaround |
-| Acceso denegado al compilar por instancia de `biblio.exe` abierta | Documentar en el spec que hay que cerrar la app antes de compilar |
+| Acceso denegado al compilar por instancia de `Biblio.exe` abierta | Documentar en el spec que hay que cerrar la app antes de compilar |
 | `dist:all` falla en la mitad (win10 ok, win7 fail) | Los scripts son independientes; `dist:win7` se puede ejecutar solo después de corregir el error |
 | Rebase de `win7-support` contra `main` introduce conflictos | Resolver con `git rebase` estándar; si hay cambios en `electron/` o `vite.config.ts` que afectan al branch, revisar manualmente |

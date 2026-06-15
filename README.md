@@ -55,6 +55,34 @@ Luego si se usa el componente `Form` en conjunto con el store, el action dentro 
 npm run dist
 ```
 
-Genera `release/biblio Setup X.X.X.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
+Genera `release/Biblio Setup X.X.X.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
 
 > **Nota:** Este proyecto se compila exclusivamente para Windows 7 (32 bits). Aunque el instalador funciona en versiones posteriores de Windows, Electron 22 es la última versión con soporte para Windows 7.
+
+---
+
+## Publicación de releases
+
+Para publicar una nueva versión (flujo automático):
+
+1. Actualizar versión:
+   ```bash
+   npm version patch   # o minor, major
+   ```
+2. Pushear el commit y el tag:
+   ```bash
+   git push && git push --tags
+   ```
+3. El workflow de GitHub Actions se activa automáticamente con el tag `v*`, compila la app y publica el release en GitHub.
+
+Ejemplo de como publicar una nueva versión manualmente:
+
+```bash
+npm version 0.1.1-beta --no-git-tag-version
+git add package.json package-lock.json
+git commit -m "chore: version 0.1.1-beta"
+git tag v0.1.1-beta
+git push origin main --tags
+```
+
+> **Requisito:** El secret `GITHUB_TOKEN` se configura automáticamente en el repositorio. No requiere acción manual.

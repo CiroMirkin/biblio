@@ -7,6 +7,7 @@ import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
 import { getCaracterSocio } from "@/models"
 import { cn, formatPrice } from "@/utils"
+import { motion, AnimatePresence } from "motion/react"
 
 const anioActual: number = new Date().getFullYear()
 
@@ -15,7 +16,6 @@ export function DetalleSocio() {
   const { precioCuota, gestionDeCuotas } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
-  const cuotasDesactualizadas = caracterSocio.tieneCuotasDesactualizadas
 
   return (
     <>
@@ -33,7 +33,17 @@ export function DetalleSocio() {
 
           <div className="flex flex-col gap-4 card">
             <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
-            <Prestamos onSuccess={() => {}} />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${socioSeleccionado?.nroSocio}-${socioSeleccionado?.nombreYApellido}`}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: "hidden" }}
+              >
+                <Prestamos onSuccess={() => {}} />
+              </motion.div>
+            </AnimatePresence>
           </div>
           
           { !caracterSocio.estado && <Observaciones /> }
@@ -54,9 +64,7 @@ export function DetalleSocio() {
                 >{anio}</span>
               </span>
 
-              <span className="text-base opacity-75 self-end">{ formatPrice(precioCuota) }</span>
-              
-              {cuotasDesactualizadas && (<span className="font-2xl font-semibold bg-sky-300 px-4">ACTUALIZAR CUOTAS</span>)}
+              <span className="text-lg opacity-75 self-end">{ formatPrice(precioCuota) }</span>
             </h2>
             <CalendarioCuotas />
           </div>

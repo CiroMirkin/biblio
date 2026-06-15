@@ -41,3 +41,27 @@ contextBridge.exposeInMainWorld('electronAPI', {
   settingsGet: (key: string) => ipcRenderer.invoke('settings:get', key),
   settingsSet: (key: string, value: unknown) => ipcRenderer.invoke('settings:set', key, value),
 })
+
+contextBridge.exposeInMainWorld('updater', {
+  onAvailable: (callback: (info: unknown) => void) => {
+    const handler = (_event: unknown, info: unknown) => callback(info)
+    ipcRenderer.on('update-available', handler)
+    return () => ipcRenderer.removeListener('update-available', handler)
+  },
+  onProgress: (callback: (percent: number) => void) => {
+    const handler = (_event: unknown, percent: number) => callback(percent)
+    ipcRenderer.on('download-progress', handler)
+    return () => ipcRenderer.removeListener('download-progress', handler)
+  },
+  onDownloaded: (callback: () => void) => {
+    ipcRenderer.on('update-downloaded', callback)
+    return () => ipcRenderer.removeListener('update-downloaded', callback)
+  },
+  onError: (callback: (message: string) => void) => {
+    const handler = (_event: unknown, message: string) => callback(message)
+    ipcRenderer.on('update-error', handler)
+    return () => ipcRenderer.removeListener('update-error', handler)
+  },
+  download: () => ipcRenderer.invoke('start-download'),
+  install: () => ipcRenderer.invoke('install-update'),
+})
