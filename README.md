@@ -55,7 +55,7 @@ Luego si se usa el componente `Form` en conjunto con el store, el action dentro 
 npm run dist
 ```
 
-Genera `release/biblio Setup X.X.X.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
+Genera `release/Biblio Setup X.X.X.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
 
 > **Nota:** Este proyecto se compila exclusivamente para Windows 7 (32 bits). Aunque el instalador funciona en versiones posteriores de Windows, Electron 22 es la última versión con soporte para Windows 7.
 
