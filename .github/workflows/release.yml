@@ -23,11 +23,4 @@ jobs:
 
       - run: npm run dist
         env:
-          ELECTRON_BUILDER_PUBLISH: never
-
-      - uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            release/*.exe
-            release/latest.yml
-          generate_release_notes: true
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
