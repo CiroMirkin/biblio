@@ -20,6 +20,14 @@
     "clean": "tsx clean.ts"
   },
   "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "CiroMirkin",
+        "repo": "biblio",
+        "releaseType": "release"
+      }
+    ],
     "appId": "com.tuusuario.biblio",
     "productName": "biblio",
     "win": {
@@ -65,6 +73,7 @@
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
     "electron-store": "^7.0.3",
+    "electron-updater": "^6.8.9",
     "exceljs": "^4.4.0",
     "motion": "^12.38.0",
     "react": "^19.2.5",
