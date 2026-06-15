@@ -15,7 +15,6 @@ export function DetalleSocio() {
   const { precioCuota, gestionDeCuotas } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
-  const cuotasDesactualizadas = caracterSocio.tieneCuotasDesactualizadas
 
   return (
     <>
@@ -54,9 +53,7 @@ export function DetalleSocio() {
                 >{anio}</span>
               </span>
 
-              <span className="text-base opacity-75 self-end">{ formatPrice(precioCuota) }</span>
-              
-              {cuotasDesactualizadas && (<span className="font-2xl font-semibold bg-sky-300 px-4">ACTUALIZAR CUOTAS</span>)}
+              <span className="text-lg opacity-75 self-end">{ formatPrice(precioCuota) }</span>
             </h2>
             <CalendarioCuotas />
           </div>
