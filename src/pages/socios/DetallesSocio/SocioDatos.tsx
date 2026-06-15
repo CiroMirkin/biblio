@@ -92,21 +92,39 @@ export function SocioDatos() {
     return (
         <div className="card relative">
             <div className="flex justify-between items-center" onClick={() => setExpandido(prev => !prev)}>
-                <h2 className="text-2xl font-semibold">
-                    {socio?.nombreYApellido} 
-                    { loading && <span className="ml-1.5">
-                        <Spinner /> <span className="text-sm opacity-60">Editando...</span>
-                    </span>}
-                </h2>
+                <AnimatePresence mode="wait">
+                    <motion.h2
+                        key={socio!.nroSocio}
+                        className="text-2xl font-semibold"
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        {socio!.nombreYApellido}
+                        {loading && (
+                            <span className="ml-1.5">
+                                <Spinner /> <span className="text-sm opacity-60">Editando...</span>
+                            </span>
+                        )}
+                    </motion.h2>
+                </AnimatePresence>
+
                 { caracterSocio.estado
                     ? <span className="px-2 py-px text-base text-black/95 font-semibold bg-green rounded-sm">Activo</span> 
                     : <span className="px-2 py-px text-base text-black/95 font-semibold bg-amber border rounded-sm">Inactivo</span> 
                 }
             </div>
-            <div className="py-1.5">
-                <span className="font-semibold text-black/70">N° Socio: </span>
-                {socio?.nroSocio}
-            </div>
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={socio!.nroSocio}
+                    className="py-1.5"
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <span className="font-semibold text-black/70">N° Socio: </span>
+                    {socio!.nroSocio}
+                </motion.div>
+            </AnimatePresence>
+
             <ul className="list-disc pl-6 text-base">
                 <AnimatePresence>
                     {expandido && (
