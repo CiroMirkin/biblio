@@ -39,7 +39,8 @@
           ]
         }
       ],
-      "icon": "public/icon.ico"
+      "icon": "public/icon.ico",
+      "artifactName": "Biblio-Setup.exe"
     },
     "files": [
       "dist/**/*",
