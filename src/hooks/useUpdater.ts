@@ -1,21 +1,24 @@
 import { useState, useEffect, useCallback } from 'react'
 
-type UpdaterState = 'idle' | 'available' | 'downloading' | 'ready'
+type UpdaterState = 'idle' | 'available' | 'downloading' | 'ready' | 'error'
 
 export function useUpdater() {
   const [state, setState] = useState<UpdaterState>('idle')
   const [progress, setProgress] = useState(0)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const updater = (window as any).updater
     if (!updater) return
 
-    updater.onAvailable(() => setState('available'))
-    updater.onProgress((percent: number) => {
-      setState('downloading')
-      setProgress(Math.round(percent))
-    })
-    updater.onDownloaded(() => setState('ready'))
+    const cleanups = [
+      updater.onAvailable(() => { setState('available'); setError(null) }),
+      updater.onProgress((percent: number) => { setState('downloading'); setProgress(Math.round(percent)); setError(null) }),
+      updater.onDownloaded(() => { setState('ready'); setError(null) }),
+      updater.onError((message: string) => { setState('error'); setError(message) }),
+    ]
+
+    return () => cleanups.forEach((fn: () => void) => fn())
   }, [])
 
   const download = useCallback(() => {
@@ -28,5 +31,5 @@ export function useUpdater() {
     if (updater) updater.install()
   }, [])
 
-  return { state, progress, download, install } as const
+  return { state, progress, error, download, install } as const
 }

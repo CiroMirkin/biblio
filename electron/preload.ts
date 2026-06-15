@@ -44,13 +44,23 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 contextBridge.exposeInMainWorld('updater', {
   onAvailable: (callback: (info: unknown) => void) => {
-    ipcRenderer.on('update-available', (_event, info) => callback(info))
+    const handler = (_event: unknown, info: unknown) => callback(info)
+    ipcRenderer.on('update-available', handler)
+    return () => ipcRenderer.removeListener('update-available', handler)
   },
   onProgress: (callback: (percent: number) => void) => {
-    ipcRenderer.on('download-progress', (_event, percent) => callback(percent))
+    const handler = (_event: unknown, percent: number) => callback(percent)
+    ipcRenderer.on('download-progress', handler)
+    return () => ipcRenderer.removeListener('download-progress', handler)
   },
   onDownloaded: (callback: () => void) => {
-    ipcRenderer.on('update-downloaded', () => callback())
+    ipcRenderer.on('update-downloaded', callback)
+    return () => ipcRenderer.removeListener('update-downloaded', callback)
+  },
+  onError: (callback: (message: string) => void) => {
+    const handler = (_event: unknown, message: string) => callback(message)
+    ipcRenderer.on('update-error', handler)
+    return () => ipcRenderer.removeListener('update-error', handler)
   },
   download: () => ipcRenderer.invoke('start-download'),
   install: () => ipcRenderer.invoke('install-update'),

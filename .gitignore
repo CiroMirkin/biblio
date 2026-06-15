@@ -3,6 +3,8 @@ dist-electron
 dist-ts
 release
 
+dev-app-update.yml
+
 templates/*.xlsx
 templates/*.xlsx
 public/*.xlsx

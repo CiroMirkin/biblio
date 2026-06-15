@@ -1,13 +1,18 @@
 import { useUpdater } from "@/hooks/useUpdater"
 
 export function ActualizarApp() {
-  const { state, progress, download, install } = useUpdater()
+  const { state, progress, error, download, install } = useUpdater()
 
   return (
     <div className="flex flex-col gap-2 card">
       <h3 className="font-semibold text-lg">Actualización de la aplicación</h3>
       {state === 'idle' && (
         <p className="text-sm text-gray-600">No hay actualizaciones disponibles.</p>
+      )}
+      {state === 'error' && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-red-600">Error al buscar actualizaciones: {error}</p>
+        </div>
       )}
       {state === 'available' && (
         <div className="flex flex-col gap-2">

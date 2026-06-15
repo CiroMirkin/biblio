@@ -61,6 +61,12 @@ ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
 
 function setupUpdater(win: BrowserWindow) {
   autoUpdater.autoDownload = false
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'CiroMirkin',
+    repo: 'biblio',
+    releaseType: 'release',
+  })
 
   autoUpdater.on('update-available', (info) => {
     win.webContents.send('update-available', info)
@@ -72,6 +78,10 @@ function setupUpdater(win: BrowserWindow) {
 
   autoUpdater.on('update-downloaded', () => {
     win.webContents.send('update-downloaded')
+  })
+
+  autoUpdater.on('error', (error) => {
+    win.webContents.send('update-error', error.message)
   })
 
   ipcMain.handle('start-download', () => {
