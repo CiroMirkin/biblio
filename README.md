@@ -63,7 +63,7 @@ Genera `release/Biblio Setup X.X.X.exe` (solo ia32, Electron 22). Compatible con
 
 ## Publicación de releases
 
-Para publicar una nueva versión:
+Para publicar una nueva versión (flujo automático):
 
 1. Actualizar versión:
    ```bash
@@ -74,5 +74,15 @@ Para publicar una nueva versión:
    git push && git push --tags
    ```
 3. El workflow de GitHub Actions se activa automáticamente con el tag `v*`, compila la app y publica el release en GitHub.
+
+Ejemplo de como publicar una nueva versión manualmente:
+
+```bash
+npm version 0.1.1-beta --no-git-tag-version
+git add package.json package-lock.json
+git commit -m "chore: version 0.1.1-beta"
+git tag v0.1.1-beta
+git push origin main --tags
+```
 
 > **Requisito:** El secret `GITHUB_TOKEN` se configura automáticamente en el repositorio. No requiere acción manual.
