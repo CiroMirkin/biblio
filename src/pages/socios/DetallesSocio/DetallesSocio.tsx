@@ -8,6 +8,8 @@ import { ChevronLeftIcon } from "@/components"
 import { getCaracterSocio } from "@/models"
 import { cn, formatPrice } from "@/utils"
 import { motion, AnimatePresence } from "motion/react"
+import { SociosVinculados } from "./SociosVinculados/SociosVinculados"
+
 
 const anioActual: number = new Date().getFullYear()
 
@@ -31,7 +33,7 @@ export function DetalleSocio() {
         <div className="flex flex-col gap-4">
           <SocioDatos />
 
-          <div className="flex flex-col gap-4 card">
+          <div className="flex flex-col gap-4 card shadow-lg mr-2.5">
             <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
             <AnimatePresence mode="wait">
               <motion.div
@@ -47,6 +49,8 @@ export function DetalleSocio() {
           </div>
           
           { !caracterSocio.estado && <Observaciones /> }
+          
+          <SociosVinculados />
         </div>
 
         <div className="flex flex-col gap-4">

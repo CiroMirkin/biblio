@@ -13,6 +13,7 @@ interface SociosState {
     sociosConLibros: Socio[]
     sociosFiltrados: Socio[]
     socioSeleccionado: Socio | null
+    sociosVinculados: Socio[]
     mesesCuotas: Calendario
     anio: number
     showDetallesSocio: boolean
@@ -41,6 +42,10 @@ interface SociosState {
 
     setObservaciones: (newObservaciones: string) => Promise<void>
 
+    vincularSocio: (nroSocio: number) => Promise<boolean>
+    desvincularSocio: (nroSocio: number) => Promise<boolean>
+    verSocioVinculado: (nroSocio: number) => void
+
     showListaSocios: () => void
 }
 
@@ -48,6 +53,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     socios: [],
     sociosConLibros: [],
     sociosFiltrados: [],
+    sociosVinculados: [],
     socioSeleccionado: null,
     mesesCuotas: [],
     anio: new Date().getFullYear(),
@@ -97,9 +103,13 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     seleccionar: async (socio) => {
         const { anio, meses: mesesCuotas } = await cargarCuotasSocio(socio.nroSocio)
         await get().aplicarCambioAutomaticoDeCaracter(socio)
+
+        const { socios } = get()
+        const sociosVinculados = socios.filter(s => socio.sociosVinculados.includes(s.nroSocio))
         
         set({
             socioSeleccionado: socio,
+            sociosVinculados: sociosVinculados,
             showDetallesSocio: true,
             mesesCuotas,
             anio,
@@ -205,6 +215,91 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             socios: actualizarSocioEnLista(actualizado, socios),
             sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
         })
+    },
+
+    desvincularSocio: async (nroSocio: number) => {
+        const { socioSeleccionado: socio_a, socios, sociosFiltrados, sociosVinculados } = get()
+        if(!nroSocio || !socio_a || !socio_a.nroSocio) return false
+
+        const socio_b = socios.filter(s => s.nroSocio === nroSocio)[0]
+        if(!socio_b) return false
+
+        const ok = await window.electronAPI.desvincularSocios(
+            socio_b, socio_a,
+        )
+
+        if(!ok) return false
+
+        const updatedSocio_a = {
+            ...socio_a,
+            sociosVinculados: socio_a.sociosVinculados.filter(nro => nro !== nroSocio),
+        }
+
+        const updatedSocio_b = {
+            ...socio_b,
+            sociosVinculados: socio_b.sociosVinculados.filter(nro => nro !== socio_a.nroSocio),
+        }
+
+        set({
+            socioSeleccionado: updatedSocio_a,
+            sociosVinculados: sociosVinculados.filter(s => s.nroSocio !== socio_b.nroSocio),
+            socios: actualizarSocioEnLista(
+                updatedSocio_a,
+                actualizarSocioEnLista(updatedSocio_b, socios)
+            ),
+            sociosFiltrados: actualizarSocioEnLista(
+                socio_a,
+                actualizarSocioEnLista(updatedSocio_b, sociosFiltrados)
+            ),
+        })
+        return true
+    },
+
+    vincularSocio: async (nroSocio: number) => {
+        const { socioSeleccionado: socio_a, socios, sociosFiltrados, sociosVinculados } = get()
+        if(!nroSocio || !socio_a || !socio_a.nroSocio) return false
+
+        const socio_b = socios.filter(s => s.nroSocio === nroSocio)[0]
+        if(!socio_b) return false
+
+        const ok = await window.electronAPI.vincularSocios(
+            socio_b, socio_a,
+        )
+
+        if(!ok) return false
+
+        const updatedSocio_a = {
+            ...socio_a,
+            sociosVinculados: [ ...socio_a.sociosVinculados, nroSocio ],
+        }
+
+        const updatedSocio_b = {
+            ...socio_b,
+            sociosVinculados: [ ...socio_b.sociosVinculados, socio_a.nroSocio ],
+        }
+
+        set({
+            socioSeleccionado: updatedSocio_a,
+            sociosVinculados: [ ...sociosVinculados, socio_b ],
+            socios: actualizarSocioEnLista(
+                updatedSocio_a,
+                actualizarSocioEnLista(updatedSocio_b, socios)
+            ),
+            sociosFiltrados: actualizarSocioEnLista(
+                socio_a,
+                actualizarSocioEnLista(updatedSocio_b, sociosFiltrados)
+            ),
+        })
+        return true
+    },
+
+    verSocioVinculado: (nroSocio: number) => {
+        const { socioSeleccionado, socios, seleccionar } = get()
+        if(!socioSeleccionado || !socioSeleccionado.nroSocio || !nroSocio) return
+
+        const socioVinculado = socios.filter(s => Number(s.nroSocio) === Number(nroSocio))
+        if(!socioVinculado.length) return;
+        seleccionar(socioVinculado[0])
     },
 
     irAnioAnterior: async () => {
