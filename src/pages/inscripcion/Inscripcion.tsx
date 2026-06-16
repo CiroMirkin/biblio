@@ -40,6 +40,7 @@ export function Inscripcion() {
       observaciones: form.observaciones.value || "",
       email: form.email.value || "",
       caracterSocio: "",
+      sociosVinculados: [],
     }
 
     const newSocio = await crearSocio(socio)

@@ -32,6 +32,9 @@ declare global {
         meses: Record<string, boolean>[],
         anio: number
       }>
+
+      vincularSocios: (socio1: Socio, socio2: Socio) => Promise<boolean>
+      desvincularSocios: (socio1: Socio, socio2: Socio) => Promise<boolean>
       
       toggleCuota: (nroSocio: number, anio: number, mesIndex: number) => Promise<boolean>
       
