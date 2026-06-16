@@ -12,7 +12,7 @@ Ejecutar Git Bash como administrador antes de ejecutar `npm run dist`.
 
 Ejecuta `npm run clean` para eliminar los directorios de compilacion dist-electron, dist-ts y release, junto con todos los archivos .js y .d.ts en los directorios `src`, `electron`, `test` y sus subdirectorios.
 
-En la raíz del proyecto debe existir una carpeta llamada `templates` con tres archivos: `cuotas.xlsx`, `libros.xlsx` y `socios.xlsx`.
+La carpeta `templates` en la raíz del proyecto contiene tres archivos: `cuotas.xlsx`, `libros.xlsx` y `socios.xlsx`, los cuales están en blanco. En modo dev debes crear una carpeta `templates-dev` con tus datos de desarrollo.
 
 Si se cambia el nombre del directorio `templates` deben actualizarce `electron\constants.ts` y `electron\utils\initializeDataFiles.ts`.
 
@@ -55,7 +55,7 @@ Luego si se usa el componente `Form` en conjunto con el store, el action dentro 
 npm run dist
 ```
 
-Genera `release/Biblio Setup X.X.X.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
+Genera `release/Biblio-Setup.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
 
 > **Nota:** Este proyecto se compila exclusivamente para Windows 7 (32 bits). Aunque el instalador funciona en versiones posteriores de Windows, Electron 22 es la última versión con soporte para Windows 7.
 

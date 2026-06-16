@@ -5,8 +5,8 @@ release
 
 dev-app-update.yml
 
-templates/*.xlsx
-templates/*.xlsx
+templates-dev/*.xlsx
+templates-dev/*/*.xlsx
 public/*.xlsx
 public/*/*.xlsx
 
