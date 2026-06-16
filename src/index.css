@@ -39,6 +39,10 @@ html, body, #root {
         @apply py-1 flex justify-center items-center;
     }
 
+    .btn-secondary {
+        @apply pb-0.5 text-lg font-semibold bg-gray px-2 rounded disabled:opacity-45 disabled:cursor-not-allowed;
+    }
+
     .card {
         @apply bg-white rounded p-4 shadow-sm;
     }
