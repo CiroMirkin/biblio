@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { parseFecha } from './parseFecha'
-import type { Socio } from '../socio'
+import type { NroSocio, Socio } from '../socio'
 import type { LibroEnPrestamo } from '../libro'
 
 function getCellString(cell: ExcelJS.Cell): string {
@@ -14,6 +14,19 @@ function getCellString(cell: ExcelJS.Cell): string {
     return String((val as { result: unknown }).result ?? '')
   }
   return String(val)
+}
+
+export function getSociosVinculados(cell: ExcelJS.Cell): NroSocio[] {
+  const value = getCellString(cell)
+  if (!value.trim()) return []
+
+  const socios = value.toString().split('-').map(n => Number(n || -1))
+  return socios.filter(n => n >= 0)
+}
+
+export function formatSociosVinculado(sociosVinculados: NroSocio[]): string {
+  if(!sociosVinculados.length) return ''
+  return sociosVinculados.join('-')
 }
 
 export function rowToSocio(row: ExcelJS.Row): Socio {
@@ -35,6 +48,7 @@ export function rowToSocio(row: ExcelJS.Row): Socio {
     fechaEgreso,
     observaciones: String(row.getCell(10).value ?? ''),
     email: getCellString(row.getCell(11)),
+    sociosVinculados: getSociosVinculados(row.getCell(12)),
   }
 }
 
@@ -49,6 +63,7 @@ export function writeSocio(row: ExcelJS.Row, socio: Socio): void {
   row.getCell(9).value = socio.fechaEgreso ? String(socio.fechaEgreso) : ""
   row.getCell(10).value = String(socio.observaciones?? "")
   row.getCell(11).value = String(socio.email ?? "")
+  row.getCell(12).value = formatSociosVinculado(socio.sociosVinculados)
 }
 
 export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {

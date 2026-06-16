@@ -3,7 +3,7 @@ import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
 import path from 'node:path'
 import type { Libro } from './libro'
-import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, cambiarNombreSocio, } from './handlers'
+import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, cambiarNombreSocio, vincularSocios, desvincularSocios, } from './handlers'
 import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
 import type { NewSocioData, Socio } from './socio'
 import { initializeDataFiles } from './utils/initializeDataFiles'
@@ -55,6 +55,15 @@ ipcMain.handle('reactivarSocio', (_event, nroSocio: number) => reactivarSocio(nr
 
 ipcMain.handle('editarDatosSocio', (_event, nroSocio: number, datos: Partial<Socio>) => editarDatosSocio(nroSocio, datos))
 ipcMain.handle('cambiarNombreSocio', (_event, nroSocio: number, nombre: string) => cambiarNombreSocio(nroSocio, nombre))
+
+ipcMain.handle(
+  'vincularSocios',
+  (_event, socio1: Socio, socio2: Socio) => vincularSocios(socio1, socio2)
+)
+ipcMain.handle(
+  'desvincularSocios',
+  (_event, socio1: Socio, socio2: Socio) => desvincularSocios(socio1, socio2)
+)
 
 ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) => changeObservaciones(obs, nroSocio))
 

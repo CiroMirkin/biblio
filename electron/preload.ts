@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { Libro } from './libro'
-import type { NewSocioData } from './socio'
+import type { NewSocioData, Socio } from './socio'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getSocios: () => ipcRenderer.invoke('getSocios'),
@@ -21,6 +21,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   editarDatosSocio: (nroSocio: number, datos: Partial<import('./socio').Socio>) => 
     ipcRenderer.invoke('editarDatosSocio', nroSocio, datos),
+
+  vincularSocios: (socio1: Socio, socio2: Socio) => ipcRenderer.invoke(
+    'vincularSocios', socio1, socio2
+  ),
+  desvincularSocios: (socio1: Socio, socio2: Socio) => ipcRenderer.invoke(
+    'desvincularSocios', socio1, socio2
+  ),
 
   getCuotasSocio: (nroSocio: number, anio?: number) => 
     anio !== undefined

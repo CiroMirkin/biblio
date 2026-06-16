@@ -44,6 +44,7 @@ describe('createSocio (integration)', () => {
             fechaEgreso: null,
             observaciones: '',
             email: '',
+            sociosVinculados: [],
         })
 
         expect(socio.nroSocio).toBe(maxNroSocio + 1)
@@ -68,6 +69,7 @@ describe('createSocio (integration)', () => {
             fechaEgreso: null,
             observaciones: '',
             email: '',
+            sociosVinculados: [],
         })
 
         const workbook = new ExcelJS.Workbook()
@@ -99,6 +101,7 @@ describe('createSocio (integration)', () => {
             fechaEgreso: null,
             observaciones: 'obs test',
             email: 'test@test.com',
+            sociosVinculados: [2, 4],
         })
 
         const workbook = new ExcelJS.Workbook()
@@ -116,6 +119,7 @@ describe('createSocio (integration)', () => {
                 expect(row.getCell(6).value).toBe('351000000')
                 expect(row.getCell(10).value).toBe('obs test')
                 expect(row.getCell(11).value).toBe('test@test.com')
+                expect(row.getCell(12).value).toBe('2-4')
             }
         })
 
@@ -134,6 +138,7 @@ describe('createSocio (integration)', () => {
             fechaEgreso: null,
             observaciones: '',
             email: '',
+            sociosVinculados: [],
         })
 
         const sociosWorkbook = new ExcelJS.Workbook()

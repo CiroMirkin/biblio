@@ -1,5 +1,5 @@
 export interface Socio {
-  nroSocio: number
+  nroSocio: NroSocio
   nombreYApellido: string
   domicilio: string
   dni: number
@@ -10,6 +10,9 @@ export interface Socio {
   fechaEgreso: String | null
   observaciones: string
   email: string
+  sociosVinculados: NroSocio[]
 }
+
+export type NroSocio = number
 
 export type NewSocioData = Omit<Socio, 'nroSocio'>
