@@ -4,9 +4,11 @@ dist-ts
 release
 
 dev-app-update.yml
+*.tsbuildinfo
 
-templates/*.xlsx
-templates/*.xlsx
+templates-dev
+templates-dev/*.xlsx
+templates-dev/*/*.xlsx
 public/*.xlsx
 public/*/*.xlsx
 

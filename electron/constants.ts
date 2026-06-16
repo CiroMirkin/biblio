@@ -11,7 +11,7 @@ export const IS_TEST = Boolean(process.env.IS_TEST)
 const FIXTURES_PATH = path.join(process.cwd(), 'tests', 'fixtures')
 
 const RESOURCES_PATH = IS_DEV
-  ? path.join(process.cwd(), 'templates')
+  ? path.join(process.cwd(), 'templates-dev')
   : path.join(process.resourcesPath, 'templates')
 
 const SOCIOS_XLSX_DEFAULT = IS_DEV
