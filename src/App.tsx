@@ -65,7 +65,7 @@ function App() {
           onClick={() => {
             setActualView(options.CUOTA)
             showListaSocios()
-            buscar("")
+            buscar("", { showDetallesSocio: false })
           }}
           animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}

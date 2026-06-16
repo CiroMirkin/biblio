@@ -9,13 +9,17 @@ export function BuscarSocioForm() {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault()
-    buscar(apellido)
+    buscar(apellido, {
+      showDetallesSocio: false,
+    })
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setApellido(e.target.value)
     sessionStorage.setItem(SESSION_KEY, e.target.value)
-    buscar(e.target.value)
+    buscar(e.target.value, {
+      showDetallesSocio: false,
+    })
   }
 
   return (

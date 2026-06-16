@@ -20,7 +20,9 @@ interface SociosState {
     sociosInactivos: number
 
     inicializar: () => Promise<void>
-    buscar: (apellido: string) => void
+    buscar: (apellido: string, options?: {
+        showDetallesSocio?: boolean,
+    }) => void
     seleccionar: (socio: Socio) => void
     toggleMes: (mesIndex: number) => Promise<void>
     irAnioAnterior: () => void
@@ -76,11 +78,12 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         })
     },
 
-    buscar: (apellido) => {
+    buscar: (apellido, options = {}) => {
         const { socios } = get()
+        const { showDetallesSocio } = options
 
         if (!apellido.trim()) {
-            set({ sociosFiltrados: [], showDetallesSocio: false })
+            set({ sociosFiltrados: [], showDetallesSocio: showDetallesSocio !== false })
             return
         }
 
@@ -88,7 +91,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         if(!query) set({ sociosFiltrados: [] })
 
         const filtrados = buscarSocio({ dato: query, socios })
-        set({ sociosFiltrados: filtrados, showDetallesSocio: false })
+        set({ sociosFiltrados: filtrados, showDetallesSocio: showDetallesSocio !== false })
     },
 
     seleccionar: async (socio) => {
@@ -112,13 +115,10 @@ export const useSociosStore = create<SociosState>((set, get) => ({
 
         const actualizado = { ...socioSeleccionado, ...datos }
 
-        const actualizarLista = (lista: Socio[]) =>
-            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
-
         set({
             socioSeleccionado: actualizado,
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
+            socios: actualizarSocioEnLista(actualizado, socios),
+            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
         })
     },
 
@@ -148,13 +148,10 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const caracterSocio: CaracterSocio = 'Inactivo'
         const actualizado = { ...socio, caracterSocio }
 
-        const actualizarLista = (lista: Socio[]) =>
-            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
-
         set({
             ...(esSocioSeleccionado && { socioSeleccionado: actualizado }),
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
+            socios: actualizarSocioEnLista(actualizado, socios),
+            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
             sociosInactivos: sociosInactivos + 1,
             sociosActivos: sociosActivos - 1,
         })
@@ -169,13 +166,10 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const caracterSocio: CaracterSocio = 'Regular'
         const actualizado = { ...socio, caracterSocio }
 
-        const actualizarLista = (lista: Socio[]) =>
-            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
-
         set({
             ...(esSocioSeleccionado && { socioSeleccionado: actualizado }),
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
+            socios: actualizarSocioEnLista(actualizado, socios),
+            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
             sociosActivos: sociosActivos + 1,
             sociosInactivos: sociosInactivos - 1,
         })
@@ -205,13 +199,11 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         if(!ok) return 
         
         const actualizado = { ...socio, nombreYApellido: newName, }
-        const actualizarLista = (lista: Socio[]) =>
-            lista.map(s => s.nroSocio === actualizado.nroSocio ? actualizado : s)
 
         set({
             socioSeleccionado: { ...actualizado },    
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
+            socios: actualizarSocioEnLista(actualizado, socios),
+            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
         })
     },
 
@@ -276,3 +268,6 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         })
     },
 }))
+
+const actualizarSocioEnLista = (socio: Socio, lista: Socio[]) =>
+    lista.map(s => s.nroSocio === socio.nroSocio ? socio : s)
