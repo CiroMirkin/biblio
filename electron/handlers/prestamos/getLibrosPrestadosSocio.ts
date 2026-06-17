@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs'
-import { LIBROS_XLSX_PATH } from '../constants'
-import type { Libro } from '../libro'
-import { rowToLibro } from '../utils/excelhelpers'
+import { LIBROS_XLSX_PATH } from '../../constants'
+import type { Libro } from '../../libro'
+import { rowToLibro } from '../../utils/excelhelpers'
 
 export const getLibrosPrestadosSocio =  async (nroSocio: number) => {
   const workbook = new ExcelJS.Workbook()

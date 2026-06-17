@@ -3,8 +3,8 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
-import { devolverLibro } from '../electron/handlers/devolverLibro'
-import { addLibroPrestado } from '../electron/handlers/addLibroPrestado'
+import { devolverLibro } from '../electron/handlers/prestamos/devolverLibro'
+import { addLibroPrestado } from '../electron/handlers/prestamos/addLibroPrestado'
 import { LIBROS_XLSX_PATH } from '../electron/constants'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

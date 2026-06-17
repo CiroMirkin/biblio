@@ -1,7 +1,8 @@
-export * from "./addLibroPrestado"
-export * from "./devolverLibro"
+
+// PRESTAMOS
+export * from "./prestamos"
+
 export * from "./getLibros"
-export * from "./getLibrosPrestadosSocio"
 export * from "./getSocios"
 export * from "./getCuotasSocio"
 export * from "./toggleCuota"
@@ -9,7 +10,6 @@ export * from "./darDeBajaSocio"
 export * from "./reactivarSocio"
 export * from "./createSocio"
 export * from "./changeObservaciones"
-export * from "./getSociosConLibros"
 export * from "./editarDatosSocio"
 export * from "./cambiarNombreSocio"
 export * from "./vincularSocios"
