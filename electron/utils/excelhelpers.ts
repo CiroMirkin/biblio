@@ -1,7 +1,6 @@
 import ExcelJS from 'exceljs'
 import { parseFecha } from './parseFecha'
 import type { NroSocio, Socio } from '../socio'
-import type { LibroEnPrestamo } from '../libro'
 
 function getCellString(cell: ExcelJS.Cell): string {
   const val = cell.value
@@ -64,26 +63,6 @@ export function writeSocio(row: ExcelJS.Row, socio: Socio): void {
   row.getCell(10).value = String(socio.observaciones?? "")
   row.getCell(11).value = String(socio.email ?? "")
   row.getCell(12).value = formatSociosVinculado(socio.sociosVinculados)
-}
-
-export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {
-  const rawFecha = row.getCell(6).value
-  const fechaDePrestamo = rawFecha instanceof Date
-    ? rawFecha
-    : rawFecha
-      ? new Date(String(rawFecha))
-      : null
-
-  const numeroInventario = String(row.getCell(3).value ?? '')
-
-  return {
-    autor: String(row.getCell(1).value),
-    titulo: String(row.getCell(2).value ?? ''),
-    numeroInventario: numeroInventario,
-    nombreSocio: String(row.getCell(4).value ?? ''),
-    numeroSocio: Number(row.getCell(5).value ?? null),
-    fechaDePrestamo,
-  }
 }
 
 export function migrarFaltaDeTextoEnCuota(cell: ExcelJS.Cell): void {
