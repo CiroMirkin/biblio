@@ -8,7 +8,7 @@ import { useSociosStore, useLibrosStore, useSettingsStore } from "./store";
 const options = {
   CUOTA: "Socios",
   INSCRIPCION: "Inscripción",
-  LIBROS: "Catalogo",
+  LIBROS: "Inventario",
   AJUSTES: "Ajustes",
 } as const;
 
@@ -28,7 +28,7 @@ const views = [
   {
     id: options.LIBROS,
     view: <Catalogo />,
-    bgColor: "bg-[#a36a96]",
+    bgColor: "bg-[#d26fb9c9]",
   },
   {
     id: options.AJUSTES,
@@ -95,12 +95,12 @@ function App() {
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
-            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#e856c6cb] transition-colors duration-75 ease-in",
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d26fb9c9] transition-colors duration-75 ease-in",
             actualView === options.LIBROS && "font-semibold",
             actualView !== options.LIBROS && "opacity-80",
           )}
         >
-          Catalogo
+          Inventario
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.AJUSTES)}
