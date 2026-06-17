@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
 
 export interface Libro {
@@ -31,3 +32,12 @@ export function rowToLibro(row: ExcelJS.Row): LibroEnPrestamo {
         fechaDePrestamo,
     }
 }
+
+export function esSinInventariar(id: string | number): boolean {
+  return id.toString().startsWith('SN-')
+}
+
+export function generarIdSinInventariar(): string {
+  return `SN-${randomUUID()}`
+}
+
