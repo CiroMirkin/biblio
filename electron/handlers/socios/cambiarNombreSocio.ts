@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH } from '../../constants'
-import { rowToSocio, writeSocio } from '../../utils/excelhelpers'
+import { rowToSocio } from '../../socio'
+import { writeSocio } from '../../socio'
 
 export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string): Promise<boolean> => {
     const sociosWorkbook = new ExcelJS.Workbook()

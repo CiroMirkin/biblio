@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH } from '../../constants'
-import { rowToSocio, writeSocio } from '../../utils/excelhelpers'
+import { rowToSocio } from '../../socio'
+import { writeSocio } from '../../socio'
 
 export const darDeBajaSocio = async (nroSocio: number): Promise<boolean> => {
     const workbook = new ExcelJS.Workbook()
