@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH } from '../../constants'
-import { rowToSocio } from '../../socio'
+import { rowToSocio } from '../../models/socio'
 
 export const getSocios = async () => {
   const workbook = new ExcelJS.Workbook()

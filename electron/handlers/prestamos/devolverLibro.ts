@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { LIBROS_XLSX_PATH } from '../../constants'
-import { esSinInventariar } from "../../libro"
+import { esSinInventariar } from "../../models/libro"
 
 export async function devolverLibro(numeroInventario: number | string): Promise<boolean> {
   const workbook = new ExcelJS.Workbook()

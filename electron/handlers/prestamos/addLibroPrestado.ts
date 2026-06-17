@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
-import type { Libro, LibroEnPrestamo } from '../../libro'
-import { generarIdSinInventariar } from "../../libro"
+import type { Libro, LibroEnPrestamo } from '../../models/libro'
+import { generarIdSinInventariar } from "../../models/libro"
 import { LIBROS_XLSX_PATH } from '../../constants'
 
 export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<LibroEnPrestamo | null> {

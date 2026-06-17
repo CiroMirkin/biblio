@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH } from '../electron/constants'
-import { rowToSocio } from '../electron/socio'
+import { rowToSocio } from '../electron/models/socio'
 import { editarDatosSocio } from '../electron/handlers'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

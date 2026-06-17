@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { CUOTAS_XLSX_PATH } from '../../constants'
-import { construirIndiceMeses, toggleCeldaPago } from '../../cuotas'
+import { construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
 let writeQueue: Promise<unknown> = Promise.resolve()
 

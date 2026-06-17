@@ -1,6 +1,6 @@
 import type ExcelJS from 'exceljs'
-import { getCellString } from './utils/excelhelpers'
-import { parseFecha } from './utils/parseFecha'
+import { getCellString } from '../utils/excelhelpers'
+import { parseFecha } from '../utils/parseFecha'
 
 export interface Socio {
   nroSocio: NroSocio
