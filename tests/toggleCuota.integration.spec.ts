@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
-import { toggleCuota } from '../electron/handlers/toggleCuota'
+import { toggleCuota } from '../electron/handlers/cuotas/toggleCuota'
 import { CUOTAS_XLSX_PATH } from '../electron/constants'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

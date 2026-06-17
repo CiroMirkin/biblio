@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
-import { CUOTAS_XLSX_PATH, MESES } from '../constants'
-import { construirIndiceMeses, migrarFaltaDeTextoEnCuota } from '../utils/excelhelpers'
+import { CUOTAS_XLSX_PATH, MESES } from '../../constants'
+import { construirIndiceMeses, migrarFaltaDeTextoEnCuota } from '../../utils/excelhelpers'
 
 export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
   const workbook = new ExcelJS.Workbook()

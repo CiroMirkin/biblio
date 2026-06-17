@@ -6,7 +6,7 @@ vi.mock('exceljs', async () => {
   return { default: mockExcelJS }
 })
 
-import { toggleCuota } from '../electron/handlers/toggleCuota'
+import { toggleCuota } from '../electron/handlers/cuotas/toggleCuota'
 
 describe('toggleCuota (unit)', () => {
   beforeEach(() => {

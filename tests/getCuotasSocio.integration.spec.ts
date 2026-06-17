@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { getCuotasSocio } from '../electron/handlers/getCuotasSocio'
+import { getCuotasSocio } from '../electron/handlers/cuotas/getCuotasSocio'
 import { CUOTAS_XLSX_PATH, MESES } from '../electron/constants'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
