@@ -1,9 +1,9 @@
 import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH } from '../constants'
-import type { Socio } from '../socio'
+import { SOCIOS_XLSX_PATH } from '../../constants'
+import type { Socio } from '../../socio'
 import { editarDatosSocio } from './editarDatosSocio'
 
-export const vincularSocios = async (socio1: Socio, socio2: Socio): Promise<boolean> => {
+export const desvincularSocios = async (socio1: Socio, socio2: Socio): Promise<boolean> => {
     if(!socio1.nroSocio || !socio2.nroSocio) return false
 
     const workbook = new ExcelJS.Workbook()
@@ -13,12 +13,12 @@ export const vincularSocios = async (socio1: Socio, socio2: Socio): Promise<bool
 
     const newSocio1: Socio = {
         ...socio1,
-        sociosVinculados: [...socio1.sociosVinculados, socio2.nroSocio]
+        sociosVinculados: socio1.sociosVinculados.filter(nro => nro !== socio2.nroSocio)
     }
 
     const newSocio2: Socio = {
         ...socio2,
-        sociosVinculados: [...socio2.sociosVinculados, socio1.nroSocio]
+        sociosVinculados: socio2.sociosVinculados.filter(nro => nro !== socio1.nroSocio)
     }
 
     // Se ejecutan secuencialmente para minimizar para evitar la posibilidad de un bloque de recursos

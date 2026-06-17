@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH } from '../electron/constants'
 import { rowToSocio } from '../electron/utils/excelhelpers'
-import { cambiarNombreSocio } from '../electron/handlers/cambiarNombreSocio'
+import { cambiarNombreSocio } from '../electron/handlers/socios/cambiarNombreSocio'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 

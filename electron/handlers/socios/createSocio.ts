@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH } from '../constants'
-import { writeSocio } from '../utils/excelhelpers'
-import type { NewSocioData, Socio } from '../socio'
+import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH } from '../../constants'
+import { writeSocio } from '../../utils/excelhelpers'
+import type { NewSocioData, Socio } from '../../socio'
 
 export const createSocio = async (socioData: NewSocioData): Promise<Socio> => {
   const sociosWorkbook = new ExcelJS.Workbook()
