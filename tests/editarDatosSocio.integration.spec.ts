@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH } from '../electron/constants'
 import { rowToSocio } from '../electron/models/socio'
-import { editarDatosSocio } from '../electron/handlers'
+import { editarDatosSocio } from '../electron/handlers/socios'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'socios-template.xlsx')

@@ -2,10 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
 import path from 'node:path'
-import type { Libro } from './models/libro'
-import { addLibroPrestado, darDeBajaSocio, devolverLibro, getCuotasSocio, getLibros, getLibrosPrestadosSocio, getSocios, reactivarSocio, toggleCuota, createSocio, changeObservaciones, getSociosConLibros, editarDatosSocio, cambiarNombreSocio, vincularSocios, desvincularSocios, } from './handlers'
-import { copiarExcel, type ArchivoKey } from './utils/copiarExcel'
-import type { NewSocioData, Socio } from './models/socio'
+import { ipcHandlers } from './handlers/ipcHandlers'
 import { initializeDataFiles } from './utils/initializeDataFiles'
 import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
 import { IS_DEV } from './constants'
@@ -25,49 +22,9 @@ app.on('second-instance', () => {
   }
 })
 
-ipcMain.handle('getLibros', () => getLibros())
-ipcMain.handle('addLibroPrestado', (_, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha))
-ipcMain.handle('devolverLibro', (_, numeroInventario: number | string) => devolverLibro(numeroInventario))
-
-ipcMain.handle(
-  'getLibrosPrestadosSocio',
-  (_,nroSocio: number) => getLibrosPrestadosSocio(nroSocio)
-)
-
-ipcMain.handle('getSociosConLibros', () => getSociosConLibros())
-
-ipcMain.handle('getSocios', () => getSocios())
-
-ipcMain.handle(
-  'getCuotasSocio',
-  (_event, nroSocio: number, anio?: number) => getCuotasSocio(nroSocio, anio)
-)
-
-ipcMain.handle(
-  'toggleCuota',
-  (_event, nroSocio: number, anio: number, mesIndex: number) => toggleCuota(nroSocio, anio, mesIndex)
-)
-
-ipcMain.handle('createSocio', (_event, socioData: NewSocioData) => createSocio(socioData))
-
-ipcMain.handle('darDeBajaSocio', (_event, nroSocio: number) => darDeBajaSocio(nroSocio))
-ipcMain.handle('reactivarSocio', (_event, nroSocio: number) => reactivarSocio(nroSocio))
-
-ipcMain.handle('editarDatosSocio', (_event, nroSocio: number, datos: Partial<Socio>) => editarDatosSocio(nroSocio, datos))
-ipcMain.handle('cambiarNombreSocio', (_event, nroSocio: number, nombre: string) => cambiarNombreSocio(nroSocio, nombre))
-
-ipcMain.handle(
-  'vincularSocios',
-  (_event, socio1: Socio, socio2: Socio) => vincularSocios(socio1, socio2)
-)
-ipcMain.handle(
-  'desvincularSocios',
-  (_event, socio1: Socio, socio2: Socio) => desvincularSocios(socio1, socio2)
-)
-
-ipcMain.handle('changeObservaciones', (_event, obs: string, nroSocio: number) => changeObservaciones(obs, nroSocio))
-
-ipcMain.handle('copiarExcel', (_event, key: ArchivoKey) => copiarExcel(key))
+for (const [channel, handler] of Object.entries(ipcHandlers)) {
+  ipcMain.handle(channel, handler)
+}
 
 function setupUpdater(win: BrowserWindow) {
   autoUpdater.logger = log
