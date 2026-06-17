@@ -8,4 +8,5 @@ export * from "./socios"
 // CUOTAS
 export * from "./cuotas"
 
-export * from "./getLibros"
+// LIBROS
+export * from "./libros"
