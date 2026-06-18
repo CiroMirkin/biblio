@@ -1,16 +1,7 @@
 import type { Libro, LibroEnPrestamo, NewSocio, Socio } from "@/models"
+import type { Settings as SettingsSchema } from "@/services/settingsService"
 
 export {}
-
-type SettingsSchema = {
-  limiteDeDias: number
-  maximoLibrosEnPrestamo: number
-  maximoDeCuotasAdeudadas: number
-  fechaDePrestamoAutomatica: boolean
-  precioCuota: number
-  gestionDeCuotas: boolean
-  numerosDeInventarioExternos: boolean
-}
 
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros'
