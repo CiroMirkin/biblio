@@ -15,8 +15,8 @@ export const getSociosConLibros =  async (): Promise<SocioConLibros[]> => {
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
 
-    const nombreSocio = String(row.getCell(4).value ?? '')
-    const nSocio = Number(row.getCell(5).value ?? 0)
+    const nombreSocio = String(row.getCell(1).value ?? '')
+    const nSocio = Number(row.getCell(2).value ?? 0)
 
     if(nombreSocio && nSocio) {
       const socio =  {

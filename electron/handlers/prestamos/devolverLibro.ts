@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { LIBROS_XLSX_PATH } from '../../constants'
-import { esSinInventariar } from "../../models/libro"
+import { esSinInventariar, getNroDeInventarioFromRow, limpiarPrestamo } from "../../models/libro"
 
 export async function devolverLibro(numeroInventario: number | string): Promise<boolean> {
   const workbook = new ExcelJS.Workbook()
@@ -13,19 +13,16 @@ export async function devolverLibro(numeroInventario: number | string): Promise<
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
-    const cellValue = row.getCell(3).value?.toString() ?? ''
+    const nroInventario = getNroDeInventarioFromRow(row)
 
-    if(cellValue === numeroInventario.toString()) {
+    if(nroInventario === numeroInventario.toString()) {
       found = true
-      
+
       if (esSinInventariar(numeroInventario)) {
         rowsToDelete.push(rowIndex)
       }
       else {
-        row.getCell(4).value = ''
-        row.getCell(5).value = null
-        row.getCell(6).value = null
-        row.commit()
+        limpiarPrestamo(row)
       }
     }
   })
