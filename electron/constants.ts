@@ -2,7 +2,11 @@ import ExcelJS from 'exceljs'
 import path from 'node:path'
 import { app } from 'electron'
 
-type Worksheet = { workbook: ExcelJS.Workbook, worksheet: ExcelJS.Worksheet | undefined }
+type Worksheet = { 
+  workbook: ExcelJS.Workbook,
+  worksheet: ExcelJS.Worksheet | undefined,
+  writeWorkbook: () => Promise<void>,
+}
 
 export const MESES = Object.freeze(
   ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -29,7 +33,8 @@ export async function getSociosWorksheet(): Promise<Worksheet> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('Hoja1')
-  return { workbook, worksheet }
+  const writeWorkbook = async () => await workbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
+  return { workbook, worksheet, writeWorkbook }
 }
 
 const CUOTAS_XLSX_DEFAULT = IS_DEV
@@ -44,7 +49,8 @@ export async function getCuotasWorksheet(): Promise<Worksheet> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('original')
-  return { workbook, worksheet }
+  const writeWorkbook = async () => await workbook.xlsx.writeFile(CUOTAS_XLSX_PATH)
+  return { workbook, worksheet, writeWorkbook }
 }
 
 const LIBROS_XLSX_DEFAULT = IS_DEV
@@ -59,7 +65,8 @@ export async function getLibrosWorksheet(): Promise<Worksheet> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('Hoja1')
-  return { workbook, worksheet }
+  const writeWorkbook = async () => await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
+  return { workbook, worksheet, writeWorkbook }
 }
 
 export const TEMPLATES_PATH = RESOURCES_PATH
