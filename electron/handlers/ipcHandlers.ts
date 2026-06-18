@@ -1,4 +1,4 @@
-import { getLibros } from './libros'
+import { getLibros, editarDatosLibro } from './libros'
 import {
   devolverLibro,
   getLibrosPrestadosSocio,
@@ -25,6 +25,7 @@ import type { NewSocioData, Socio } from '../models/socio'
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
+  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<Libro>) => editarDatosLibro(nroInventario, datos),
 }
 
 const prestamosIpcHandlers = {
