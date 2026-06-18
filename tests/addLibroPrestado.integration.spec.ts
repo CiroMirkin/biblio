@@ -43,16 +43,16 @@ describe('addLibroPrestado (integration)', () => {
         let filaEncontrada: ExcelJS.Row | undefined
         ws!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (String(row.getCell(3).value) === String(libro.numeroInventario)) {
+            if (String(row.getCell(6).value) === String(libro.numeroInventario)) {
                 filaEncontrada = row
             }
         })
 
         expect(filaEncontrada).toBeDefined()
-        expect(filaEncontrada!.getCell(1).value).toBe(libro.autor)
-        expect(filaEncontrada!.getCell(2).value).toBe(libro.titulo)
-        expect(filaEncontrada!.getCell(4).value).toBe(libro.nombreSocio)
-        expect(filaEncontrada!.getCell(5).value).toBe(libro.numeroSocio)
+        expect(filaEncontrada!.getCell(1).value).toBe(libro.nombreSocio)
+        expect(filaEncontrada!.getCell(2).value).toBe(libro.numeroSocio)
+        expect(filaEncontrada!.getCell(4).value).toBe(libro.autor)
+        expect(filaEncontrada!.getCell(5).value).toBe(libro.titulo)
     }, 30000)
 
     it('Actualiza solo los datos del socio si el libro ya existe en el inventario', async () => {
@@ -60,7 +60,7 @@ describe('addLibroPrestado (integration)', () => {
         await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
         const ws = workbook.getWorksheet('Hoja1')
 
-        const inventarioExistente = ws!.getRow(2).getCell(3).value
+        const inventarioExistente = ws!.getRow(2).getCell(6).value
 
         const libro = {
             titulo: 'Titulo Modificado',
@@ -71,8 +71,8 @@ describe('addLibroPrestado (integration)', () => {
         }
         const fecha = new Date('2024-07-15')
 
-        const tituloOriginal = ws!.getRow(2).getCell(2).value as string
-        const autorOriginal = ws!.getRow(2).getCell(1).value as string
+        const tituloOriginal = ws!.getRow(2).getCell(5).value as string
+        const autorOriginal = ws!.getRow(2).getCell(4).value as string
 
         const result = await addLibroPrestado(libro, fecha)
 
@@ -86,16 +86,16 @@ describe('addLibroPrestado (integration)', () => {
         let filaEncontrada: ExcelJS.Row | undefined
         wsActualizado!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (String(row.getCell(3).value) === String(inventarioExistente)) {
+            if (String(row.getCell(6).value) === String(inventarioExistente)) {
                 filaEncontrada = row
             }
         })
 
         expect(filaEncontrada).toBeDefined()
-        expect(filaEncontrada!.getCell(1).value).toBe(autorOriginal)
-        expect(filaEncontrada!.getCell(2).value).toBe(tituloOriginal)
-        expect(filaEncontrada!.getCell(4).value).toBe(libro.nombreSocio)
-        expect(filaEncontrada!.getCell(5).value).toBe(libro.numeroSocio)
+        expect(filaEncontrada!.getCell(1).value).toBe(libro.nombreSocio)
+        expect(filaEncontrada!.getCell(2).value).toBe(libro.numeroSocio)
+        expect(filaEncontrada!.getCell(4).value).toBe(autorOriginal)
+        expect(filaEncontrada!.getCell(5).value).toBe(tituloOriginal)
     }, 30000)
 
     it('Retorna null y no modifica el archivo si el libro no tiene titulo', async () => {
@@ -122,7 +122,7 @@ describe('addLibroPrestado (integration)', () => {
         await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
         const ws = workbook.getWorksheet('Hoja1')
 
-        const inventarioExistente = ws!.getRow(2).getCell(3).value as number
+        const inventarioExistente = ws!.getRow(2).getCell(6).value as number
 
         const libro = {
             titulo: 'Cualquier Titulo',

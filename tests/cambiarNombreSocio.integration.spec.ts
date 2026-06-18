@@ -109,10 +109,10 @@ describe('cambiarNombre (integration)', () => {
         const otrasFilas: { nroInventario: string; nombreSocio: string | null }[] = []
         wbAntes.getWorksheet('Hoja1')!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (Number(row.getCell(5).value) !== NRO_SOCIO) {
-                const rawNombre = row.getCell(4).value
+            if (Number(row.getCell(2).value) !== NRO_SOCIO) {
+                const rawNombre = row.getCell(1).value
                 otrasFilas.push({
-                    nroInventario: String(row.getCell(3).value),
+                    nroInventario: String(row.getCell(6).value),
                     nombreSocio: rawNombre == null ? null : String(rawNombre),
                 })
             }
@@ -125,12 +125,12 @@ describe('cambiarNombre (integration)', () => {
 
         wbDespues.getWorksheet('Hoja1')!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (Number(row.getCell(5).value) === NRO_SOCIO) {
-                expect(row.getCell(4).value).toBe(NOMBRE_NUEVO)
+            if (Number(row.getCell(2).value) === NRO_SOCIO) {
+                expect(row.getCell(1).value).toBe(NOMBRE_NUEVO)
             } else {
                 const fila = otrasFilas.find(f => f.nroInventario === String(row.getCell(3).value))
                 if (fila) {
-                    const rawNombre = row.getCell(4).value
+                    const rawNombre = row.getCell(1).value
                     const nombreActual = rawNombre == null ? null : String(rawNombre)
                     expect(nombreActual).toBe(fila.nombreSocio)
                 }

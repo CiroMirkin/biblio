@@ -46,8 +46,8 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
 
     librosSheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return
-        if (Number(row.getCell(5).value) === nroSocio) {
-            row.getCell(4).value = nuevoNombre
+        if (Number(row.getCell(2).value) === nroSocio) {
+            row.getCell(1).value = nuevoNombre
         }
     })
 

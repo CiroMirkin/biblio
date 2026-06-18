@@ -43,7 +43,7 @@ describe('devolverLibro (integration)', () => {
         let filaEncontrada = false
         ws!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (row.getCell(3).value?.toString() === idSinInventariar) {
+            if (row.getCell(6).value?.toString() === idSinInventariar) {
                 filaEncontrada = true
             }
         })
@@ -57,9 +57,9 @@ describe('devolverLibro (integration)', () => {
         const ws = workbook.getWorksheet('Hoja1')
 
         const filaOriginal = ws!.getRow(2)
-        const numeroInventario = filaOriginal.getCell(3).value as number
-        const tituloOriginal = filaOriginal.getCell(2).value as string
-        const autorOriginal = filaOriginal.getCell(1).value as string
+        const numeroInventario = filaOriginal.getCell(6).value as number
+        const tituloOriginal = filaOriginal.getCell(5).value as string
+        const autorOriginal = filaOriginal.getCell(4).value as string
 
         const result = await devolverLibro(numeroInventario)
         expect(result).toBe(true)
@@ -71,17 +71,17 @@ describe('devolverLibro (integration)', () => {
         let filaEncontrada: ExcelJS.Row | undefined
         wsActualizado!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (String(row.getCell(3).value) === String(numeroInventario)) {
+            if (String(row.getCell(6).value) === String(numeroInventario)) {
                 filaEncontrada = row
             }
         })
 
         expect(filaEncontrada).toBeDefined()
-        expect(filaEncontrada!.getCell(1).value).toBe(autorOriginal)
-        expect(filaEncontrada!.getCell(2).value).toBe(tituloOriginal)
-        expect(filaEncontrada!.getCell(4).value).toBe('')
-        expect(filaEncontrada!.getCell(5).value).toBeNull()
-        expect(filaEncontrada!.getCell(6).value).toBeNull()
+        expect(filaEncontrada!.getCell(4).value).toBe(autorOriginal)
+        expect(filaEncontrada!.getCell(5).value).toBe(tituloOriginal)
+        expect(filaEncontrada!.getCell(1).value).toBe('')
+        expect(filaEncontrada!.getCell(2).value).toBeNull()
+        expect(filaEncontrada!.getCell(3).value).toBeNull()
     }, 30000)
 
     it('Retorna false y no modifica el archivo si el libro no existe en el inventario', async () => {
