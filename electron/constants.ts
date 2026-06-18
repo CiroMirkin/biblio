@@ -1,5 +1,8 @@
+import ExcelJS from 'exceljs'
 import path from 'node:path'
 import { app } from 'electron'
+
+type Worksheet = { workbook: ExcelJS.Workbook, worksheet: ExcelJS.Worksheet | undefined }
 
 export const MESES = Object.freeze(
   ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -22,6 +25,13 @@ export const SOCIOS_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'socios-test.xlsx')
   : SOCIOS_XLSX_DEFAULT
 
+export async function getSociosWorksheet(): Promise<Worksheet> {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
+  const worksheet = workbook.getWorksheet('Hoja1')
+  return { workbook, worksheet }
+}
+
 const CUOTAS_XLSX_DEFAULT = IS_DEV
   ? path.join(RESOURCES_PATH, 'cuotas.xlsx')
   : path.join(app.getPath('userData'), 'cuotas.xlsx')
@@ -30,6 +40,13 @@ export const CUOTAS_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'cuotas-test.xlsx')
   : CUOTAS_XLSX_DEFAULT
 
+export async function getCuotasWorksheet(): Promise<Worksheet> {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
+  const worksheet = workbook.getWorksheet('original')
+  return { workbook, worksheet }
+}
+
 const LIBROS_XLSX_DEFAULT = IS_DEV
   ? path.join(RESOURCES_PATH, 'libros.xlsx')
   : path.join(app.getPath('userData'), 'libros.xlsx')
@@ -37,5 +54,12 @@ const LIBROS_XLSX_DEFAULT = IS_DEV
 export const LIBROS_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'libros-test.xlsx')
   : LIBROS_XLSX_DEFAULT
+
+export async function getLibrosWorksheet(): Promise<Worksheet> {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+  const worksheet = workbook.getWorksheet('Hoja1')
+  return { workbook, worksheet }
+}
 
 export const TEMPLATES_PATH = RESOURCES_PATH
