@@ -16,6 +16,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   precioCuota: 1000,
   gestionDeCuotas: true,
   numerosDeInventarioExternos: true,
+  vincularSocios: false,
 
   inicializar: async () => {
     const settings = await settingsService.getAll()

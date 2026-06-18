@@ -8,6 +8,7 @@ import { ComoEstablecerFechaPrestamo } from "./ComoEstablecerFechaPrestamo";
 import { PrecioCuota } from "./PrecioCuotas";
 import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 import { UsarNumeroDeInventarioExternos } from "./UsarNumeroDeInventarioExternos";
+import { PermitirVincularSocios } from "./PermitirVincularSocios";
 
 export function Ajustes() {
     const { gestionDeCuotas } = useSettingsStore()
@@ -24,6 +25,7 @@ export function Ajustes() {
                     <MaximoDiasDelPrestamo />
                     <UsarNumeroDeInventarioExternos />
                     <ComoEstablecerFechaPrestamo />
+                    <PermitirVincularSocios />
                     <CopiarExcels />
                     <ActualizarApp />
                 </div>

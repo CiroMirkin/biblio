@@ -8,6 +8,7 @@ interface SettingsSchema {
   precioCuota: number
   gestionDeCuotas: boolean
   numerosDeInventarioExternos: boolean
+  vincularSocios: boolean
 }
 
 const store = new Store<SettingsSchema>({
@@ -20,6 +21,7 @@ const store = new Store<SettingsSchema>({
     precioCuota: { type: 'number', minimum: 1, maximum: 10000, },
     gestionDeCuotas: { type: 'boolean', },
     numerosDeInventarioExternos: { type: 'boolean', },
+    vincularSocios: { type: 'boolean' },
   },
   defaults: {
     limiteDeDias: 40,
@@ -29,6 +31,7 @@ const store = new Store<SettingsSchema>({
     precioCuota: 1000,
     gestionDeCuotas: true,
     numerosDeInventarioExternos: true,
+    vincularSocios: false,
   },
 })
 
@@ -41,6 +44,7 @@ export function getAll(): SettingsSchema {
     precioCuota: store.get('precioCuota'),
     gestionDeCuotas: store.get('gestionDeCuotas'),
     numerosDeInventarioExternos: store.get('numerosDeInventarioExternos'),
+    vincularSocios: store.get('vincularSocios'),
   }
 }
 

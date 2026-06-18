@@ -15,7 +15,7 @@ const anioActual: number = new Date().getFullYear()
 
 export function DetalleSocio() {
   const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
-  const { precioCuota, gestionDeCuotas } = useSettingsStore()
+  const { precioCuota, gestionDeCuotas, vincularSocios } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
 
@@ -50,7 +50,7 @@ export function DetalleSocio() {
           
           { !caracterSocio.estado && <Observaciones /> }
           
-          <SociosVinculados />
+          { vincularSocios && <SociosVinculados /> }
         </div>
 
         <div className="flex flex-col gap-4">

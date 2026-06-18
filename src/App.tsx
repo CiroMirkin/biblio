@@ -9,6 +9,7 @@ const options = {
   CUOTA: "Socios",
   INSCRIPCION: "Inscripción",
   LIBROS: "Inventario",
+  CATALOGACION: "Catalogación",
   AJUSTES: "Ajustes",
 } as const;
 
@@ -29,6 +30,11 @@ const views = [
     id: options.LIBROS,
     view: <Catalogo />,
     bgColor: "bg-[#d26fb9c9]",
+  },
+  {
+    id: options.CATALOGACION,
+    view: <></>,
+    bgColor: "bg-[#a1c690]",
   },
   {
     id: options.AJUSTES,
@@ -101,6 +107,18 @@ function App() {
           )}
         >
           Inventario
+        </motion.button>
+        <motion.button
+          onClick={() => setActualView(options.CATALOGACION)}
+          animate={{ height: actualView === options.CATALOGACION ? 72 : 56 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          className={cn(
+            "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#a1c690] transition-colors duration-75 ease-in",
+            actualView === options.CATALOGACION && "font-semibold",
+            actualView !== options.CATALOGACION && "opacity-80",
+          )}
+        >
+          Catalogación
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.AJUSTES)}

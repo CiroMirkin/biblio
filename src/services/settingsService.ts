@@ -7,6 +7,7 @@ export interface Settings {
   precioCuota: number
   gestionDeCuotas: boolean
   numerosDeInventarioExternos: boolean
+  vincularSocios: boolean
 }
 
 export async function getAll(): Promise<Settings> {
