@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { motion } from "motion/react"
-import { Inscripcion, Socios, Catalogo, Ajustes } from "@/pages";
+import { Inscripcion, Socios, Catalogo, Ajustes, IngresoLibros } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
 import { useSociosStore, useLibrosStore, useSettingsStore } from "./store";
@@ -9,7 +9,7 @@ const options = {
   CUOTA: "Socios",
   INSCRIPCION: "Inscripción",
   LIBROS: "Inventario",
-  CATALOGACION: "Catalogación",
+  INGRESO_LIBROS: "Ingreso de libros",
   AJUSTES: "Ajustes",
 } as const;
 
@@ -32,8 +32,8 @@ const views = [
     bgColor: "bg-[#d26fb9c9]",
   },
   {
-    id: options.CATALOGACION,
-    view: <></>,
+    id: options.INGRESO_LIBROS,
+    view: <IngresoLibros />,
     bgColor: "bg-[#a1c690]",
   },
   {
@@ -106,19 +106,19 @@ function App() {
             actualView !== options.LIBROS && "opacity-80",
           )}
         >
-          Inventario
+          Catalogo
         </motion.button>
         <motion.button
-          onClick={() => setActualView(options.CATALOGACION)}
-          animate={{ height: actualView === options.CATALOGACION ? 72 : 56 }}
+          onClick={() => setActualView(options.INGRESO_LIBROS)}
+          animate={{ height: actualView === options.INGRESO_LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
             "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#a1c690] transition-colors duration-75 ease-in",
-            actualView === options.CATALOGACION && "font-semibold",
-            actualView !== options.CATALOGACION && "opacity-80",
+            actualView === options.INGRESO_LIBROS && "font-semibold",
+            actualView !== options.INGRESO_LIBROS && "opacity-80",
           )}
         >
-          Catalogación
+          Ingreso de libros
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.AJUSTES)}
