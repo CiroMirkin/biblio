@@ -8,14 +8,22 @@ import { useSettingsStore } from "./useSettingsStore"
 export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
 
 interface LibrosState {
+  showDetallesLibro: boolean
+  libroSeleccionado: Libro | LibroEnPrestamo | null
   libros: LibroEnPrestamo[]
   librosFiltrados: LibroEnPrestamo[]
   librosVencidos: LibroEnPrestamo[]
   librosDisponibles: Libro[]
   librosPrestados: LibroEnPrestamo[]
-
+  
   inicializar: () => Promise<void>
+  
+  verDetallesLibro: (libro: Libro | LibroEnPrestamo) => void
+  editarLibro: (libro: Partial<LibroEnPrestamo>) => Promise<Libro | LibroEnPrestamo | null>
+  
+  verCatalogo: () => void
   buscar: (query: string) => void
+
   getLibrosSocio: (nroSocio: number) => Promise<LibroEnPrestamo[]>
   agregarLibroEnPrestamo: (
     libro: Libro,
@@ -31,6 +39,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
+  showDetallesLibro: false,
+  libroSeleccionado: null,
 
   inicializar: async () => {
     const { limiteDeDias } = useSettingsStore.getState()
@@ -74,6 +84,37 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     set({ librosFiltrados: filtrados })
   },
 
+  verCatalogo: () => set({ showDetallesLibro: false, }),
+
+  verDetallesLibro: (libro) => {
+    if(!libro) return;
+
+    set({
+      showDetallesLibro: true,
+      libroSeleccionado: { ...libro },
+    })
+  },
+
+  editarLibro: async (libro) => {
+    if(!libro || !libro.numeroInventario) return null
+    
+    const updatedLibro = await window.electronAPI.editarDatosLibro(
+      String(libro.numeroInventario),
+      { ...libro }
+    )
+    
+    if(!updatedLibro) return null
+    
+    const { libros, librosDisponibles, librosPrestados, librosVencidos } = get()
+    set({
+      libros: actualizarListaLibros(libros, updatedLibro as LibroEnPrestamo),
+      librosDisponibles: actualizarListaLibros(librosDisponibles, updatedLibro as Libro),
+      librosPrestados: actualizarListaLibros(librosPrestados, updatedLibro as LibroEnPrestamo),
+      librosVencidos: actualizarListaLibros(librosVencidos, updatedLibro as LibroEnPrestamo),
+    })
+    return updatedLibro
+  },
+
   getLibrosSocio: async (nroSocio) => {
     const raw = await window.electronAPI.getLibrosPrestadosSocio(nroSocio)
     return (raw as unknown[]).map(l => {
@@ -113,3 +154,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     ) ?? null
   },
 }))
+
+function actualizarListaLibros<T extends Libro>(libros: T[], updated: T): T[] {
+  return libros.map(l => l.numeroInventario === updated.numeroInventario ? updated : l)
+}

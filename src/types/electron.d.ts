@@ -10,7 +10,7 @@ declare global {
     electronAPI: {
       getSocios: () => Promise<Record<string, unknown>[]>
       getLibros: () => Promise<LibroEnPrestamo[]>
-      editarDatosLibro: (nroInventario: number, datos: Partial<Libro | LibroEnPrestamo>) => Promise<Libro | LibroEnPrestamo | null>
+      editarDatosLibro: (nroInventario: string, datos: Partial<Libro | LibroEnPrestamo>) => Promise<Libro | LibroEnPrestamo | null>
       
       addLibroPrestado: (libro: Libro, fecha?: Date) => Promise<LibroEnPrestamo | null>
       
