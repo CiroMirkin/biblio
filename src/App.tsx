@@ -45,7 +45,7 @@ const views = [
 
 function App() {
   const { showListaSocios, buscar, inicializar: inicializarSocios } = useSociosStore()
-  const { inicializar: inicializarLibros } = useLibrosStore()
+  const { inicializar: inicializarLibros, verCatalogo } = useLibrosStore()
   const { inicializar: inicializarSettings } = useSettingsStore()
 
   const [ actualView, setActualView ] = useState<options>(options.CUOTA)
@@ -97,7 +97,10 @@ function App() {
           Inscripción
         </motion.button>
         <motion.button
-          onClick={() => setActualView(options.LIBROS)}
+          onClick={() => {
+            verCatalogo()
+            setActualView(options.LIBROS)
+          }}
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
@@ -118,7 +121,8 @@ function App() {
             actualView !== options.INGRESO_LIBROS && "opacity-80",
           )}
         >
-          Ingreso de libros
+          <span className="hidden md:block">Ingreso de libros</span>
+          <span className="block md:hidden text-base min-w-20">Ing. Libros</span>
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.AJUSTES)}

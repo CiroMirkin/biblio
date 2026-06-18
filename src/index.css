@@ -44,7 +44,7 @@ html, body, #root {
     }
 
     .card {
-        @apply bg-white rounded p-4 shadow-sm;
+        @apply bg-white text-black/85 rounded p-4 shadow-sm;
     }
 
     .card-secondary {
