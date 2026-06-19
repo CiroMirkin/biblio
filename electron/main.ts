@@ -77,6 +77,7 @@ function createWindow() {
     },
   })
 
+  mainWindow.maximize()
   setupUpdater(mainWindow)
 
   mainWindow.on('closed', () => {
