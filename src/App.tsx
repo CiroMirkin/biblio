@@ -52,10 +52,10 @@ function App() {
   const [ bg, setbg ] = useState("bg-secondary")
 
   useEffect(() => {
-    inicializarSettings().then(() => {
-      inicializarSocios().catch(console.error)
-      inicializarLibros().catch(console.error)
-    })
+    inicializarSettings()
+      .then(() => inicializarSocios())
+      .then(() => inicializarLibros())
+      .catch(console.error)
   }, [])
 
   views.forEach(view => {
