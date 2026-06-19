@@ -8,13 +8,14 @@ import { useSettingsStore } from "./useSettingsStore"
 export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
 
 interface LibrosState {
-  showDetallesLibro: boolean
-  libroSeleccionado: Libro | LibroEnPrestamo | null
   libros: LibroEnPrestamo[]
   librosFiltrados: LibroEnPrestamo[]
   librosVencidos: LibroEnPrestamo[]
   librosDisponibles: Libro[]
   librosPrestados: LibroEnPrestamo[]
+  
+  showDetallesLibro: boolean
+  libroSeleccionado: Libro | LibroEnPrestamo | null
   
   inicializar: () => Promise<void>
   
@@ -39,6 +40,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
+
   showDetallesLibro: false,
   libroSeleccionado: null,
 
@@ -105,12 +107,13 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     
     if(!updatedLibro) return null
     
-    const { libros, librosDisponibles, librosPrestados, librosVencidos } = get()
+    const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
     set({
       libros: actualizarListaLibros(libros, updatedLibro as LibroEnPrestamo),
       librosDisponibles: actualizarListaLibros(librosDisponibles, updatedLibro as Libro),
       librosPrestados: actualizarListaLibros(librosPrestados, updatedLibro as LibroEnPrestamo),
       librosVencidos: actualizarListaLibros(librosVencidos, updatedLibro as LibroEnPrestamo),
+      librosFiltrados: actualizarListaLibros(librosFiltrados, updatedLibro as LibroEnPrestamo),
     })
     return updatedLibro
   },
