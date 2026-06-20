@@ -46,7 +46,7 @@ const views = [
 function App() {
   const { showListaSocios, buscar, inicializar: inicializarSocios } = useSociosStore()
   const { inicializar: inicializarLibros, verCatalogo } = useLibrosStore()
-  const { inicializar: inicializarSettings } = useSettingsStore()
+  const { inicializar: inicializarSettings, numerosDeInventarioExternos } = useSettingsStore()
 
   const [ actualView, setActualView ] = useState<options>(options.CUOTA)
   const [ bg, setbg ] = useState("bg-secondary")
@@ -109,7 +109,7 @@ function App() {
             actualView !== options.LIBROS && "opacity-80",
           )}
         >
-          Catalogo
+          { numerosDeInventarioExternos ? "Catalogo" : "Prestamos" }
         </motion.button>
         <motion.button
           onClick={() => setActualView(options.INGRESO_LIBROS)}
@@ -119,6 +119,7 @@ function App() {
             "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#a1c690] transition-colors duration-75 ease-in",
             actualView === options.INGRESO_LIBROS && "font-semibold",
             actualView !== options.INGRESO_LIBROS && "opacity-80",
+            !numerosDeInventarioExternos && "hidden",
           )}
         >
           <span className="hidden md:block">Ingreso de libros</span>

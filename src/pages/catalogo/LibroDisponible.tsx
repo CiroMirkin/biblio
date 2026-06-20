@@ -22,7 +22,7 @@ export function LibroDisponible({ libro }: Props) {
                 <span className="text-base font-semibold text-greem">Disponible</span>
             </div>
             <div className="flex justify-end">
-                <button className="btn-secondary cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
+                <button className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
             </div>
         </li>
     )

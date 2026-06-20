@@ -57,7 +57,7 @@ export function LibroEnPrestamo({ libro }: Props) {
                         <p><span className="font-semibold">Domicilio:</span> {socio.domicilio}</p>
                     </>}
                 </div>
-                <button className="self-end btn-secondary cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
+                <button className="self-end btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
             </div>
         </li>
     )

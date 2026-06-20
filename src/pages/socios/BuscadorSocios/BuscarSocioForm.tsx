@@ -31,7 +31,7 @@ export function BuscarSocioForm() {
           value={apellido}
           onChange={handleChange}
           className="w-full border bg-white border-black rounded p-1 px-2"
-          placeholder="Apellido del socio"
+          placeholder="Escribe aquí el apellido o nombre del socio"
         />
         <input type="submit" value="Buscar" className="btn" />
       </div>
