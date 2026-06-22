@@ -1,37 +1,38 @@
 import { create } from "zustand"
-import type { Libro, LibroEnPrestamo } from "@/models"
+import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21 } from "@/models"
 import { cargarLibrosEnPrestamo } from "@/services"
 import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
 import { useSettingsStore } from "./useSettingsStore"
+import { buscarLibroPorNro } from "./buscarLibroPorNro"
 
 export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
 
 interface LibrosState {
-  libros: LibroEnPrestamo[]
-  librosFiltrados: LibroEnPrestamo[]
-  librosVencidos: LibroEnPrestamo[]
-  librosDisponibles: Libro[]
-  librosPrestados: LibroEnPrestamo[]
+  libros: LibroRegistrado[]
+  librosFiltrados: LibroRegistrado[]
+  librosVencidos: LibroRegistrado[]
+  librosDisponibles: Libro[] | Marc21[]
+  librosPrestados: LibroRegistrado[]
   
   showDetallesLibro: boolean
-  libroSeleccionado: Libro | LibroEnPrestamo | null
+  libroSeleccionado: Libro | Marc21 |LibroRegistrado | null
   
   inicializar: () => Promise<void>
   
-  verDetallesLibro: (libro: Libro | LibroEnPrestamo) => void
-  editarLibro: (libro: Partial<LibroEnPrestamo>) => Promise<Libro | LibroEnPrestamo | null>
+  verDetallesLibro: (libro: Libro | LibroRegistrado) => void
+  editarLibro: (libro: Partial<LibroRegistrado>) => Promise<Libro | LibroRegistrado | null>
   
   verCatalogo: () => void
   buscar: (query: string) => void
 
-  getLibrosSocio: (nroSocio: number) => Promise<LibroEnPrestamo[]>
+  getLibrosSocio: (nroSocio: number) => Promise<LibroRegistrado[]>
   agregarLibroEnPrestamo: (
-    libro: Libro,
+    libro: Libro | Marc21,
     options?: { fechaDePrestamo?: Date },
-  ) => Promise<LibroEnPrestamo | null>
+  ) => Promise<LibroRegistrado | null>
   devolverLibro: (nroInventario: number | string) => Promise<void>
-  getLibroPorInventario: (nroInventario: number | string) => LibroEnPrestamo | null
+  getLibroPorInventario: (nroInventario: number | string) => LibroRegistrado | null
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -47,9 +48,9 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   inicializar: async () => {
     const { limiteDeDias } = useSettingsStore.getState()
 
-    const librosVencidos: LibroEnPrestamo[] = []
+    const librosVencidos: LibroRegistrado[] = []
     const librosDisponibles: Libro[] = []
-    const librosPrestados: LibroEnPrestamo[] = []
+    const librosPrestados: LibroRegistrado[] = []
 
     const libros = await cargarLibrosEnPrestamo()
     libros.forEach(libro => {
@@ -109,11 +110,11 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     
     const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
     set({
-      libros: actualizarListaLibros(libros, updatedLibro as LibroEnPrestamo),
+      libros: actualizarListaLibros(libros, updatedLibro as LibroRegistrado),
       librosDisponibles: actualizarListaLibros(librosDisponibles, updatedLibro as Libro),
-      librosPrestados: actualizarListaLibros(librosPrestados, updatedLibro as LibroEnPrestamo),
-      librosVencidos: actualizarListaLibros(librosVencidos, updatedLibro as LibroEnPrestamo),
-      librosFiltrados: actualizarListaLibros(librosFiltrados, updatedLibro as LibroEnPrestamo),
+      librosPrestados: actualizarListaLibros(librosPrestados, updatedLibro as LibroRegistrado),
+      librosVencidos: actualizarListaLibros(librosVencidos, updatedLibro as LibroRegistrado),
+      librosFiltrados: actualizarListaLibros(librosFiltrados, updatedLibro as LibroRegistrado),
     })
     return updatedLibro
   },
@@ -152,9 +153,8 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   getLibroPorInventario: (nroInventario) => {
     const { libros } = get()
-    return libros.find(l =>
-      l.numeroInventario?.toString() === nroInventario.toString().trim()
-    ) ?? null
+    const result = buscarLibroPorNro(String(nroInventario), libros)
+    return result.length ? result[0] : null
   },
 }))
 

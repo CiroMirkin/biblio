@@ -1,14 +1,15 @@
-import type { LibroEnPrestamo } from "@/models"
+import type { LibroEnPrestamo, LibroRegistrado } from "@/models"
 import { levenshtein, normailzarTexto } from "@/utils"
+import { buscarLibroPorNro } from "./buscarLibroPorNro"
 
 interface Params {
-  libros: LibroEnPrestamo[]
+  libros: LibroRegistrado[]
   dato: string
 }
 
-export function buscarLibro({ libros, dato}: Params): LibroEnPrestamo[] {
+export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
   if (!isNaN(Number(dato))) {
-    return libros.filter(s => Number(s.numeroInventario) === Number(dato))
+    return buscarLibroPorNro(dato, libros)
   }
 
   const porTitulo = buscarPorTitulo(libros, dato)
@@ -50,6 +51,6 @@ function buscarPorTitulo(libros: LibroEnPrestamo[], dato: string): LibroEnPresta
   })
 }
 
-function buscarPorAutor(libros: LibroEnPrestamo[], dato: string): LibroEnPrestamo[] {
+function buscarPorAutor(libros: LibroRegistrado[], dato: string): LibroRegistrado[] {
   return libros.filter(libro => normailzarTexto(libro.autor || '').includes(dato))
 }
