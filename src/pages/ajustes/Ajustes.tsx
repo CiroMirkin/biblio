@@ -12,6 +12,7 @@ import { PermitirVincularSocios } from "./PermitirVincularSocios";
 import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
 import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
 import { NombreBiblioteca } from "./NombreBiblioteca";
+import { EstablecerTipoDeIdEnLibros } from "./EstablecerTipoDeIdEnLibros";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -28,6 +29,7 @@ export function Ajustes() {
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
                     <UsarNumeroDeInventarioExternos />
+                    { numerosDeInventarioExternos && <EstablecerTipoDeIdEnLibros /> }
                     { numerosDeInventarioExternos && <EstableceTipoDeCatalogacion /> }
                     <ComoEstablecerFechaPrestamo />
                     <PermitirVincularSocios />

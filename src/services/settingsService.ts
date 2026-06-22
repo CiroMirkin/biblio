@@ -1,4 +1,6 @@
 
+export type IdEnLibros = 'Código de Barras' | 'N° de Inventario'
+
 export interface Settings {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
@@ -10,6 +12,7 @@ export interface Settings {
   vincularSocios: boolean
   catalogacionSimple: boolean
   nombreBiblioteca: string
+  tipoDeIdEnLibros: IdEnLibros
 }
 
 export async function getAll(): Promise<Settings> {

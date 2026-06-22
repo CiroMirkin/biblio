@@ -36,7 +36,7 @@ export function IngresoMarc21() {
   const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>("BK")
-  const { nombreBiblioteca, estaDefinidoNombreBiblioteca } = useSettingsStore()
+  const { nombreBiblioteca, estaDefinidoNombreBiblioteca, tipoDeIdEnLibros } = useSettingsStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -121,7 +121,10 @@ export function IngresoMarc21() {
                 </label>
 
                 <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">Código de barras: <span className="text-red">*</span></span>
+                <span className="font-semibold">
+                    {`${tipoDeIdEnLibros}: `}
+                    <span className="text-red">*</span>
+                </span>
                 <input
                     onKeyDown={handleEnter}
                     type="text"

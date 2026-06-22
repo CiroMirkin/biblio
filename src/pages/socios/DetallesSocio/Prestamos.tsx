@@ -42,6 +42,7 @@ export function Prestamos({ onSuccess }: Props) {
     limiteDeDias,
     fechaDePrestamoAutomatica,
     numerosDeInventarioExternos,
+    tipoDeIdEnLibros,
   } = useSettingsStore()
 
   const caracterSocio = getCaracterSocio(socio?.caracterSocio).estado
@@ -237,7 +238,9 @@ export function Prestamos({ onSuccess }: Props) {
   return (
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
-        <span className={cn(colNro, !numerosDeInventarioExternos && "hidden",)}>N° Inventario</span>
+        <span className={cn(colNro, !numerosDeInventarioExternos && "hidden",)}>
+          { tipoDeIdEnLibros === 'N° de Inventario' ? "N° Inventario" : tipoDeIdEnLibros }
+        </span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
         <span className={cn(colFecha, !hasLibros && "opacity-0", !fechaDePrestamoAutomatica && "opacity-100")}>Fecha</span>

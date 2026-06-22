@@ -1,6 +1,6 @@
 import { CheckIcon } from "@/components"
 import type { Libro } from "@/models"
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSettingsStore } from "@/store"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
@@ -23,6 +23,7 @@ function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
 
 export function IngresoSimple() {
   const { ingresoSimple } = useLibrosStore()
+  const { tipoDeIdEnLibros } = useSettingsStore()
   const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
 
@@ -70,7 +71,10 @@ export function IngresoSimple() {
         <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">N° de inventario: <span className="text-red">*</span></span>
+                <span className="font-semibold">
+                    {`${tipoDeIdEnLibros}: `}
+                    <span className="text-red">*</span>
+                </span>
                 <input
                     onKeyDown={handleEnter}
                     type="text"
@@ -80,7 +84,6 @@ export function IngresoSimple() {
                     required
                     minLength={2}
                     className="w-full border bg-white border-black rounded p-1 px-2"
-                    placeholder="N° de inventario"
                 />
                 </label>
             </div>
@@ -97,7 +100,6 @@ export function IngresoSimple() {
                     minLength={2}
                     defaultValue={""}
                     className="w-full border bg-white border-black rounded p-1 px-2"
-                    placeholder="Título"
                 />
                 </label>
 
@@ -110,7 +112,6 @@ export function IngresoSimple() {
                     id="autor"
                     defaultValue={""}
                     className="w-full border bg-white border-black rounded p-1 px-2"
-                    placeholder="Autor"
                 />
                 </label>
             </div>
