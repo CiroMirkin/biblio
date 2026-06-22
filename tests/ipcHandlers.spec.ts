@@ -37,6 +37,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       gestionDeCuotas: true,
       numerosDeInventarioExternos: true,
       vincularSocios: false,
+      catalogacionSimple: true,
     })
     const handler = handlers.get('settings:getAll')!
     const result = await handler()
@@ -49,6 +50,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       gestionDeCuotas: true,
       numerosDeInventarioExternos: true,
       vincularSocios: false,
+      catalogacionSimple: true,
     })
     expect(mockSettings.getAll).toHaveBeenCalledOnce()
   })

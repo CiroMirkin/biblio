@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronLeftIcon } from "@/components"
+import { CheckIcon } from "@/components"
 import type { Libro } from "@/models"
 import { useLibrosStore } from "@/store"
 import { useRef, useState } from "react"
@@ -20,11 +20,7 @@ function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
   focusSiguiente((e.target as HTMLInputElement).name)
 }
 
-interface Props {
-    comeBack: () => void
-}
-
-export function IngresoSimple({ comeBack }: Props) {
+export function IngresoSimple() {
   const { ingresoSimple } = useLibrosStore()
   const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
@@ -52,13 +48,6 @@ export function IngresoSimple({ comeBack }: Props) {
 
   return (
     <>
-        <p
-          className="w-70 mt-2 px-2 pt-1 pb-1.5 flex items-center gap-2 opacity-90 rounded bg-white/40 hover:bg-white transition-colors duration-75 ease-in cursor-pointer"
-          onClick={() => comeBack()}
-        >
-          <ChevronLeftIcon />
-          <span className="text-lg">Volver</span>
-        </p>
       <div className="card pt-4 mt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
             Editar libro

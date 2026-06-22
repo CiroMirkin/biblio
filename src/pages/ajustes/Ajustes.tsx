@@ -10,6 +10,7 @@ import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 import { UsarNumeroDeInventarioExternos } from "./UsarNumeroDeInventarioExternos";
 import { PermitirVincularSocios } from "./PermitirVincularSocios";
 import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
+import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -25,6 +26,7 @@ export function Ajustes() {
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
                     <UsarNumeroDeInventarioExternos />
+                    { numerosDeInventarioExternos && <EstableceTipoDeCatalogacion /> }
                     <ComoEstablecerFechaPrestamo />
                     <PermitirVincularSocios />
                     <CopiarExcels />
