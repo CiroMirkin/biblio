@@ -99,21 +99,28 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   editarLibro: async (libro) => {
     if(!libro || !libro.numeroInventario) return null
-    
+    const { libroSeleccionado } = get()
+    if(!libroSeleccionado) return null
+
     const updatedLibro = await window.electronAPI.editarDatosLibro(
-      String(libro.numeroInventario),
+      String(libroSeleccionado!.numeroInventario),
       { ...libro }
     )
     
     if(!updatedLibro) return null
-    
+
+    const nroViejo = String(libroSeleccionado.numeroInventario)
     const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
     set({
-      libros: actualizarListaLibros(libros, updatedLibro as LibroEnPrestamo),
-      librosDisponibles: actualizarListaLibros(librosDisponibles, updatedLibro as Libro),
-      librosPrestados: actualizarListaLibros(librosPrestados, updatedLibro as LibroEnPrestamo),
-      librosVencidos: actualizarListaLibros(librosVencidos, updatedLibro as LibroEnPrestamo),
-      librosFiltrados: actualizarListaLibros(librosFiltrados, updatedLibro as LibroEnPrestamo),
+      libros: actualizarListaLibros(libros, updatedLibro as LibroEnPrestamo, { nroViejo }),
+      librosDisponibles: actualizarListaLibros(librosDisponibles, updatedLibro as Libro, { nroViejo }),
+      librosPrestados: actualizarListaLibros(
+        librosPrestados, updatedLibro as LibroEnPrestamo, { nroViejo }
+      ),
+      librosVencidos: actualizarListaLibros(
+        librosVencidos, updatedLibro as LibroEnPrestamo, { nroViejo }
+      ),
+      librosFiltrados: actualizarListaLibros(librosFiltrados, updatedLibro as LibroEnPrestamo, { nroViejo }),
     })
     return updatedLibro
   },
@@ -158,6 +165,11 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   },
 }))
 
-function actualizarListaLibros<T extends Libro>(libros: T[], updated: T): T[] {
-  return libros.map(l => l.numeroInventario === updated.numeroInventario ? updated : l)
+function actualizarListaLibros<T extends Libro>(
+  libros: T[], updated: T, options?: { nroViejo?: string }
+): T[] {
+  let nrolibro = updated.numeroInventario
+  if(options?.nroViejo) nrolibro = options?.nroViejo
+
+  return libros.map(l => l.numeroInventario === nrolibro ? updated : l)
 }
