@@ -19,7 +19,7 @@ import {
 import { getCuotasSocio, toggleCuota } from './cuotas'
 import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
-import type { Libro } from '../models/libro'
+import type { Libro, LibroRegistrado } from '../models/libro'
 import type { NewSocioData, Socio } from '../models/socio'
 import type { Marc21 } from '../models/marc21'
 import { descargarMrc } from '../utils/descargarMrc'
@@ -27,7 +27,7 @@ import { descargarMrc } from '../utils/descargarMrc'
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
-  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<Libro>) => editarDatosLibro(nroInventario, datos),
+  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<LibroRegistrado>) => editarDatosLibro(nroInventario, datos),
   ingresarLibro: (_: unknown, ingreso: Libro) => ingresarLibro(ingreso),
   ingresarLibroMark21: (_: unknown, ingreso: Marc21) => ingresarLibroMark21(ingreso),
 }

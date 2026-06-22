@@ -1,35 +1,30 @@
 import ExcelJS from 'exceljs'
 import { getLibrosWorksheet } from "../../constants"
-import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro, type Libro, type LibroEnPrestamo } from "../../models/libro"
+import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro, type Libro, type LibroRegistrado } from "../../models/libro"
+import { isMarc21, type Marc21 } from '../../models/marc21'
 
-export const editarDatosLibro = async (nroInventario: number, datos: Partial<Libro>): Promise<Libro | null> => {
+export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<Libro | Marc21 | null> => {
     const { worksheet, writeWorkbook } = await getLibrosWorksheet()
     if (!worksheet) return null
 
     let targetRow: ExcelJS.Row | null = null
-    let nroInventarioDuplicado = false
     const {
         nombreSocio: _,
         numeroSocio: __,
         fechaDePrestamo: ___,
         ...nuevosDatos
-    } = datos as Partial<LibroEnPrestamo>
-    const newNroInventario = nuevosDatos.numeroInventario
+    } = datos as Partial<LibroRegistrado>
 
     worksheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return
-        const nroFila = getNroDeInventarioFromRow(row)
+        const nro = getNroDeInventarioFromRow(row)
 
-        if (nroFila === String(nroInventario) && !targetRow) {
+        if (nro === String(nroInventario) && !targetRow) {
             targetRow = row
-        }
-        else if (newNroInventario !== undefined && newNroInventario !== '' && nroFila === String(newNroInventario)) {
-            nroInventarioDuplicado = true
         }
     })
 
     if (!targetRow) return null
-    if (nroInventarioDuplicado) return null
 
     const libroGuardadoActualmente = rowToLibro(targetRow)
     if (nuevosDatos.titulo === '' && libroGuardadoActualmente.titulo) return null
@@ -38,11 +33,31 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
         ? (nuevosDatos.numeroInventario || generarIdSinInventariar())
         : libroGuardadoActualmente.numeroInventario
 
+    let nroInventarioDuplicado = false  
+    worksheet.eachRow((row, rowIndex) => {
+        if (rowIndex === 1) return
+        if (row.number === targetRow!.number) return 
+
+        const nro = getNroDeInventarioFromRow(row)
+        if (nro === String(numeroInventarioFinal)) {
+            nroInventarioDuplicado = true
+        }
+    })
+    if (nroInventarioDuplicado) return null
+
     const newLibro = {
         ...libroGuardadoActualmente,
         ...nuevosDatos,
         numeroInventario: numeroInventarioFinal,
     }
+
+    if (isMarc21(newLibro)) {
+        newLibro.holding = {
+            ...newLibro.holding,
+            barcode: String(numeroInventarioFinal)
+        }
+    }
+
     writeLibro(targetRow, newLibro)
     await writeWorkbook()
     return newLibro
