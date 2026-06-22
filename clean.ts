@@ -6,6 +6,7 @@ const dirs = ["dist", "dist-electron", "dist-ts", "release"]
 const ignore = [
     "eslint.config.js",
     "src/types/electron.d.ts",
+    "electron/types/marcjs.d.ts",
 ]
 
 const searchDirs = ["electron", "src", "tests"]
