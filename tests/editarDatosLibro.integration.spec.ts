@@ -145,7 +145,6 @@ describe('editarDatosLibro (integration)', () => {
         const result = await editarDatosLibro(nroInventario, {
             numeroInventario: nroInventario,
             autor: 'Autor Sin Cambio De Inventario',
-            nombreSocio: 'Pepe',
         })
 
         expect(result).not.toBeNull()

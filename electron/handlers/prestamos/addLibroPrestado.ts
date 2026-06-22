@@ -1,9 +1,9 @@
 import ExcelJS from 'exceljs'
-import type { Libro, LibroEnPrestamo } from '../../models/libro'
+import type { LibroEnPrestamo } from '../../models/libro'
 import { generarIdSinInventariar, getFechaDePrestamoFromRow, getNroDeInventarioFromRow, libroToRow, rowToLibro, writeLibro } from "../../models/libro"
 import { LIBROS_XLSX_PATH } from '../../constants'
 
-export async function addLibroPrestado(libro: Libro, fecha?: Date): Promise<LibroEnPrestamo | null> {
+export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Promise<LibroEnPrestamo | null> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('Hoja1')
