@@ -4,6 +4,7 @@ import { useLibrosStore } from "@/store"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
+import { formatName, formatTitulo } from "@/utils"
 
 const ORDER = ["numeroInventario", "titulo", "autor"]
 
@@ -28,12 +29,12 @@ export function IngresoSimple() {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    if(!form.titulo.value.trim()) return;
+    if(!form.titulo.value.trim() || !form.numeroInventario.value.trim()) return;
 
     const libro: Libro = {
-      numeroInventario: Number(form.numeroInventario.value) || "",
-      titulo: form.titulo.value || "",
-      autor: form.autor.value || "",
+      numeroInventario: form.numeroInventario.value,
+      titulo: formatTitulo(form.titulo.value),
+      autor: formatName(form.autor.value) || "",
     }
 
     const actualizado = await ingresoSimple(libro)
@@ -47,8 +48,8 @@ export function IngresoSimple() {
   }
 
   return (
-    <>
-      <div className="card pt-4 mt-4">
+    <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
+      <div className="card pt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
             Editar libro
             <AnimatePresence>
@@ -69,13 +70,15 @@ export function IngresoSimple() {
         <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">N° de inventario:</span>
+                <span className="font-semibold">N° de inventario: <span className="text-red">*</span></span>
                 <input
                     onKeyDown={handleEnter}
                     type="text"
                     name="numeroInventario"
                     id="numeroInventario"
                     defaultValue={""}
+                    required
+                    minLength={2}
                     className="w-full border bg-white border-black rounded p-1 px-2"
                     placeholder="N° de inventario"
                 />
@@ -115,6 +118,12 @@ export function IngresoSimple() {
             <input type="submit" value="Guardar cambios" className="px-4 py-2 btn mt-2" />
         </form>
       </div>
-    </>
+      <aside className="sticky top-0 h-fit hidden md:block">
+        <div className="w-full bg-transparent h-2" />
+        <section className="card mb-4 flex flex-col gap-2">
+          <p>Aquí puedes registrar nuevos libros</p>
+        </section>
+      </aside>
+    </div>
   )
 }

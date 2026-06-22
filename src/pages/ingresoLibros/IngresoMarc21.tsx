@@ -4,6 +4,7 @@ import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import type { Marc21, Marc21ItemType } from "@/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
+import { formatTitulo } from "@/utils"
 
 const ORDER = [
   "titulo",
@@ -44,7 +45,7 @@ export function IngresoMarc21() {
 
     const registro: Marc21 = {
       numeroInventario: form.barcode.value,
-      titulo: form.titulo.value,
+      titulo: formatTitulo(form.titulo.value),
       autor: form.autor.value || undefined,
       itemType: form.itemType.value,
       literaryForm: tipoItem === "BK" ? (form.literaryForm.value || undefined) : undefined,
@@ -74,8 +75,8 @@ export function IngresoMarc21() {
   }
 
   return (
-    <>
-      <div className="card pt-4 mt-4">
+    <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
+      <div className="card pt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
             Ingresar libro
             <AnimatePresence>
@@ -261,6 +262,13 @@ export function IngresoMarc21() {
             <input type="submit" value="Guardar registro" disabled={!homeBranch} className="px-4 py-2 btn mt-2" />
         </form>
       </div>
-    </>
+      <aside className="sticky top-0 h-fit hidden md:block">
+        <div className="w-full bg-transparent h-2" />
+        <section className="card mb-4 flex flex-col gap-2">
+            { !homeBranch && <p className="font-semibold">El nombre de la biblioteca debe definirse dentro de ajustes.</p> }
+            <p>Aquí puedes registrar nuevos libros.</p>
+        </section>
+      </aside>
+    </div>
   )
 }
