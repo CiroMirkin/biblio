@@ -7,29 +7,23 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
     if (!worksheet) return null
 
     let targetRow: ExcelJS.Row | null = null
-    let nroInventarioDuplicado = false
     const {
         nombreSocio: _,
         numeroSocio: __,
         fechaDePrestamo: ___,
         ...nuevosDatos
     } = datos as Partial<LibroEnPrestamo>
-    const newNroInventario = nuevosDatos.numeroInventario
 
     worksheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return
-        const nroFila = getNroDeInventarioFromRow(row)
+        const nro = getNroDeInventarioFromRow(row)
 
-        if (nroFila === String(nroInventario) && !targetRow) {
+        if (nro === String(nroInventario) && !targetRow) {
             targetRow = row
-        }
-        else if (newNroInventario !== undefined && newNroInventario !== '' && nroFila === String(newNroInventario)) {
-            nroInventarioDuplicado = true
         }
     })
 
     if (!targetRow) return null
-    if (nroInventarioDuplicado) return null
 
     const libroGuardadoActualmente = rowToLibro(targetRow)
     if (nuevosDatos.titulo === '' && libroGuardadoActualmente.titulo) return null
@@ -37,6 +31,18 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
     const numeroInventarioFinal = 'numeroInventario' in nuevosDatos
         ? (nuevosDatos.numeroInventario || generarIdSinInventariar())
         : libroGuardadoActualmente.numeroInventario
+
+    let nroInventarioDuplicado = false  
+    worksheet.eachRow((row, rowIndex) => {
+        if (rowIndex === 1) return
+        if (row.number === targetRow!.number) return 
+
+        const nro = getNroDeInventarioFromRow(row)
+        if (nro === String(numeroInventarioFinal)) {
+            nroInventarioDuplicado = true
+        }
+    })
+    if (nroInventarioDuplicado) return null
 
     const newLibro = {
         ...libroGuardadoActualmente,
