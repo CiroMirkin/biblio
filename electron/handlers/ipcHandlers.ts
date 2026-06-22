@@ -1,4 +1,4 @@
-import { getLibros, editarDatosLibro } from './libros'
+import { getLibros, editarDatosLibro, ingresarLibro, ingresarLibroMark21 } from './libros'
 import {
   devolverLibro,
   getLibrosPrestadosSocio,
@@ -21,11 +21,15 @@ import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
 import type { Libro } from '../models/libro'
 import type { NewSocioData, Socio } from '../models/socio'
+import type { Marc21 } from '../models/marc21'
+import { descargarMrc } from '../utils/descargarMrc'
 
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
   editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<Libro>) => editarDatosLibro(nroInventario, datos),
+  ingresarLibro: (_: unknown, ingreso: Libro) => ingresarLibro(ingreso),
+  ingresarLibroMark21: (_: unknown, ingreso: Marc21) => ingresarLibroMark21(ingreso),
 }
 
 const prestamosIpcHandlers = {
@@ -53,6 +57,7 @@ const cuotasIpcHandlers = {
 
 const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
+  obtenerArchivoMrc: (_: unknown) => descargarMrc(),
 }
 
 export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {

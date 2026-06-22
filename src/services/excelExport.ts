@@ -11,4 +11,8 @@ export class ExcelExportService {
   static async descargarLibros(): Promise<boolean> {
     return window.electronAPI.copiarExcel('libros')
   }
+
+  static async descargarInventarioEnMRC(): Promise<void> {
+    return window.electronAPI.obtenerArchivoMrc()
+  }
 }
