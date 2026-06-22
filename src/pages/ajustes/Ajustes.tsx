@@ -11,6 +11,7 @@ import { UsarNumeroDeInventarioExternos } from "./UsarNumeroDeInventarioExternos
 import { PermitirVincularSocios } from "./PermitirVincularSocios";
 import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
 import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
+import { NombreBiblioteca } from "./NombreBiblioteca";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -20,6 +21,7 @@ export function Ajustes() {
             <div>
                 <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
                 <div className="flex flex-col gap-4">
+                    <NombreBiblioteca />
                     <EstablecerUsoDeCuotas />
                     { gestionDeCuotas && <PrecioCuota /> }
                     { gestionDeCuotas && <MaximoDeCuotasAdeudadas /> }

@@ -3,7 +3,7 @@ import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import type { Marc21, Marc21ItemType } from "@/models"
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSettingsStore } from "@/store"
 
 const ORDER = [
   "titulo",
@@ -35,6 +35,8 @@ export function IngresoMarc21() {
   const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>("BK")
+  const { nombreBiblioteca, estaDefinidoNombreBiblioteca } = useSettingsStore()
+  const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
@@ -51,8 +53,8 @@ export function IngresoMarc21() {
       publisher: form.publisher.value || undefined,
       publicationYear: form.publicationYear.value || undefined,
       holding: {
-        homeBranch: form.homeBranch.value,
-        holdingBranch: form.homeBranch.value,
+        homeBranch: homeBranch,
+        holdingBranch: homeBranch,
         barcode: form.barcode.value,
         shelvingLocation: form.shelvingLocation.value || undefined,
         callNumber: form.callNumber.value || undefined,
@@ -75,7 +77,7 @@ export function IngresoMarc21() {
     <>
       <div className="card pt-4 mt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
-            Ingresar registro MARC21
+            Ingresar libro
             <AnimatePresence>
             {exito && (
                 <motion.span
@@ -245,17 +247,18 @@ export function IngresoMarc21() {
                 <label className="flex flex-col gap-1 text-base">
                 <span>Biblioteca propietaria:</span>
                 <input
-                    onKeyDown={handleEnter}
                     type="text"
+                    value={!homeBranch ? "El nombre se define en AJUSTES" : homeBranch}
+                    disabled
                     name="homeBranch"
                     id="homeBranch"
                     required
-                    className="w-full border bg-white border-black rounded p-1 px-2"
+                    className="w-full border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 </label>
             </div>
 
-            <input type="submit" value="Guardar registro" className="px-4 py-2 btn mt-2" />
+            <input type="submit" value="Guardar registro" disabled={!homeBranch} className="px-4 py-2 btn mt-2" />
         </form>
       </div>
     </>

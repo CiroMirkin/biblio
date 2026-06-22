@@ -38,6 +38,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       numerosDeInventarioExternos: true,
       vincularSocios: false,
       catalogacionSimple: true,
+      nombreBiblioteca: 'Biblioteca ...',
     })
     const handler = handlers.get('settings:getAll')!
     const result = await handler()
@@ -51,6 +52,7 @@ describe('Handlers IPC de ajustes (settings)', () => {
       numerosDeInventarioExternos: true,
       vincularSocios: false,
       catalogacionSimple: true,
+      nombreBiblioteca: 'Biblioteca ...',
     })
     expect(mockSettings.getAll).toHaveBeenCalledOnce()
   })

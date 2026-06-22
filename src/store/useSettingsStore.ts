@@ -6,7 +6,10 @@ interface SettingsState extends Settings {
   inicializar: () => Promise<void>
   updateSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void
   toggleSetting: <K extends keyof Settings>(key: K) => void
+  estaDefinidoNombreBiblioteca: () => boolean
 }
+
+const bibliotecaNombrePorDefecto = 'Biblioteca...'
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   limiteDeDias: 40,
@@ -18,6 +21,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   numerosDeInventarioExternos: true,
   vincularSocios: false,
   catalogacionSimple: true,
+  nombreBiblioteca: bibliotecaNombrePorDefecto,
 
   inicializar: async () => {
     const settings = await settingsService.getAll()
@@ -36,4 +40,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     settingsService.set(key as keyof Settings, next as Settings[typeof key])
     set({ [key as string]: next } as Partial<SettingsState>)
   },
+
+  estaDefinidoNombreBiblioteca: (): boolean => {
+    const { nombreBiblioteca } = get()
+    return nombreBiblioteca !== bibliotecaNombrePorDefecto
+  }
 }))
