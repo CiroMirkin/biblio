@@ -9,9 +9,10 @@ import { PrecioCuota } from "./PrecioCuotas";
 import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 import { UsarNumeroDeInventarioExternos } from "./UsarNumeroDeInventarioExternos";
 import { PermitirVincularSocios } from "./PermitirVincularSocios";
+import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
 
 export function Ajustes() {
-    const { gestionDeCuotas } = useSettingsStore()
+    const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
 
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
@@ -27,6 +28,7 @@ export function Ajustes() {
                     <ComoEstablecerFechaPrestamo />
                     <PermitirVincularSocios />
                     <CopiarExcels />
+                    { numerosDeInventarioExternos && <DescargarArchivoMrc /> }
                     <ActualizarApp />
                 </div>
             </div>
