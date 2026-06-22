@@ -33,6 +33,9 @@ interface LibrosState {
   ) => Promise<LibroRegistrado | null>
   devolverLibro: (nroInventario: number | string) => Promise<void>
   getLibroPorInventario: (nroInventario: number | string) => LibroRegistrado | null
+
+  ingresoMark21: (ingreso: Marc21) => Promise<boolean>
+  ingresoSimple: (ingreso: Libro) => Promise<boolean>
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -155,6 +158,42 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     const { libros } = get()
     const result = buscarLibroPorNro(String(nroInventario), libros)
     return result.length ? result[0] : null
+  },
+
+  ingresoMark21: async (ingreso: Marc21) => {
+    if (!ingreso.titulo?.trim() || !ingreso.itemType) return false
+    if (!ingreso.holding.barcode || !ingreso.holding.homeBranch) return false
+
+    const libroRegistrado = await window.electronAPI.ingresarLibroMark21(ingreso)
+    if(!libroRegistrado) return false
+
+    const { libros, librosDisponibles } = get()
+    set({
+      libros: [...libros, {
+        ...libroRegistrado,
+        fechaDePrestamo: null,
+      }],
+      librosDisponibles: [...librosDisponibles, libroRegistrado],
+    })
+    return true
+  },
+
+  ingresoSimple: async (ingreso: Libro) => {
+    if(!ingreso.titulo.trim()) return false
+
+    const libroRegistrado = await window.electronAPI.ingresarLibro(ingreso)
+    if(!libroRegistrado) return false
+    const newLibro = {
+        ...libroRegistrado,
+        fechaDePrestamo: null,
+      }
+
+    const { libros, librosDisponibles } = get()
+    set({
+      libros: [...libros, newLibro],
+      librosDisponibles: [...librosDisponibles, newLibro ],
+    })
+    return true
   },
 }))
 
