@@ -35,7 +35,7 @@ export interface Marc21 {
     homeBranch: string
     holdingBranch: string
     barcode: string
-    shelvingLocation?: string
+    publicNote?: string
     callNumber?: string
   }
 }

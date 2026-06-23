@@ -14,8 +14,8 @@ const ORDER = [
   "placeOfPublication",
   "publisher",
   "publicationYear",
-  "shelvingLocation",
   "callNumber",
+  "publicNote",
 ]
 
 function focusSiguiente(name: string) {
@@ -57,7 +57,7 @@ export function IngresoMarc21() {
         homeBranch: homeBranch,
         holdingBranch: homeBranch,
         barcode: form.barcode.value,
-        shelvingLocation: form.shelvingLocation.value || undefined,
+        publicNote: form.publicNote.value || undefined,
         callNumber: form.callNumber.value || undefined,
       },
     }
@@ -227,23 +227,23 @@ export function IngresoMarc21() {
                 </label>
 
                 <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">Ubicación en estantería:</span>
-                <input
-                    onKeyDown={handleEnter}
-                    type="text"
-                    name="shelvingLocation"
-                    id="shelvingLocation"
-                    className="w-full border bg-white border-black rounded p-1 px-2"
-                />
-                </label>
-
-                <label className="flex flex-col gap-1 text-base">
                 <span className="font-semibold">Signatura topográfica:</span>
                 <input
                     onKeyDown={handleEnter}
                     type="text"
                     name="callNumber"
                     id="callNumber"
+                    className="w-full border bg-white border-black rounded p-1 px-2"
+                />
+                </label>
+
+                <label className="flex flex-col gap-1 text-base">
+                <span className="font-semibold">Observaciones / Notas publicas:</span>
+                <input
+                    onKeyDown={handleEnter}
+                    type="text"
+                    name="publicNote"
+                    id="publicNote"
                     className="w-full border bg-white border-black rounded p-1 px-2"
                 />
                 </label>

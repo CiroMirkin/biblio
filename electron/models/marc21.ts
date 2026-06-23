@@ -31,7 +31,7 @@ export type Marc21LiteraryForm =
 | `260$a Lugar`          | 260 $a        | Lugar de publicación  (op)        |
 | `260$b Editor`         | 260 $b        | Editorial          (op)           |
 | `260$c Año`            | 260 $c        | Año de publicación (op)           |
-| `952$c Ubicación`      | 952 $c        | Ubicación en estantería  (op)     |
+| `952$z Observaciones`  | 952 $z        | Nota pública              (op)    |
 | `952$o Signatura`      | 952 $o        | Signatura topográfica    (op)     |
  */
 
@@ -51,7 +51,7 @@ export interface Marc21 {
     homeBranch: string
     holdingBranch: string
     barcode: string
-    shelvingLocation?: string
+    publicNote?: string
     callNumber?: string
   }
 }
