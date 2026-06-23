@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import ExcelJS from 'exceljs'
 import { rowToLibro } from '../electron/models/libro'
+import type { Marc21EnPrestamo } from '../electron/models/marc21'
 
 const crearRow = (celdas: Record<number, unknown>): ExcelJS.Row => {
     const workbook = new ExcelJS.Workbook()
@@ -32,32 +33,84 @@ describe('rowToLibro', () => {
             13: 'Central',
             14: 'Deposito',
             15: 'Buen estado',
-            16: 'COL-001',
+            16: '863 AVE',
         })
 
         const result = rowToLibro(row)
 
         expect(result).toMatchObject({
-            nombreSocio:       'Juan Perez',
-            numeroSocio:       42,
-            fechaDePrestamo:   fecha,
-            autor:             'Gabriel Garcia Marquez',
-            titulo:            'Cien anos de soledad',
-            numeroInventario:  '555555',
-            itemType:          'BK',
-            literaryForm:      'f',
-            edition:           '2da',
-            placeOfPublication:'Buenos Aires',
-            publisher:         'Sudamericana',
-            publicationYear:   '1967',
+            nombreSocio:        'Juan Perez',
+            numeroSocio:        42,
+            fechaDePrestamo:    fecha,
+            autor:              'Gabriel Garcia Marquez',
+            titulo:             'Cien anos de soledad',
+            numeroInventario:   '555555',
+            itemType:           'BK',
+            literaryForm:       'f',
+            edition:            '2da',
+            placeOfPublication: 'Buenos Aires',
+            publisher:          'Sudamericana',
+            publicationYear:    '1967',
             holding: {
                 barcode:       '555555',
                 homeBranch:    'Central',
                 holdingBranch: 'Deposito',
                 publicNote:    'Buen estado',
-                callNumber:    'COL-001',
+                callNumber:    { dewey: '863', cutter: 'AVE' },
             },
         })
+    })
+
+    it('Parsea el callNumber con prefijo desde la celda', () => {
+        const row = crearRow({
+            5:  'Martin Fierro',
+            6:  '123456',
+            7:  'BK',
+            13: 'Central',
+            14: 'Central',
+            16: 'A863 HER',
+        })
+
+        const result = rowToLibro(row)
+
+        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual({
+            prefix: 'A',
+            dewey:  '863',
+            cutter: 'HER',
+        })
+    })
+
+    it('Parsea el callNumber con volumen desde la celda', () => {
+        const row = crearRow({
+            5:  'Historia Universal',
+            6:  '654321',
+            7:  'BK',
+            13: 'Central',
+            14: 'Central',
+            16: '982 COO v.2',
+        })
+
+        const result = rowToLibro(row)
+
+        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual({
+            dewey:  '982',
+            cutter: 'COO',
+            volume: 'v.2',
+        })
+    })
+
+    it('Retorna callNumber undefined cuando la celda esta vacia', () => {
+        const row = crearRow({
+            5:  'Ficciones',
+            6:  '777777',
+            7:  'BK',
+            13: 'Central',
+            14: 'Central',
+        })
+
+        const result = rowToLibro(row)
+
+        expect((result as Marc21EnPrestamo).holding.callNumber).toBeUndefined()
     })
 
     it('Retorna un LibroEnPrestamo cuando la fila no tiene itemType ni holding validos', () => {

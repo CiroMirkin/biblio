@@ -2,12 +2,17 @@ import { describe, it, expect } from 'vitest'
 import ExcelJS from 'exceljs'
 import { writeLibro } from '../electron/models/libro'
 import type { Marc21EnPrestamo } from '../electron/models/marc21'
+import type { CallNumber } from '../electron/models/callNumber'
 
 const crearRowEnBlanco = (): ExcelJS.Row => {
     const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet('Hoja1')
     return worksheet.getRow(1)
 }
+
+const callNumber: CallNumber = { dewey: '863', cutter: 'AVE' }
+const callNumberConPrefijo: CallNumber = { prefix: 'A', dewey: '863', cutter: 'AGU' }
+const callNumberConVolumen: CallNumber = { dewey: '982', cutter: 'COO', volume: 'v.2' }
 
 describe('writeLibro', () => {
     it('Escribe un Marc21EnPrestamo en las columnas que corresponden segun el mapeo', () => {
@@ -28,7 +33,7 @@ describe('writeLibro', () => {
                 homeBranch: 'Central',
                 holdingBranch: 'Deposito',
                 publicNote: 'Buen estado',
-                callNumber: 'COL-001',
+                callNumber,
             },
             nombreSocio: 'Juan Perez',
             numeroSocio: 42,
@@ -52,7 +57,51 @@ describe('writeLibro', () => {
         expect(row.getCell(13).value).toBe(libro.holding.homeBranch)
         expect(row.getCell(14).value).toBe(libro.holding.holdingBranch)
         expect(row.getCell(15).value).toBe(libro.holding.publicNote)
-        expect(row.getCell(16).value).toBe(libro.holding.callNumber)
+        expect(row.getCell(16).value).toBe('863 AVE')
+    })
+
+    it('Escribe el callNumber con prefijo correctamente', () => {
+        const row = crearRowEnBlanco()
+
+        const libro: Marc21EnPrestamo = {
+            titulo: 'El Aleph',
+            itemType: 'BK',
+            holding: {
+                barcode: '111111',
+                homeBranch: 'Central',
+                holdingBranch: 'Central',
+                callNumber: callNumberConPrefijo,
+            },
+            nombreSocio: 'Ana Gomez',
+            numeroSocio: 1,
+            fechaDePrestamo: new Date('2024-01-01'),
+        }
+
+        writeLibro(row, libro)
+
+        expect(row.getCell(16).value).toBe('A863 AGU')
+    })
+
+    it('Escribe el callNumber con volumen correctamente', () => {
+        const row = crearRowEnBlanco()
+
+        const libro: Marc21EnPrestamo = {
+            titulo: 'Historia Universal',
+            itemType: 'BK',
+            holding: {
+                barcode: '222222',
+                homeBranch: 'Central',
+                holdingBranch: 'Central',
+                callNumber: callNumberConVolumen,
+            },
+            nombreSocio: 'Luis Torres',
+            numeroSocio: 2,
+            fechaDePrestamo: new Date('2024-02-01'),
+        }
+
+        writeLibro(row, libro)
+
+        expect(row.getCell(16).value).toBe('982 COO v.2')
     })
 
     it('No escribe en celdas cuyos campos opcionales no fueron especificados', () => {
