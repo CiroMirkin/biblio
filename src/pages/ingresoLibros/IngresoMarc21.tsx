@@ -2,7 +2,7 @@ import { CheckIcon } from "@/components"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import type { Marc21, Marc21ItemType } from "@/models"
+import { countryToPrefix, cutterFromAuthor, type Marc21, type Marc21ItemType } from "@/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatTitulo } from "@/utils"
 
@@ -15,6 +15,7 @@ const ORDER = [
   "publisher",
   "publicationYear",
   "callNumber",
+  "callNumberPrefix",
   "publicNote",
 ]
 
@@ -58,7 +59,12 @@ export function IngresoMarc21() {
         holdingBranch: homeBranch,
         barcode: form.barcode.value,
         publicNote: form.publicNote.value || undefined,
-        callNumber: form.callNumber.value || undefined,
+        callNumber:  {
+            prefix: countryToPrefix(form.callNumberPrefix.value || ""),
+            dewey: form.callNumber.value || "",
+            cutter: cutterFromAuthor(form.autor.value || ""),
+            volume: "",
+        },
       },
     }
 
@@ -233,6 +239,17 @@ export function IngresoMarc21() {
                     type="text"
                     name="callNumber"
                     id="callNumber"
+                    className="w-full border bg-white border-black rounded p-1 px-2"
+                />
+                </label>
+
+                <label className="flex flex-col gap-1 text-base">
+                <span className="font-semibold">País de origen del autor:</span>
+                <input
+                    onKeyDown={handleEnter}
+                    type="text"
+                    name="callNumberPrefix"
+                    id="callNumberPrefix"
                     className="w-full border bg-white border-black rounded p-1 px-2"
                 />
                 </label>
