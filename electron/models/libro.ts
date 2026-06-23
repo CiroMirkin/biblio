@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
-import { isMarc21, type Marc21, type Marc21EnPrestamo, type Marc21LiteraryForm } from "./marc21"
+import { isMarc21, type Marc21EnPrestamo, type Marc21ItemType, type Marc21LiteraryForm } from "./marc21"
 import type { DatosPrestamo } from "./prestamo"
 
 export interface Libro {
@@ -14,14 +14,21 @@ export type LibroEnPrestamo = Libro & DatosPrestamo
 export type LibroRegistrado = LibroEnPrestamo | Marc21EnPrestamo
 
 export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
-    const libro = {
+    const libroSimple: LibroEnPrestamo = {
+        titulo: String(row.getCell(5).value ?? ''),
+        autor: String(row.getCell(4).value ?? '') || undefined,
+        numeroInventario: String(row.getCell(6).value ?? ''),
         nombreSocio: String(row.getCell(1).value ?? ''),
         numeroSocio: Number(row.getCell(2).value ?? null),
         fechaDePrestamo: getFechaDePrestamoFromRow(row),
-        autor: String(row.getCell(4).value ?? ''),
-        titulo: String(row.getCell(5).value ?? ''),
-        numeroInventario: String(row.getCell(6).value ?? ''),
-        itemType: String(row.getCell(7).value ?? '') as Marc21["itemType"],
+    }
+
+    const itemType = String(row.getCell(7).value ?? '') as Marc21ItemType
+    if (!itemType) return libroSimple
+
+    return {
+        ...libroSimple,
+        itemType,
         literaryForm: (String(row.getCell(8).value ?? '') || undefined) as Marc21LiteraryForm | undefined,
         edition: String(row.getCell(9).value ?? '') || undefined,
         placeOfPublication: String(row.getCell(10).value ?? '') || undefined,
@@ -29,15 +36,6 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         publicationYear: String(row.getCell(12).value ?? '') || undefined,
         holding: getHoldingFromRow(row),
     }
-    const libroSimple: LibroEnPrestamo = {
-        titulo: libro.titulo,
-        autor: libro.autor,
-        numeroInventario: libro.numeroInventario,
-        nombreSocio: libro.nombreSocio,
-        numeroSocio: libro.numeroSocio,
-        fechaDePrestamo: libro.fechaDePrestamo
-    }
-    return isMarc21(libro) ? libro : libroSimple
 }
 
 export const getHoldingFromRow = (row: ExcelJS.Row) => ({
