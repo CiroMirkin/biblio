@@ -183,7 +183,7 @@ export function IngresoMarc21() {
                 )}
 
                 <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">Edición:</span>
+                <span className="font-semibold">Tipo o Numero de Edición:</span>
                 <input
                     onKeyDown={handleEnter}
                     type="text"
@@ -205,7 +205,7 @@ export function IngresoMarc21() {
                 </label>
 
                 <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">Editorial:</span>
+                <span className="font-semibold">Nombre de la Editorial:</span>
                 <input
                     onKeyDown={handleEnter}
                     type="text"
