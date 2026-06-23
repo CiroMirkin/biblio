@@ -17,38 +17,36 @@ export function buscarSocio({ socios, dato }: Params): Socio[] {
 
     const filtrados = socios.filter(socio => {
         const apellido = normailzarTexto(getApellido(socio.nombreYApellido))
-        const nombreCompleto = normailzarTexto(socio.nombreYApellido.split(',').join(' '))
+        const nombreCompleto = normailzarTexto(socio.nombreYApellido).replace(/[,()]/g, ' ')
 
         if (nombreCompleto.includes(datoNormalizado)) return true
         if (apellido.includes(datoNormalizado)) return true
 
+        const palabrasSocio = nombreCompleto.split(' ').filter(Boolean)
+
         return palabrasDato.every(palabraDato =>
-            apellido.split(' ').some(palabraApellido => {
-                const sonSimilaresPorInicio = palabraApellido.startsWith(palabraDato) || palabraDato.startsWith(palabraApellido)
-                if (sonSimilaresPorInicio) return true
+            palabrasSocio.some(palabraS => {
+                const sonSimilaresPorInicio = palabraS.startsWith(palabraDato) || palabraDato.startsWith(palabraS)
+                const sonSimilaresPorFin = palabraS.endsWith(palabraDato) || palabraDato.endsWith(palabraS)
+                if (sonSimilaresPorInicio || sonSimilaresPorFin) return true
                 
-                const esPalabraLarga = palabraDato.length >= 7 || palabraApellido.length >= 7
+                if (palabraS.length >= 7 && palabraDato.length >= 7) {
+                    if (palabraS.includes(palabraDato.substring(1)) || 
+                        palabraS.includes(palabraDato.substring(0, palabraDato.length - 1)) ||
+                        palabraDato.includes(palabraS.substring(1)) ||
+                        palabraDato.includes(palabraS.substring(0, palabraS.length - 1))) {
+                        return true
+                    }
+                }
+
+                const esPalabraLarga = palabraDato.length >= 7 || palabraS.length >= 7
                 const maxDiferenciaPermitida = esPalabraLarga ? 2 : 1
-                const longitudInvalida = Math.abs(
-                    palabraApellido.length - palabraDato.length
-                ) > maxDiferenciaPermitida
-                const esPalabraCorta = palabraDato.length < 4 && palabraApellido.length < 4
+                const longitudInvalida = Math.abs(palabraS.length - palabraDato.length) > maxDiferenciaPermitida
+                const esPalabraCorta = palabraDato.length < 3 && palabraS.length < 3
 
                 if (esPalabraCorta || longitudInvalida) return false
                 
-                return levenshtein(palabraApellido, palabraDato) <= 2
-            }) || nombreCompleto.split(' ').some(palabraNombre => {
-                const sonSimilaresPorInicio = palabraNombre.startsWith(palabraDato) || palabraDato.startsWith(palabraNombre)
-                const sonSimilaresPorFin = palabraNombre.endsWith(palabraDato)
-                if (sonSimilaresPorInicio || sonSimilaresPorFin) return true
-                
-                const esPalabraLarga = palabraDato.length >= 7 || palabraNombre.length >= 7
-                const maxDiferenciaPermitida = esPalabraLarga ? 2 : 1
-                const longitudInvalida = Math.abs(palabraNombre.length - palabraDato.length) > maxDiferenciaPermitida
-                const esPalabraCorta = palabraDato.length < 4 && palabraNombre.length < 4
-                if (esPalabraCorta || longitudInvalida) return false
-                
-                return levenshtein(palabraNombre, palabraDato) <= 2
+                return levenshtein(palabraS, palabraDato) <= 2 || levenshtein(palabraDato, palabraS) <= 2
             })
         )
     })
