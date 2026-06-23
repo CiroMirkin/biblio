@@ -56,12 +56,12 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
 
     const subs952: string[] = [
         'b', libro.holding.homeBranch       || 'CENTRAL',
-        'c', libro.holding.shelvingLocation || 'GEN',
         'p', libro.holding.barcode,
         'y', itemType,
     ]
     if (libro.holding.holdingBranch) subs952.push('a', libro.holding.holdingBranch)
     if (libro.holding.callNumber)    subs952.push('o', libro.holding.callNumber)
+    if (libro.holding.publicNote)    subs952.push('z', libro.holding.publicNote)
 
     record.append(['952', '  ', ...subs952])
 
