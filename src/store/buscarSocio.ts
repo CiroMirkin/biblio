@@ -24,7 +24,7 @@ export function buscarSocio({ socios, dato }: Params): Socio[] {
 
         const palabrasSocio = nombreCompleto.split(' ').filter(Boolean)
 
-        return palabrasDato.every(palabraDato =>
+        return palabrasDato.some(palabraDato =>
             palabrasSocio.some(palabraS => {
                 const sonSimilaresPorInicio = palabraS.startsWith(palabraDato) || palabraDato.startsWith(palabraS)
                 const sonSimilaresPorFin = palabraS.endsWith(palabraDato) || palabraDato.endsWith(palabraS)
@@ -64,9 +64,11 @@ export function buscarSocio({ socios, dato }: Params): Socio[] {
         const palabrasA = nameA.split(/[\s,]+/).filter(Boolean)
         const palabrasB = nameB.split(/[\s,]+/).filter(Boolean)
         
-        const tienePalabraExactaA = palabrasDato.some(p => palabrasA.includes(p)) ? 1 : 0
-        const tienePalabraExactaB = palabrasDato.some(p => palabrasB.includes(p)) ? 1 : 0
-        if (tienePalabraExactaA !== tienePalabraExactaB) return tienePalabraExactaB - tienePalabraExactaA
+        const coincidenciasPalabrasA = palabrasDato.filter(p => palabrasA.includes(p)).length
+        const coincidenciasPalabrasB = palabrasDato.filter(p => palabrasB.includes(p)).length
+        if (coincidenciasPalabrasA !== coincidenciasPalabrasB) {
+            return coincidenciasPalabrasB - coincidenciasPalabrasA
+        }
 
         // Relevancia por defecto (Levenshtein/Aproximación)
         return getRelevanciaDelApellido(b.nombreYApellido, dato) - getRelevanciaDelApellido(a.nombreYApellido, dato)
