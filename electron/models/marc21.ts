@@ -1,3 +1,4 @@
+import type { CallNumber } from "./callNumber"
 import type { LibroRegistrado } from "./libro"
 import type { DatosPrestamo } from "./prestamo"
 
@@ -52,7 +53,7 @@ export interface Marc21 {
     holdingBranch: string
     barcode: string
     publicNote?: string
-    callNumber?: string
+    callNumber?: CallNumber | null
   }
 }
 

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
 import { isMarc21, type Marc21EnPrestamo, type Marc21ItemType, type Marc21LiteraryForm } from "./marc21"
 import type { DatosPrestamo } from "./prestamo"
+import { formatCallNumber, parseCallNumber } from "./callNumber"
 
 export interface Libro {
     titulo: string
@@ -43,7 +44,7 @@ export const getHoldingFromRow = (row: ExcelJS.Row) => ({
     homeBranch: String(row.getCell(13).value ?? ''),
     holdingBranch: String(row.getCell(14).value ?? ''),
     publicNote: String(row.getCell(15).value ?? '') || undefined,
-    callNumber: String(row.getCell(16).value ?? '') || undefined,
+    callNumber: parseCallNumber(String(row.getCell(16).value ?? '')) || undefined,
 })
 
 export const getFechaDePrestamoFromRow = (row: ExcelJS.Row): Date | null => {
@@ -74,7 +75,7 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
             libro.holding.homeBranch,
             libro.holding.holdingBranch,
             libro.holding.publicNote ?? '',
-            libro.holding.callNumber ?? '',
+            formatCallNumber(libro.holding.callNumber),
         ]
     }
  
@@ -102,7 +103,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
         if (libro.holding?.homeBranch !== undefined) row.getCell(13).value = libro.holding.homeBranch
         if (libro.holding?.holdingBranch !== undefined) row.getCell(14).value = libro.holding.holdingBranch
         if (libro.holding?.publicNote !== undefined) row.getCell(15).value = libro.holding.publicNote
-        if (libro.holding?.callNumber !== undefined) row.getCell(16).value = libro.holding.callNumber
+        if (libro.holding?.callNumber !== undefined) row.getCell(16).value = formatCallNumber(libro.holding.callNumber)
 
         if (libro.itemType !== undefined) row.getCell(7).value = libro.itemType
         if (libro.literaryForm !== undefined) row.getCell(8).value = libro.literaryForm
