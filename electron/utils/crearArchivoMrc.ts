@@ -1,7 +1,8 @@
 import fs from 'fs'
 import { Record } from 'marcjs'
 import { getLibros } from '../handlers/libros'
-import type { Marc21, Marc21EnPrestamo } from '../models/marc21'
+import { type Marc21, isMarc21 } from '../models/marc21'
+import { formatCallNumber } from '../models/callNumber'
 
 
 export async function excelAMrc(outputPath: string): Promise<void> {
@@ -12,7 +13,7 @@ export async function excelAMrc(outputPath: string): Promise<void> {
         return
     }
 
-    const chunks = libros.filter(l => "holding" in l).map(libro =>
+    const chunks = libros.filter(l => isMarc21(l)).map(libro =>
         Buffer.from(libroToRecord(libro).as('iso2709'), 'binary')
     )
     fs.writeFileSync(outputPath, Buffer.concat(chunks))
@@ -22,7 +23,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     const record = new Record()
     const itemType = libro.itemType || 'BK'
 
-    // Deberia asignarlo Koha a importar los datos
+    // Deberia asignarlo Koha al importar los datos
     record.append(['001', ""])
     
     record.append(
@@ -60,7 +61,9 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
         'y', itemType,
     ]
     if (libro.holding.holdingBranch) subs952.push('a', libro.holding.holdingBranch)
-    if (libro.holding.callNumber)    subs952.push('o', libro.holding.callNumber)
+    if (libro.holding.callNumber) {
+        subs952.push('o', formatCallNumber(libro.holding.callNumber))
+    }
     if (libro.holding.publicNote)    subs952.push('z', libro.holding.publicNote)
 
     record.append(['952', '  ', ...subs952])
@@ -69,7 +72,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
 }
 
 
-function buildField008(libro: Marc21EnPrestamo): string {
+function buildField008(libro: Marc21): string {
     const year     = (libro.publicationYear ?? '').padEnd(4, ' ').slice(0, 4)
     const literary = libro.literaryForm ?? '0'
     return `000000s${year}    xx            00${literary}0 spa d`.slice(0, 40).padEnd(40, ' ')
