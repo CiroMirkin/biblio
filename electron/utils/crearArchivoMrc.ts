@@ -13,19 +13,22 @@ export async function excelAMrc(outputPath: string): Promise<void> {
         return
     }
 
-    const chunks = libros.filter(l => isMarc21(l)).map(libro =>
-        Buffer.from(libroToRecord(libro).as('iso2709'), 'binary')
-    )
+    const chunks = libros.filter(l => isMarc21(l)).map(libro => {
+        const raw = libroToRecord(libro).as('iso2709')
+        return Buffer.from(raw, 'utf8')
+    })
     fs.writeFileSync(outputPath, Buffer.concat(chunks))
 }
 
 function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     const record = new Record()
+    const leader = '01197nam  22002891  4500'
+    record.leader = leader.substring(0, 9) + 'a' + leader.substring(10)
     const itemType = libro.itemType || 'BK'
 
     // Deberia asignarlo Koha al importar los datos
     record.append(['001', ""])
-    
+
     record.append(
         ['003', 'LOCAL'],
         ['008', buildField008(libro)],
