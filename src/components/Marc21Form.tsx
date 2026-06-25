@@ -1,5 +1,5 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import type { Marc21ItemType } from "@shared/models"
+import { formatCallNumber, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
 import { useSettingsStore } from "@/store"
 
@@ -21,16 +21,16 @@ const inputClass = "w-full border bg-white border-black rounded p-1 px-2"
 interface Props {
   mode: "ingreso" | "edicion"
   submitLabel: string
-  onSubmit: (e: SyntheticEvent) => Promise<boolean>
+  onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
   homeBranch: string
   submitDisabled?: boolean
+  defaultValues?: Marc21
 }
 
-export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBranch }: Props) {
-  const [tipoItem, setTipoItem] = useState<Marc21ItemType>("BK")
+export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues }: Props) {
+  const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
   const formRef = useRef<HTMLFormElement>(null)
   const { tipoDeIdEnLibros } = useSettingsStore()
-  
 
   const handleSubmit = async (e: SyntheticEvent) => {
     const ok = await onSubmit(e)
@@ -46,17 +46,17 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Título: <span className="text-red">*</span></span>
-          <input onKeyDown={handleEnter} type="text" name="titulo" id="titulo" required minLength={2} className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="titulo" id="titulo" required minLength={2} defaultValue={defaultValues!.titulo ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues?.autor ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">{tipoDeIdEnLibros}: <span className="text-red">*</span></span>
-          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" required minLength={2} className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" required minLength={2} defaultValue={defaultValues!.holding.barcode ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
@@ -74,7 +74,7 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
         {tipoItem === "BK" && (
           <label className="flex flex-col gap-1 text-base">
             <span className="font-semibold">Forma literaria:</span>
-            <select name="literaryForm" id="literaryForm" defaultValue="" className={inputClass}>
+            <select name="literaryForm" id="literaryForm" defaultValue={defaultValues?.literaryForm ?? ""} className={inputClass}>
               <option value="">Sin especificar</option>
               <option value="0">No es ficción</option>
               <option value="1">Ficción</option>
@@ -95,37 +95,37 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Tipo o Numero de Edición:</span>
-          <input onKeyDown={handleEnter} type="text" name="edition" id="edition" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="edition" id="edition" defaultValue={defaultValues?.edition ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Lugar de publicación:</span>
-          <input onKeyDown={handleEnter} type="text" name="placeOfPublication" id="placeOfPublication" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="placeOfPublication" id="placeOfPublication" defaultValue={defaultValues?.placeOfPublication ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Nombre de la Editorial:</span>
-          <input onKeyDown={handleEnter} type="text" name="publisher" id="publisher" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="publisher" id="publisher" defaultValue={defaultValues?.publisher ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Año de publicación:</span>
-          <input onKeyDown={handleEnter} type="text" name="publicationYear" id="publicationYear" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="publicationYear" id="publicationYear" defaultValue={defaultValues?.publicationYear ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Signatura topográfica:</span>
-          <input onKeyDown={handleEnter} type="text" name="callNumber" id="callNumber" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="callNumber" id="callNumber" defaultValue={formatCallNumber(defaultValues?.holding.callNumber) ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">País de origen del autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" defaultValue={defaultValues?.authorCountry ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Observaciones / Notas publicas:</span>
-          <input onKeyDown={handleEnter} type="text" name="publicNote" id="publicNote" className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="publicNote" id="publicNote" defaultValue={defaultValues?.holding.publicNote ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">

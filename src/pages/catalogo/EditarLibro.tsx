@@ -1,12 +1,15 @@
-import { CheckIcon, ChevronLeftIcon, LibroForm } from "@/components"
-import type { Libro } from "@shared/models"
-import { useLibrosStore } from "@/store"
+import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form } from "@/components"
+import { countryToPrefix, cutterFromAuthor, isMarc21, type Libro, type Marc21 } from "@shared/models"
+import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
+import { formatName, formatTitulo } from "@/utils"
 
 export function EditarLibro() {
   const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
+  const { nombreBiblioteca, estaDefinidoNombreBiblioteca, } = useSettingsStore()
+  const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
   const [exito, setExito] = useState(false)
 
   if (!libroSeleccionado) {
@@ -20,13 +23,38 @@ export function EditarLibro() {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    const libro: Partial<Libro> = {
+    const libroSimple: Partial<Libro> = {
       numeroInventario: Number(form.numeroInventario.value) || libroSeleccionado.numeroInventario,
-      titulo: form.titulo.value || libroSeleccionado.titulo,
-      autor: form.autor.value || libroSeleccionado.autor,
+      titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
+      autor: formatName(form.autor.value) || libroSeleccionado.autor,
     }
 
-    const actualizado = await editarLibro(libro)
+    const libroMarc: Partial<Marc21> = {
+      numeroInventario: form.barcode.value,
+      titulo: formatTitulo(form.titulo.value),
+      autor: formatName(form.autor.value) || undefined,
+      itemType: form.itemType.value,
+      literaryForm: form.literaryForm.value || undefined,
+      edition: form.edition.value || undefined,
+      placeOfPublication: form.placeOfPublication.value || undefined,
+      publisher: form.publisher.value || undefined,
+      publicationYear: form.publicationYear.value || undefined,
+      authorCountry: form.callNumberPrefix.value || "",
+      holding: {
+        homeBranch,
+        holdingBranch: homeBranch,
+        barcode: form.barcode.value,
+        publicNote: form.publicNote.value || undefined,
+        callNumber: {
+          prefix: countryToPrefix(form.callNumberPrefix.value || ""),
+          dewey: form.callNumber.value || "",
+          cutter: cutterFromAuthor(form.autor.value || ""),
+          volume: "",
+        },
+      },
+    }
+
+    const actualizado = await editarLibro(isMarc21(libroSeleccionado) ? libroMarc : libroSimple)
     if (!actualizado) {
       console.error("Error en la edición del libro")
       return
@@ -63,12 +91,21 @@ export function EditarLibro() {
             </AnimatePresence>
         </h2>
 
-        <LibroForm
-          submitLabel="Guardar Cambios"
-          onSubmit={handleSubmit}
-          mode="edicion"
-          defaultValues={libroSeleccionado}
-        />
+        { isMarc21(libroSeleccionado)
+          ? <Marc21Form 
+            submitLabel="Guardar Cambios"
+            onSubmit={handleSubmit}
+            mode="edicion"
+            homeBranch={homeBranch}
+            defaultValues={libroSeleccionado}
+          /> 
+          : <LibroForm
+            submitLabel="Guardar Cambios"
+            onSubmit={handleSubmit}
+            mode="edicion"
+            defaultValues={libroSeleccionado}
+          />
+        }
       </div>
     </>
   )
