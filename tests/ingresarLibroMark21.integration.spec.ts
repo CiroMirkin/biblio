@@ -44,7 +44,7 @@ describe('ingresarLibroMark21 (integration)', () => {
         let filaEncontrada: ExcelJS.Row | undefined
         ws!.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (String(row.getCell(6).value) === ingreso.holding.barcode) {
+            if (String(row.getCell(18).value) === ingreso.holding.barcode) {
                 filaEncontrada = row
             }
         })

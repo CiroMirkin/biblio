@@ -32,7 +32,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
 }
 
 export const getHoldingFromRow = (row: ExcelJS.Row) => ({
-    barcode: String(row.getCell(6).value ?? ''),
+    barcode: String(row.getCell(18).value ?? ''),
     homeBranch: String(row.getCell(13).value ?? ''),
     holdingBranch: String(row.getCell(14).value ?? ''),
     publicNote: String(row.getCell(15).value ?? '') || undefined,
@@ -69,6 +69,7 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
             libro.holding.publicNote ?? '',
             formatCallNumber(libro.holding.callNumber),
             libro.authorCountry ?? '',
+            libro.holding.barcode ?? '',
         ]
     }
  
@@ -92,7 +93,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.numeroInventario !== undefined) row.getCell(6).value = libro.numeroInventario
 
     if(isMarc21(libro)) {
-        if (libro.holding?.barcode !== undefined) row.getCell(6).value = libro.holding.barcode
+        if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
         if (libro.holding?.homeBranch !== undefined) row.getCell(13).value = libro.holding.homeBranch
         if (libro.holding?.holdingBranch !== undefined) row.getCell(14).value = libro.holding.holdingBranch
         if (libro.holding?.publicNote !== undefined) row.getCell(15).value = libro.holding.publicNote

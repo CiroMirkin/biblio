@@ -34,6 +34,8 @@ describe('rowToLibro', () => {
             14: 'Deposito',
             15: 'Buen estado',
             16: '863 AVE',
+            17: 'Colombia',
+            18: '666666',
         })
 
         const result = rowToLibro(row)
@@ -51,14 +53,15 @@ describe('rowToLibro', () => {
             placeOfPublication: 'Buenos Aires',
             publisher:          'Sudamericana',
             publicationYear:    '1967',
+            authorCountry:       'Colombia',
             holding: {
-                barcode:       '555555',
+                barcode:       '666666',
                 homeBranch:    'Central',
                 holdingBranch: 'Deposito',
                 publicNote:    'Buen estado',
                 callNumber:    { dewey: '863', cutter: 'AVE' },
             },
-        })
+        } as Marc21EnPrestamo)
     })
 
     it('Parsea el callNumber con prefijo desde la celda', () => {

@@ -30,9 +30,9 @@ export function EditarLibro() {
     }
 
     const libroMarc: Partial<Marc21> = {
-      numeroInventario: form.barcode.value,
+      numeroInventario: form.nro || "",
       titulo: formatTitulo(form.titulo.value),
-      autor: formatName(form.autor.value) || undefined,
+      autor: formatName(form.autor.value) || "",
       itemType: form.itemType.value,
       literaryForm: form.literaryForm.value || undefined,
       edition: form.edition.value || undefined,
@@ -44,7 +44,7 @@ export function EditarLibro() {
         homeBranch,
         holdingBranch: homeBranch,
         barcode: form.barcode.value,
-        publicNote: form.publicNote.value || undefined,
+        publicNote: form.publicNote.value || "",
         callNumber: {
           prefix: countryToPrefix(form.callNumberPrefix.value || ""),
           dewey: form.callNumber.value || "",

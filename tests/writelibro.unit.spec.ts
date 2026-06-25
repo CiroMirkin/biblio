@@ -26,9 +26,10 @@ describe('writeLibro', () => {
             edition: '2da',
             placeOfPublication: 'Buenos Aires',
             publisher: 'Sudamericana',
+            authorCountry: 'Colombia',
             publicationYear: '1967',
             holding: {
-                barcode: '1001',
+                barcode: '1002',
                 homeBranch: 'Central',
                 holdingBranch: 'Deposito',
                 publicNote: 'Buen estado',
@@ -46,7 +47,7 @@ describe('writeLibro', () => {
         expect(row.getCell(3).value).toEqual(libro.fechaDePrestamo)
         expect(row.getCell(4).value).toBe(libro.autor)
         expect(row.getCell(5).value).toBe(libro.titulo)
-        expect(row.getCell(6).value).toBe(libro.holding.barcode)
+        expect(row.getCell(6).value).toBe(libro.numeroInventario)
         expect(row.getCell(7).value).toBe(libro.itemType)
         expect(row.getCell(8).value).toBe(libro.literaryForm)
         expect(row.getCell(9).value).toBe(libro.edition)
@@ -57,6 +58,8 @@ describe('writeLibro', () => {
         expect(row.getCell(14).value).toBe(libro.holding.holdingBranch)
         expect(row.getCell(15).value).toBe(libro.holding.publicNote)
         expect(row.getCell(16).value).toBe('863 AVE')
+        expect(row.getCell(17).value).toBe(libro.authorCountry)
+        expect(row.getCell(18).value).toBe(libro.holding.barcode)
     })
 
     it('Escribe el callNumber con prefijo correctamente', () => {

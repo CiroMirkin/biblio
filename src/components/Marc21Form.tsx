@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 import { useSettingsStore } from "@/store"
 
 const ORDER = [
-  "titulo", "autor", "barcode", "edition", "placeOfPublication",
+  "titulo", "autor", "nro", "barcode", "edition", "placeOfPublication",
   "publisher", "publicationYear", "callNumber", "callNumberPrefix", "publicNote",
 ]
 
@@ -46,7 +46,7 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Título: <span className="text-red">*</span></span>
-          <input onKeyDown={handleEnter} type="text" name="titulo" id="titulo" required minLength={2} defaultValue={defaultValues!.titulo ?? ""} className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="titulo" id="titulo" required minLength={2} defaultValue={defaultValues?.titulo ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
@@ -54,9 +54,16 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
           <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues?.autor ?? ""} className={inputClass} />
         </label>
 
+        { tipoDeIdEnLibros === "N° de Inventario" && 
+          <label className="flex flex-col gap-1 text-base">
+            <span className="font-semibold">N° de Inventario: <span className="text-red">*</span></span>
+            <input onKeyDown={handleEnter} type="text" name="nro" id="nro" required minLength={2} defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
+          </label>
+        }
+
         <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">{tipoDeIdEnLibros}: <span className="text-red">*</span></span>
-          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" required minLength={2} defaultValue={defaultValues!.holding.barcode ?? ""} className={inputClass} />
+          <span className="font-semibold">Código de barras (ISBN): <span className="text-red">*</span></span>
+          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" required minLength={2} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">

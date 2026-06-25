@@ -17,7 +17,7 @@ export function IngresoMarc21() {
         const form = e.target as HTMLFormElement
 
         const registro: Marc21 = {
-            numeroInventario: form.barcode.value,
+            numeroInventario: form.nro || "",
             titulo: formatTitulo(form.titulo.value),
             autor: form.autor.value || undefined,
             itemType: form.itemType.value,
