@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import ExcelJS from 'exceljs'
-import { writeLibro } from '../electron/models/excelLibro'
+import { writeLibro } from '../electron/models/libro'
 import type { CallNumber, Marc21EnPrestamo } from "@shared/models"
 
 const crearRowEnBlanco = (): ExcelJS.Row => {
