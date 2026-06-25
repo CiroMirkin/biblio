@@ -1,12 +1,11 @@
 import type { Libro } from "@shared/models"
-import { useLibrosStore } from "@/store"
+import { DetallesLibro } from "./DetallesLibro"
 
 type Props = {
     libro: Libro
 }
 
 export function LibroDisponible({ libro }: Props) {
-    const { verDetallesLibro } = useLibrosStore()
     
     return (
         <li className="card">
@@ -21,9 +20,7 @@ export function LibroDisponible({ libro }: Props) {
                 </div>
                 <span className="text-base font-semibold text-greem">Disponible</span>
             </div>
-            <div className="flex justify-end">
-                <button className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
-            </div>
+            <DetallesLibro libro={libro} />
         </li>
     )
 }

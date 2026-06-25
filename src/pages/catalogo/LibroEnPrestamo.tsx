@@ -1,16 +1,16 @@
-import type { LibroEnPrestamo } from "@shared/models"
+import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
-import { useLibrosStore, useSettingsStore, useSociosStore } from "@/store"
+import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
 import { format } from "@formkit/tempo"
+import { DetallesLibro } from "./DetallesLibro"
 
 type Props = {
-  libro: LibroEnPrestamo
+  libro: LibroRegistrado
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
     const { limiteDeDias, numerosDeInventarioExternos } = useSettingsStore()
-    const { verDetallesLibro } = useLibrosStore()
 
     if(libro.fechaDePrestamo === null) {
         return <LibroDisponible libro={libro} />
@@ -24,7 +24,7 @@ export function LibroEnPrestamo({ libro }: Props) {
     ) ?? null
     
     return (
-        <li className="card flex flex-col gap-1">
+        <li className="card flex flex-col">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
@@ -44,20 +44,20 @@ export function LibroEnPrestamo({ libro }: Props) {
                     { format(libro.fechaDePrestamo!, "long") }
                 </span>
             </div>
-            <hr className="opacity-20" />
-            <div className="flex justify-between">
-                <div className="text-base opacity-70">
-                    <p>
-                        <span className="font-semibold">Socio: </span>
-                        {socio?.nombreYApellido ?? libro.nombreSocio}
-                    </p>
-                    {socio && <>
-                        <p><span className="font-semibold">N° Socio:</span> {socio.nroSocio}</p>
-                        <p><span className="font-semibold">Telefono:</span> {socio.telefono ?? "-"}</p>
-                        <p><span className="font-semibold">Domicilio:</span> {socio.domicilio}</p>
-                    </>}
-                </div>
-                <button className="self-end btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
+
+            <DetallesLibro libro={libro} />
+
+            <hr className="opacity-20 py-1" />
+            <div className="text-base opacity-70">
+                <p>
+                    <span className="font-semibold">Socio: </span>
+                    {socio?.nombreYApellido ?? libro.nombreSocio}
+                </p>
+                {socio && <>
+                    <p><span className="font-semibold">N° Socio:</span> {socio.nroSocio}</p>
+                    <p><span className="font-semibold">Telefono:</span> {socio.telefono ?? "-"}</p>
+                    <p><span className="font-semibold">Domicilio:</span> {socio.domicilio}</p>
+                </>}
             </div>
         </li>
     )

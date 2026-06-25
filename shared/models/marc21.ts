@@ -63,3 +63,25 @@ export type Marc21EnPrestamo = Marc21 & DatosPrestamo
 export function isMarc21(libro: LibroRegistrado): libro is Marc21EnPrestamo {
   return 'itemType' in libro && 'holding' in libro
 }
+
+export function parceLiteraryForm(lf: Marc21LiteraryForm | undefined) {
+  if(!lf) return ""
+  
+  const literaryFors = [
+    ["0","No es ficción"],
+    ["c", "Historieta"],
+    ["e", "Ensayo"],
+    ["1", "Ficción"],
+    ["h", "Humor, sátiras, etc."],
+    ["d", "Drama"],
+    ["j", "Cuentos"],
+    ["f", "Novela"],
+    ["p", "Poesía"],
+    ["i", "Cartas"],
+    ["u", "Desconocido"],
+    ["m", "Formas mixtas"],
+    ["s", "Discursos"],
+  ]
+  
+  return literaryFors.filter(f => f[0] === lf)[0][1]
+}
