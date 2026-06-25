@@ -21,6 +21,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
     return {
         ...libroSimple,
         itemType,
+        authorCountry: String(row.getCell(17) ?? ''),
         literaryForm: (String(row.getCell(8).value ?? '') || undefined) as Marc21LiteraryForm | undefined,
         edition: String(row.getCell(9).value ?? '') || undefined,
         placeOfPublication: String(row.getCell(10).value ?? '') || undefined,
@@ -67,6 +68,7 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
             libro.holding.holdingBranch,
             libro.holding.publicNote ?? '',
             formatCallNumber(libro.holding.callNumber),
+            libro.authorCountry ?? '',
         ]
     }
  
@@ -102,6 +104,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
         if (libro.placeOfPublication !== undefined) row.getCell(10).value = libro.placeOfPublication
         if (libro.publisher !== undefined) row.getCell(11).value = libro.publisher
         if (libro.publicationYear !== undefined) row.getCell(12).value = libro.publicationYear
+        if (libro.authorCountry !== undefined) row.getCell(17).value = libro.authorCountry
     }
 
     row.commit()

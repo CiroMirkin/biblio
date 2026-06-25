@@ -54,6 +54,7 @@ export function IngresoMarc21() {
       placeOfPublication: form.placeOfPublication.value || undefined,
       publisher: form.publisher.value || undefined,
       publicationYear: form.publicationYear.value || undefined,
+      authorCountry: form.callNumberPrefix.value || "",
       holding: {
         homeBranch: homeBranch,
         holdingBranch: homeBranch,

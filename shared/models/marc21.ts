@@ -41,6 +41,7 @@ export interface Marc21 {
   numeroInventario?: number | string
   titulo: string
   autor?: string
+  authorCountry?: string
   itemType: Marc21ItemType
   literaryForm?: Marc21LiteraryForm
 

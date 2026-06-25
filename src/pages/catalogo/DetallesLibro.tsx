@@ -55,6 +55,8 @@ export function DetallesLibro({ libro }: Props) {
 
 function Detalles({ libro }: { libro: Marc21 }) {
     const publicNote = libro.holding.publicNote
+    const authorCountry = libro.authorCountry
+
     return (
         <ul className="pt-2 list-disc pl-6 text-base">
             <li className="group flex items-center justify-start">
@@ -68,11 +70,13 @@ function Detalles({ libro }: { libro: Marc21 }) {
                     { parceLiteraryForm(libro.literaryForm) }
                 </span>
              </li>
-            <li className="group flex items-center justify-start">
-                <span className="cursor-default mr-1 mb-1">
-                    <span className="font-semibold">País de origen del autor:</span>
-                </span>
-             </li>
+            { authorCountry && 
+                <li className="group flex items-center justify-start">
+                    <span className="cursor-default mr-1 mb-1">
+                        <span className="font-semibold">País de origen del autor: { authorCountry }</span>
+                    </span>
+                </li>
+            }
             { publicNote && 
                 <li className="group flex items-center justify-start">
                     <span className="cursor-default mr-1 my-1">
