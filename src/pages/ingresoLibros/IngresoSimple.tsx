@@ -1,30 +1,13 @@
-import { CheckIcon } from "@/components"
+import { CheckIcon, LibroForm } from "@/components"
 import type { Libro } from "@shared/models"
-import { useLibrosStore, useSettingsStore } from "@/store"
-import { useRef, useState } from "react"
-import type { KeyboardEvent, SyntheticEvent } from "react"
+import { useLibrosStore } from "@/store"
+import { useState } from "react"
+import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { formatName, formatTitulo } from "@/utils"
 
-const ORDER = ["numeroInventario", "titulo", "autor"]
-
-function focusSiguiente(name: string) {
-  const index = ORDER.indexOf(name)
-  if (index === -1 || index === ORDER.length - 1) return
-  const siguiente = document.getElementById(ORDER[index + 1])
-  siguiente?.focus()
-}
-
-function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
-  if (e.key !== "Enter") return
-  e.preventDefault()
-  focusSiguiente((e.target as HTMLInputElement).name)
-}
-
 export function IngresoSimple() {
   const { ingresoSimple } = useLibrosStore()
-  const { tipoDeIdEnLibros } = useSettingsStore()
-  const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -68,56 +51,7 @@ export function IngresoSimple() {
             </AnimatePresence>
         </h2>
 
-        <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">
-                    {`${tipoDeIdEnLibros}: `}
-                    <span className="text-red">*</span>
-                </span>
-                <input
-                    onKeyDown={handleEnter}
-                    type="text"
-                    name="numeroInventario"
-                    id="numeroInventario"
-                    defaultValue={""}
-                    required
-                    minLength={2}
-                    className="w-full border bg-white border-black rounded p-1 px-2"
-                />
-                </label>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">Título: <span className="text-red">*</span></span>
-                <input
-                    onKeyDown={handleEnter}
-                    type="text"
-                    name="titulo"
-                    id="titulo"
-                    required
-                    minLength={2}
-                    defaultValue={""}
-                    className="w-full border bg-white border-black rounded p-1 px-2"
-                />
-                </label>
-
-                <label className="flex flex-col gap-1 text-base">
-                <span className="font-semibold">Autor:</span>
-                <input
-                    onKeyDown={handleEnter}
-                    type="text"
-                    name="autor"
-                    id="autor"
-                    defaultValue={""}
-                    className="w-full border bg-white border-black rounded p-1 px-2"
-                />
-                </label>
-            </div>
-
-            <input type="submit" value="Guardar cambios" className="px-4 py-2 btn mt-2" />
-        </form>
+        <LibroForm submitLabel="Ingresar Libro" onSubmit={handleSubmit} mode="ingreso" />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">
         <div className="w-full bg-transparent h-2" />

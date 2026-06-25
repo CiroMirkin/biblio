@@ -1,28 +1,12 @@
-import { CheckIcon, ChevronLeftIcon } from "@/components"
+import { CheckIcon, ChevronLeftIcon, LibroForm } from "@/components"
 import type { Libro } from "@shared/models"
 import { useLibrosStore } from "@/store"
-import { useRef, useState } from "react"
-import type { KeyboardEvent, SyntheticEvent } from "react"
+import { useState } from "react"
+import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-
-const ORDER = ["numeroInventario", "titulo", "autor"]
-
-function focusSiguiente(name: string) {
-  const index = ORDER.indexOf(name)
-  if (index === -1 || index === ORDER.length - 1) return
-  const siguiente = document.getElementById(ORDER[index + 1])
-  siguiente?.focus()
-}
-
-function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
-  if (e.key !== "Enter") return
-  e.preventDefault()
-  focusSiguiente((e.target as HTMLInputElement).name)
-}
 
 export function EditarLibro() {
   const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
-  const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
 
   if (!libroSeleccionado) {
@@ -79,48 +63,12 @@ export function EditarLibro() {
             </AnimatePresence>
         </h2>
 
-        <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
-            <label className="flex flex-col gap-1 text-base">
-            N° de inventario:
-            <input
-                onKeyDown={handleEnter}
-                type="text"
-                name="numeroInventario"
-                id="numeroInventario"
-                defaultValue={libroSeleccionado.numeroInventario}
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="N° de inventario"
-            />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-            Título:
-            <input
-                onKeyDown={handleEnter}
-                type="text"
-                name="titulo"
-                id="titulo"
-                defaultValue={libroSeleccionado.titulo}
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="Título"
-            />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-            Autor:
-            <input
-                onKeyDown={handleEnter}
-                type="text"
-                name="autor"
-                id="autor"
-                defaultValue={libroSeleccionado.autor}
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="Autor"
-            />
-            </label>
-
-            <input type="submit" value="Guardar cambios" className="px-4 py-2 btn mt-2" />
-        </form>
+        <LibroForm
+          submitLabel="Guardar Cambios"
+          onSubmit={handleSubmit}
+          mode="edicion"
+          defaultValues={libroSeleccionado}
+        />
       </div>
     </>
   )
