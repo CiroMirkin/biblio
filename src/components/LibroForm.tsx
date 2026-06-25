@@ -31,8 +31,8 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {} }: P
     <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">N° de inventario: <span className="text-red">*</span></span>
-          <input onKeyDown={handleEnter} type="text" name="numeroInventario" id="numeroInventario" required minLength={2} defaultValue={defaultValues.numeroInventario ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
+          <span className="font-semibold">N° de inventario: </span>
+          <input onKeyDown={handleEnter} type="text" name="numeroInventario" id="numeroInventario" defaultValue={defaultValues.numeroInventario ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
         </label>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">

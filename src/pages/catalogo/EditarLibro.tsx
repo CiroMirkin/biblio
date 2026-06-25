@@ -23,6 +23,8 @@ export function EditarLibro() {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
+    if(!form.titulo.value.trim()) return;
+
     const libroSimple: Partial<Libro> = {
       numeroInventario: Number(form.numeroInventario.value) || libroSeleccionado.numeroInventario,
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,

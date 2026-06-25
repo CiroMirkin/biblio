@@ -7,16 +7,21 @@ import { AnimatePresence, motion } from "motion/react"
 import { formatName, formatTitulo } from "@/utils"
 
 export function IngresoSimple() {
-  const { ingresoSimple } = useLibrosStore()
+  const { ingresoSimple, getUltimoNumeroInventario } = useLibrosStore()
   const [exito, setExito] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    if(!form.titulo.value.trim() || !form.numeroInventario.value.trim()) return;
+    if(!form.titulo.value.trim()) return;
+    
+    let numeroInventario: string = form.numeroInventario.value.trim()
+    if(!numeroInventario) {
+      numeroInventario = String(getUltimoNumeroInventario() - 1)
+    }
 
     const libro: Libro = {
-      numeroInventario: form.numeroInventario.value,
+      numeroInventario,
       titulo: formatTitulo(form.titulo.value),
       autor: formatName(form.autor.value) || "",
     }

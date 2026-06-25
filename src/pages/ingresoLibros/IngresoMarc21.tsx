@@ -4,22 +4,29 @@ import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { countryToPrefix, cutterFromAuthor, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
-import { formatTitulo } from "@/utils"
+import { formatName, formatTitulo } from "@/utils"
 
 export function IngresoMarc21() {
   const { ingresoMark21 } = useLibrosStore()
   const [exito, setExito] = useState(false)
   const { nombreBiblioteca, estaDefinidoNombreBiblioteca, } = useSettingsStore()
+  const { getUltimoNumeroInventario } = useLibrosStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
 
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault()
         const form = e.target as HTMLFormElement
+        if(!form.titulo.value.trim()) return;
+    
+        let numeroInventario: string = form.nro.value.trim()
+        if(!numeroInventario) {
+          numeroInventario = String(getUltimoNumeroInventario() - 1)
+        }
 
         const registro: Marc21 = {
-            numeroInventario: form.nro || "",
+            numeroInventario,
             titulo: formatTitulo(form.titulo.value),
-            autor: form.autor.value || undefined,
+            autor: formatName(form.autor.value) || undefined,
             itemType: form.itemType.value,
             literaryForm: form.literaryForm.value || undefined,
             edition: form.edition.value || undefined,

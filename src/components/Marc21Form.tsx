@@ -56,8 +56,8 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
 
         { tipoDeIdEnLibros === "N° de Inventario" && 
           <label className="flex flex-col gap-1 text-base">
-            <span className="font-semibold">N° de Inventario: <span className="text-red">*</span></span>
-            <input onKeyDown={handleEnter} type="text" name="nro" id="nro" required minLength={2} defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
+            <span className="font-semibold">N° de Inventario:</span>
+            <input onKeyDown={handleEnter} type="text" name="nro" id="nro" defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
           </label>
         }
 

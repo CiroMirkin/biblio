@@ -34,6 +34,8 @@ interface LibrosState {
 
   ingresoMark21: (ingreso: Marc21) => Promise<boolean>
   ingresoSimple: (ingreso: Libro) => Promise<boolean>
+
+  getUltimoNumeroInventario: () => number
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -192,6 +194,16 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       librosDisponibles: [...librosDisponibles, newLibro ],
     })
     return true
+  },
+
+  getUltimoNumeroInventario: () => {
+    const { libros } = get()
+    if (!libros.length) return 0
+
+    return libros.reduce((max, l) => {
+      const n = Number(l.numeroInventario)
+      return n > max ? n : max
+    }, 0)
   },
 }))
 
