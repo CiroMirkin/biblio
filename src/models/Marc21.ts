@@ -1,4 +1,4 @@
-import type { DatosPrestamo, LibroRegistrado } from "./Libro"
+import type { DatosPrestamo, Libro, LibroRegistrado } from "./Libro"
 
 
 export type Marc21ItemType =  "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
@@ -56,7 +56,7 @@ export interface Marc21 {
 
 export type Marc21EnPrestamo = Marc21 & DatosPrestamo
 
-export function isMarc21(libro: LibroRegistrado): libro is Marc21EnPrestamo {
+export function isMarc21(libro: LibroRegistrado | Libro | Marc21): libro is Marc21EnPrestamo {
   return 'itemType' in libro && 'holding' in libro
 }
 
@@ -97,4 +97,34 @@ export function countryToPrefix(country: string): string {
   }
 
   return words.map(w => w[0]).join('')
+}
+
+export function callNumberToString(callNumber: CallNumber | null | undefined): string {
+ if (!callNumber) return ''
+
+  const prefix = callNumber.prefix ?? ''
+  const volume = callNumber.volume ? ` ${callNumber.volume}` : ''
+  return `${prefix}${callNumber.dewey} ${callNumber.cutter}${volume}`
+}
+
+export function parceLiteraryForm(lf: Marc21LiteraryForm | undefined) {
+  if(!lf) return ""
+  
+  const literaryFors = [
+    ["0","No es ficción"],
+    ["c", "Historieta"],
+    ["e", "Ensayo"],
+    ["1", "Ficción"],
+    ["h", "Humor, sátiras, etc."],
+    ["d", "Drama"],
+    ["j", "Cuentos"],
+    ["f", "Novela"],
+    ["p", "Poesía"],
+    ["i", "Cartas"],
+    ["u", "Desconocido"],
+    ["m", "Formas mixtas"],
+    ["s", "Discursos"],
+  ]
+  
+  return literaryFors.filter(f => f[0] === lf)[0][1]
 }
