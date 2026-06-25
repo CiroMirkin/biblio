@@ -9,7 +9,7 @@ const ignore = [
     "electron/types/marcjs.d.ts",
 ]
 
-const searchDirs = ["electron", "src", "tests"]
+const searchDirs = ["electron", "src", "tests", "shared"]
 
 for (const dir of dirs) {
     rmSync(dir, { recursive: true, force: true })
