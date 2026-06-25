@@ -1,4 +1,4 @@
-import { type LibroRegistrado } from "@/models";
+import { type LibroRegistrado } from "@shared/models"
 
 export const buscarLibroPorNro = (dato: string | number, libros: LibroRegistrado[]): LibroRegistrado[] => {
     if (dato !== '' && !isNaN(Number(dato))) {

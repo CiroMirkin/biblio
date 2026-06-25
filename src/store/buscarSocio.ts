@@ -1,4 +1,4 @@
-import type { Socio } from "@/models"
+import type { Socio } from "@shared/models"
 import { getApellido, levenshtein, normailzarTexto } from "@/utils"
 import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
 

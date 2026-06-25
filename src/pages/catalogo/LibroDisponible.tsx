@@ -1,4 +1,4 @@
-import type { Libro } from "@/models"
+import type { Libro } from "@shared/models"
 import { useLibrosStore } from "@/store"
 
 type Props = {

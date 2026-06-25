@@ -2,7 +2,7 @@ import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
-import type { Socio } from '../../models/socio'
+import type { Socio } from '@shared/models/socio'
 
 export const editarDatosSocio = async (nroSocio: number, datos: Partial<Socio>): Promise<boolean> => {
     const workbook = new ExcelJS.Workbook()

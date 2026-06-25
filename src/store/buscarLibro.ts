@@ -1,4 +1,4 @@
-import type { LibroEnPrestamo, LibroRegistrado } from "@/models"
+import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
 import { levenshtein, normailzarTexto } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
 

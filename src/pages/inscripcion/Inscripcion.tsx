@@ -1,5 +1,5 @@
 import { CheckIcon } from "@/components"
-import type { NewSocio } from "@/models"
+import type { NewSocio } from "@shared/models"
 import { useSociosStore } from "@/store"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
@@ -33,8 +33,9 @@ export function Inscripcion() {
     const socio: NewSocio = {
       dni: Number(form.dni.value),
       nombreYApellido: `${formatName(form.apellidos.value)}, ${formatName(form.nombres.value)}`,
-      fechaNacimiento: form.fechaNacimiento.value ? format(form.fechaNacimiento.value, "D/M/YYYY", "es") : undefined,
+      fechaNacimiento: form.fechaNacimiento.value ? format(form.fechaNacimiento.value, "D/M/YYYY", "es") : null,
       fechaIngreso: formatFecha(new Date()),
+      fechaEgreso: null,
       telefono: form.telefono.value,
       domicilio: form.domicilio.value || undefined,
       observaciones: form.observaciones.value || "",

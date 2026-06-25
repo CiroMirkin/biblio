@@ -1,8 +1,9 @@
 import fs from 'fs'
 import { Record } from 'marcjs'
 import { getLibros } from '../handlers/libros'
-import { type Marc21, isMarc21 } from '../models/marc21'
-import { formatCallNumber } from '../models/callNumber'
+import { isMarc21 } from "@shared/models"
+import { type Marc21 } from "@shared/models/marc21"
+import { formatCallNumber } from '../../shared/models/callNumber'
 
 
 export async function excelAMrc(outputPath: string): Promise<void> {

@@ -1,12 +1,10 @@
 import { create } from "zustand"
-import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21 } from "@/models"
+import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21 } from "@shared/models"
 import { cargarLibrosEnPrestamo } from "@/services"
 import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
 import { useSettingsStore } from "./useSettingsStore"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
-
-export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
 
 interface LibrosState {
   libros: LibroRegistrado[]

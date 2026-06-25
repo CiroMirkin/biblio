@@ -19,9 +19,9 @@ import {
 import { getCuotasSocio, toggleCuota } from './cuotas'
 import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
-import type { Libro, LibroRegistrado } from '../models/libro'
-import type { NewSocioData, Socio } from '../models/socio'
-import type { Marc21 } from '../models/marc21'
+import type { Libro, LibroRegistrado } from "@shared/models/libro"
+import type { NewSocio, Socio } from '@shared/models/socio'
+import type { Marc21 } from "@shared/models/marc21"
 import { descargarMrc } from '../utils/descargarMrc'
 
 const librosIpcHandlers = {
@@ -40,7 +40,7 @@ const prestamosIpcHandlers = {
 
 const sociosIpcHandlers = {
   getSocios: () => getSocios(),
-  createSocio: (_: unknown, socioData: NewSocioData) => createSocio(socioData),
+  createSocio: (_: unknown, socioData: NewSocio) => createSocio(socioData),
   darDeBajaSocio: (_: unknown, nroSocio: number) => darDeBajaSocio(nroSocio),
   reactivarSocio: (_: unknown, nroSocio: number) => reactivarSocio(nroSocio),
   editarDatosSocio: (_: unknown, nroSocio: number, datos: Partial<Socio>) => editarDatosSocio(nroSocio, datos),

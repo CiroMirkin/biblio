@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs'
-import { type LibroRegistrado, rowToLibro } from '../../models/libro'
+import { rowToLibro } from '../../models/libro'
+import { type LibroRegistrado } from "@shared/models/libro"
 import { LIBROS_XLSX_PATH } from '../../constants'
 
 export const getLibros = async (): Promise<LibroRegistrado[]> => {

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { Libro } from './models/libro'
-import type { NewSocioData, Socio } from './models/socio'
-import type { Marc21 } from './models/marc21'
+import type { Libro } from "@shared/models/libro"
+import type { NewSocio, Socio } from '@shared/models/socio'
+import type { Marc21 } from "@shared/models/marc21"
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getSocios: () => ipcRenderer.invoke('getSocios'),
@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     nombre,
   ),
   
-  editarDatosSocio: (nroSocio: number, datos: Partial<import('./models/socio').Socio>) => 
+  editarDatosSocio: (nroSocio: number, datos: Partial<import('../shared/models').Socio>) => 
     ipcRenderer.invoke('editarDatosSocio', nroSocio, datos),
 
   vincularSocios: (socio1: Socio, socio2: Socio) => ipcRenderer.invoke(
@@ -46,7 +46,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   changeObservaciones: (observaciones: string, nroSocio: number) => ipcRenderer.invoke(
     'changeObservaciones', observaciones, nroSocio
   ),
-  createSocio: (socio: NewSocioData) => ipcRenderer.invoke('createSocio', socio),
+  createSocio: (socio: NewSocio) => ipcRenderer.invoke('createSocio', socio),
   
   copiarExcel: (key: 'socios' | 'cuotas' | 'libros') => ipcRenderer.invoke('copiarExcel', key),
   obtenerArchivoMrc: () => ipcRenderer.invoke('obtenerArchivoMrc'),

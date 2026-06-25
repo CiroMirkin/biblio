@@ -1,9 +1,9 @@
 import { format } from "@formkit/tempo"
 
 /** @returns DD/MM/AA */
-export const formatFecha = (fecha: Date | null): string => {
+export const formatFecha = (fecha: Date | null | undefined): string => {
     try {
-        if (fecha === null) return ""
+        if(!fecha)  return ""
         
         return format(fecha, "short")
     }

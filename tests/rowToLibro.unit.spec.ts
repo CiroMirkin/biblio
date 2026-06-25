@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import ExcelJS from 'exceljs'
-import { rowToLibro } from '../electron/models/libro'
-import type { Marc21EnPrestamo } from '../electron/models/marc21'
+import { rowToLibro } from '../electron/models/excelLibro'
+import type { Marc21EnPrestamo } from "@shared/models"
 
 const crearRow = (celdas: Record<number, unknown>): ExcelJS.Row => {
     const workbook = new ExcelJS.Workbook()

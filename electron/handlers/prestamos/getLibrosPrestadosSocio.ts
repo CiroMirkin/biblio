@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { LIBROS_XLSX_PATH } from '../../constants'
-import { type Libro, rowToLibro } from '../../models/libro'
+import { rowToLibro } from '../../models/libro'
+import { type Libro } from "@shared/models/libro"
 
 export const getLibrosPrestadosSocio =  async (nroSocio: number) => {
   const workbook = new ExcelJS.Workbook()

@@ -11,7 +11,10 @@
     "moduleDetection": "force",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@shared/*": ["./shared/*"]
+    }
   },
-  "include": ["tests", "electron"]
+  "include": ["tests", "electron", "shared"]
 }

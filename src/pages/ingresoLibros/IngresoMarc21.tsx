@@ -2,7 +2,7 @@ import { CheckIcon } from "@/components"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { countryToPrefix, cutterFromAuthor, type Marc21, type Marc21ItemType } from "@/models"
+import { countryToPrefix, cutterFromAuthor, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatTitulo } from "@/utils"
 

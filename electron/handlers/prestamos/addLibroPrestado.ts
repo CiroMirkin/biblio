@@ -1,5 +1,5 @@
 import ExcelJS from 'exceljs'
-import type { LibroEnPrestamo } from '../../models/libro'
+import type { LibroEnPrestamo } from "@shared/models/libro"
 import { generarIdSinInventariar, getFechaDePrestamoFromRow, getNroDeInventarioFromRow, libroToRow, rowToLibro, writeLibro } from "../../models/libro"
 import { LIBROS_XLSX_PATH } from '../../constants'
 

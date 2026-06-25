@@ -1,19 +1,2 @@
 
 export type CaracterSocio = "Inactivo" | "Regular" | "" | "cuotas-desactualizadas"
-
-export interface Socio {
-  nroSocio: number
-  nombreYApellido: string // los apellidos se separan mediante una coma
-  telefono: string | null
-  dni?: number
-  domicilio?: string
-  fechaNacimiento?: String | null
-  caracterSocio: string
-  fechaIngreso?: String | null
-  fechaEgreso?: String | null
-  observaciones?: string
-  email: string
-  sociosVinculados: number[]
-}
-
-export type NewSocio = Omit<Socio, 'nroSocio'>

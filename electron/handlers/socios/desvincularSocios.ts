@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH } from '../../constants'
-import type { Socio } from '../../models/socio'
+import type { Socio } from '@shared/models/socio'
 import { editarDatosSocio } from './editarDatosSocio'
 
 export const desvincularSocios = async (socio1: Socio, socio2: Socio): Promise<boolean> => {

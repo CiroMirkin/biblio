@@ -1,5 +1,6 @@
 import { getLibrosWorksheet } from "../../constants"
-import { generarIdSinInventariar, getNroDeInventarioFromRow, writeLibro, type Libro } from "../../models/libro"
+import { generarIdSinInventariar, getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
+import { type Libro } from "@shared/models/libro"
 
 export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => {
     const { worksheet, writeWorkbook } = await getLibrosWorksheet()

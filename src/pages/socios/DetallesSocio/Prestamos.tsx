@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
-import { getCaracterSocio, type LibroEnPrestamo } from "@/models"
+import { getCaracterSocio } from "@/models"
+import { type LibroEnPrestamo } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatName, formatFecha, formatTitulo, getDia } from "@/utils"
 import { useSociosStore, useLibrosStore, useSettingsStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"

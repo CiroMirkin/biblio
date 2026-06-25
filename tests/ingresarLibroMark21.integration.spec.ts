@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { ingresarLibroMark21 } from '../electron/handlers/libros/ingresarLibroMark21'
 import { LIBROS_XLSX_PATH } from '../electron/constants'
-import type { Marc21 } from '../electron/models/marc21'
+import type { Marc21 } from "@shared/models"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'libros-template.xlsx')

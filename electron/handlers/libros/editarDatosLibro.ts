@@ -1,7 +1,9 @@
 import ExcelJS from 'exceljs'
 import { getLibrosWorksheet } from "../../constants"
-import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro, type Libro, type LibroRegistrado } from "../../models/libro"
-import { isMarc21, type Marc21 } from '../../models/marc21'
+import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
+import { type Libro, type LibroRegistrado } from "@shared/models/libro"
+import { isMarc21 } from "@shared/models"
+import { type Marc21 } from "@shared/models/marc21"
 
 export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<Libro | Marc21 | null> => {
     const { worksheet, writeWorkbook } = await getLibrosWorksheet()

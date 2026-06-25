@@ -1,5 +1,5 @@
 import { CheckIcon } from "@/components"
-import type { Libro } from "@/models"
+import type { Libro } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useRef, useState } from "react"
 import type { KeyboardEvent, SyntheticEvent } from "react"

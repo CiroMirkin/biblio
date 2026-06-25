@@ -1,9 +1,9 @@
 import ExcelJS from 'exceljs'
 import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH } from '../../constants'
 import { writeSocio } from '../../models/socio'
-import type { NewSocioData, Socio } from '../../models/socio'
+import type { NewSocio, Socio } from '@shared/models/socio'
 
-export const createSocio = async (socioData: NewSocioData): Promise<Socio> => {
+export const createSocio = async (socioData: NewSocio): Promise<Socio> => {
   const sociosWorkbook = new ExcelJS.Workbook()
   await sociosWorkbook.xlsx.readFile(SOCIOS_XLSX_PATH)
   const sociosSheet = sociosWorkbook.getWorksheet('Hoja1')
