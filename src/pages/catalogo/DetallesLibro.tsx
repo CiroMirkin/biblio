@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react"
 import { formatCallNumber, isMarc21, parceLiteraryForm, type Libro, type LibroRegistrado, type Marc21 } from "@shared/models"
 import { useState } from "react"
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn } from "@/utils"
 
 interface Props {
@@ -11,7 +11,21 @@ interface Props {
 export function DetallesLibro({ libro }: Props) {
     const [expandido, setExpandido] = useState(false)
     const { verDetallesLibro } = useLibrosStore()
+    const { catalogacionSimple } = useSettingsStore()
     const isMarc = isMarc21(libro)
+
+    if(catalogacionSimple) {
+        return (
+         <div className="w-full flex justify-end">
+            <button
+                className="mb-2 btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                onClick={() => verDetallesLibro(libro)}
+            >
+                Editar Libro
+            </button>
+         </div>   
+        )
+    }
 
     return (
         <>
