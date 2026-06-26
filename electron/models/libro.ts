@@ -36,7 +36,7 @@ export const getHoldingFromRow = (row: ExcelJS.Row) => ({
     homeBranch: String(row.getCell(13).value ?? ''),
     holdingBranch: String(row.getCell(14).value ?? ''),
     publicNote: String(row.getCell(15).value ?? '') || undefined,
-    callNumber: parseStrToCallNumber(String(row.getCell(16).value ?? '')),
+    callNumber: parseStrToCallNumber(String(row.getCell(16).value ?? '')) || undefined,
 })
 
 export const getFechaDePrestamoFromRow = (row: ExcelJS.Row): Date | null => {

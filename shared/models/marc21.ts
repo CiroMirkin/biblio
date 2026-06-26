@@ -1,5 +1,5 @@
 import type { CallNumber } from "./callNumber";
-import type { LibroRegistrado } from "./libro";
+import type { Libro, LibroEnPrestamo, LibroRegistrado } from "./libro";
 import type { DatosPrestamo } from "./prestamo";
 
 export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
@@ -61,8 +61,39 @@ export interface Marc21 {
 
 export type Marc21EnPrestamo = Marc21 & DatosPrestamo
 
-export function isMarc21(libro: LibroRegistrado): libro is Marc21EnPrestamo {
-  return 'itemType' in libro && 'holding' in libro
+export function isMarc21(libro: LibroRegistrado | undefined): libro is Marc21EnPrestamo {
+  if(!libro) return false
+
+  if('itemType' in libro && 'holding' in libro) {
+    const holding = libro.holding
+    
+    if('callNumber' in holding) {
+      const callNumber = holding.callNumber
+      const existeCallNumber = callNumber !== undefined && callNumber !== null
+
+      if(existeCallNumber) {
+        return 'dewey' in callNumber && String(callNumber.dewey || "").trim() !== ""
+      }
+    }
+  }
+
+  return false
+}
+
+export function makeBlankMark21(libro: Libro | LibroEnPrestamo): Marc21 {
+  return {
+    ...libro,
+    itemType: "BK",
+    holding: {
+      barcode: "",
+      holdingBranch: "",
+      homeBranch: "",
+      callNumber: {
+        dewey: "",
+        cutter: "",
+      },
+    },
+  }
 }
 
 export function parceLiteraryForm(lf: Marc21LiteraryForm | undefined) {
@@ -93,6 +124,7 @@ export function getLiteraryFormInCallNumber(lf: Marc21LiteraryForm | undefined) 
   const literaryFors = [
     ["e", "E"],
     ["j", "CU"],
+    ["c", "CO"],
     ["f", "N"],
     ["p", "P"],
   ]

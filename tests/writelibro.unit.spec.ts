@@ -116,6 +116,10 @@ describe('writeLibro', () => {
                 barcode: '666666',
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
+                callNumber: {
+                    dewey: "863",
+                    cutter: "COR",
+                },
             },
             nombreSocio: 'Maria Lopez',
             numeroSocio: 7,
@@ -131,7 +135,7 @@ describe('writeLibro', () => {
         expect(row.getCell(11).value).toBeNull()
         expect(row.getCell(12).value).toBeNull()
         expect(row.getCell(15).value).toBeNull()
-        expect(row.getCell(16).value).toBeNull()
+        expect(row.getCell(17).value).toBeNull()
     })
 
     it('Solo sobreescribe las celdas de los campos especificados y deja intactas las demas', () => {
@@ -150,6 +154,10 @@ describe('writeLibro', () => {
                 barcode: '777777',
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
+                callNumber: {
+                    dewey: "863",
+                    cutter: "BOR",
+                },
             },
             autor: 'Jorge Luis Borges',
             nombreSocio: 'Carlos Ruiz',
