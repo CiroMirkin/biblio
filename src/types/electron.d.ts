@@ -3,6 +3,13 @@ import type { Settings as SettingsSchema } from "@/services/settingsService"
 
 export {}
 
+export type ImportarMrcResult = {
+  agregados: number
+  actualizados: number
+  sinCambios: number
+  errores: MrcImportError[]
+}
+
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros'
   type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
@@ -40,6 +47,7 @@ declare global {
       createSocio: (socio: NewSocio) => Promise<Socio>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
       obtenerArchivoMrc: () => Promise<void>
+      importarMrc: (filePath: string) => Promise<ImportarMrcResult>
       settingsGetAll: () => Promise<SettingsSchema>
       settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>
       settingsSet: <K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]) => Promise<void>

@@ -12,6 +12,7 @@ import { PermitirVincularSocios } from "./PermitirVincularSocios";
 import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
 import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
 import { NombreBiblioteca } from "./NombreBiblioteca";
+import { ImportarArchivoMrc } from "./ImportarArchivoMrc";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -33,6 +34,7 @@ export function Ajustes() {
                     <PermitirVincularSocios />
                     <CopiarExcels />
                     { numerosDeInventarioExternos && <DescargarArchivoMrc /> }
+                    { numerosDeInventarioExternos && <ImportarArchivoMrc /> }
                     <ActualizarApp />
                 </div>
             </div>
