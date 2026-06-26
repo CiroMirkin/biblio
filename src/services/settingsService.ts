@@ -12,7 +12,6 @@ export interface Settings {
   vincularSocios: boolean
   catalogacionSimple: boolean
   nombreBiblioteca: string
-  tipoDeIdEnLibros: IdEnLibros
 }
 
 export async function getAll(): Promise<Settings> {
