@@ -1,10 +1,9 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { formatCallNumber, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
-import { useSettingsStore } from "@/store"
 
 const ORDER = [
-  "titulo", "autor", "nro", "barcode", "edition", "placeOfPublication",
+  "titulo", "autor", "numeroInventario", "barcode", "edition", "placeOfPublication",
   "publisher", "publicationYear", "callNumber", "callNumberPrefix", "publicNote",
 ]
 
@@ -30,7 +29,6 @@ interface Props {
 export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues }: Props) {
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
   const formRef = useRef<HTMLFormElement>(null)
-  const { tipoDeIdEnLibros } = useSettingsStore()
 
   const handleSubmit = async (e: SyntheticEvent) => {
     const ok = await onSubmit(e)
@@ -54,16 +52,14 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
           <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues?.autor ?? ""} className={inputClass} />
         </label>
 
-        { tipoDeIdEnLibros === "N° de Inventario" && 
-          <label className="flex flex-col gap-1 text-base">
-            <span className="font-semibold">N° de Inventario:</span>
-            <input onKeyDown={handleEnter} type="text" name="nro" id="nro" defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
-          </label>
-        }
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">N° de Inventario:</span>
+          <input onKeyDown={handleEnter} type="text" name="numeroInventario" id="numeroInventario" defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
+        </label>
 
         <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Código de barras (ISBN): <span className="text-red">*</span></span>
-          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" required minLength={2} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
+          <span className="font-semibold">Código de barras (ISBN):</span>
+          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
@@ -85,11 +81,11 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
               <option value="">Sin especificar</option>
               <option value="0">No es ficción</option>
               <option value="1">Ficción</option>
-              <option value="c">Historietas</option>
-              <option value="d">Dramas</option>
-              <option value="e">Ensayos</option>
-              <option value="f">Novelas</option>
-              <option value="h">Humor, sátiras, etc.</option>
+              <option value="c">Historieta</option>
+              <option value="d">Drama</option>
+              <option value="e">Ensayo</option>
+              <option value="f">Novela</option>
+              <option value="h">Humor, sátira, etc.</option>
               <option value="i">Cartas</option>
               <option value="j">Cuentos</option>
               <option value="m">Formas mixtas</option>
@@ -122,7 +118,7 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Signatura topográfica:</span>
-          <input onKeyDown={handleEnter} type="text" name="callNumber" id="callNumber" defaultValue={formatCallNumber(defaultValues?.holding.callNumber) ?? ""} className={inputClass} />
+          <input onKeyDown={handleEnter} type={ mode == "ingreso" ? "number": "text" } name="callNumber" id="callNumber" defaultValue={ formatCallNumber(defaultValues?.holding.callNumber) ?? "" } className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
