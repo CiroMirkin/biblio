@@ -23,6 +23,7 @@ import type { Libro, LibroRegistrado } from "@shared/models/libro"
 import type { NewSocio, Socio } from '@shared/models/socio'
 import type { Marc21 } from "@shared/models/marc21"
 import { descargarMrc } from '../utils/descargarMrc'
+import { importarMrc } from '../utils/importarMrc'
 
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
@@ -58,6 +59,7 @@ const cuotasIpcHandlers = {
 const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
   obtenerArchivoMrc: (_: unknown) => descargarMrc(),
+  importarMrc: (_: unknown, filePath: string) => importarMrc(filePath),
 }
 
 export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {
