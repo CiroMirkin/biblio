@@ -29,7 +29,6 @@ it('Constructor de electron-store recibe schema y defaults correctos', () => {
       vincularSocios: { type: 'boolean' },
       catalogacionSimple: { type: 'boolean' },
       nombreBiblioteca: { type: 'string', minLength: 6, maxLength: 40, },
-      tipoDeIdEnLibros: { type: 'string', },
     },
     defaults: {
       limiteDeDias: 40,
@@ -42,7 +41,6 @@ it('Constructor de electron-store recibe schema y defaults correctos', () => {
       vincularSocios: false,
       catalogacionSimple: true,
       nombreBiblioteca: 'Biblioteca ...',
-      tipoDeIdEnLibros: 'N° de Inventario',
     },
   })
 })
@@ -65,7 +63,6 @@ describe('electron/settings', () => {
       if (key === 'vincularSocios') return true
       if (key === 'catalogacionSimple') return false
       if (key === 'nombreBiblioteca') return 'Biblio Rural Juance'
-      if (key === 'tipoDeIdEnLibros') return 'N° de Inventario'
 
       return undefined
     })
@@ -82,7 +79,6 @@ describe('electron/settings', () => {
       vincularSocios: true,
       catalogacionSimple: false,
       nombreBiblioteca: 'Biblio Rural Juance',
-      tipoDeIdEnLibros: 'N° de Inventario',
     })
     expect(mockStoreInstance.get).toHaveBeenCalledWith('limiteDeDias')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('maximoLibrosEnPrestamo')
@@ -94,7 +90,6 @@ describe('electron/settings', () => {
     expect(mockStoreInstance.get).toHaveBeenCalledWith('vincularSocios')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('catalogacionSimple')
     expect(mockStoreInstance.get).toHaveBeenCalledWith('nombreBiblioteca')
-    expect(mockStoreInstance.get).toHaveBeenCalledWith('tipoDeIdEnLibros')
   })
 
   // get() delega en store.get(key) y retorna el valor del constructor por defecto
