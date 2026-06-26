@@ -115,7 +115,7 @@ export function parceLiteraryForm(lf: Marc21LiteraryForm | undefined) {
     ["s", "Discursos"],
   ]
   
-  return literaryFors.filter(f => f[0] === lf)[0][1]
+  return literaryFors.find(f => f[0] === lf)?.[1] ?? ""
 }
 
 export function getLiteraryFormInCallNumber(lf: Marc21LiteraryForm | undefined) {
@@ -129,5 +129,5 @@ export function getLiteraryFormInCallNumber(lf: Marc21LiteraryForm | undefined) 
     ["p", "P"],
   ]
   
-  return literaryFors.filter(f => f[0] === lf)[0][1]
+  return literaryFors.find(f => f[0] === lf)?.[1] ?? ""
 }
