@@ -18,7 +18,7 @@ export function IngresoMarc21() {
         const form = e.target as HTMLFormElement
         if(!form.titulo.value.trim()) return;
     
-        let numeroInventario: string = form.nro.value.trim()
+        let numeroInventario: string = form.numeroInventario.value.trim()
         if(!numeroInventario) {
           numeroInventario = String(getUltimoNumeroInventario() - 1)
         }
@@ -37,11 +37,11 @@ export function IngresoMarc21() {
             holding: {
                 homeBranch,
                 holdingBranch: homeBranch,
-                barcode: form.barcode.value,
+                barcode: form.barcode.value || "",
                 publicNote: form.publicNote.value || undefined,
                 callNumber: {
                     prefix: countryToPrefix(form.callNumberPrefix.value || ""),
-                    dewey: form.callNumber.value || "",
+                    dewey: String(form.callNumber.value || "").split(',').join('.'),
                     cutter: cutterFromAuthor(form.autor.value || ""),
                     volume: "",
                 },
