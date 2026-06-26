@@ -95,7 +95,13 @@ export function normalizeCallNumber(callNumber: string): string {
     .replace(/V\.(\d+)/, 'v.$1')
 }
 
-/** Objeto a String */
+/** 
+ * Signatura topográfica en formato Dewey + Cutter, con extensiones locales.
+ *
+ * Formato: `[PREFIJO] [DEWEY] [CUTTER][ v.N]`
+ * 
+ * Formato: `[País] [Clasificación] [Autor][Tomo-Volumen]`
+ * */
 export function formatCallNumber(callNumber: CallNumber | null | undefined): string {
  if (!callNumber) return ''
 
