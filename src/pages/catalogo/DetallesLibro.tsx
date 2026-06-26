@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react"
-import { formatCallNumber, isMarc21, parceLiteraryForm, type Libro, type LibroRegistrado, type Marc21 } from "@shared/models"
+import { formatCallNumber, getLiteraryFormInCallNumber, isMarc21, parceLiteraryForm, type Libro, type LibroRegistrado, type Marc21 } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn } from "@/utils"
@@ -52,8 +52,9 @@ export function DetallesLibro({ libro }: Props) {
 
             <div className={cn( isMarc ? "flex justify-between": "self-end")}>
                 { isMarc && 
-                    <span className={cn("pb-1 font-semibold opacity-80", expandido && "opacity-0")}>
-                        { formatCallNumber(libro.holding.callNumber) }
+                    <span className={cn("flex gap-2 pb-1 font-semibold opacity-80", expandido && "opacity-0")}>
+                        { getLiteraryFormInCallNumber(libro.literaryForm) }
+                        <span>{ formatCallNumber(libro.holding.callNumber) }</span>
                     </span>
                 }
                 <button
@@ -75,7 +76,11 @@ function Detalles({ libro }: { libro: Marc21 }) {
         <ul className="pt-2 list-disc pl-6 text-base">
             <li className="group flex items-center justify-start">
                 <span className="font-semibold opacity-80 cursor-default mr-1 mb-2">
-                    Signatura: { formatCallNumber(libro.holding.callNumber) }
+                    Signatura: 
+                    <span className="flex gap-2">
+                        { getLiteraryFormInCallNumber(libro.literaryForm) }
+                        <span>{ formatCallNumber(libro.holding.callNumber) }</span>
+                    </span>
                 </span>
              </li>
             <li className="group flex items-center justify-start">

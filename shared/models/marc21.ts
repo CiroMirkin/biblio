@@ -86,3 +86,16 @@ export function parceLiteraryForm(lf: Marc21LiteraryForm | undefined) {
   
   return literaryFors.filter(f => f[0] === lf)[0][1]
 }
+
+export function getLiteraryFormInCallNumber(lf: Marc21LiteraryForm | undefined) {
+  if(!lf) return ""
+  
+  const literaryFors = [
+    ["e", "E"],
+    ["j", "CU"],
+    ["f", "N"],
+    ["p", "P"],
+  ]
+  
+  return literaryFors.filter(f => f[0] === lf)[0][1]
+}
