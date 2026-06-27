@@ -1,24 +1,8 @@
 import type { CallNumber } from "./callNumber";
-import type { Libro, LibroEnPrestamo, LibroRegistrado } from "./libro";
+import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21LiteraryForm } from "./libro";
 import type { DatosPrestamo } from "./prestamo";
 
 export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
-
-export type Marc21LiteraryForm =
-  | "0" // No es ficción
-  | "1" // Ficción
-  | "c" // Historietas
-  | "d" // Dramas
-  | "e" // Ensayos
-  | "f" // Novelas
-  | "h" // Humor, sátiras, etc.
-  | "i" // Cartas
-  | "j" // Cuentos
-  | "m" // Formas mixtas
-  | "p" // Poesía
-  | "s" // Discursos
-  | "u" // Desconocido
-
 
 /**
  * Registro de un libro en formato MARC 21.

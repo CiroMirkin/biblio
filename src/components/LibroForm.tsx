@@ -1,4 +1,5 @@
 import { cn } from "@/utils"
+import type { Marc21LiteraryForm } from "@shared/models"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { useRef } from "react"
 
@@ -16,7 +17,9 @@ interface Props {
   mode: "ingreso" | "edicion"
   submitLabel: string
   onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
-  defaultValues?: { numeroInventario?: string | number; titulo?: string; autor?: string }
+  defaultValues?: {
+    numeroInventario?: string | number; titulo?: string; autor?: string, literaryForm?: Marc21LiteraryForm
+  }
   submitDisabled?: boolean
 }
 
@@ -35,6 +38,25 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, sub
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">N° de inventario: </span>
           <input onKeyDown={handleEnter} type="text" name="numeroInventario" id="numeroInventario" defaultValue={defaultValues.numeroInventario ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
+        </label>
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Forma literaria:</span>
+          <select name="literaryForm" id="literaryForm" defaultValue={defaultValues?.literaryForm ?? ""} className="w-full border bg-white border-black rounded p-1 px-2">
+            <option value="">Sin especificar</option>
+            <option value="0">No es ficción</option>
+            <option value="1">Ficción</option>
+            <option value="c">Historieta</option>
+            <option value="d">Drama</option>
+            <option value="e">Ensayo</option>
+            <option value="f">Novela</option>
+            <option value="h">Humor, sátira, etc.</option>
+            <option value="i">Cartas</option>
+            <option value="j">Cuentos</option>
+            <option value="m">Formas mixtas</option>
+            <option value="p">Poesía</option>
+            <option value="s">Discursos</option>
+            <option value="u">Desconocido</option>
+          </select>
         </label>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
