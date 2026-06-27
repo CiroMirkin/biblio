@@ -1,5 +1,5 @@
-import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
-import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
+import { isMarc21, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
+import { calcularDiasDesdePrestamo, cn, formatDiasRelativo, formatNro } from "@/utils"
 import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
 import { format } from "@formkit/tempo"
@@ -22,17 +22,22 @@ export function LibroEnPrestamo({ libro }: Props) {
     const socio = socios.find(s =>
         s.nroSocio === libro.numeroSocio || s.nombreYApellido === libro.nombreSocio
     ) ?? null
-    
+
+    const mostrarNroDeInventario = numerosDeInventarioExternos && !isMarc21(libro)
+
     return (
         <li className="card flex flex-col">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base font-semibold">{libro.autor}</p>
-                    { numerosDeInventarioExternos && 
+                    { mostrarNroDeInventario && 
                         <p className="text-base mt-px">
                             <span className="mr-1 font-semibold">N°</span>
-                            { libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario }
+                            { 
+                                libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario 
+                                ? 'S/N' : formatNro(libro.numeroInventario)
+                            }
                         </p>
                     }
                 </div>
@@ -47,7 +52,7 @@ export function LibroEnPrestamo({ libro }: Props) {
 
             <DetallesLibro libro={libro} />
 
-            <hr className="opacity-20 py-1" />
+            <hr className="opacity-20 my-2" />
             <div className="text-base opacity-70">
                 <p>
                     <span className="font-semibold">Socio: </span>
