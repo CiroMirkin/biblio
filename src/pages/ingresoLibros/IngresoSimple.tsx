@@ -17,7 +17,7 @@ export function IngresoSimple() {
     
     let numeroInventario: string = form.numeroInventario.value.trim()
     if(!numeroInventario) {
-      numeroInventario = String(getUltimoNumeroInventario() - 1)
+      numeroInventario = String(getUltimoNumeroInventario() + 1)
     }
 
     const libro: Libro = {

@@ -7,7 +7,7 @@ export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | nul
     if (!worksheet) return null
 
     let nroInventarioDuplicado = false
-    const idLibro = ingreso.holding.barcode
+    const idLibro = ingreso.numeroInventario
 
     worksheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return
@@ -19,8 +19,8 @@ export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | nul
     })
 
     if (nroInventarioDuplicado) return null
-    if (!ingreso.titulo?.trim() || !ingreso.itemType) return null
-    if (!ingreso.holding.barcode || !ingreso.holding.homeBranch) return null
+    if (!String(ingreso.titulo || "").trim() || !ingreso.itemType) return null
+    if (!ingreso.numeroInventario || !ingreso.holding.homeBranch) return null
 
     const targetRow = worksheet.getRow(worksheet.rowCount + 1)
     writeLibro(targetRow, ingreso)

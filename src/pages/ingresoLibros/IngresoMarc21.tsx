@@ -20,7 +20,7 @@ export function IngresoMarc21() {
     
         let numeroInventario: string = form.numeroInventario.value.trim()
         if(!numeroInventario) {
-          numeroInventario = String(getUltimoNumeroInventario() - 1)
+          numeroInventario = String(getUltimoNumeroInventario() + 1)
         }
 
         const registro: Marc21 = {
@@ -33,12 +33,12 @@ export function IngresoMarc21() {
             placeOfPublication: form.placeOfPublication.value || undefined,
             publisher: form.publisher.value || undefined,
             publicationYear: form.publicationYear.value || undefined,
-            authorCountry: form.callNumberPrefix.value || "",
+            authorCountry: formatTitulo(form.callNumberPrefix.value) || "",
             holding: {
                 homeBranch,
                 holdingBranch: homeBranch,
                 barcode: form.barcode.value || "",
-                publicNote: form.publicNote.value || undefined,
+                publicNote: form.publicNote.value || "",
                 callNumber: {
                     prefix: countryToPrefix(form.callNumberPrefix.value || ""),
                     dewey: String(form.callNumber.value || "").split(',').join('.'),

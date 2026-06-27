@@ -56,7 +56,6 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
     if (isMarc21(newLibro)) {
         newLibro.holding = {
             ...newLibro.holding,
-            barcode: String(numeroInventarioFinal)
         }
     }
 

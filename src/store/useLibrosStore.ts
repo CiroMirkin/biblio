@@ -162,7 +162,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   ingresoMark21: async (ingreso: Marc21) => {
     if (!ingreso.titulo?.trim() || !ingreso.itemType) return false
-    if (!ingreso.holding.barcode || !ingreso.holding.homeBranch) return false
+    if (!ingreso.numeroInventario || !ingreso.holding.homeBranch) return false
 
     const libroRegistrado = await window.electronAPI.ingresarLibroMark21(ingreso)
     if(!libroRegistrado) return false

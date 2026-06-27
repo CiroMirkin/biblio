@@ -59,7 +59,7 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Código de barras (ISBN):</span>
-          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" minLength={8} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
