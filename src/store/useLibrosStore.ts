@@ -36,6 +36,7 @@ interface LibrosState {
   ingresoSimple: (ingreso: Libro) => Promise<boolean>
 
   getUltimoNumeroInventario: () => number
+  esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -211,6 +212,30 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       const n = Number(l.numeroInventario)
       return n > max ? n : max
     }, 0)
+  },
+
+  esNroInventarioExistente: (nro: string | number) => {
+    if(nro === "" || nro === null || nro === undefined) {
+      return {
+        libro: null,
+        existente: false,
+      }
+    }
+
+    const { libros, libroSeleccionado } = get()
+
+    if(String(libroSeleccionado?.numeroInventario) === String(nro)) {
+      return {
+        libro: libroSeleccionado,
+        existente: false,
+      }
+    }
+
+    const libro = libros.find(l => String(l.numeroInventario) === String(nro)) ?? null
+    return {
+      libro,
+      existente: libro !== null,
+    }
   },
 }))
 

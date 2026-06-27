@@ -16,3 +16,4 @@ export * from "./ChevronsRightIcon"
 
 export * from "./LibroForm"
 export * from "./Marc21Form"
+export * from "./NroInventarioInput"

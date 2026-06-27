@@ -1,7 +1,8 @@
 import { cn } from "@/utils"
 import type { Marc21LiteraryForm } from "@shared/models"
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { useRef, useState } from "react"
+import { useRef } from "react"
+import { NroInventarioInput } from "./NroInventarioInput"
 
 const ORDER = ["numeroInventario", "titulo", "autor"]
 
@@ -25,7 +26,6 @@ interface Props {
 
 export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, submitDisabled = false }: Props) {
   const formRef = useRef<HTMLFormElement>(null)
-  const [ esLibroNuevo, setEsLibroNuevo ] = useState<boolean>(mode === "ingreso" && defaultValues.numeroInventario !== "")
 
   const handleSubmit = async (e: SyntheticEvent) => {
     const ok = await onSubmit(e)
@@ -36,16 +36,12 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, sub
   return (
     <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-        <label className="flex flex-col gap-1 text-base">
-          <span className="flex gap-1 items-end font-semibold">
-            N° de inventario
-            <span className="text-sm">
-              ({esLibroNuevo ? "Libro nuevo" : "Libro existente"})
-            </span>
-            :
-          </span>
-          <input onKeyDown={handleEnter} onChange={() => setEsLibroNuevo(false)} type="text" name="numeroInventario" id="numeroInventario" defaultValue={defaultValues.numeroInventario ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
-        </label>
+        <NroInventarioInput
+          mode={mode}
+          defaultValue={defaultValues?.numeroInventario ?? ""}
+          onKeyDown={handleEnter}
+          inputClass="w-full border bg-white border-black rounded p-1 px-2"
+        />
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Forma literaria:</span>
           <select name="literaryForm" id="literaryForm" defaultValue={defaultValues?.literaryForm ?? ""} className="w-full border bg-white border-black rounded p-1 px-2">
