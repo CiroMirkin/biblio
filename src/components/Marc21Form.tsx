@@ -54,7 +54,7 @@ export function Marc21Form({
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues?.autor ?? ""} className={inputClass} />
+          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues?.autor ?? ""} className={inputClass} placeholder="Apellido, nombre" />
         </label>
 
         <NroInventarioInput 

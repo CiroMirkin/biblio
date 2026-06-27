@@ -32,26 +32,27 @@ export function IngresoMarc21() {
           return;
         }
 
+        const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
         const registro: Marc21 = {
             numeroInventario,
             titulo: formatTitulo(form.titulo.value),
-            autor: formatName(form.autor.value) || undefined,
+            autor: formatName(form.autor?.value) || "",
             itemType: "BK",
-            literaryForm: form.literaryForm.value || undefined,
-            edition: form.edition.value || undefined,
-            placeOfPublication: form.placeOfPublication.value || undefined,
-            publisher: form.publisher.value || undefined,
-            publicationYear: form.publicationYear.value || undefined,
-            authorCountry: formatTitulo(form.callNumberPrefix.value) || "",
+            literaryForm: form.literaryForm?.value || "u",
+            edition: form.edition?.value || "",
+            placeOfPublication: formatName(form.placeOfPublication?.value) || "",
+            publisher: formatName(form.publisher?.value) || "",
+            publicationYear: form.publicationYear?.value || "",
+            authorCountry: formatTitulo(form.callNumberPrefix?.value) || "",
             holding: {
                 homeBranch,
                 holdingBranch: homeBranch,
-                barcode: validateISBN(form.barcode.value) ? form.barcode.value : "",
-                publicNote: form.publicNote.value || "",
+                barcode,
+                publicNote: formatTitulo(form.publicNote?.value) || "",
                 callNumber: {
-                    prefix: countryToPrefix(form.callNumberPrefix.value || ""),
-                    dewey: String(form.callNumber.value || "").split(',').join('.'),
-                    cutter: cutterFromAuthor(form.autor.value || ""),
+                    prefix: countryToPrefix(form.callNumberPrefix?.value || ""),
+                    dewey: String(form.callNumber?.value || "").split(',').join('.'),
+                    cutter: cutterFromAuthor(form.autor?.value || ""),
                     volume: "",
                 },
             },

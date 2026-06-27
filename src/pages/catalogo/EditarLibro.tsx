@@ -35,30 +35,31 @@ export function EditarLibro() {
     let libro: Partial<Libro | Marc21> = {
       numeroInventario: nroValido ? nro : libroSeleccionado.numeroInventario,
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
-      autor: formatName(form.autor.value) || libroSeleccionado.autor,
+      autor: formatName(form.autor?.value) || libroSeleccionado.autor,
+      literaryForm: form.literaryForm?.value || "u",
     }
     
     if(!catalogacionSimple) {
-      const callNumber = parseStrToCallNumber(form.callNumber.value || "")
-      const barcode = validateISBN(form.barcode.value || "") ? form.barcode.value : ""
+      const callNumber = parseStrToCallNumber(form.callNumber?.value || "")
+      const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
       libro = {
         ...libro,
         itemType: "BK",
-        literaryForm: form.literaryForm.value || undefined,
-        edition: form.edition.value || undefined,
-        placeOfPublication: form.placeOfPublication.value || undefined,
-        publisher: form.publisher.value || undefined,
-        publicationYear: form.publicationYear.value || undefined,
-        authorCountry: form.callNumberPrefix.value || "",
+        literaryForm: form.literaryForm?.value || "u",
+        edition: form.edition?.value || "",
+        placeOfPublication: form.placeOfPublication?.value || "",
+        publisher: form.publisher?.value || "",
+        publicationYear: form.publicationYear?.value || "",
+        authorCountry: form.callNumberPrefix?.value || "",
         holding: {
           homeBranch,
           holdingBranch: homeBranch,
           barcode,
-          publicNote: form.publicNote.value || "",
+          publicNote: form.publicNote?.value || "",
           callNumber: callNumber ?? {
-            dewey: form.callNumber.value,
-            cutter: cutterFromAuthor(form.autor.value),
-            prefix: countryToPrefix(form.callNumberPrefix.value),
+            dewey: form.callNumber?.value,
+            cutter: cutterFromAuthor(form.autor?.value || ""),
+            prefix: countryToPrefix(form.callNumberPrefix?.value || ""),
           }
         },
       }

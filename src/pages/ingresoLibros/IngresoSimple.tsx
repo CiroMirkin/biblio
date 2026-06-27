@@ -27,7 +27,8 @@ export function IngresoSimple() {
     const libro: Libro = {
       numeroInventario,
       titulo: formatTitulo(form.titulo.value),
-      autor: formatName(form.autor.value) || "",
+      autor: formatName(form.autor?.value) || "",
+      literaryForm: form.literaryForm?.value || "u",
     }
 
     setLoading(true)
