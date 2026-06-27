@@ -35,6 +35,24 @@ function getAllFields(record: MarcRecord, tag: string): MarcField[] {
   return record.fields.filter(f => f[0] === tag && f.length >= 4)
 }
 
+function parseNumeroInventario(raw: string): string | undefined {
+  const trimmed = raw.trim()
+  
+  /* Extrae prefijo que tiene inserta el Koha */
+  const withPrefix = trimmed.match(/Inv\.\s*Interno\s+(\d+)/i)
+  if (withPrefix) {
+    const digits = withPrefix[1]
+    return digits.length <= 5 ? digits : undefined
+  }
+
+  const onlyDigits = trimmed.match(/^\d+$/)
+  if (onlyDigits) {
+    return trimmed.length <= 5 ? trimmed : undefined
+  }
+
+  return undefined
+}
+
 export type MrcImportError = {
   index: number
   reason: string
@@ -42,7 +60,7 @@ export type MrcImportError = {
 
 export type MrcImportResult = {
   libro: Marc21EnPrestamo
-  numeroInventario: string | undefined
+  numeroInventario: string
   barcode: string | undefined
 }
 
@@ -63,11 +81,16 @@ export type MrcParseResult = {
  * un `Marc21EnPrestamo` por cada campo 952, todos compartiendo los datos
  * bibliográficos del registro padre (título, autor, año, etc.).
  *
- * ### Número de inventario: 001 → 952$p como fallback
- * El campo 001 es el identificador del registro en el catálogo. Sin embargo,
- * los archivos exportados desde Koha frecuentemente omiten el 001 o lo dejan
- * vacío. En ese caso se usa el barcode (952$p) como identificador, ya que es
- * único por ejemplar y siempre está presente cuando el ítem fue cargado.
+ * ### Número de inventario: 952$x
+ * El número de inventario se ingresa manualmente en Koha en el campo
+ * "Inventario" (952$x), exportado con el formato "Inv. Interno NNNNN".
+ * Se extrae el número del prefijo y se valida que tenga 5 dígitos o menos.
+ * Si un ejemplar no tiene 952$x, o el número supera los 5 dígitos, se descarta.
+ *
+ * ### Código de barras: 952$p (ISBN del ejemplar)
+ * El campo 952$p contiene el código de barras, que en esta instancia de Koha
+ * corresponde al ISBN. Es opcional para el parseo pero se expone en el
+ * resultado para uso posterior.
  *
  * ### Tipo de ítem: 942$c → 952$y → "BK" como fallback
  * El campo estándar para el tipo de material en Koha es 942$c. Sin embargo,
@@ -94,7 +117,9 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     }
 
     const field008 = getControlField(record, '008') ?? ''
-    const publicationYear = field008.slice(7, 11).trim() || getSubfieldFromRecord(record, '260', 'c')?.replace(/\s*[,;.]\s*$/, '').trim() || undefined
+    const publicationYear = field008.slice(7, 11).trim()
+      || getSubfieldFromRecord(record, '260', 'c')?.replace(/\s*[,;.]\s*$/, '').trim()
+      || undefined
     const literaryFormRaw = field008[33]
     const literaryForm = literaryFormRaw && literaryFormRaw !== ' '
       ? literaryFormRaw as Marc21LiteraryForm
@@ -110,16 +135,22 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     const holding952s = getAllFields(record, '952')
 
     if (holding952s.length === 0) {
-      errores.push({ index, reason: `"${titulo}" — Sin ejemplar (952) (sin barcode, sede ni signatura)` })
+      errores.push({ index, reason: `"${titulo}" — Sin ejemplar (952)` })
       return
     }
 
     holding952s.forEach((field952, holdingIndex) => {
       const barcode = getSubfield(field952, 'p') || undefined
-      const numeroInventario = getControlField(record, '001') || barcode
+      const rawX = getSubfield(field952, 'x')
 
+      if (!rawX) {
+        errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Sin número de inventario (952$x)` })
+        return
+      }
+
+      const numeroInventario = parseNumeroInventario(rawX)
       if (!numeroInventario) {
-        errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Sin número de inventario (001) ni barcode (952$p)` })
+        errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Número de inventario inválido: "${rawX}"` })
         return
       }
 
