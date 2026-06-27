@@ -30,7 +30,7 @@ export function IngresoMarc21() {
             numeroInventario,
             titulo: formatTitulo(form.titulo.value),
             autor: formatName(form.autor.value) || undefined,
-            itemType: form.itemType.value,
+            itemType: "BK",
             literaryForm: form.literaryForm.value || undefined,
             edition: form.edition.value || undefined,
             placeOfPublication: form.placeOfPublication.value || undefined,

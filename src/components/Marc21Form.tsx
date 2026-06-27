@@ -63,18 +63,6 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
           <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" minLength={8} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
         </label>
 
-        <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Tipo de ítem: <span className="text-red">*</span></span>
-          <select name="itemType" id="itemType" required value={tipoItem} onChange={(e) => setTipoItem(e.target.value as Marc21ItemType)} className={inputClass}>
-            <option value="BK">Libro</option>
-            <option value="DVD">DVD</option>
-            <option value="MAP">Mapa</option>
-            <option value="MX">Mixto</option>
-            <option value="REF">Referencia</option>
-            <option value="SER">Publicación periódica</option>
-          </select>
-        </label>
-
         {tipoItem === "BK" && (
           <label className="flex flex-col gap-1 text-base">
             <span className="font-semibold">Forma literaria:</span>

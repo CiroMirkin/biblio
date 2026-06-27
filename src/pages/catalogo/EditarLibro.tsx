@@ -40,7 +40,7 @@ export function EditarLibro() {
     const barcode = validateISBN(form.barcode.value) ? form.barcode.value : ""
     const libroMarc: Partial<Marc21> = {
       ...libroSimple,
-      itemType: form.itemType.value || undefined,
+      itemType: "BK",
       literaryForm: form.literaryForm.value || undefined,
       edition: form.edition.value || undefined,
       placeOfPublication: form.placeOfPublication.value || undefined,
