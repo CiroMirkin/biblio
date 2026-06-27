@@ -1,6 +1,7 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { formatCallNumber, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
+import { cn } from "@/utils"
 
 const ORDER = [
   "titulo", "autor", "numeroInventario", "barcode", "edition", "placeOfPublication",
@@ -137,7 +138,7 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
         </label>
       </div>
 
-      <input type="submit" value={submitLabel} disabled={submitDisabled} className="px-4 py-2 btn mt-2" />
+      <input type="submit" value={submitLabel} disabled={submitDisabled} className={cn("px-4 py-2 btn mt-2", submitDisabled && "btn-disabled")} />
     </form>
   )
 }

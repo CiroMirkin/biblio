@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form } from "@/components"
+import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
 import { countryToPrefix, cutterFromAuthor, isMarc21, makeBlankMark21, parseStrToCallNumber, type Libro, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
@@ -11,6 +11,7 @@ export function EditarLibro() {
   const { nombreBiblioteca, estaDefinidoNombreBiblioteca, catalogacionSimple } = useSettingsStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
   const [exito, setExito] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   if (!libroSeleccionado) {
     return (
@@ -23,6 +24,7 @@ export function EditarLibro() {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
+    if(loading) return;
     if(!form.titulo.value.trim()) return;
 
     const nro = form.numeroInventario ? form.numeroInventario.value : libroSeleccionado.numeroInventario
@@ -56,7 +58,9 @@ export function EditarLibro() {
       },
     }
 
+    setLoading(true)
     const actualizado = await editarLibro(catalogacionSimple ? libroSimple : libroMarc)
+    setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")
       return
@@ -70,7 +74,7 @@ export function EditarLibro() {
     <>
         <p
           className="w-70 mt-2 px-2 pt-1 pb-1.5 flex items-center gap-2 opacity-90 rounded bg-white/40 hover:bg-white transition-colors duration-75 ease-in cursor-pointer"
-          onClick={verCatalogo}
+          onClick={() => !loading && verCatalogo()}
         >
           <ChevronLeftIcon />
           <span className="text-lg">Volver al catalogo de libros</span>
@@ -78,6 +82,7 @@ export function EditarLibro() {
       <div className="card pt-4 mt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
             Editar libro
+            { loading && <span className="ml-4"><Spinner /></span> }
             <AnimatePresence>
             {exito && (
                 <motion.span
@@ -102,12 +107,14 @@ export function EditarLibro() {
             defaultValues={
               !isMarc21(libroSeleccionado) ? makeBlankMark21(libroSeleccionado) : libroSeleccionado
             }
+            submitDisabled={loading}
           /> 
           : <LibroForm
             submitLabel="Guardar Cambios"
             onSubmit={handleSubmit}
             mode="edicion"
             defaultValues={libroSeleccionado}
+            submitDisabled={loading}
           />
         }
       </div>

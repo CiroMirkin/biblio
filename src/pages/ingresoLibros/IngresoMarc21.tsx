@@ -1,4 +1,4 @@
-import { CheckIcon, Marc21Form } from "@/components"
+import { CheckIcon, Marc21Form, Spinner } from "@/components"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
@@ -9,6 +9,7 @@ import { formatName, formatTitulo } from "@/utils"
 export function IngresoMarc21() {
   const { ingresoMark21 } = useLibrosStore()
   const [exito, setExito] = useState(false)
+  const [loading, setLoading] = useState(false)
   const { nombreBiblioteca, estaDefinidoNombreBiblioteca, } = useSettingsStore()
   const { getUltimoNumeroInventario } = useLibrosStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
@@ -16,6 +17,7 @@ export function IngresoMarc21() {
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault()
         const form = e.target as HTMLFormElement
+        if(loading) return;
         if(!form.titulo.value.trim()) return;
     
         let numeroInventario: string = form.numeroInventario.value.trim()
@@ -48,7 +50,9 @@ export function IngresoMarc21() {
             },
         }
 
+        setLoading(true)
         const ingresado = await ingresoMark21(registro)
+        setLoading(false)
         if (!ingresado) {
             console.error("Error en el ingreso del registro MARC21")
             return false
@@ -64,6 +68,7 @@ export function IngresoMarc21() {
       <div className="card pt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
             Ingresar libro
+            { loading && <span className="ml-4"><Spinner /></span> }
             <AnimatePresence>
             {exito && (
                 <motion.span
@@ -84,6 +89,7 @@ export function IngresoMarc21() {
             submitLabel="Ingresar Libro"
             mode="ingreso"
             homeBranch={nombreBiblioteca}
+            submitDisabled={loading}
         />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">

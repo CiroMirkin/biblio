@@ -1,3 +1,4 @@
+import { cn } from "@/utils"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { useRef } from "react"
 
@@ -16,9 +17,10 @@ interface Props {
   submitLabel: string
   onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
   defaultValues?: { numeroInventario?: string | number; titulo?: string; autor?: string }
+  submitDisabled?: boolean
 }
 
-export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {} }: Props) {
+export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, submitDisabled = false }: Props) {
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -45,7 +47,12 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {} }: P
           <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues.autor ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
         </label>
       </div>
-      <input type="submit" value={submitLabel} className="px-4 py-2 btn mt-2" />
+      <input
+        type="submit"
+        value={submitLabel}
+        className={cn("px-4 py-2 btn mt-2", submitDisabled && "btn-disabled")}
+        disabled={submitDisabled}
+      />
     </form>
   )
 }
