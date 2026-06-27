@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { countryToPrefix, cutterFromAuthor, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatName, formatTitulo } from "@/utils"
+import { validateISBN } from "@shared/utils"
 
 export function IngresoMarc21() {
   const { ingresoMark21 } = useLibrosStore()
@@ -39,7 +40,7 @@ export function IngresoMarc21() {
             holding: {
                 homeBranch,
                 holdingBranch: homeBranch,
-                barcode: form.barcode.value || "",
+                barcode: validateISBN(form.barcode.value) ? form.barcode.value : "",
                 publicNote: form.publicNote.value || "",
                 callNumber: {
                     prefix: countryToPrefix(form.callNumberPrefix.value || ""),

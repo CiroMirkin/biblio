@@ -1,5 +1,6 @@
 import { parseStrToCallNumber } from '@shared/models/callNumber'
 import type { Marc21EnPrestamo, Marc21ItemType, Marc21LiteraryForm } from '@shared/models/marc21'
+import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
 
@@ -88,9 +89,9 @@ export type MrcParseResult = {
  * Si un ejemplar no tiene 952$x, o el número supera los 5 dígitos, se descarta.
  *
  * ### Código de barras: 952$p (ISBN del ejemplar)
- * El campo 952$p contiene el código de barras, que en esta instancia de Koha
- * corresponde al ISBN. Es opcional para el parseo pero se expone en el
- * resultado para uso posterior.
+ * El campo 952$p contiene el código de barras, que en esta instancia de Koha corresponde al ISBN.
+ * Se valida con el algoritmo del dígito verificador (ISBN-10 módulo 11, ISBN-13 módulo 10 con pesos alternados 1-3).
+ * Si no pasa la validación se descarta silenciosamente y el barcode queda vacío.
  *
  * ### Tipo de ítem: 942$c → 952$y → "BK" como fallback
  * El campo estándar para el tipo de material en Koha es 942$c. Sin embargo,
@@ -140,7 +141,10 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     }
 
     holding952s.forEach((field952, holdingIndex) => {
-      const barcode = getSubfield(field952, 'p') || undefined
+      const barcodeRaw = getSubfield(field952, 'p') || undefined
+      const barcode = barcodeRaw && validateISBN(barcodeRaw)
+        ? barcodeRaw.replace(/[-\s]/g, '')
+        : undefined
       const rawX = getSubfield(field952, 'x')
 
       if (!rawX) {

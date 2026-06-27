@@ -5,6 +5,7 @@ import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { formatName, formatTitulo } from "@/utils"
+import { validateISBN } from "@shared/utils"
 
 export function EditarLibro() {
   const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
@@ -36,6 +37,7 @@ export function EditarLibro() {
     }
 
     const callNumber = parseStrToCallNumber(form.callNumber.value)
+    const barcode = validateISBN(form.barcode.value) ? form.barcode.value : ""
     const libroMarc: Partial<Marc21> = {
       ...libroSimple,
       itemType: form.itemType.value || undefined,
@@ -48,7 +50,7 @@ export function EditarLibro() {
       holding: {
         homeBranch,
         holdingBranch: homeBranch,
-        barcode: form.barcode.value || "",
+        barcode,
         publicNote: form.publicNote.value || "",
         callNumber: callNumber ?? {
           dewey: form.callNumber.value,
