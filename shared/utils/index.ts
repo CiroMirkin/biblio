@@ -1,2 +1,2 @@
 
-export * from "./isbn"
+export * from "./ISBN"

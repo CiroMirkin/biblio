@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
 import { isMarc21 } from "@shared/models"
 import type { LibroRegistrado, LibroEnPrestamo  } from "@shared/models"
-import { type Marc21ItemType, type Marc21LiteraryForm } from "@shared/models/marc21"
+import { type Marc21ItemType, type Marc21LiteraryForm } from "@shared/models"
 import { formatCallNumber, parseStrToCallNumber } from "@shared/models/callNumber"
 
 export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {

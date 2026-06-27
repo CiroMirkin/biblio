@@ -1,5 +1,5 @@
 import { parseStrToCallNumber } from '@shared/models/callNumber'
-import type { Marc21EnPrestamo, Marc21ItemType, Marc21LiteraryForm } from '@shared/models/marc21'
+import type { Marc21EnPrestamo, Marc21ItemType, Marc21LiteraryForm } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
