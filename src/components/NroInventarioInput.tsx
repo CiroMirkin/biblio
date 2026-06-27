@@ -7,9 +7,12 @@ interface Props {
   defaultValue?: string | number
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
   inputClass?: string
+  onNroInvalid?: (isValid: boolean) => void
 }
 
-export function NroInventarioInput({ mode, defaultValue, onKeyDown, inputClass = "" }: Props) {
+export function NroInventarioInput({
+  mode, defaultValue, onKeyDown, inputClass = "", onNroInvalid = () => {},
+}: Props) {
   const [esLibroNuevo, setEsLibroNuevo] = useState<boolean>(
     mode === "ingreso" && defaultValue !== ""
   )
@@ -18,16 +21,16 @@ export function NroInventarioInput({ mode, defaultValue, onKeyDown, inputClass =
 
   const handleChangeNro = (nro: string) => {
     if(nro === "" || nro === "0") {
-      setMensajeDeError(["El N° de inventario es requerido, no puede faltar."])
-      return
-    }
-    if(!isValidNumeroInventario(nro)) {
-      setMensajeDeError(["El N° es invalido, el sistema solo gestiona N° menores a 100 mil."])
+      setMensajeDeError(["El N° de inventario es requerido,", "no puede faltar."])
+      onNroInvalid(true)
       return
     }
 
-    setEsLibroNuevo(false)
-    setMensajeDeError(null)
+    if(!isValidNumeroInventario(nro)) {
+      onNroInvalid(true)
+      setMensajeDeError(["El N° es invalido,", "el sistema solo gestiona N° menores a 100 mil."])
+      return
+    }
     
     const { libro, existente } = esNroInventarioExistente(nro)
     if (existente && libro !== null) {
@@ -36,8 +39,13 @@ export function NroInventarioInput({ mode, defaultValue, onKeyDown, inputClass =
         `El N° ${libro.numeroInventario} ya esta registrado en el libro`,
         `"${libro.titulo}" ${autor}`
       ])
+      onNroInvalid(true)
       return
     }
+    
+    setEsLibroNuevo(false)
+    onNroInvalid(false)
+    setMensajeDeError(null)
   }
 
   return (

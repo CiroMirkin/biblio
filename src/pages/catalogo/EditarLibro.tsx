@@ -29,9 +29,11 @@ export function EditarLibro() {
     if(!form.titulo.value.trim()) return;
 
     const nro = form.numeroInventario ? form.numeroInventario.value : libroSeleccionado.numeroInventario
+    const nroValido = isValidNumeroInventario(nro)
+    if(!nroValido) return;
 
     let libro: Partial<Libro | Marc21> = {
-      numeroInventario: isValidNumeroInventario(nro) ? nro : libroSeleccionado.numeroInventario,
+      numeroInventario: nroValido ? nro : libroSeleccionado.numeroInventario,
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
       autor: formatName(form.autor.value) || libroSeleccionado.autor,
     }

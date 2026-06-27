@@ -32,6 +32,7 @@ export function Marc21Form({
   mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues
 }: Props) {
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
+  const [ nroInvalido, setNroComoInvalido ] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -61,6 +62,7 @@ export function Marc21Form({
           onKeyDown={handleEnter}
           defaultValue={defaultValues?.numeroInventario ?? ""}
           inputClass={inputClass}
+          onNroInvalid={setNroComoInvalido}
         />
 
         {tipoItem === "BK" && (
@@ -126,7 +128,16 @@ export function Marc21Form({
         </label>
       </div>
 
-      <input type="submit" value={submitLabel} disabled={submitDisabled} className={cn("px-4 py-2 btn mt-2", submitDisabled && "btn-disabled")} />
+      <input
+        type="submit"
+        value={submitLabel}
+        disabled={submitDisabled || nroInvalido}
+        className={cn(
+          "px-4 py-2 btn mt-2",
+          submitDisabled && "btn-disabled",
+          nroInvalido && "btn-disabled",
+        )}
+        />
     </form>
   )
 }

@@ -11,6 +11,7 @@ export function IngresoMarc21() {
   const { ingresoMark21 } = useLibrosStore()
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [ nroInvalido, setNroComoInvalido ] = useState(false)
   const { nombreBiblioteca, estaDefinidoNombreBiblioteca, } = useSettingsStore()
   const { getUltimoNumeroInventario } = useLibrosStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
@@ -26,7 +27,10 @@ export function IngresoMarc21() {
         if(!numeroInventario) {
           numeroInventario = nroParaLibroNuevo
         }
-        if(!isValidNumeroInventario(numeroInventario)) return;
+        if(!isValidNumeroInventario(numeroInventario)) {
+          setNroComoInvalido(true)
+          return;
+        }
 
         const registro: Marc21 = {
             numeroInventario,
@@ -92,7 +96,7 @@ export function IngresoMarc21() {
             submitLabel="Ingresar Libro"
             mode="ingreso"
             homeBranch={nombreBiblioteca}
-            submitDisabled={loading}
+            submitDisabled={loading || nroInvalido}
             defaultValues={makeBlankMark21({ numeroInventario: nroParaLibroNuevo, titulo:"" })}
         />
       </div>

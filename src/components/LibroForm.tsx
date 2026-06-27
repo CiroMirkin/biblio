@@ -1,7 +1,7 @@
 import { cn } from "@/utils"
-import type { Marc21LiteraryForm } from "@shared/models"
+import { type Marc21LiteraryForm } from "@shared/models"
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { NroInventarioInput } from "./NroInventarioInput"
 
 const ORDER = ["numeroInventario", "titulo", "autor"]
@@ -26,6 +26,7 @@ interface Props {
 
 export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, submitDisabled = false }: Props) {
   const formRef = useRef<HTMLFormElement>(null)
+  const [ nroInvalido, setNroComoInvalido ] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
     const ok = await onSubmit(e)
@@ -40,6 +41,7 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, sub
           mode={mode}
           defaultValue={defaultValues?.numeroInventario ?? ""}
           onKeyDown={handleEnter}
+          onNroInvalid={setNroComoInvalido}
           inputClass="w-full border bg-white border-black rounded p-1 px-2"
         />
         <label className="flex flex-col gap-1 text-base">
@@ -75,8 +77,12 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, sub
       <input
         type="submit"
         value={submitLabel}
-        className={cn("px-4 py-2 btn mt-2", submitDisabled && "btn-disabled")}
-        disabled={submitDisabled}
+        className={cn(
+          "px-4 py-2 btn mt-2",
+          submitDisabled && "btn-disabled",
+          nroInvalido && "btn-disabled",
+        )}
+        disabled={submitDisabled || nroInvalido}
       />
     </form>
   )
