@@ -236,7 +236,7 @@ export function Prestamos({ onSuccess }: Props) {
   return (
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
-        <span className={cn(colNro, !numerosDeInventarioExternos && "hidden",)}>N° Inventario</span>
+        <span className={cn(colNro, "truncate",!numerosDeInventarioExternos && "hidden",)}>N° Inventario</span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
         <span className={cn(colFecha, !hasLibros && "opacity-0", !fechaDePrestamoAutomatica && "opacity-100")}>Fecha</span>
@@ -257,7 +257,7 @@ export function Prestamos({ onSuccess }: Props) {
                 {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
               </span>
               <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
-              <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
+              <span className={cn("text-lg truncate", colAutor)}>{libro.autor}</span>
               <span
                 className={cn(
                   "text-lg", colFecha,
