@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
-import { countryToPrefix, cutterFromAuthor, isMarc21, makeBlankMark21, parseStrToCallNumber, type Libro, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, isMarc21, isValidNumeroInventario, makeBlankMark21, parseStrToCallNumber, type Libro, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
@@ -31,7 +31,7 @@ export function EditarLibro() {
     const nro = form.numeroInventario ? form.numeroInventario.value : libroSeleccionado.numeroInventario
 
     let libro: Partial<Libro | Marc21> = {
-      numeroInventario: String(nro).trim() || "",
+      numeroInventario: isValidNumeroInventario(nro) ? Str : libroSeleccionado.numeroInventario,
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
       autor: formatName(form.autor.value) || libroSeleccionado.autor,
     }

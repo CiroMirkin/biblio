@@ -1,5 +1,5 @@
 import { CheckIcon, LibroForm, Spinner } from "@/components"
-import type { Libro } from "@shared/models"
+import { isValidNumeroInventario, type Libro } from "@shared/models"
 import { useLibrosStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
@@ -21,6 +21,7 @@ export function IngresoSimple() {
     if(!numeroInventario) {
       numeroInventario = String(getUltimoNumeroInventario() + 1)
     }
+    if(!isValidNumeroInventario(numeroInventario)) return;
 
     const libro: Libro = {
       numeroInventario,

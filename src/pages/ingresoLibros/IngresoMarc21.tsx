@@ -2,7 +2,7 @@ import { CheckIcon, Marc21Form, Spinner } from "@/components"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { countryToPrefix, cutterFromAuthor, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, isValidNumeroInventario, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatName, formatTitulo } from "@/utils"
 import { validateISBN } from "@shared/utils"
@@ -25,6 +25,7 @@ export function IngresoMarc21() {
         if(!numeroInventario) {
           numeroInventario = String(getUltimoNumeroInventario() + 1)
         }
+        if(!isValidNumeroInventario(numeroInventario)) return;
 
         const registro: Marc21 = {
             numeroInventario,
