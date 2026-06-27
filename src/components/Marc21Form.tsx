@@ -17,7 +17,7 @@ function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
   document.getElementById(ORDER[index + 1])?.focus()
 }
 
-const inputClass = "w-full border bg-white border-black rounded p-1 px-2"
+const inputClass = "w-full border bg-white border-black rounded p-1 px-2 placeholder:opacity-85"
 
 interface Props {
   mode: "ingreso" | "edicion"

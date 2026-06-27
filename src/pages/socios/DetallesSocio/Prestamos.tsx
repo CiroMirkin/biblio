@@ -346,7 +346,7 @@ export function Prestamos({ onSuccess }: Props) {
                       }}
                       disabled={lockedInputs[id]}
                       className={cn(
-                        "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                        "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed placeholder:opacity-85",
                         field === 'autor' ? colAutor : colTitulo,
                       )}
                       placeholder={field === 'autor' ? 'Autor' : 'Título'}

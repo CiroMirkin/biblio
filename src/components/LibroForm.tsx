@@ -71,7 +71,7 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, sub
         </label>
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues.autor ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Apellido, nombre" />
+          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues.autor ?? ""} className="w-full border bg-white border-black rounded p-1 px-2 placeholder:opacity-85" placeholder="Apellido, nombre" />
         </label>
       </div>
       <input
