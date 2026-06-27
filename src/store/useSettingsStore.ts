@@ -9,7 +9,7 @@ interface SettingsState extends Settings {
   estaDefinidoNombreBiblioteca: () => boolean
 }
 
-const bibliotecaNombrePorDefecto = 'Biblioteca...'
+const bibliotecaNombrePorDefecto = 'Biblioteca ...'
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   limiteDeDias: 40,

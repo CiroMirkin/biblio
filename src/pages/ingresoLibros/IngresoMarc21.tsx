@@ -96,7 +96,7 @@ export function IngresoMarc21() {
             submitLabel="Ingresar Libro"
             mode="ingreso"
             homeBranch={nombreBiblioteca}
-            submitDisabled={loading || nroInvalido}
+            submitDisabled={loading || nroInvalido || !homeBranch}
             defaultValues={makeBlankMark21({ numeroInventario: nroParaLibroNuevo, titulo:"" })}
         />
       </div>
