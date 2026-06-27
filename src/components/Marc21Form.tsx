@@ -109,7 +109,7 @@ export function Marc21Form({
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Signatura topográfica:</span>
-          <input onKeyDown={handleEnter} type={ mode == "ingreso" ? "number": "text" } name="callNumber" id="callNumber" defaultValue={ formatCallNumber(defaultValues?.holding.callNumber) ?? "" } className={inputClass} />
+          <input onKeyDown={handleEnter} step="0.01" type={ mode == "ingreso" ? "number": "text" } name="callNumber" id="callNumber" defaultValue={ formatCallNumber(defaultValues?.holding.callNumber) ?? "" } className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
