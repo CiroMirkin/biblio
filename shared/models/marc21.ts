@@ -53,7 +53,7 @@ export interface Marc21 {
   holding: {
     homeBranch: string
     holdingBranch: string
-    barcode: string
+    barcode?: string
     publicNote?: string
     callNumber?: CallNumber | null
   }

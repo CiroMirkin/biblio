@@ -4,6 +4,7 @@ import { getLibros } from '../handlers/libros'
 import { isMarc21 } from "@shared/models"
 import { type Marc21 } from "@shared/models/marc21"
 import { formatCallNumber } from '../../shared/models/callNumber'
+import { get } from '../settings'
 
 
 export async function excelAMrc(outputPath: string): Promise<void> {
@@ -14,9 +15,24 @@ export async function excelAMrc(outputPath: string): Promise<void> {
         return
     }
 
-    const chunks = libros.filter(l => isMarc21(l)).map(libro => {
-        const raw = libroToRecord(libro).as('iso2709')
-        return Buffer.from(raw, 'utf8')
+    const chunks = libros.map(libro => {
+        if(isMarc21(libro)) {
+            const raw = libroToRecord(libro).as('iso2709')
+            return Buffer.from(raw, 'utf8')
+        }
+        else {
+            const branch = get('nombreBiblioteca')
+            const markLibro: Marc21 = {
+                ...libro,
+                itemType: 'BK',
+                holding: {
+                    holdingBranch: branch,
+                    homeBranch: branch,
+                }
+            }
+            const raw = libroToRecord(markLibro).as('iso2709')
+            return Buffer.from(raw, 'utf8')
+        }
     })
     fs.writeFileSync(outputPath, Buffer.concat(chunks))
 }
@@ -60,8 +76,8 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     record.append(['942', '  ', 'c', itemType])
 
     const subs952: string[] = [
-        'b', libro.holding.homeBranch       || 'CENTRAL',
-        'p', libro.holding.barcode,
+        'b', libro.holding.homeBranch || 'CENTRAL',
+        ...(libro.holding.barcode ? ['p', libro.holding.barcode] : []),
         'y', itemType,
     ]
     if (libro.holding.holdingBranch) subs952.push('a', libro.holding.holdingBranch)
