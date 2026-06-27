@@ -27,8 +27,12 @@ export type LibroEnPrestamo = Libro & DatosPrestamo
 
 export type LibroRegistrado = LibroEnPrestamo | Marc21EnPrestamo
 
-/** El sistema solo gestiona menos de 100.000 ejemplares, los números de inventario menores a 100mil son validos. */
-export function isValidNumeroInventario(value: string): boolean {
-  const digits = value.replace(/\D/g, '')
+export function isValidNumeroInventario(value: string | number): boolean {
+  const str = String(value).trim()
+  if (!str) return false
+
+  const digits = str.replace(/\D/g, '')
+  if (!digits || Number(digits) === 0) return false
+  
   return digits.length <= 5
 }
