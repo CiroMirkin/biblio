@@ -345,7 +345,7 @@ export function Prestamos({ onSuccess }: Props) {
                         "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed",
                         field === 'autor' ? colAutor : colTitulo,
                       )}
-                      placeholder={field === 'autor' ? 'Autor' : 'Título'}
+                      placeholder={field === 'autor' ? 'Autor (Apellido, Nombre)' : 'Título'}
                     />
                   ))}
 
