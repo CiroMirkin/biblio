@@ -30,38 +30,40 @@ export function EditarLibro() {
 
     const nro = form.numeroInventario ? form.numeroInventario.value : libroSeleccionado.numeroInventario
 
-    const libroSimple: Partial<Libro> = {
+    let libro: Partial<Libro | Marc21> = {
       numeroInventario: String(nro).trim() || "",
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
       autor: formatName(form.autor.value) || libroSeleccionado.autor,
     }
-
-    const callNumber = parseStrToCallNumber(form.callNumber.value)
-    const barcode = validateISBN(form.barcode.value) ? form.barcode.value : ""
-    const libroMarc: Partial<Marc21> = {
-      ...libroSimple,
-      itemType: "BK",
-      literaryForm: form.literaryForm.value || undefined,
-      edition: form.edition.value || undefined,
-      placeOfPublication: form.placeOfPublication.value || undefined,
-      publisher: form.publisher.value || undefined,
-      publicationYear: form.publicationYear.value || undefined,
-      authorCountry: form.callNumberPrefix.value || "",
-      holding: {
-        homeBranch,
-        holdingBranch: homeBranch,
-        barcode,
-        publicNote: form.publicNote.value || "",
-        callNumber: callNumber ?? {
-          dewey: form.callNumber.value,
-          cutter: cutterFromAuthor(form.autor.value),
-          prefix: countryToPrefix(form.callNumberPrefix.value),
-        }
-      },
+    
+    if(!catalogacionSimple) {
+      const callNumber = parseStrToCallNumber(form.callNumber.value || "")
+      const barcode = validateISBN(form.barcode.value || "") ? form.barcode.value : ""
+      libro = {
+        ...libro,
+        itemType: "BK",
+        literaryForm: form.literaryForm.value || undefined,
+        edition: form.edition.value || undefined,
+        placeOfPublication: form.placeOfPublication.value || undefined,
+        publisher: form.publisher.value || undefined,
+        publicationYear: form.publicationYear.value || undefined,
+        authorCountry: form.callNumberPrefix.value || "",
+        holding: {
+          homeBranch,
+          holdingBranch: homeBranch,
+          barcode,
+          publicNote: form.publicNote.value || "",
+          callNumber: callNumber ?? {
+            dewey: form.callNumber.value,
+            cutter: cutterFromAuthor(form.autor.value),
+            prefix: countryToPrefix(form.callNumberPrefix.value),
+          }
+        },
+      }
     }
 
     setLoading(true)
-    const actualizado = await editarLibro(catalogacionSimple ? libroSimple : libroMarc)
+    const actualizado = await editarLibro(libro)
     setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")
