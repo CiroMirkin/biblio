@@ -6,7 +6,9 @@ export function BuscarLibroForm() {
   const { numerosDeInventarioExternos } = useSettingsStore()
 
   const handleBusqueda = (nombreLibro: string) => {
-    buscar(nombreLibro)
+    if(!nombreLibro.length || nombreLibro.length > 3) {
+      buscar(nombreLibro)
+    }
   }
 
   const placeholder = numerosDeInventarioExternos
