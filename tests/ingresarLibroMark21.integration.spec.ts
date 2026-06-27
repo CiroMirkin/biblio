@@ -23,6 +23,7 @@ describe('ingresarLibroMark21 (integration)', () => {
 
     it('Ingresa el libro y lo persiste en el archivo si los datos son correctos y el barcode no existe', async () => {
         const ingreso: Marc21 = {
+            numeroInventario: "205",
             titulo: 'El Senor de los Anillos',
             itemType: 'BK',
             holding: {
