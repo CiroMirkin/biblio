@@ -65,6 +65,11 @@ export function Marc21Form({
           onNroInvalid={setNroComoInvalido}
         />
 
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Código de barras (ISBN):</span>
+          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" minLength={8} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
+        </label>
+
         {tipoItem === "BK" && (
           <label className="flex flex-col gap-1 text-base">
             <span className="font-semibold">Forma literaria:</span>
