@@ -10,7 +10,8 @@ export function IngresoSimple() {
   const { ingresoSimple, getUltimoNumeroInventario } = useLibrosStore()
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
-
+  const nroParaLibroNuevo = String(getUltimoNumeroInventario() + 1)
+  
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
@@ -19,7 +20,7 @@ export function IngresoSimple() {
     
     let numeroInventario: string = form.numeroInventario.value.trim()
     if(!numeroInventario) {
-      numeroInventario = String(getUltimoNumeroInventario() + 1)
+      numeroInventario = nroParaLibroNuevo
     }
     if(!isValidNumeroInventario(numeroInventario)) return;
 
@@ -62,7 +63,15 @@ export function IngresoSimple() {
             </AnimatePresence>
         </h2>
 
-        <LibroForm submitLabel="Ingresar Libro" onSubmit={handleSubmit} mode="ingreso" submitDisabled={loading} />
+        <LibroForm
+          submitLabel="Ingresar Libro"
+          onSubmit={handleSubmit}
+          mode="ingreso"
+          submitDisabled={loading}
+          defaultValues={{
+            numeroInventario: nroParaLibroNuevo,
+          }}
+        />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">
         <div className="w-full bg-transparent h-2" />

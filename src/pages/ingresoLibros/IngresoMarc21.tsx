@@ -2,7 +2,7 @@ import { CheckIcon, Marc21Form, Spinner } from "@/components"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { countryToPrefix, cutterFromAuthor, isValidNumeroInventario, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, isValidNumeroInventario, makeBlankMark21, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatName, formatTitulo } from "@/utils"
 import { validateISBN } from "@shared/utils"
@@ -14,6 +14,7 @@ export function IngresoMarc21() {
   const { nombreBiblioteca, estaDefinidoNombreBiblioteca, } = useSettingsStore()
   const { getUltimoNumeroInventario } = useLibrosStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
+  const nroParaLibroNuevo = String(getUltimoNumeroInventario() + 1)
 
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault()
@@ -23,7 +24,7 @@ export function IngresoMarc21() {
     
         let numeroInventario: string = form.numeroInventario.value.trim()
         if(!numeroInventario) {
-          numeroInventario = String(getUltimoNumeroInventario() + 1)
+          numeroInventario = nroParaLibroNuevo
         }
         if(!isValidNumeroInventario(numeroInventario)) return;
 
@@ -92,6 +93,7 @@ export function IngresoMarc21() {
             mode="ingreso"
             homeBranch={nombreBiblioteca}
             submitDisabled={loading}
+            defaultValues={makeBlankMark21({ numeroInventario: nroParaLibroNuevo, titulo:"" })}
         />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">

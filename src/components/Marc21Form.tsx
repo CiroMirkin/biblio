@@ -29,6 +29,7 @@ interface Props {
 
 export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues }: Props) {
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
+  const [ esLibroNuevo, setEsLibroNuevo ] = useState<boolean>(mode === "ingreso" && defaultValues?.numeroInventario !== "")
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -54,8 +55,14 @@ export function Marc21Form({ mode, submitLabel, onSubmit, submitDisabled, homeBr
         </label>
 
         <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">N° de Inventario:</span>
-          <input onKeyDown={handleEnter} type="text" name="numeroInventario" id="numeroInventario" defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
+          <span className="flex gap-1 items-end font-semibold">
+            N° de inventario
+            <span className="text-sm">
+              ({esLibroNuevo ? "Libro nuevo" : "Libro existente"})
+            </span>
+            :
+          </span>
+          <input onKeyDown={handleEnter} onChange={() => setEsLibroNuevo(false)} type="text" name="numeroInventario" id="numeroInventario" defaultValue={defaultValues?.numeroInventario ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
