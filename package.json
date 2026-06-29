@@ -1,7 +1,7 @@
 {
   "name": "biblio",
   "private": true,
-  "version": "1.1.5",
+  "version": "1.2.0",
   "type": "commonjs",
   "main": "dist-electron/main.js",
   "scripts": {
