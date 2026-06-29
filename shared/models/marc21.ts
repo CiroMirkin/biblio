@@ -21,13 +21,9 @@ export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
 | `952$o Signatura`      | 952 $o        | Signatura topográfica    (op)     |
  */
 
-export interface Marc21 {
-  numeroInventario?: number | string
-  titulo: string
-  autor?: string
+export interface Marc21 extends Libro {
   authorCountry?: string
   itemType: Marc21ItemType
-  literaryForm?: Marc21LiteraryForm
 
   edition?: string
   placeOfPublication?: string
