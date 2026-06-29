@@ -142,23 +142,36 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   },
 
   agregarLibroEnPrestamo: async (libro, { fechaDePrestamo } = {}) => {
-    const libroEnPrestamo = await window.electronAPI.addLibroPrestado(libro, fechaDePrestamo)
-    if (!libroEnPrestamo) return null
-    const { libros } = get()
-    set({ libros: [...libros, libroEnPrestamo] })
-    return libroEnPrestamo
+    const libroPrestado = await window.electronAPI.addLibroPrestado(libro, fechaDePrestamo)
+    if (!libroPrestado) return null
+
+    const { libros, librosPrestados, librosDisponibles } = get()
+    set({
+      libros: actualizarListaLibros(libros, libroPrestado),
+      librosPrestados: actualizarListaLibros(librosPrestados, libroPrestado),
+      librosDisponibles: actualizarListaLibros(librosDisponibles, libroPrestado)
+    })
+    return libroPrestado
   },
 
   devolverLibro: async (nroInventario) => {
     const ok = await window.electronAPI.devolverLibro(nroInventario)
     if (!ok) return
-    const { libros } = get()
+    const { libros, librosPrestados, librosVencidos, librosDisponibles } = get()
+    const libroEnPrestamo = libros.find(l => String(l.numeroInventario) === String(nroInventario))
+    if(libroEnPrestamo === undefined) return
+
+    const libroDevuelto = {
+      ...libroEnPrestamo,
+      fechaDePrestamo: null,
+      nombreSocio: "",
+      numeroSocio: null,
+    }
     set({
-      libros: libros.map(l =>
-        l.numeroInventario !== nroInventario
-          ? l
-          : { ...l, fechaDePrestamo: null, nombreSocio: "", numeroSocio: null }
-      )
+      libros: actualizarListaLibros(libros, libroDevuelto),
+      librosPrestados: actualizarListaLibros(librosPrestados, libroDevuelto),
+      librosVencidos: actualizarListaLibros(librosVencidos, libroDevuelto),
+      librosDisponibles: actualizarListaLibros(librosDisponibles, libroDevuelto),
     })
   },
 
@@ -240,8 +253,10 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 }))
 
 function actualizarListaLibros<T extends Libro>(
-  libros: T[], updated: T, options?: { nroViejo?: string }
+  libros: T[], updated?: T, options?: { nroViejo?: string }
 ): T[] {
+  if(!updated) return libros
+
   let nrolibro = updated.numeroInventario
   if(options?.nroViejo) nrolibro = options?.nroViejo
 
