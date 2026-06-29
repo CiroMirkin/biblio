@@ -71,6 +71,7 @@ export function NroInventarioInput({
         id="numeroInventario"
         defaultValue={defaultValue ?? ""}
         className={inputClass}
+        maxLength={5}
       />
     </label>
   )

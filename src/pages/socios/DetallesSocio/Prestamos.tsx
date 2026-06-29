@@ -306,6 +306,7 @@ export function Prestamos({ onSuccess }: Props) {
               )}
               disabled={!caracterSocio}
               placeholder="N°"
+              maxLength={5}
             />
 
             {enPrestamo
