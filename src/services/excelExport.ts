@@ -1,3 +1,4 @@
+import type { ImportarMrcResult } from "@/types/electron"
 
 export class ExcelExportService {
   static async descargarSocios(): Promise<boolean> {
@@ -10,5 +11,13 @@ export class ExcelExportService {
 
   static async descargarLibros(): Promise<boolean> {
     return window.electronAPI.copiarExcel('libros')
+  }
+
+  static async descargarInventarioEnMRC(): Promise<void> {
+    return window.electronAPI.obtenerArchivoMrc()
+  }
+
+  static async importarMrc(filePath: string): Promise<ImportarMrcResult> {
+    return window.electronAPI.importarMrc(filePath)
   }
 }

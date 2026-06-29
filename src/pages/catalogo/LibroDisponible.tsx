@@ -1,12 +1,12 @@
-import type { Libro } from "@/models"
-import { useLibrosStore } from "@/store"
+import { isMarc21, type Libro } from "@shared/models"
+import { DetallesLibro } from "./DetallesLibro"
+import { formatNro } from "@/utils"
 
 type Props = {
     libro: Libro
 }
 
 export function LibroDisponible({ libro }: Props) {
-    const { verDetallesLibro } = useLibrosStore()
     
     return (
         <li className="card">
@@ -14,16 +14,16 @@ export function LibroDisponible({ libro }: Props) {
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base">{libro.autor}</p>
-                    <p className="text-base opacity-80 mt-px">
-                        <span className="mr-1 font-semibold">N° </span>
-                        { libro.numeroInventario || "S/N" }
-                    </p>
+                    { !isMarc21(libro) && 
+                        <p className="text-base opacity-80 mt-px">
+                            <span className="mr-1 font-semibold">N° </span>
+                            { libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
+                        </p>
+                    }
                 </div>
                 <span className="text-base font-semibold text-greem">Disponible</span>
             </div>
-            <div className="flex justify-end">
-                <button className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
-            </div>
+            <DetallesLibro libro={libro} />
         </li>
     )
 }

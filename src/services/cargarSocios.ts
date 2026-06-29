@@ -1,4 +1,4 @@
-import type { Socio } from "@/models/Socio"
+import type { Socio } from "@shared/models"
 
 export async function cargarSocios(): Promise<Socio[]> {
   const raw = await window.electronAPI.getSocios()

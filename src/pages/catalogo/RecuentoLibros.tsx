@@ -1,4 +1,4 @@
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSettingsStore } from "@/store"
 
 export function RecuentoLibros() {
     const {
@@ -7,6 +7,7 @@ export function RecuentoLibros() {
         librosPrestados,
         libros
     } = useLibrosStore()
+    const { numerosDeInventarioExternos } = useSettingsStore()
 
     return (
         <section className="w-60 card card-secondary">
@@ -19,10 +20,12 @@ export function RecuentoLibros() {
                     <span className="font-semibold opacity-65">Libros prestados: </span>
                     { librosPrestados.length }
                 </li>
-                <li>
-                    <span className="font-semibold opacity-65">Libros disponibles: </span>
-                    { librosDisponibles.length }
-                </li>
+                { numerosDeInventarioExternos &&
+                    <li>
+                        <span className="font-semibold opacity-65">Libros disponibles: </span>
+                        { librosDisponibles.length }
+                    </li>
+                }
                 <li>
                     <span className="font-semibold opacity-65">Total de Libros: </span>
                     { libros.length }

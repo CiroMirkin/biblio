@@ -1,16 +1,16 @@
-import type { LibroEnPrestamo } from "@/models"
-import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
-import { useLibrosStore, useSettingsStore, useSociosStore } from "@/store"
+import { isMarc21, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
+import { calcularDiasDesdePrestamo, cn, formatDiasRelativo, formatNro } from "@/utils"
+import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
 import { format } from "@formkit/tempo"
+import { DetallesLibro } from "./DetallesLibro"
 
 type Props = {
-  libro: LibroEnPrestamo
+  libro: LibroRegistrado
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
     const { limiteDeDias, numerosDeInventarioExternos } = useSettingsStore()
-    const { verDetallesLibro } = useLibrosStore()
 
     if(libro.fechaDePrestamo === null) {
         return <LibroDisponible libro={libro} />
@@ -22,17 +22,22 @@ export function LibroEnPrestamo({ libro }: Props) {
     const socio = socios.find(s =>
         s.nroSocio === libro.numeroSocio || s.nombreYApellido === libro.nombreSocio
     ) ?? null
-    
+
+    const mostrarNroDeInventario = numerosDeInventarioExternos && !isMarc21(libro)
+
     return (
-        <li className="card flex flex-col gap-1">
+        <li className="card flex flex-col">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base font-semibold">{libro.autor}</p>
-                    { numerosDeInventarioExternos && 
+                    { mostrarNroDeInventario && 
                         <p className="text-base mt-px">
                             <span className="mr-1 font-semibold">N°</span>
-                            { libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario }
+                            { 
+                                libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario 
+                                ? 'S/N' : formatNro(libro.numeroInventario)
+                            }
                         </p>
                     }
                 </div>
@@ -44,20 +49,20 @@ export function LibroEnPrestamo({ libro }: Props) {
                     { format(libro.fechaDePrestamo!, "long") }
                 </span>
             </div>
-            <hr className="opacity-20" />
-            <div className="flex justify-between">
-                <div className="text-base opacity-70">
-                    <p>
-                        <span className="font-semibold">Socio: </span>
-                        {socio?.nombreYApellido ?? libro.nombreSocio}
-                    </p>
-                    {socio && <>
-                        <p><span className="font-semibold">N° Socio:</span> {socio.nroSocio}</p>
-                        <p><span className="font-semibold">Telefono:</span> {socio.telefono ?? "-"}</p>
-                        <p><span className="font-semibold">Domicilio:</span> {socio.domicilio}</p>
-                    </>}
-                </div>
-                <button className="self-end btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline" onClick={() => verDetallesLibro(libro)}>Editar Libro</button>
+
+            <DetallesLibro libro={libro} />
+
+            <hr className="opacity-20 my-2" />
+            <div className="text-base opacity-70">
+                <p>
+                    <span className="font-semibold">Socio: </span>
+                    {socio?.nombreYApellido ?? libro.nombreSocio}
+                </p>
+                {socio && <>
+                    <p><span className="font-semibold">N° Socio:</span> {socio.nroSocio}</p>
+                    <p><span className="font-semibold">Telefono:</span> {socio.telefono ?? "-"}</p>
+                    <p><span className="font-semibold">Domicilio:</span> {socio.domicilio}</p>
+                </>}
             </div>
         </li>
     )

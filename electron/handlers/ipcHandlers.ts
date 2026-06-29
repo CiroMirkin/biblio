@@ -1,4 +1,4 @@
-import { getLibros, editarDatosLibro } from './libros'
+import { getLibros, editarDatosLibro, ingresarLibro, ingresarLibroMark21 } from './libros'
 import {
   devolverLibro,
   getLibrosPrestadosSocio,
@@ -19,13 +19,18 @@ import {
 import { getCuotasSocio, toggleCuota } from './cuotas'
 import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
-import type { Libro } from '../models/libro'
-import type { NewSocioData, Socio } from '../models/socio'
+import type { Libro, LibroRegistrado } from "@shared/models/libro"
+import type { NewSocio, Socio } from '@shared/models/socio'
+import type { Marc21 } from "@shared/models/marc21"
+import { descargarMrc } from '../utils/descargarMrc'
+import { importarMrc } from '../utils/importarMrc'
 
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
-  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<Libro>) => editarDatosLibro(nroInventario, datos),
+  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<LibroRegistrado>) => editarDatosLibro(nroInventario, datos),
+  ingresarLibro: (_: unknown, ingreso: Libro) => ingresarLibro(ingreso),
+  ingresarLibroMark21: (_: unknown, ingreso: Marc21) => ingresarLibroMark21(ingreso),
 }
 
 const prestamosIpcHandlers = {
@@ -36,7 +41,7 @@ const prestamosIpcHandlers = {
 
 const sociosIpcHandlers = {
   getSocios: () => getSocios(),
-  createSocio: (_: unknown, socioData: NewSocioData) => createSocio(socioData),
+  createSocio: (_: unknown, socioData: NewSocio) => createSocio(socioData),
   darDeBajaSocio: (_: unknown, nroSocio: number) => darDeBajaSocio(nroSocio),
   reactivarSocio: (_: unknown, nroSocio: number) => reactivarSocio(nroSocio),
   editarDatosSocio: (_: unknown, nroSocio: number, datos: Partial<Socio>) => editarDatosSocio(nroSocio, datos),
@@ -53,6 +58,8 @@ const cuotasIpcHandlers = {
 
 const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
+  obtenerArchivoMrc: (_: unknown) => descargarMrc(),
+  importarMrc: (_: unknown, filePath: string) => importarMrc(filePath),
 }
 
 export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {

@@ -1,5 +1,7 @@
 
-export function calcularDiasDesdePrestamo(fecha: Date): number {
+export function calcularDiasDesdePrestamo(fecha: Date | undefined): number {
+    if(!fecha) return 0
+
     let inicio = new Date(fecha)
 
     if (inicio.getFullYear() < 100) {

@@ -1,4 +1,4 @@
-import type { LibroEnPrestamo } from "@/models"
+import type { LibroEnPrestamo } from "@shared/models"
 
 export async function cargarLibrosEnPrestamo(): Promise<LibroEnPrestamo[]> {
   const raw = await window.electronAPI.getLibros()

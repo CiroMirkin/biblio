@@ -1,29 +1,18 @@
-import { CheckIcon, ChevronLeftIcon } from "@/components"
-import type { Libro } from "@/models"
-import { useLibrosStore } from "@/store"
-import { useRef, useState } from "react"
-import type { KeyboardEvent, SyntheticEvent } from "react"
+import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
+import { countryToPrefix, cutterFromAuthor, isMarc21, isValidNumeroInventario, makeBlankMark21, parseStrToCallNumber, type Libro, type Marc21 } from "@shared/models"
+import { useLibrosStore, useSettingsStore } from "@/store"
+import { useState } from "react"
+import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-
-const ORDER = ["numeroInventario", "titulo", "autor"]
-
-function focusSiguiente(name: string) {
-  const index = ORDER.indexOf(name)
-  if (index === -1 || index === ORDER.length - 1) return
-  const siguiente = document.getElementById(ORDER[index + 1])
-  siguiente?.focus()
-}
-
-function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
-  if (e.key !== "Enter") return
-  e.preventDefault()
-  focusSiguiente((e.target as HTMLInputElement).name)
-}
+import { formatName, formatTitulo } from "@/utils"
+import { validateISBN } from "@shared/utils"
 
 export function EditarLibro() {
   const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
-  const formRef = useRef<HTMLFormElement>(null)
+  const { nombreBiblioteca, estaDefinidoNombreBiblioteca, catalogacionSimple } = useSettingsStore()
+  const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
   const [exito, setExito] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   if (!libroSeleccionado) {
     return (
@@ -36,27 +25,61 @@ export function EditarLibro() {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    const libro: Partial<Libro> = {
-      numeroInventario: Number(form.numeroInventario.value) || libroSeleccionado.numeroInventario,
-      titulo: form.titulo.value || libroSeleccionado.titulo,
-      autor: form.autor.value || libroSeleccionado.autor,
+    if(loading) return false
+    if(!form.titulo.value.trim()) return false
+
+    const nro = form.numeroInventario ? form.numeroInventario.value : libroSeleccionado.numeroInventario
+    const nroValido = isValidNumeroInventario(nro)
+    if(!nroValido) return false
+
+    let libro: Partial<Libro | Marc21> = {
+      numeroInventario: nroValido ? nro : libroSeleccionado.numeroInventario,
+      titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
+      autor: formatName(form.autor?.value) || libroSeleccionado.autor,
+      literaryForm: form.literaryForm?.value || "u",
+    }
+    
+    if(!catalogacionSimple) {
+      const callNumber = parseStrToCallNumber(form.callNumber?.value || "")
+      const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
+      libro = {
+        ...libro,
+        itemType: "BK",
+        literaryForm: form.literaryForm?.value || "u",
+        edition: form.edition?.value || "",
+        placeOfPublication: form.placeOfPublication?.value || "",
+        publisher: form.publisher?.value || "",
+        publicationYear: form.publicationYear?.value || "",
+        authorCountry: form.callNumberPrefix?.value || "",
+        holding: {
+          homeBranch,
+          holdingBranch: homeBranch,
+          barcode,
+          publicNote: form.publicNote?.value || "",
+          callNumber: callNumber ?? {
+            dewey: form.callNumber?.value,
+            cutter: cutterFromAuthor(form.autor?.value || ""),
+            prefix: countryToPrefix(form.callNumberPrefix?.value || ""),
+          }
+        },
+      }
     }
 
+    setLoading(true)
     const actualizado = await editarLibro(libro)
+    setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")
-      return
+      return false
     }
-
-    setExito(true)
-    setTimeout(() => setExito(false), 1200)
+    return true
   }
 
   return (
     <>
         <p
           className="w-70 mt-2 px-2 pt-1 pb-1.5 flex items-center gap-2 opacity-90 rounded bg-white/40 hover:bg-white transition-colors duration-75 ease-in cursor-pointer"
-          onClick={verCatalogo}
+          onClick={() => !loading && verCatalogo()}
         >
           <ChevronLeftIcon />
           <span className="text-lg">Volver al catalogo de libros</span>
@@ -64,6 +87,7 @@ export function EditarLibro() {
       <div className="card pt-4 mt-4">
         <h2 className="mb-4 flex items-center gap-4 text-xl font-semibold">
             Editar libro
+            { loading && <span className="ml-4"><Spinner /></span> }
             <AnimatePresence>
             {exito && (
                 <motion.span
@@ -79,48 +103,27 @@ export function EditarLibro() {
             </AnimatePresence>
         </h2>
 
-        <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
-            <label className="flex flex-col gap-1 text-base">
-            N° de inventario:
-            <input
-                onKeyDown={handleEnter}
-                type="text"
-                name="numeroInventario"
-                id="numeroInventario"
-                defaultValue={libroSeleccionado.numeroInventario}
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="N° de inventario"
-            />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-            Título:
-            <input
-                onKeyDown={handleEnter}
-                type="text"
-                name="titulo"
-                id="titulo"
-                defaultValue={libroSeleccionado.titulo}
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="Título"
-            />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-            Autor:
-            <input
-                onKeyDown={handleEnter}
-                type="text"
-                name="autor"
-                id="autor"
-                defaultValue={libroSeleccionado.autor}
-                className="w-full border bg-white border-black rounded p-1 px-2"
-                placeholder="Autor"
-            />
-            </label>
-
-            <input type="submit" value="Guardar cambios" className="px-4 py-2 btn mt-2" />
-        </form>
+        { isMarc21(libroSeleccionado) || !catalogacionSimple
+          ? <Marc21Form 
+            submitLabel="Guardar Cambios"
+            onSubmit={handleSubmit}
+            mode="edicion"
+            homeBranch={homeBranch}
+            defaultValues={
+              !isMarc21(libroSeleccionado) ? makeBlankMark21(libroSeleccionado) : libroSeleccionado
+            }
+            submitDisabled={loading}
+            onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
+          /> 
+          : <LibroForm
+            submitLabel="Guardar Cambios"
+            onSubmit={handleSubmit}
+            mode="edicion"
+            defaultValues={libroSeleccionado}
+            submitDisabled={loading}
+            onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
+          />
+        }
       </div>
     </>
   )

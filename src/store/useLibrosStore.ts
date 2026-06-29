@@ -1,37 +1,42 @@
 import { create } from "zustand"
-import type { Libro, LibroEnPrestamo } from "@/models"
+import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21 } from "@shared/models"
 import { cargarLibrosEnPrestamo } from "@/services"
 import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
 import { useSettingsStore } from "./useSettingsStore"
-
-export type AreasDeBusqueda = "all" | "disponibles" | "prestados" | "vencidos"
+import { buscarLibroPorNro } from "./buscarLibroPorNro"
 
 interface LibrosState {
-  libros: LibroEnPrestamo[]
-  librosFiltrados: LibroEnPrestamo[]
-  librosVencidos: LibroEnPrestamo[]
-  librosDisponibles: Libro[]
-  librosPrestados: LibroEnPrestamo[]
+  libros: LibroRegistrado[]
+  librosFiltrados: LibroRegistrado[]
+  librosVencidos: LibroRegistrado[]
+  librosDisponibles: Libro[] | Marc21[]
+  librosPrestados: LibroRegistrado[]
   
   showDetallesLibro: boolean
-  libroSeleccionado: Libro | LibroEnPrestamo | null
+  libroSeleccionado: Libro | Marc21 |LibroRegistrado | null
   
   inicializar: () => Promise<void>
   
-  verDetallesLibro: (libro: Libro | LibroEnPrestamo) => void
-  editarLibro: (libro: Partial<LibroEnPrestamo>) => Promise<Libro | LibroEnPrestamo | null>
+  verDetallesLibro: (libro: Libro | LibroRegistrado) => void
+  editarLibro: (libro: Partial<LibroRegistrado>) => Promise<Libro | LibroRegistrado | null>
   
   verCatalogo: () => void
   buscar: (query: string) => void
 
-  getLibrosSocio: (nroSocio: number) => Promise<LibroEnPrestamo[]>
+  getLibrosSocio: (nroSocio: number) => Promise<LibroRegistrado[]>
   agregarLibroEnPrestamo: (
-    libro: Libro,
+    libro: Libro | Marc21,
     options?: { fechaDePrestamo?: Date },
-  ) => Promise<LibroEnPrestamo | null>
+  ) => Promise<LibroRegistrado | null>
   devolverLibro: (nroInventario: number | string) => Promise<void>
-  getLibroPorInventario: (nroInventario: number | string) => LibroEnPrestamo | null
+  getLibroPorInventario: (nroInventario: number | string) => LibroRegistrado | null
+
+  ingresoMark21: (ingreso: Marc21) => Promise<boolean>
+  ingresoSimple: (ingreso: Libro) => Promise<boolean>
+
+  getUltimoNumeroInventario: () => number
+  esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -47,9 +52,9 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   inicializar: async () => {
     const { limiteDeDias } = useSettingsStore.getState()
 
-    const librosVencidos: LibroEnPrestamo[] = []
+    const librosVencidos: LibroRegistrado[] = []
     const librosDisponibles: Libro[] = []
-    const librosPrestados: LibroEnPrestamo[] = []
+    const librosPrestados: LibroRegistrado[] = []
 
     const libros = await cargarLibrosEnPrestamo()
     libros.forEach(libro => {
@@ -159,9 +164,78 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
 
   getLibroPorInventario: (nroInventario) => {
     const { libros } = get()
-    return libros.find(l =>
-      l.numeroInventario?.toString() === nroInventario.toString().trim()
-    ) ?? null
+    const result = buscarLibroPorNro(String(nroInventario), libros)
+    return result.length ? result[0] : null
+  },
+
+  ingresoMark21: async (ingreso: Marc21) => {
+    if (!ingreso.titulo?.trim() || !ingreso.itemType) return false
+    if (!ingreso.numeroInventario || !ingreso.holding.homeBranch) return false
+
+    const libroRegistrado = await window.electronAPI.ingresarLibroMark21(ingreso)
+    if(!libroRegistrado) return false
+
+    const { libros, librosDisponibles } = get()
+    set({
+      libros: [...libros, {
+        ...libroRegistrado,
+        fechaDePrestamo: null,
+      }],
+      librosDisponibles: [...librosDisponibles, libroRegistrado],
+    })
+    return true
+  },
+
+  ingresoSimple: async (ingreso: Libro) => {
+    if(!ingreso.titulo.trim()) return false
+
+    const libroRegistrado = await window.electronAPI.ingresarLibro(ingreso)
+    if(!libroRegistrado) return false
+    const newLibro = {
+        ...libroRegistrado,
+        fechaDePrestamo: null,
+      }
+
+    const { libros, librosDisponibles } = get()
+    set({
+      libros: [...libros, newLibro],
+      librosDisponibles: [...librosDisponibles, newLibro ],
+    })
+    return true
+  },
+
+  getUltimoNumeroInventario: () => {
+    const { libros } = get()
+    if (!libros.length) return 0
+
+    return libros.reduce((max, l) => {
+      const n = Number(l.numeroInventario)
+      return n > max ? n : max
+    }, 0)
+  },
+
+  esNroInventarioExistente: (nro: string | number) => {
+    if(nro === "" || nro === null || nro === undefined) {
+      return {
+        libro: null,
+        existente: false,
+      }
+    }
+
+    const { libros, libroSeleccionado } = get()
+
+    if(String(libroSeleccionado?.numeroInventario) === String(nro)) {
+      return {
+        libro: libroSeleccionado,
+        existente: false,
+      }
+    }
+
+    const libro = libros.find(l => String(l.numeroInventario) === String(nro)) ?? null
+    return {
+      libro,
+      existente: libro !== null,
+    }
   },
 }))
 

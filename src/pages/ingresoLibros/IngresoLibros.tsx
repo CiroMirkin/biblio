@@ -1,8 +1,14 @@
+import { IngresoSimple } from "./IngresoSimple"
+import { IngresoMarc21 } from "./IngresoMarc21"
+import { useSettingsStore } from "@/store"
 
 export function IngresoLibros() {
+    const { catalogacionSimple } = useSettingsStore()
+    
     return (
         <>
-            <h2>Próximamente...</h2>
+            { catalogacionSimple && <IngresoSimple /> }
+            { !catalogacionSimple && <IngresoMarc21 /> }
         </>
     )
 }

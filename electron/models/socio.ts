@@ -1,24 +1,7 @@
 import type ExcelJS from 'exceljs'
 import { getCellString } from '../utils/excelhelpers'
 import { parseFecha } from '../utils/parseFecha'
-
-export interface Socio {
-  nroSocio: NroSocio
-  nombreYApellido: string
-  domicilio: string
-  dni: number
-  telefono: string | null
-  fechaNacimiento: String | null
-  caracterSocio: string
-  fechaIngreso: String | null
-  fechaEgreso: String | null
-  observaciones: string
-  email: string
-  sociosVinculados: NroSocio[]
-}
-
-export type NroSocio = number
-export type NewSocioData = Omit<Socio, 'nroSocio'>
+import type { Socio, NroSocio } from '@shared/models/socio'
 
 export function writeSocio(row: ExcelJS.Row, socio: Socio): void {
   row.getCell(2).value = socio.nombreYApellido ?? ""

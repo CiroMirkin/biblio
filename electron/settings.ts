@@ -9,6 +9,8 @@ interface SettingsSchema {
   gestionDeCuotas: boolean
   numerosDeInventarioExternos: boolean
   vincularSocios: boolean
+  catalogacionSimple: boolean
+  nombreBiblioteca: string
 }
 
 const store = new Store<SettingsSchema>({
@@ -22,6 +24,8 @@ const store = new Store<SettingsSchema>({
     gestionDeCuotas: { type: 'boolean', },
     numerosDeInventarioExternos: { type: 'boolean', },
     vincularSocios: { type: 'boolean' },
+    catalogacionSimple: { type: 'boolean' },
+    nombreBiblioteca: { type: 'string', minLength: 6, maxLength: 40, },
   },
   defaults: {
     limiteDeDias: 40,
@@ -32,6 +36,8 @@ const store = new Store<SettingsSchema>({
     gestionDeCuotas: true,
     numerosDeInventarioExternos: true,
     vincularSocios: false,
+    catalogacionSimple: true,
+    nombreBiblioteca: 'Biblioteca ...',
   },
 })
 
@@ -45,6 +51,8 @@ export function getAll(): SettingsSchema {
     gestionDeCuotas: store.get('gestionDeCuotas'),
     numerosDeInventarioExternos: store.get('numerosDeInventarioExternos'),
     vincularSocios: store.get('vincularSocios'),
+    catalogacionSimple: store.get('catalogacionSimple'),
+    nombreBiblioteca: store.get('nombreBiblioteca'),
   }
 }
 

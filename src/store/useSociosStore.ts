@@ -1,5 +1,6 @@
 import { create } from "zustand"
-import type { CaracterSocio, NewSocio, Socio } from "@/models/Socio"
+import type { CaracterSocio } from "@/models/Socio"
+import type { NewSocio, Socio } from "@shared/models"
 import { cargarSocios } from "@/services/cargarSocios"
 import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"

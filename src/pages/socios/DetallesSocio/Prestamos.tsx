@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
-import { getCaracterSocio, type Libro, type LibroEnPrestamo } from "@/models"
+import { getCaracterSocio } from "@/models"
+import { type LibroEnPrestamo } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatName, formatFecha, formatTitulo, getDia } from "@/utils"
 import { useSociosStore, useLibrosStore, useSettingsStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"
@@ -163,12 +164,13 @@ export function Prestamos({ onSuccess }: Props) {
         ? ""
         : input.numeroInventario
 
-      const libro: Libro = {
+      const libro: LibroEnPrestamo = {
         autor: formatName(input.autor),
         titulo: formatTitulo(input.titulo),
         nombreSocio,
         numeroSocio: nroSocio ?? null,
         numeroInventario,
+        fechaDePrestamo: null,
       }
 
       const fecha = input.fechaDePrestamo
@@ -236,7 +238,9 @@ export function Prestamos({ onSuccess }: Props) {
   return (
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
-        <span className={cn(colNro, "truncate",!numerosDeInventarioExternos && "hidden",)}>N° Inventario</span>
+        <span className={cn(colNro, "truncate",!numerosDeInventarioExternos && "hidden",)}>
+          N° Inventario
+        </span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
         <span className={cn(colFecha, !hasLibros && "opacity-0", !fechaDePrestamoAutomatica && "opacity-100")}>Fecha</span>
@@ -302,6 +306,7 @@ export function Prestamos({ onSuccess }: Props) {
               )}
               disabled={!caracterSocio}
               placeholder="N°"
+              maxLength={5}
             />
 
             {enPrestamo
@@ -342,7 +347,7 @@ export function Prestamos({ onSuccess }: Props) {
                       }}
                       disabled={lockedInputs[id]}
                       className={cn(
-                        "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed",
+                        "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed placeholder:opacity-85",
                         field === 'autor' ? colAutor : colTitulo,
                       )}
                       placeholder={field === 'autor' ? 'Autor (Apellido, Nombre)' : 'Título'}

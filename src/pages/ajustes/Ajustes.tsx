@@ -9,24 +9,32 @@ import { PrecioCuota } from "./PrecioCuotas";
 import { EstablecerUsoDeCuotas } from "./EstablecerUsoDeCuotas";
 import { UsarNumeroDeInventarioExternos } from "./UsarNumeroDeInventarioExternos";
 import { PermitirVincularSocios } from "./PermitirVincularSocios";
+import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
+import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
+import { NombreBiblioteca } from "./NombreBiblioteca";
+import { ImportarArchivoMrc } from "./ImportarArchivoMrc";
 
 export function Ajustes() {
-    const { gestionDeCuotas } = useSettingsStore()
+    const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
 
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
             <div>
                 <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
                 <div className="flex flex-col gap-4">
+                    <NombreBiblioteca />
                     <EstablecerUsoDeCuotas />
                     { gestionDeCuotas && <PrecioCuota /> }
                     { gestionDeCuotas && <MaximoDeCuotasAdeudadas /> }
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
                     <UsarNumeroDeInventarioExternos />
+                    { numerosDeInventarioExternos && <EstableceTipoDeCatalogacion /> }
                     <ComoEstablecerFechaPrestamo />
                     <PermitirVincularSocios />
                     <CopiarExcels />
+                    { numerosDeInventarioExternos && <DescargarArchivoMrc /> }
+                    { numerosDeInventarioExternos && <ImportarArchivoMrc /> }
                     <ActualizarApp />
                 </div>
             </div>

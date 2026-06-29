@@ -1,5 +1,5 @@
 import { CheckIcon, Form, Spinner } from "@/components"
-import type { Socio } from "@/models"
+import type { Socio } from "@shared/models"
 import { useSociosStore } from "@/store"
 import { cn } from "@/utils"
 import { useState } from "react"

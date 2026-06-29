@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs'
 import { LIBROS_XLSX_PATH } from '../../constants'
-import type { Socio } from '../../models/socio'
+import type { Socio } from '@shared/models/socio'
 
 type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
 

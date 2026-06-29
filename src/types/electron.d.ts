@@ -1,7 +1,14 @@
-import type { Libro, LibroEnPrestamo, NewSocio, Socio } from "@/models"
+import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21, NewSocio, Socio } from "@/models"
 import type { Settings as SettingsSchema } from "@/services/settingsService"
 
 export {}
+
+export type ImportarMrcResult = {
+  agregados: number
+  actualizados: number
+  sinCambios: number
+  errores: MrcImportError[]
+}
 
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros'
@@ -10,8 +17,10 @@ declare global {
     electronAPI: {
       getSocios: () => Promise<Record<string, unknown>[]>
       getLibros: () => Promise<LibroEnPrestamo[]>
-      editarDatosLibro: (nroInventario: string, datos: Partial<Libro | LibroEnPrestamo>) => Promise<Libro | LibroEnPrestamo | null>
-      
+      editarDatosLibro: (nroInventario: string, datos: Partial<Libro | LibroRegistrado>) => Promise<Libro | LibroEnPrestamo | null>
+      ingresarLibro: (libro: Libro) => Promise<Libro | null>
+      ingresarLibroMark21: (libro: Marc21) => Promise<Marc21 | null>
+
       addLibroPrestado: (libro: Libro, fecha?: Date) => Promise<LibroEnPrestamo | null>
       
       devolverLibro: (numeroInventario: number | string) => Promise<boolean>
@@ -37,6 +46,8 @@ declare global {
       
       createSocio: (socio: NewSocio) => Promise<Socio>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
+      obtenerArchivoMrc: () => Promise<void>
+      importarMrc: (filePath: string) => Promise<ImportarMrcResult>
       settingsGetAll: () => Promise<SettingsSchema>
       settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>
       settingsSet: <K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]) => Promise<void>
