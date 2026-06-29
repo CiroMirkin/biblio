@@ -14,17 +14,10 @@ export function EditarLibro() {
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  if (!libroSeleccionado) {
-    return (
-      <div className="card">
-        <p>No hay ningún libro seleccionado.</p>
-      </div>
-    )
-  }
-
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
+    if(!libroSeleccionado) return false
     if(loading) return false
     if(!form.titulo.value.trim()) return false
 
@@ -73,6 +66,14 @@ export function EditarLibro() {
       return false
     }
     return true
+  }
+
+  if (!libroSeleccionado) {
+    return (
+      <div className="card">
+        <p>No hay ningún libro seleccionado.</p>
+      </div>
+    )
   }
 
   return (

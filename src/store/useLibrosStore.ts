@@ -87,11 +87,11 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     const filtrados = buscarLibro({
       libros,
       dato: query.toLowerCase().trim(),
-    })
+    }) || []
     set({ librosFiltrados: filtrados })
   },
 
-  verCatalogo: () => set({ showDetallesLibro: false, }),
+  verCatalogo: () => set({ showDetallesLibro: false, libroSeleccionado: null, }),
 
   verDetallesLibro: (libro) => {
     if(!libro) return;

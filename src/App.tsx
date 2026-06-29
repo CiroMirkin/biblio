@@ -98,8 +98,8 @@ function App() {
         </motion.button>
         <motion.button
           onClick={() => {
-            verCatalogo()
             setActualView(options.LIBROS)
+            verCatalogo()
           }}
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
