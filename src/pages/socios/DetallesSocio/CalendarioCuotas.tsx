@@ -18,13 +18,13 @@ function Mes({ nombre, pagado, gris, loading, anyLoading, onToggle, year }: MesP
   const color = pagado ? "bg-green" : "bg-[#f582ae59]"
   return (
     <li onClick={!anyLoading ? onToggle : undefined} className={cn(
-      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs select-none",
+      "px-3 pb-2 pt-1 rounded flex flex-col gap-2 justify-center cursor-default shadow-xs select-none w-0 min-w-full",
       gris ? "bg-gray" : color,
       anyLoading && "opacity-80"
     )}>
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center overflow-hidden w-full">
         <span className="pt-px text-xs opacity-70 font-semibold">{year}</span>
-        <span className={cn("font-semibold text-lg text-center truncate", gris && "opacity-80")}>
+        <span className={cn("font-semibold text-lg text-center truncate w-full", gris && "opacity-80")}>
           {nombre}
         </span>
       </div>

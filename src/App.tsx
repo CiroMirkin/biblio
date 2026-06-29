@@ -46,7 +46,7 @@ const views = [
 function App() {
   const { showListaSocios, buscar, inicializar: inicializarSocios } = useSociosStore()
   const { inicializar: inicializarLibros, verCatalogo } = useLibrosStore()
-  const { inicializar: inicializarSettings, numerosDeInventarioExternos } = useSettingsStore()
+  const { inicializar: inicializarSettings, numerosDeInventarioExternos, gestionDeCuotas } = useSettingsStore()
 
   const [ actualView, setActualView ] = useState<options>(options.CUOTA)
   const [ bg, setbg ] = useState("bg-secondary")
@@ -81,7 +81,7 @@ function App() {
             actualView !== options.CUOTA && "opacity-80",
           )}
         >
-          <span className="hidden md:block">Socios y cuotas</span>
+          <span className="hidden md:block">{ gestionDeCuotas ? "Socios y cuotas" : "Socios" }</span>
           <span className="block md:hidden">Socios</span>
         </motion.button>
         <motion.button

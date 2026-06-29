@@ -238,8 +238,8 @@ export function Prestamos({ onSuccess }: Props) {
   return (
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
-        <span className={cn(colNro, !numerosDeInventarioExternos && "hidden",)}>
-          N° de Inventario
+        <span className={cn(colNro, "truncate",!numerosDeInventarioExternos && "hidden",)}>
+          N° Inventario
         </span>
         <span className={colTitulo}>Título</span>
         <span className={colAutor}>Autor</span>
@@ -261,7 +261,7 @@ export function Prestamos({ onSuccess }: Props) {
                 {libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario}
               </span>
               <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
-              <span className={cn("text-lg wrap-break-word", colAutor)}>{libro.autor}</span>
+              <span className={cn("text-lg truncate", colAutor)}>{libro.autor}</span>
               <span
                 className={cn(
                   "text-lg", colFecha,
@@ -350,7 +350,7 @@ export function Prestamos({ onSuccess }: Props) {
                         "border bg-white border-black rounded p-1 px-2 disabled:opacity-50 disabled:cursor-not-allowed placeholder:opacity-85",
                         field === 'autor' ? colAutor : colTitulo,
                       )}
-                      placeholder={field === 'autor' ? 'Autor' : 'Título'}
+                      placeholder={field === 'autor' ? 'Autor (Apellido, Nombre)' : 'Título'}
                     />
                   ))}
 
