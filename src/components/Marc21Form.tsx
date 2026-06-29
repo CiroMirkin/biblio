@@ -7,8 +7,7 @@ import { CheckIcon, Spinner } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 
 const ORDER = [
-  "titulo", "autor", "numeroInventario", "barcode", "edition", "placeOfPublication",
-  "publisher", "publicationYear", "callNumber", "callNumberPrefix", "publicNote",
+  "titulo", "autor", "numeroInventario", "barcode", "callNumberPrefix", "callNumber","publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
 ]
 
 function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
@@ -107,18 +106,33 @@ export function Marc21Form({
         )}
 
         <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Tipo o Numero de Edición:</span>
-          <input onKeyDown={handleEnter} type="text" name="edition" id="edition" defaultValue={defaultValues?.edition ?? ""} className={inputClass} />
+          <span className="font-semibold">País de origen del autor:</span>
+          <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" defaultValue={defaultValues?.authorCountry ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Signatura topográfica:</span>
+          <input onKeyDown={handleEnter} step="0.01" min={100} type={ mode == "ingreso" ? "number": "text" } name="callNumber" id="callNumber" defaultValue={ formatCallNumber(defaultValues?.holding.callNumber) ?? "" } className={inputClass} />
+        </label>
+
+        <label className="flex flex-col gap-1 text-base opacity-50">
+          <span>Biblioteca propietaria:</span>
+          <input type="text" value={!homeBranch ? "El nombre se define en AJUSTES" : homeBranch} disabled name="homeBranch" id="homeBranch" required className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`} />
+        </label>
+
+        <label className="mt-4 flex flex-col gap-1 text-base">
+          <span className="font-semibold">Nombre de la Editorial:</span>
+          <input onKeyDown={handleEnter} type="text" name="publisher" id="publisher" defaultValue={defaultValues?.publisher ?? ""} className={inputClass} />
+        </label>
+
+        <label className="mt-4 flex flex-col gap-1 text-base">
           <span className="font-semibold">Lugar de publicación:</span>
           <input onKeyDown={handleEnter} type="text" name="placeOfPublication" id="placeOfPublication" defaultValue={defaultValues?.placeOfPublication ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Nombre de la Editorial:</span>
-          <input onKeyDown={handleEnter} type="text" name="publisher" id="publisher" defaultValue={defaultValues?.publisher ?? ""} className={inputClass} />
+          <span className="font-semibold">Tipo o Numero de Edición:</span>
+          <input onKeyDown={handleEnter} type="text" name="edition" id="edition" defaultValue={defaultValues?.edition ?? ""} className={inputClass} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
@@ -126,24 +140,9 @@ export function Marc21Form({
           <input onKeyDown={handleEnter} type="text" name="publicationYear" id="publicationYear" defaultValue={defaultValues?.publicationYear ?? ""} className={inputClass} />
         </label>
 
-        <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Signatura topográfica:</span>
-          <input onKeyDown={handleEnter} step="0.01" type={ mode == "ingreso" ? "number": "text" } name="callNumber" id="callNumber" defaultValue={ formatCallNumber(defaultValues?.holding.callNumber) ?? "" } className={inputClass} />
-        </label>
-
-        <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">País de origen del autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" defaultValue={defaultValues?.authorCountry ?? ""} className={inputClass} />
-        </label>
-
-        <label className="flex flex-col gap-1 text-base">
+        <label className="mt-2 col-span-2 flex flex-col gap-1 text-base">
           <span className="font-semibold">Observaciones / Notas publicas:</span>
           <input onKeyDown={handleEnter} type="text" name="publicNote" id="publicNote" defaultValue={defaultValues?.holding.publicNote ?? ""} className={inputClass} />
-        </label>
-
-        <label className="flex flex-col gap-1 text-base">
-          <span>Biblioteca propietaria:</span>
-          <input type="text" value={!homeBranch ? "El nombre se define en AJUSTES" : homeBranch} disabled name="homeBranch" id="homeBranch" required className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`} />
         </label>
       </div>
 
