@@ -77,7 +77,7 @@ export function IngresoSimple() {
       <aside className="sticky top-0 h-fit hidden md:block">
         <div className="w-full bg-transparent h-2" />
         <section className="card mb-4 flex flex-col gap-2">
-          <p>Aquí puedes registrar nuevos libros</p>
+          <p>Aquí puedes registrar nuevos libros dentro del inventario, <strong>esta sección no es para registrar prestamos.</strong></p>
         </section>
       </aside>
     </div>

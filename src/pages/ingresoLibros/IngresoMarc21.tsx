@@ -105,7 +105,7 @@ export function IngresoMarc21() {
         <div className="w-full bg-transparent h-2" />
         <section className="card mb-4 flex flex-col gap-2">
             { !homeBranch && <p className="font-semibold">El nombre de la biblioteca debe definirse dentro de ajustes.</p> }
-            <p>Aquí puedes registrar nuevos libros.</p>
+            <p>Aquí puedes registrar nuevos libros dentro del inventario, <strong>esta sección no es para registrar prestamos.</strong></p>
         </section>
       </aside>
     </div>
