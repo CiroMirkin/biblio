@@ -2,6 +2,8 @@ import { cn } from "@/utils"
 import { type Marc21LiteraryForm } from "@shared/models"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { useRef, useState } from "react"
+import { motion } from "motion/react"
+import { CheckIcon, Spinner } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 
 const ORDER = ["numeroInventario", "titulo", "autor"]
@@ -22,16 +24,29 @@ interface Props {
     numeroInventario?: string | number; titulo?: string; autor?: string, literaryForm?: Marc21LiteraryForm
   }
   submitDisabled?: boolean
+  onSuccess?: () => void
 }
 
-export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, submitDisabled = false }: Props) {
+export function LibroForm({
+  mode, submitLabel, onSubmit, defaultValues = {}, submitDisabled = false, onSuccess = () => {}
+}: Props) {
   const formRef = useRef<HTMLFormElement>(null)
-  const [ nroInvalido, setNroComoInvalido ] = useState(false)
+  const [nroInvalido, setNroComoInvalido] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
+    if (loading) return false
+
+    setLoading(true)
     const ok = await onSubmit(e)
-    if (!ok) return
+    setLoading(false)
+    if (!ok) return false
+
     if (mode === "ingreso") formRef.current?.reset()
+    setSuccess(true)
+    setTimeout(() => setSuccess(false), 1500)
+    onSuccess()
   }
 
   return (
@@ -74,16 +89,24 @@ export function LibroForm({ mode, submitLabel, onSubmit, defaultValues = {}, sub
           <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues.autor ?? ""} className="w-full border bg-white border-black rounded p-1 px-2 placeholder:opacity-85" placeholder="Apellido, nombre" />
         </label>
       </div>
-      <input
+
+      <motion.button
         type="submit"
-        value={submitLabel}
+        disabled={ submitDisabled || nroInvalido || loading }
+        animate={{
+          backgroundColor: success ? "#00a63e" : "",
+          color: success ? "#fff" : "",
+        }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className={cn(
-          "px-4 py-2 btn mt-2",
-          submitDisabled && "btn-disabled",
-          nroInvalido && "btn-disabled",
+          "px-4 py-2 btn mt-2 flex items-center justify-center gap-2",
+          (submitDisabled || nroInvalido || loading) && "btn-disabled",
         )}
-        disabled={submitDisabled || nroInvalido}
-      />
+      >
+        { success && <CheckIcon size={20} className="pt-0.5 text-[#fff]" /> }
+        { loading && <Spinner /> }
+        { submitLabel }
+      </motion.button>
     </form>
   )
 }

@@ -25,12 +25,12 @@ export function EditarLibro() {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    if(loading) return;
-    if(!form.titulo.value.trim()) return;
+    if(loading) return false
+    if(!form.titulo.value.trim()) return false
 
     const nro = form.numeroInventario ? form.numeroInventario.value : libroSeleccionado.numeroInventario
     const nroValido = isValidNumeroInventario(nro)
-    if(!nroValido) return;
+    if(!nroValido) return false
 
     let libro: Partial<Libro | Marc21> = {
       numeroInventario: nroValido ? nro : libroSeleccionado.numeroInventario,
@@ -70,11 +70,9 @@ export function EditarLibro() {
     setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")
-      return
+      return false
     }
-
-    setExito(true)
-    setTimeout(() => setExito(false), 1200)
+    return true
   }
 
   return (
@@ -115,6 +113,7 @@ export function EditarLibro() {
               !isMarc21(libroSeleccionado) ? makeBlankMark21(libroSeleccionado) : libroSeleccionado
             }
             submitDisabled={loading}
+            onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
           /> 
           : <LibroForm
             submitLabel="Guardar Cambios"
@@ -122,6 +121,7 @@ export function EditarLibro() {
             mode="edicion"
             defaultValues={libroSeleccionado}
             submitDisabled={loading}
+            onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
           />
         }
       </div>

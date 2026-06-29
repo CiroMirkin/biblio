@@ -2,6 +2,8 @@ import type { KeyboardEvent, SyntheticEvent } from "react"
 import { formatCallNumber, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
 import { cn } from "@/utils"
+import { motion } from "motion/react"
+import { CheckIcon, Spinner } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 
 const ORDER = [
@@ -26,22 +28,34 @@ interface Props {
   homeBranch: string
   submitDisabled?: boolean
   defaultValues?: Marc21
+  onSuccess?: () => void
 }
 
 export function Marc21Form({
-  mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues
+  mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues, onSuccess = () => {}
 }: Props) {
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
   const [ nroInvalido, setNroComoInvalido ] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: SyntheticEvent) => {
+    if (loading) return false
+    
+    setLoading(true)
     const ok = await onSubmit(e)
-    if (!ok) return
+    setLoading(false)
+    if (!ok) return false
+
     if (mode === "ingreso") {
       formRef.current?.reset()
       setTipoItem("BK")
     }
+
+    setSuccess(true)
+    setTimeout(() => setSuccess(false), 1500)
+    onSuccess()
   }
 
   return (
@@ -133,16 +147,23 @@ export function Marc21Form({
         </label>
       </div>
 
-      <input
+      <motion.button
         type="submit"
-        value={submitLabel}
-        disabled={submitDisabled || nroInvalido}
+        disabled={ submitDisabled || nroInvalido || loading }
+        animate={{
+          backgroundColor: success ? "#00a63e" : "",
+          color: success ? "#fff" : "",
+        }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className={cn(
-          "px-4 py-2 btn mt-2",
-          submitDisabled && "btn-disabled",
-          nroInvalido && "btn-disabled",
+          "px-4 py-2 btn mt-2 flex items-center justify-center gap-2",
+          (submitDisabled || nroInvalido || loading) && "btn-disabled",
         )}
-        />
+      >
+        { success && <CheckIcon size={20} className="pt-0.5 text-[#fff]" /> }
+        { loading && <Spinner /> }
+        { submitLabel }
+      </motion.button>
     </form>
   )
 }

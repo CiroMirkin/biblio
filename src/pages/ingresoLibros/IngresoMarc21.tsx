@@ -20,8 +20,8 @@ export function IngresoMarc21() {
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault()
         const form = e.target as HTMLFormElement
-        if(loading) return;
-        if(!form.titulo.value.trim()) return;
+        if(loading) return false
+        if(!form.titulo.value.trim()) return false
     
         let numeroInventario: string = form.numeroInventario.value.trim()
         if(!numeroInventario) {
@@ -29,7 +29,7 @@ export function IngresoMarc21() {
         }
         if(!isValidNumeroInventario(numeroInventario)) {
           setNroComoInvalido(true)
-          return;
+          return false
         }
 
         const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
@@ -65,9 +65,6 @@ export function IngresoMarc21() {
             console.error("Error en el ingreso del registro MARC21")
             return false
         }
-
-        setExito(true)
-        setTimeout(() => setExito(false), 1200)
         return true
     }
 
@@ -99,6 +96,7 @@ export function IngresoMarc21() {
             homeBranch={nombreBiblioteca}
             submitDisabled={loading || nroInvalido || !homeBranch}
             defaultValues={makeBlankMark21({ numeroInventario: nroParaLibroNuevo, titulo:"" })}
+            onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
         />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">

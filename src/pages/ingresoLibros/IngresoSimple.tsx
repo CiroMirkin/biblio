@@ -38,9 +38,6 @@ export function IngresoSimple() {
       console.error("Error en la edición del libro")
       return
     }
-
-    setExito(true)
-    setTimeout(() => setExito(false), 1200)
   }
 
   return (
@@ -72,6 +69,7 @@ export function IngresoSimple() {
           defaultValues={{
             numeroInventario: nroParaLibroNuevo,
           }}
+          onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
         />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">
