@@ -19,23 +19,34 @@ export function Ajustes() {
 
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
-            <div>
+            <div className="pb-6">
                 <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
                 <div className="flex flex-col gap-4">
                     <NombreBiblioteca />
                     <EstablecerUsoDeCuotas />
-                    { gestionDeCuotas && <PrecioCuota /> }
-                    { gestionDeCuotas && <MaximoDeCuotasAdeudadas /> }
+                    { gestionDeCuotas && 
+                        <div className="pl-8 flex flex-col gap-4">
+                            <PrecioCuota />
+                            <MaximoDeCuotasAdeudadas />
+                        </div>
+                    }
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
-                    <UsarNumeroDeInventarioExternos />
-                    { numerosDeInventarioExternos && <EstableceTipoDeCatalogacion /> }
                     <ComoEstablecerFechaPrestamo />
                     <PermitirVincularSocios />
+                    <UsarNumeroDeInventarioExternos />
+                    { numerosDeInventarioExternos && 
+                        <div className="pl-8 flex flex-col gap-4">
+                            <EstableceTipoDeCatalogacion />
+                        </div>
+                    }
                     <CopiarExcels />
-                    { numerosDeInventarioExternos && <DescargarArchivoMrc /> }
-                    { numerosDeInventarioExternos && <ImportarArchivoMrc /> }
+                    <DescargarArchivoMrc />
+                    <ImportarArchivoMrc />
                     <ActualizarApp />
+                    <div className="card mt-4">
+                        Ante cualquier inconveniente o sugerencia, puedes enviar un mensaje a traves del <a href="https://ciromirkin.github.io/biblio/" className="font-semibold hover:underline">sitio web</a>.
+                    </div>
                 </div>
             </div>
             <aside className="sticky top-0 h-fit hidden md:flex flex-col">
