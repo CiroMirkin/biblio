@@ -13,6 +13,7 @@ import { DescargarArchivoMrc } from "./DescargarArchivoMrc";
 import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
 import { NombreBiblioteca } from "./NombreBiblioteca";
 import { ImportarArchivoMrc } from "./ImportarArchivoMrc";
+import { AjustarCamposDeInscripcion } from "./AjustarCamposDeInscripcion";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -32,6 +33,7 @@ export function Ajustes() {
                     }
                     <MaximoPrestamosForm />
                     <MaximoDiasDelPrestamo />
+                    <AjustarCamposDeInscripcion />
                     <ComoEstablecerFechaPrestamo />
                     <PermitirVincularSocios />
                     <UsarNumeroDeInventarioExternos />

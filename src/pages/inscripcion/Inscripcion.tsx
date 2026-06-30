@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { formatFecha, formatName } from "@/utils"
 import { format } from "@formkit/tempo"
 import { InscripcionForm } from "./InscripcionForm"
+import { DatosNecesariosTexto } from "./DatosNecesariosTexto"
 
 export function Inscripcion() {
   const { crearSocio } = useSociosStore()
@@ -69,7 +70,7 @@ export function Inscripcion() {
 
         <aside className="sticky top-0 h-fit hidden md:block">
           <section className="p-4 rounded bg-white text-base">
-            <p>El apellido, nombre y numero de celular son los únicos datos 100% necesarios.</p>
+            <DatosNecesariosTexto />
           </section>
         </aside>
       </div>
