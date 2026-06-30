@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 		if (this.state.hasError) {
 			return (
 				<div className='bg-white w-full h-dvh p-20'>
-					<h2 className='block font-semibold text-xl'>Lo sentimos. Ocurrió un error inesperado. &#x1F641;</h2>
+					<h2 className='block font-semibold text-xl'>Lo sentimos. Ocurrió un error inesperado.</h2>
 					<p>Cierra el sistema y vuelve a abrirlo.</p>
 				</div>
 			)

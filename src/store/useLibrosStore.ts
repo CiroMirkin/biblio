@@ -37,6 +37,8 @@ interface LibrosState {
 
   getUltimoNumeroInventario: () => number
   esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
+
+  actualizarListados: <T extends Libro>(updated: T | undefined, options?: { nroViejo?: string }) => void
 }
 
 export const useLibrosStore = create<LibrosState>((set, get) => ({
@@ -115,64 +117,37 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     if(!updatedLibro) return null
 
     const nroViejo = String(libroSeleccionado.numeroInventario)
-    const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
-    set({
-      libros: actualizarListaLibros(libros, updatedLibro as LibroEnPrestamo, { nroViejo }),
-      librosDisponibles: actualizarListaLibros(librosDisponibles, updatedLibro as Libro, { nroViejo }),
-      librosPrestados: actualizarListaLibros(
-        librosPrestados, updatedLibro as LibroEnPrestamo, { nroViejo }
-      ),
-      librosVencidos: actualizarListaLibros(
-        librosVencidos, updatedLibro as LibroEnPrestamo, { nroViejo }
-      ),
-      librosFiltrados: actualizarListaLibros(librosFiltrados, updatedLibro as LibroEnPrestamo, { nroViejo }),
-    })
+    const { actualizarListados } = get()
+    actualizarListados(updatedLibro, { nroViejo })
     return updatedLibro
   },
 
   getLibrosSocio: async (nroSocio) => {
-    const raw = await window.electronAPI.getLibrosPrestadosSocio(nroSocio)
-    return (raw as unknown[]).map(l => {
-      const libro = l as Record<string, unknown>
-      return {
-        ...libro,
-        fechaDePrestamo: libro.fechaDePrestamo ? new Date(libro.fechaDePrestamo as string) : null,
-      }
-    }) as LibroEnPrestamo[]
+    const libros = await window.electronAPI.getLibrosPrestadosSocio(nroSocio)
+    return libros || []
   },
 
   agregarLibroEnPrestamo: async (libro, { fechaDePrestamo } = {}) => {
     const libroPrestado = await window.electronAPI.addLibroPrestado(libro, fechaDePrestamo)
     if (!libroPrestado) return null
-
-    const { libros, librosPrestados, librosDisponibles } = get()
-    set({
-      libros: actualizarListaLibros(libros, libroPrestado),
-      librosPrestados: actualizarListaLibros(librosPrestados, libroPrestado),
-      librosDisponibles: actualizarListaLibros(librosDisponibles, libroPrestado)
-    })
+    const { actualizarListados } = get()
+    actualizarListados(libroPrestado)
     return libroPrestado
   },
 
   devolverLibro: async (nroInventario) => {
     const ok = await window.electronAPI.devolverLibro(nroInventario)
     if (!ok) return
-    const { libros, librosPrestados, librosVencidos, librosDisponibles } = get()
+    
+    const { actualizarListados, libros } = get()
     const libroEnPrestamo = libros.find(l => String(l.numeroInventario) === String(nroInventario))
-    if(libroEnPrestamo === undefined) return
-
     const libroDevuelto = {
       ...libroEnPrestamo,
       fechaDePrestamo: null,
       nombreSocio: "",
       numeroSocio: null,
-    }
-    set({
-      libros: actualizarListaLibros(libros, libroDevuelto),
-      librosPrestados: actualizarListaLibros(librosPrestados, libroDevuelto),
-      librosVencidos: actualizarListaLibros(librosVencidos, libroDevuelto),
-      librosDisponibles: actualizarListaLibros(librosDisponibles, libroDevuelto),
-    })
+    } as LibroRegistrado
+    actualizarListados(libroDevuelto)
   },
 
   getLibroPorInventario: (nroInventario) => {
@@ -250,6 +225,30 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       existente: libro !== null,
     }
   },
+
+  actualizarListados: (updated, options) => {
+    if(!updated) return
+
+    const nroViejo = options?.nroViejo
+    const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
+    set({
+      libros: actualizarListaLibros(
+        libros, updated as LibroEnPrestamo, { nroViejo }
+      ),
+      librosDisponibles: actualizarListaLibros(
+        librosDisponibles, updated as Libro, { nroViejo }
+      ),
+      librosPrestados: actualizarListaLibros(
+        librosPrestados, updated as LibroEnPrestamo, { nroViejo }
+      ),
+      librosVencidos: actualizarListaLibros(
+        librosVencidos, updated as LibroEnPrestamo, { nroViejo }
+      ),
+      librosFiltrados: actualizarListaLibros(
+        librosFiltrados, updated as LibroEnPrestamo, { nroViejo }
+      ),
+    })
+  }
 }))
 
 function actualizarListaLibros<T extends Libro>(

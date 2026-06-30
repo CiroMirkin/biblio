@@ -16,7 +16,7 @@ export function DescargarArchivoMrc() {
 
     return (
         <div className="flex flex-col gap-2 card">
-            <h3 className="font-semibold text-lg">Descargar inventario de libro para subirlo al Koha</h3>
+            <h3 className="font-semibold text-lg">Descargar inventario de libros para subirlo al Koha</h3>
             <div className="flex gap-2">
                 <button
                     className={cn("btn flex items-center justify-center gap-1.5", loading && "btn-disabled")}
