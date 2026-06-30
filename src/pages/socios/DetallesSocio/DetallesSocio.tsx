@@ -1,7 +1,7 @@
 import { useSettingsStore, useSociosStore } from "@/store"
 import { Prestamos } from "./Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
-import { SocioDatos } from "./SocioDatos"
+import { Datos as SocioDatos } from "./Datos"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
