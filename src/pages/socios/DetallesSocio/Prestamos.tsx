@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react"
-import { motion } from "motion/react"
 import { getCaracterSocio } from "@/models"
 import { type LibroEnPrestamo } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatName, formatFecha, formatTitulo, getDia } from "@/utils"
 import { useSociosStore, useLibrosStore, useSettingsStore } from "@/store"
-import { CheckIcon, Spinner } from "@/components"
+import { CheckIcon, SubmitButton } from "@/components"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
 const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
@@ -383,20 +382,16 @@ export function Prestamos({ onSuccess }: Props) {
       })}
 
       {caracterSocio && (
-        <motion.button
-          type="button"
+        <SubmitButton
           onClick={handleAgregar}
-          disabled={loadingAgregar}
-          animate={{
-            backgroundColor: successAgregar ? "#00a63e" : "",
-            color: successAgregar ? "#fff" : "",
-          }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className={cn("btn mt-4 p-1 pb-2 flex items-center justify-center gap-2 text-lg rounded", loadingAgregar && "btn-disabled")}
+          loading={loadingAgregar}
+          success={successAgregar}
+          className="btn mt-4 p-1 pb-2 text-lg rounded"
+          iconSize={24}
+          iconClassName="pt-1 text-[#fff]"
         >
-          {successAgregar && <CheckIcon size={24} className="pt-1 text-[#fff]" />}
-          {loadingAgregar && <Spinner />} Registrar préstamo
-        </motion.button>
+          Registrar préstamo
+        </SubmitButton>
       )}
     </form>
   )

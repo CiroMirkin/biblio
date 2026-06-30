@@ -1,4 +1,5 @@
 import type { FormEvent, KeyboardEvent, Ref } from "react"
+import { SubmitButton } from "@/components"
 
 const ORDER = ["apellidos", "nombres", "dni", "fechaNacimiento", "telefono", "email", "domicilio", "observaciones"]
 
@@ -18,9 +19,22 @@ function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
 type InscripcionFormProps = {
   formRef: Ref<HTMLFormElement>
   onSubmit: (e: FormEvent<HTMLFormElement>) => void
+  loading: boolean
+  success: boolean
+  submitDisabled?: boolean
+  nroInvalido?: boolean
+  submitLabel?: string
 }
 
-export function InscripcionForm({ formRef, onSubmit }: InscripcionFormProps) {
+export function InscripcionForm({
+  formRef,
+  onSubmit,
+  loading,
+  success,
+  submitDisabled = false,
+  nroInvalido = false,
+  submitLabel = "Inscribir",
+}: InscripcionFormProps) {
   return (
     <form ref={formRef} className="flex flex-col gap-2 card" onSubmit={onSubmit}>
       <div className="w-full grid grid-cols-2 gap-4">
@@ -69,7 +83,15 @@ export function InscripcionForm({ formRef, onSubmit }: InscripcionFormProps) {
         <input onKeyDown={handleEnter} type="text" name="observaciones" id="observaciones" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="" />
       </label>
 
-      <input type="submit" value="Inscribir" className="px-4 py-2 btn mt-2" />
+        <SubmitButton
+            type="submit"
+            disabled={submitDisabled || nroInvalido}
+            loading={loading}
+            success={success}
+            className="px-4 py-2 btn mt-2"
+        >
+            {submitLabel}
+        </SubmitButton> 
     </form>
   )
 }

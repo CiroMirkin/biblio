@@ -12,6 +12,7 @@ export function Inscripcion() {
   const { crearSocio } = useSociosStore()
   const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
@@ -30,7 +31,10 @@ export function Inscripcion() {
       sociosVinculados: [],
     }
 
+    setLoading(true)
     const newSocio = await crearSocio(socio)
+    setLoading(false)
+
     if (!newSocio) {
       console.error("Error en la creación del socio")
       return
@@ -61,7 +65,7 @@ export function Inscripcion() {
       </h2>
 
       <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
-        <InscripcionForm formRef={formRef} onSubmit={handleSubmit} />
+        <InscripcionForm formRef={formRef} onSubmit={handleSubmit} loading={loading} success={exito} />
 
         <aside className="sticky top-0 h-fit hidden md:block">
           <section className="p-4 rounded bg-white text-base">
