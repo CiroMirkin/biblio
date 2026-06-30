@@ -8,6 +8,10 @@ interface Params {
 }
 
 export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
+  if (dato.toLocaleLowerCase().trim() === "prestamos de hoy") {
+    return buscarLibrosDeHoy(libros)
+  }
+
   if (!isNaN(Number(dato))) {
     return buscarLibroPorNro(dato, libros)
   }
@@ -22,6 +26,21 @@ export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
     : [porTitulo, porAutor]
 
   return [...new Set([...primero, ...segundo])]
+}
+
+function buscarLibrosDeHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
+  const hoy = new Date()
+  return libros.filter(
+    libro => libro.fechaDePrestamo != null && esMismaFecha(libro.fechaDePrestamo, hoy)
+  )
+}
+
+function esMismaFecha(fecha: Date, otra: Date): boolean {
+  return (
+    fecha.getFullYear() === otra.getFullYear() &&
+    fecha.getMonth() === otra.getMonth() &&
+    fecha.getDate() === otra.getDate()
+  )
 }
 
 function buscarPorTitulo(libros: LibroEnPrestamo[], dato: string): LibroEnPrestamo[] {
