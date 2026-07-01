@@ -13,6 +13,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         nombreSocio: String(row.getCell(1).value ?? ''),
         numeroSocio: Number(row.getCell(2).value ?? null),
         fechaDePrestamo: getFechaDePrestamoFromRow(row),
+        literaryForm: (String(row.getCell(8).value ?? '') || undefined) as Marc21LiteraryForm | undefined,
     }
 
     const itemType = String(row.getCell(7).value ?? '') as Marc21ItemType
@@ -22,7 +23,6 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         ...libroSimple,
         itemType,
         authorCountry: String(row.getCell(17) ?? ''),
-        literaryForm: (String(row.getCell(8).value ?? '') || undefined) as Marc21LiteraryForm | undefined,
         edition: String(row.getCell(9).value ?? '') || undefined,
         placeOfPublication: String(row.getCell(10).value ?? '') || undefined,
         publisher: String(row.getCell(11).value ?? '') || undefined,
@@ -80,6 +80,8 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
         libro.autor || '',
         libro.titulo,
         libro.numeroInventario ?? '',
+        '', // Pertenece a itemType el cual no existe en Libro
+        libro.literaryForm ?? '',
     ]
 }
 
@@ -91,6 +93,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.autor !== undefined) row.getCell(4).value = libro.autor
     if (libro.titulo !== undefined) row.getCell(5).value = libro.titulo
     if (libro.numeroInventario !== undefined) row.getCell(6).value = libro.numeroInventario
+    if (libro.literaryForm !== undefined) row.getCell(8).value = libro.literaryForm
 
     if(isMarc21(libro)) {
         if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
@@ -100,7 +103,6 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
         if (libro.holding?.callNumber !== undefined) row.getCell(16).value = formatCallNumber(libro.holding.callNumber)
 
         if (libro.itemType !== undefined) row.getCell(7).value = libro.itemType
-        if (libro.literaryForm !== undefined) row.getCell(8).value = libro.literaryForm
         if (libro.edition !== undefined) row.getCell(9).value = libro.edition
         if (libro.placeOfPublication !== undefined) row.getCell(10).value = libro.placeOfPublication
         if (libro.publisher !== undefined) row.getCell(11).value = libro.publisher
