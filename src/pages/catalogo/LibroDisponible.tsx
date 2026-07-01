@@ -1,6 +1,6 @@
-import { isMarc21, type Libro } from "@shared/models"
+import { isMarc21, parceLiteraryForm, type Libro } from "@shared/models"
 import { DetallesLibro } from "./DetallesLibro"
-import { formatNro } from "@/utils"
+import { cn } from "@/utils"
 
 type Props = {
     libro: Libro
@@ -15,10 +15,16 @@ export function LibroDisponible({ libro }: Props) {
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base">{libro.autor}</p>
                     { !isMarc21(libro) && 
-                        <p className="text-base opacity-80 mt-px">
-                            <span className="mr-1 font-semibold">N° </span>
-                            { libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
-                        </p>
+                        <div className="">
+                            <span
+                                className={cn(
+                                    "mr-1 font-semibold opacity-85",
+                                    libro.literaryForm ? "block" : "hidden"
+                                )}
+                            >
+                                { parceLiteraryForm(libro.literaryForm) }
+                            </span>
+                        </div>
                     }
                 </div>
                 <span className="text-base font-semibold text-greem">Disponible</span>

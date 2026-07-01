@@ -11,7 +11,7 @@ interface Props {
 export function DetallesLibro({ libro }: Props) {
     const [expandido, setExpandido] = useState(false)
     const { verDetallesLibro } = useLibrosStore()
-    const { catalogacionSimple } = useSettingsStore()
+    const { catalogacionSimple, numerosDeInventarioExternos } = useSettingsStore()
     const isMarc = isMarc21(libro)
 
     if(catalogacionSimple) {
@@ -40,6 +40,12 @@ export function DetallesLibro({ libro }: Props) {
                     onClick={() => setExpandido((prev) => !prev)}
                     >
                         { isMarc && <MarkDetalles libro={libro} /> }
+                        { (!isMarc && numerosDeInventarioExternos) && 
+                            <p className="text-base opacity-80 mt-1">
+                                <span className="mr-1 font-semibold">N° </span>
+                                { libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
+                            </p>
+                        }
                     </motion.div>
                 )}
             </AnimatePresence>

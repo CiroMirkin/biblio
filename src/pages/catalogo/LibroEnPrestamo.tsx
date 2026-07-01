@@ -1,5 +1,5 @@
-import { isMarc21, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
-import { calcularDiasDesdePrestamo, cn, formatDiasRelativo, formatNro } from "@/utils"
+import { isMarc21, parceLiteraryForm, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
+import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
 import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
 import { format } from "@formkit/tempo"
@@ -10,7 +10,7 @@ type Props = {
 }
 
 export function LibroEnPrestamo({ libro }: Props) {
-    const { limiteDeDias, numerosDeInventarioExternos } = useSettingsStore()
+    const { limiteDeDias } = useSettingsStore()
 
     if(libro.fechaDePrestamo === null) {
         return <LibroDisponible libro={libro} />
@@ -23,22 +23,21 @@ export function LibroEnPrestamo({ libro }: Props) {
         s.nroSocio === libro.numeroSocio || s.nombreYApellido === libro.nombreSocio
     ) ?? null
 
-    const mostrarNroDeInventario = numerosDeInventarioExternos && !isMarc21(libro)
-
     return (
         <li className="card flex flex-col">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
-                    <p className="text-base font-semibold">{libro.autor}</p>
-                    { mostrarNroDeInventario && 
-                        <p className="text-base mt-px">
-                            <span className="mr-1 font-semibold">N°</span>
-                            { 
-                                libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario 
-                                ? 'S/N' : formatNro(libro.numeroInventario)
-                            }
-                        </p>
+                    <p className="text-base font-semibold ">{libro.autor}</p>
+                    { !isMarc21(libro) &&
+                        <span
+                            className={cn(
+                                "mr-1 font-semibold opacity-85",
+                                libro.literaryForm ? "block" : "hidden"
+                            )}
+                        >
+                        { parceLiteraryForm(libro.literaryForm) }
+                        </span>
                     }
                 </div>
                 <span className={cn(
