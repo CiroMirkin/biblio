@@ -9,6 +9,7 @@ import { getCaracterSocio } from "@/models"
 import { cn, formatPrice } from "@/utils"
 import { motion, AnimatePresence } from "motion/react"
 import { SociosVinculados } from "./SociosVinculados/SociosVinculados"
+import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
 
 const anioActual: number = new Date().getFullYear()
@@ -48,6 +49,7 @@ export function DetalleSocio() {
             </AnimatePresence>
           </div>
           
+          { !caracterSocio.estado && <ExplicacionSocioInactivo /> }
           { !caracterSocio.estado && <Observaciones /> }
           
           { vincularSocios && <SociosVinculados /> }
@@ -77,9 +79,11 @@ export function DetalleSocio() {
 
           { caracterSocio.estado && <Observaciones /> }
           
-          <div className="flex gap-4 card">
-            <GestionEstadoSocio />
-          </div>
+          { caracterSocio.estado && 
+            <div className="flex gap-4 card">
+              <GestionEstadoSocio />
+            </div>
+          }
         </div>
       </div>
     </>

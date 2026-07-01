@@ -5,7 +5,6 @@ import { type LibroEnPrestamo } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatName, formatFecha, formatTitulo, getDia } from "@/utils"
 import { useSociosStore, useLibrosStore, useSettingsStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"
-import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
 
 const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
 
@@ -232,7 +231,7 @@ export function Prestamos({ onSuccess }: Props) {
   const hasLibros = libroSlots.length > 0
 
   if (!caracterSocio && !hasLibros) {
-    return <ExplicacionSocioInactivo />
+    return;
   }
 
   return (
