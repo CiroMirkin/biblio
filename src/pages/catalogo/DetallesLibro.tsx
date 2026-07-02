@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react"
-import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey } from "@shared/models"
+import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatNro } from "@/utils"
@@ -92,8 +92,8 @@ export function DetallesLibro({ libro }: Props) {
 
 function MarkDetalles({ libro }: { libro: Marc21 }) {
     const publicNote = libro.holding.publicNote
-    const dewey = libro?.dewey ?? "Desconocido"
     const signatura = libro?.holding?.callNumber || ""
+    const dewey = (libro?.dewey ?? getDeweyFromCallNumber(signatura)) || ""
     const authorCountry = libro.authorCountry
     const literaryForm = formatLiteraryForm(libro.literaryForm)
 

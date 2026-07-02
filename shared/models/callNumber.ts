@@ -1,4 +1,4 @@
-import { formatCountry } from "./dewey"
+import { formatCountry, type Dewey } from "./dewey"
 
 /** 
  * Signatura topográfica en formato Dewey + Cutter, con extensiones locales.
@@ -75,4 +75,15 @@ export function countryToPrefix(country: string): string {
   }
 
   return words.map(w => w[0]).join('')
+}
+
+export function getDeweyFromCallNumber(callNumber: string | undefined): Dewey | undefined {
+  if(!callNumber || !callNumber.trim()) return undefined
+
+  const forValidation = normalizeCallNumber(callNumber)
+  const match = forValidation.match(
+    new RegExp(`^([A-Z]{1,4})?(\\d{3}(?:\\.\\d+)?)\\s([${CUTTER_CHARS}]{2,5})(?:\\s(v\\.\\d+))?$`)
+  )
+  if(!match) return undefined
+  return Number(match[2])
 }
