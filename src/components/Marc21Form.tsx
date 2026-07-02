@@ -3,7 +3,7 @@ import { type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
-import { cn } from "@/utils"
+import { CallNumberInput } from "./CallNumberInput"
 
 const ORDER = [
   "titulo", "autor", "numeroInventario", "barcode", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
@@ -36,6 +36,11 @@ export function Marc21Form({
   const [ nroInvalido, setNroComoInvalido ] = useState(false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  const [autor, setAutor] = useState(defaultValues?.autor ?? "")
+  const [country, setCountry] = useState(defaultValues?.authorCountry ?? "")
+  const [dewey, setDewey] = useState(defaultValues?.dewey?.toString() ?? "")
+  
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -49,6 +54,9 @@ export function Marc21Form({
     if (mode === "ingreso") {
       formRef.current?.reset()
       setTipoItem("BK")
+      setAutor("")
+      setCountry("")
+      setDewey("")
     }
 
     setSuccess(true)
@@ -66,7 +74,7 @@ export function Marc21Form({
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues?.autor ?? ""} className={inputClass} placeholder="Apellido, nombre" />
+          <input onKeyDown={handleEnter} onChange={e => setAutor(e.target.value)} type="text" name="autor" id="autor" value={autor} className={inputClass} placeholder="Apellido, nombre" />
         </label>
 
         <NroInventarioInput 
@@ -106,19 +114,23 @@ export function Marc21Form({
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">País de origen del autor:</span>
-          <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" defaultValue={defaultValues?.authorCountry ?? ""} className={inputClass} />
+          <input onKeyDown={handleEnter} onChange={e => setCountry(e.target.value)} type="text" name="callNumberPrefix" id="callNumberPrefix" value={country} className={inputClass} />
         </label>
 
         <div className="grid grid-cols-2 gap-4">
           <label className="flex flex-col gap-1 text-base">
             <span className="font-semibold">CDD:</span>
-            <input onKeyDown={handleEnter} step="0.01" min={100} type="number" name="dewey" id="dewey" defaultValue={ defaultValues?.dewey ?? "" } className={inputClass} />
+            <input onKeyDown={handleEnter} onChange={e => setDewey(e.target.value)} step="0.01" min={100} type="number" name="dewey" id="dewey" value={dewey} className={inputClass} />
           </label>
 
-          <label className={cn("flex flex-col gap-1 text-base", mode === "ingreso" && "opacity-50 font-semibold")}>
-            <span className="font-semibold">Signatura:</span>
-            <input onKeyDown={handleEnter} step="0.01" min={100} type="text" disabled={mode === "ingreso"} name="callNumber" id="callNumber" defaultValue={ defaultValues?.holding.callNumber ?? "" } className={inputClass} />
-          </label>
+          <CallNumberInput
+            mode={mode}
+            autor={autor}
+            country={country}
+            dewey={dewey}
+            defaultValue={defaultValues?.holding.callNumber ?? ""}
+            inputClass={inputClass}
+          />
         </div>
 
         <label className="flex flex-col gap-1 text-base opacity-50">
