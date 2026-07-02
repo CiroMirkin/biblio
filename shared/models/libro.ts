@@ -1,4 +1,4 @@
-import type { Marc21LiteraryForm } from "./literaryForm"
+import type { LiteraryForm } from "./literaryForm"
 import type { Marc21EnPrestamo } from "./marc21"
 import type { DatosPrestamo } from "./prestamo"
 
@@ -6,7 +6,7 @@ export interface Libro {
     titulo: string
     autor?: string
     numeroInventario?: number | string
-    literaryForm?: Marc21LiteraryForm
+    literaryForm?: LiteraryForm
 }
 
 export type LibroEnPrestamo = Libro & DatosPrestamo

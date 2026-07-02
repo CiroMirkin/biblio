@@ -1,4 +1,4 @@
-import { type Marc21LiteraryForm } from "@shared/models"
+import { type LiteraryForm } from "@shared/models"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
@@ -19,7 +19,7 @@ interface Props {
   submitLabel: string
   onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
   defaultValues?: {
-    numeroInventario?: string | number; titulo?: string; autor?: string, literaryForm?: Marc21LiteraryForm
+    numeroInventario?: string | number; titulo?: string; autor?: string, literaryForm?: LiteraryForm
   }
   submitDisabled?: boolean
   onSuccess?: () => void

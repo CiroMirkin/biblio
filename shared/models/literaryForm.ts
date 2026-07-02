@@ -1,5 +1,6 @@
 
-export type Marc21LiteraryForm = 
+/** Forma literaria según Marc21 */
+export type LiteraryForm = 
     "0" | // No es ficción
     "1" | // Ficción
     "c" | // Historietas
@@ -29,7 +30,7 @@ export type Genero =
     "Discursos" |
     "Desconocido"
 
-export const marc21LiteraryForm: Record<Marc21LiteraryForm, Genero> = {
+export const marc21LiteraryForm: Record<LiteraryForm, Genero> = {
     "0": "No ficción",
     "1": "Ficción",
     "c": "Historieta",
@@ -45,7 +46,7 @@ export const marc21LiteraryForm: Record<Marc21LiteraryForm, Genero> = {
     "u": "Desconocido",
 }
 
-export function formatLiteraryForm(lf: Marc21LiteraryForm | undefined): Genero {
+export function formatLiteraryForm(lf: LiteraryForm | undefined): Genero {
   if (!lf) return "Desconocido"
   return marc21LiteraryForm[lf] ?? "Desconocido"
 }
