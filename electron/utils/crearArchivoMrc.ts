@@ -56,6 +56,10 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
         record.append(['100', '1 ', 'a', libro.autor])
     }
 
+    if (libro.authorCountry) {
+        record.append(['386', '  ', 'a', libro.authorCountry, 'm', 'nationality/regional group'])
+    }
+
     if (libro.titulo) {
         record.append(['245', libro.autor ? '10' : '00', 'a', libro.titulo])
     }
@@ -72,6 +76,10 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
         record.append(['260', '  ', ...subs260])
     }
 
+    if (libro.dewey !== undefined) {
+        record.append(['082', '0 ', 'a', String(libro.dewey)])
+    }
+
     record.append(['942', '  ', 'c', itemType])
 
     const subs952: string[] = [
@@ -84,12 +92,12 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
         subs952.push('o', libro.holding.callNumber)
     }
     if (libro.holding.publicNote)    subs952.push('z', libro.holding.publicNote)
+    if (libro.numeroInventario)      subs952.push('x', `Inv. Interno ${libro.numeroInventario}`)
 
     record.append(['952', '  ', ...subs952])
 
     return record
 }
-
 
 function buildField008(libro: Marc21): string {
     const year     = (libro.publicationYear ?? '').padEnd(4, ' ').slice(0, 4)
