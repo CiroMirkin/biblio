@@ -1,6 +1,6 @@
 import Store from 'electron-store'
 
-interface SettingsSchema {
+export interface SettingsSchema {
   limiteDeDias: number
   maximoLibrosEnPrestamo: number
   maximoDeCuotasAdeudadas: number
