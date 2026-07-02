@@ -125,6 +125,8 @@ describe('rowToLibro', () => {
         expect(result).toEqual({
             nombreSocio:      'Maria Lopez',
             numeroSocio:      7,
+            fechaDeIngreso: null,
+            literaryForm: undefined,
             fechaDePrestamo:  fecha,
             autor:            'Julio Cortazar',
             titulo:           'Rayuela',
