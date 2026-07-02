@@ -49,7 +49,15 @@ export function Ajustes() {
                     <ImportarArchivoMrc />
                     <ActualizarApp />
                     <div className="card mt-4">
-                        Ante cualquier inconveniente o sugerencia, puedes enviar un mensaje a traves del <a href="https://ciromirkin.github.io/biblio/" className="font-semibold hover:underline">sitio web</a>.
+                        Ante cualquier inconveniente o sugerencia, puedes enviar un mensaje a traves del 
+                        <a
+                            href="https://ciromirkin.github.io/biblio/"
+                            className="pl-1.5 font-semibold hover:underline"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                window.electronAPI.openExternal('https://ciromirkin.github.io/biblio/');
+                            }}
+                        >sitio web</a>.
                     </div>
                 </div>
             </div>

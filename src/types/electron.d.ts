@@ -53,6 +53,8 @@ declare global {
       settingsGetAll: () => Promise<SettingsSchema>
       settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>
       settingsSet: <K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]) => Promise<void>
+      
+      openExternal: (url: string) => Promise<void>
     }
   }
 }

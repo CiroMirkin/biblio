@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
 import path from 'node:path'
@@ -25,6 +25,10 @@ app.on('second-instance', () => {
 for (const [channel, handler] of Object.entries(ipcHandlers)) {
   ipcMain.handle(channel, handler)
 }
+
+ipcMain.handle('open-external', (_event, url: string) => {
+  shell.openExternal(url)
+})
 
 function setupUpdater(win: BrowserWindow) {
   autoUpdater.logger = log

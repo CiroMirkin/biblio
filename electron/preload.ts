@@ -57,6 +57,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   settingsGetAll: () => ipcRenderer.invoke('settings:getAll'),
   settingsGet: (key: string) => ipcRenderer.invoke('settings:get', key),
   settingsSet: (key: string, value: unknown) => ipcRenderer.invoke('settings:set', key, value),
+  
+  openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
 })
 
 contextBridge.exposeInMainWorld('updater', {
