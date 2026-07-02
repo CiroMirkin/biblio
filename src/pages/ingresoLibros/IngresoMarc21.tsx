@@ -44,17 +44,15 @@ export function IngresoMarc21() {
             publisher: formatName(form.publisher?.value) || "",
             publicationYear: form.publicationYear?.value || "",
             authorCountry: formatTitulo(form.callNumberPrefix?.value) || "",
+            dewey: parseFloat(form.dewey?.value || ""),
             holding: {
                 homeBranch,
                 holdingBranch: homeBranch,
                 barcode,
                 publicNote: formatTitulo(form.publicNote?.value) || "",
-                callNumber: {
-                    prefix: countryToPrefix(form.callNumberPrefix?.value || ""),
-                    dewey: String(form.callNumber?.value || "").split(',').join('.'),
-                    cutter: cutterFromAuthor(form.autor?.value || ""),
-                    volume: "",
-                },
+                callNumber: (
+                  `${countryToPrefix(form.callNumberPrefix?.value || "")} ${(form.dewey?.value || "").split(',').join('.')} ${cutterFromAuthor(form.autor?.value || "")}`
+                )
             },
         }
 

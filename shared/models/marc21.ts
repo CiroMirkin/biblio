@@ -1,4 +1,5 @@
 import type { CallNumber } from "./callNumber";
+import type { Dewey } from "./dewey";
 import type { Libro, LibroEnPrestamo, LibroRegistrado } from "./libro";
 import type { DatosPrestamo } from "./prestamo";
 
@@ -29,13 +30,15 @@ export interface Marc21 extends Libro {
   placeOfPublication?: string
   publisher?: string
   publicationYear?: string
+  dewey?: Dewey
+  volume?: string
 
   holding: {
     homeBranch: string
     holdingBranch: string
     barcode?: string
     publicNote?: string
-    callNumber?: CallNumber | null
+    callNumber?: CallNumber
   }
 }
 
@@ -49,11 +52,7 @@ export function isMarc21(libro: LibroRegistrado | undefined): libro is Marc21EnP
     
     if('callNumber' in holding) {
       const callNumber = holding.callNumber
-      const existeCallNumber = callNumber !== undefined && callNumber !== null
-
-      if(existeCallNumber) {
-        return 'dewey' in callNumber && String(callNumber.dewey || "").trim() !== ""
-      }
+      return callNumber !== undefined && callNumber !== null
     }
   }
 
@@ -68,10 +67,7 @@ export function makeBlankMark21(libro: Libro | LibroEnPrestamo): Marc21 {
       barcode: "",
       holdingBranch: "",
       homeBranch: "",
-      callNumber: {
-        dewey: "",
-        cutter: "",
-      },
+      callNumber: "",
     },
   }
 }

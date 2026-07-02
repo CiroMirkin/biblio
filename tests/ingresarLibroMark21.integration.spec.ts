@@ -30,10 +30,7 @@ describe('ingresarLibroMark21 (integration)', () => {
                 barcode: '999999',
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
-                callNumber: {
-                    dewey: "823",
-                    cutter: "TOL",
-                },
+                callNumber: "823 TOL",
             },
         }
 
@@ -69,10 +66,7 @@ describe('ingresarLibroMark21 (integration)', () => {
                 barcode: '888888',
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
-                callNumber: {
-                    dewey: " ",
-                    cutter: " ",
-                },
+                callNumber: "",
             },
         }
 
@@ -100,10 +94,7 @@ describe('ingresarLibroMark21 (integration)', () => {
                 barcode: barcodeExistente,
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
-                callNumber: {
-                    dewey: "",
-                    cutter: "",
-                },
+                callNumber: "",
             },
         }
 

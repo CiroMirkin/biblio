@@ -1,5 +1,4 @@
-import { parseStrToCallNumber } from '@shared/models/callNumber'
-import type { Marc21EnPrestamo, Marc21ItemType, Marc21LiteraryForm } from '@shared/models'
+import type { LiteraryForm, Marc21EnPrestamo, Marc21ItemType } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
@@ -123,7 +122,7 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
       || undefined
     const literaryFormRaw = field008[33]
     const literaryForm = literaryFormRaw && literaryFormRaw !== ' '
-      ? literaryFormRaw as Marc21LiteraryForm
+      ? literaryFormRaw as LiteraryForm
       : undefined
 
     const itemTypeFromRecord = (getSubfieldFromRecord(record, '942', 'c') ?? '') as Marc21ItemType
@@ -186,7 +185,7 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
           holdingBranch: getSubfield(field952, 'a') || homeBranch,
           barcode: barcode ?? '',
           publicNote: getSubfield(field952, 'z') || undefined,
-          callNumber: callNumberRaw ? parseStrToCallNumber(callNumberRaw) : undefined,
+          callNumber: callNumberRaw ? callNumberRaw : undefined,
         },
         nombreSocio: undefined,
         numeroSocio: undefined,

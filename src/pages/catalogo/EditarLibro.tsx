@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
-import { countryToPrefix, cutterFromAuthor, isMarc21, isValidNumeroInventario, makeBlankMark21, parseStrToCallNumber, type Libro, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, isMarc21, isValidNumeroInventario, makeBlankMark21, type Libro, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
@@ -33,7 +33,7 @@ export function EditarLibro() {
     }
     
     if(!catalogacionSimple) {
-      const callNumber = parseStrToCallNumber(form.callNumber?.value || "")
+      const callNumber = form.callNumber?.value || `${countryToPrefix(form.callNumberPrefix?.value || "")} ${(form.dewey?.value || "").split(',').join('.')} ${cutterFromAuthor(form.autor?.value || "")}`
       const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
       libro = {
         ...libro,
@@ -44,16 +44,13 @@ export function EditarLibro() {
         publisher: form.publisher?.value || "",
         publicationYear: form.publicationYear?.value || "",
         authorCountry: form.callNumberPrefix?.value || "",
+        dewey: parseFloat(form.dewey?.value || ""),
         holding: {
           homeBranch,
           holdingBranch: homeBranch,
           barcode,
           publicNote: form.publicNote?.value || "",
-          callNumber: callNumber ?? {
-            dewey: form.callNumber?.value,
-            cutter: cutterFromAuthor(form.autor?.value || ""),
-            prefix: countryToPrefix(form.callNumberPrefix?.value || ""),
-          }
+          callNumber: callNumber,
         },
       }
     }

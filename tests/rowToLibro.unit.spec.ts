@@ -59,7 +59,7 @@ describe('rowToLibro', () => {
                 homeBranch:    'Central',
                 holdingBranch: 'Deposito',
                 publicNote:    'Buen estado',
-                callNumber:    { dewey: '863', cutter: 'AVE' },
+                callNumber:    '863 AVE',
             },
         } as Marc21EnPrestamo)
     })

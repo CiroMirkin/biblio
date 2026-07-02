@@ -99,5 +99,36 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 890, genero: "Ficción", paises: ["Diversos"] },
 ]
 
+export function getDatosDelDewey(codigo: Dewey | undefined | null): { genero: Genero, paises: string[] } {
+  if (!codigo) {
+    return {
+      genero: "Desconocido",
+      paises: ["Desconocido"],
+    }
+  }
+  
+  const entrada = deweyPaises.find((item) => item.codigo === codigo)
+  
+  if (!entrada) {
+    return {
+      genero: "Desconocido",
+      paises: ["Desconocido"],
+    }
+  }
+
+  return {
+    genero: entrada.genero,
+    paises: entrada.paises,
+  }
+}
+
+export function getDeweyPorPaisYGenero(pais: string, genero: Genero): Dewey | null {
+  const entrada = deweyPaises.find(
+    (item) => item.genero === genero && item.paises.includes(pais)
+  )
+
+  return entrada ? entrada.codigo : null
+}
+
 export { deweyPaises }
 export default deweyPaises

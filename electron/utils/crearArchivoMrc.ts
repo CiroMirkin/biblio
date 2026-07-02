@@ -3,7 +3,6 @@ import { Record } from 'marcjs'
 import { getLibros } from '../handlers/libros'
 import { isMarc21 } from "@shared/models"
 import { type Marc21 } from "@shared/models/marc21"
-import { formatCallNumber } from '../../shared/models/callNumber'
 import { get } from '../settings'
 
 
@@ -82,7 +81,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     ]
     if (libro.holding.holdingBranch) subs952.push('a', libro.holding.holdingBranch)
     if (libro.holding.callNumber) {
-        subs952.push('o', formatCallNumber(libro.holding.callNumber))
+        subs952.push('o', libro.holding.callNumber)
     }
     if (libro.holding.publicNote)    subs952.push('z', libro.holding.publicNote)
 

@@ -1,11 +1,12 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { formatCallNumber, type Marc21, type Marc21ItemType } from "@shared/models"
+import { type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
+import { cn } from "@/utils"
 
 const ORDER = [
-  "titulo", "autor", "numeroInventario", "barcode", "callNumberPrefix", "callNumber","publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
+  "titulo", "autor", "numeroInventario", "barcode", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
 ]
 
 function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
@@ -108,10 +109,17 @@ export function Marc21Form({
           <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" defaultValue={defaultValues?.authorCountry ?? ""} className={inputClass} />
         </label>
 
-        <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Signatura topográfica:</span>
-          <input onKeyDown={handleEnter} step="0.01" min={100} type={ mode == "ingreso" ? "number": "text" } name="callNumber" id="callNumber" defaultValue={ formatCallNumber(defaultValues?.holding.callNumber) ?? "" } className={inputClass} />
-        </label>
+        <div className="grid grid-cols-2 gap-4">
+          <label className="flex flex-col gap-1 text-base">
+            <span className="font-semibold">CDD:</span>
+            <input onKeyDown={handleEnter} step="0.01" min={100} type="number" name="dewey" id="dewey" defaultValue={ defaultValues?.dewey ?? "" } className={inputClass} />
+          </label>
+
+          <label className={cn("flex flex-col gap-1 text-base", mode === "ingreso" && "opacity-50 font-semibold")}>
+            <span className="font-semibold">Signatura:</span>
+            <input onKeyDown={handleEnter} step="0.01" min={100} type="text" disabled={mode === "ingreso"} name="callNumber" id="callNumber" defaultValue={ defaultValues?.holding.callNumber ?? "" } className={inputClass} />
+          </label>
+        </div>
 
         <label className="flex flex-col gap-1 text-base opacity-50">
           <span>Biblioteca propietaria:</span>

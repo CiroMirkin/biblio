@@ -1,9 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
 import { isMarc21 } from "@shared/models"
-import type { LibroRegistrado, LibroEnPrestamo  } from "@shared/models"
-import { type Marc21ItemType, type Marc21LiteraryForm } from "@shared/models"
-import { formatCallNumber, parseStrToCallNumber } from "@shared/models/callNumber"
+import type { LibroRegistrado, LibroEnPrestamo, LiteraryForm, Marc21ItemType  } from "@shared/models"
 
 export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
     const libroSimple: LibroEnPrestamo = {
@@ -13,7 +11,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         nombreSocio: String(row.getCell(1).value ?? ''),
         numeroSocio: Number(row.getCell(2).value ?? null),
         fechaDePrestamo: getFechaDePrestamoFromRow(row),
-        literaryForm: (String(row.getCell(8).value ?? '') || undefined) as Marc21LiteraryForm | undefined,
+        literaryForm: (String(row.getCell(8).value ?? '') || undefined) as LiteraryForm | undefined,
     }
 
     const itemType = String(row.getCell(7).value ?? '') as Marc21ItemType
@@ -28,6 +26,11 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         publisher: String(row.getCell(11).value ?? '') || undefined,
         publicationYear: String(row.getCell(12).value ?? '') || undefined,
         holding: getHoldingFromRow(row),
+        dewey: (() => {
+            const raw = row.getCell(19).value
+            const parsed = typeof raw === 'number' ? raw : parseFloat(String(raw ?? ''))
+            return isNaN(parsed) ? undefined : parsed
+        })(),
     }
 }
 
@@ -36,7 +39,7 @@ export const getHoldingFromRow = (row: ExcelJS.Row) => ({
     homeBranch: String(row.getCell(13).value ?? ''),
     holdingBranch: String(row.getCell(14).value ?? ''),
     publicNote: String(row.getCell(15).value ?? '') || undefined,
-    callNumber: parseStrToCallNumber(String(row.getCell(16).value ?? '')) || undefined,
+    callNumber: String(row.getCell(16).value ?? '') || undefined,
 })
 
 export const getFechaDePrestamoFromRow = (row: ExcelJS.Row): Date | null => {
@@ -67,9 +70,10 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
             libro.holding.homeBranch,
             libro.holding.holdingBranch,
             libro.holding.publicNote ?? '',
-            formatCallNumber(libro.holding.callNumber),
+            libro.holding.callNumber ?? '',
             libro.authorCountry ?? '',
             libro.holding.barcode ?? '',
+            libro.dewey ?? '',
         ]
     }
  
@@ -96,18 +100,19 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.literaryForm !== undefined) row.getCell(8).value = libro.literaryForm
 
     if(isMarc21(libro)) {
-        if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
         if (libro.holding?.homeBranch !== undefined) row.getCell(13).value = libro.holding.homeBranch
         if (libro.holding?.holdingBranch !== undefined) row.getCell(14).value = libro.holding.holdingBranch
         if (libro.holding?.publicNote !== undefined) row.getCell(15).value = libro.holding.publicNote
-        if (libro.holding?.callNumber !== undefined) row.getCell(16).value = formatCallNumber(libro.holding.callNumber)
-
+        if (libro.holding?.callNumber !== undefined) row.getCell(16).value = libro.holding.callNumber
+        
         if (libro.itemType !== undefined) row.getCell(7).value = libro.itemType
         if (libro.edition !== undefined) row.getCell(9).value = libro.edition
         if (libro.placeOfPublication !== undefined) row.getCell(10).value = libro.placeOfPublication
         if (libro.publisher !== undefined) row.getCell(11).value = libro.publisher
         if (libro.publicationYear !== undefined) row.getCell(12).value = libro.publicationYear
         if (libro.authorCountry !== undefined) row.getCell(17).value = libro.authorCountry
+        if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
+        if (libro.dewey !== undefined) row.getCell(19).value = String(libro.dewey)
     }
 
     row.commit()

@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "motion/react"
-import { formatCallNumber, isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm } from "@shared/models"
+import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatNro } from "@/utils"
+import { getDatosDelDewey } from "@shared/models/dewey"
 
 interface Props {
     libro: LibroRegistrado | Libro | Marc21
@@ -61,7 +62,8 @@ export function DetallesLibro({ libro }: Props) {
                 { isMarc && 
                     <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
                         <span className="font-normal">{ formatNro(libro.numeroInventario) }</span>
-                        <span>{ formatCallNumber(libro.holding.callNumber) }</span>
+                        <span>{ getDatosDelDewey(libro?.dewey).genero }</span>
+                        <span className="opacity-70">{ libro.authorCountry }</span>
                     </span>
                 }
                 <button
@@ -89,6 +91,8 @@ export function DetallesLibro({ libro }: Props) {
 
 function MarkDetalles({ libro }: { libro: Marc21 }) {
     const publicNote = libro.holding.publicNote
+    const dewey = libro?.dewey ?? "Desconocido"
+    const signatura = libro?.holding?.callNumber || ""
     const authorCountry = libro.authorCountry
     const literaryForm = formatLiteraryForm(libro.literaryForm)
 
@@ -96,8 +100,8 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
         <ul className="pt-2 list-disc pl-6 text-base">
             <li className="group flex items-center justify-start">
                 <span className="flex gap-2 font-semibold opacity-80 cursor-default mr-1">
-                    <span>Signatura:</span>
-                    <span>{ formatCallNumber(libro.holding.callNumber) }</span>
+                    <span>CDD:</span>
+                    <span>{ dewey }</span>
                 </span>
              </li>
             <li className="group flex items-center justify-start">
@@ -119,6 +123,14 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                     <span className="cursor-default mr-1">
                         <span className="font-semibold mr-2">País de origen del autor:</span>
                         { authorCountry }
+                    </span>
+                </li>
+            }
+            { signatura &&
+                <li className="group flex items-center justify-start opacity-75">
+                    <span className="cursor-default mr-1">
+                        <span className="mr-2">Signatura:</span>
+                        { signatura }
                     </span>
                 </li>
             }

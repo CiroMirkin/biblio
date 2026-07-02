@@ -9,9 +9,9 @@ const crearRowEnBlanco = (): ExcelJS.Row => {
     return worksheet.getRow(1)
 }
 
-const callNumber: CallNumber = { dewey: '863', cutter: 'AVE' }
-const callNumberConPrefijo: CallNumber = { prefix: 'A', dewey: '863', cutter: 'AGU' }
-const callNumberConVolumen: CallNumber = { dewey: '982', cutter: 'COO', volume: 'v.2' }
+const callNumber: CallNumber = "863 AVE"
+const callNumberConPrefijo: CallNumber = "A 863 AGU"
+const callNumberConVolumen: CallNumber = "982 COO v.2"
 
 describe('writeLibro', () => {
     it('Escribe un Marc21EnPrestamo en las columnas que corresponden segun el mapeo', () => {
@@ -116,10 +116,7 @@ describe('writeLibro', () => {
                 barcode: '666666',
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
-                callNumber: {
-                    dewey: "863",
-                    cutter: "COR",
-                },
+                callNumber: "COR 863",
             },
             nombreSocio: 'Maria Lopez',
             numeroSocio: 7,
@@ -154,10 +151,7 @@ describe('writeLibro', () => {
                 barcode: '777777',
                 homeBranch: 'Central',
                 holdingBranch: 'Central',
-                callNumber: {
-                    dewey: "863",
-                    cutter: "BOR",
-                },
+                callNumber: "863 BOR"
             },
             autor: 'Jorge Luis Borges',
             nombreSocio: 'Carlos Ruiz',
