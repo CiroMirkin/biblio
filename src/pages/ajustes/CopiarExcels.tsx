@@ -10,6 +10,7 @@ export function CopiarExcels() {
         if (key === 'socios') await ExcelExportService.descargarSocios()
         if (key === 'cuotas') await ExcelExportService.descargarCuotas()
         if (key === 'libros') await ExcelExportService.descargarLibros()
+        if (key === 'completo') await ExcelExportService.copiaDeSeguridad()
         setCargando(null)
     }
 
@@ -37,6 +38,13 @@ export function CopiarExcels() {
                     onClick={() => handleDescargar('libros')}
                 >
                     {cargando === 'libros' ? 'Copiando libros...' : 'Libros'}
+                </button>
+                <button
+                    className={cn("ml-4 btn", cargando === "completo" && "btn-disabled")}
+                    disabled={!!cargando}
+                    onClick={() => handleDescargar('completo')}
+                >
+                    {cargando === 'completo' ? 'Exportando copia...' : 'Copia completa'}
                 </button>
             </div>
         </div>

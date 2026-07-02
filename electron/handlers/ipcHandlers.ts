@@ -24,6 +24,7 @@ import type { NewSocio, Socio } from '@shared/models/socio'
 import type { Marc21 } from "@shared/models/marc21"
 import { descargarMrc } from '../utils/descargarMrc'
 import { importarMrc } from '../utils/importarMrc'
+import { copiarExcelCompleto } from '../utils/copiarExcelCompleto'
 
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
@@ -60,6 +61,7 @@ const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
   obtenerArchivoMrc: (_: unknown) => descargarMrc(),
   importarMrc: (_: unknown, filePath: string) => importarMrc(filePath),
+  exportarExcelCompleto: (_: unknown) => copiarExcelCompleto(),
 }
 
 export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {

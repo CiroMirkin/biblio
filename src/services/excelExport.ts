@@ -20,4 +20,8 @@ export class ExcelExportService {
   static async importarMrc(filePath: string): Promise<ImportarMrcResult> {
     return window.electronAPI.importarMrc(filePath)
   }
+
+  static async copiaDeSeguridad(): Promise<boolean> {
+    return window.electronAPI.exportarExcelCompleto()
+  }
 }
