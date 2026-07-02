@@ -8,7 +8,7 @@ const ARCHIVOS = {
     libros: { path: LIBROS_XLSX_PATH, hojaOrigen: 'Hoja1', hojaDestino: 'libros' },
 } as const
 
-export const copiarExcelCompleto = async () => {
+export const exportarExcelCompleto = async () => {
     const fecha = new Date().toLocaleDateString(
         'es-AR',
         { day: '2-digit', month: '2-digit', year: '2-digit' }
