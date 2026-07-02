@@ -60,32 +60,8 @@ export const getFechaDeIngresoFromRow = (row: ExcelJS.Row): Date | null => {
 export const getNroDeInventarioFromRow = (row: ExcelJS.Row): string => row.getCell(6).value?.toString() ?? '' 
 
 export function libroToRow(libro: LibroRegistrado): (string | number | Date | null)[] {
-    if (isMarc21(libro)) {
-        return [
-            libro.nombreSocio ?? '',
-            libro.numeroSocio ?? null,
-            libro.fechaDePrestamo ?? null,
-            libro.autor || '',
-            libro.titulo,
-            libro.numeroInventario ?? '',
-            libro.itemType,
-            libro.literaryForm ?? '',
-            libro.edition ?? '',
-            libro.placeOfPublication ?? '',
-            libro.publisher ?? '',
-            libro.publicationYear ?? '',
-            // Holding
-            libro.holding.homeBranch,
-            libro.holding.holdingBranch,
-            libro.holding.publicNote ?? '',
-            libro.holding.callNumber ?? '',
-            libro.authorCountry ?? '',
-            libro.holding.barcode ?? '',
-            libro.dewey ?? '',
-            libro.fechaDeIngreso ?? '',
-        ]
-    }
-    
+    const marc21 = isMarc21(libro) ? libro : undefined
+
     return [
         libro.nombreSocio ?? '',
         libro.numeroSocio ?? null,
@@ -93,19 +69,20 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
         libro.autor || '',
         libro.titulo,
         libro.numeroInventario ?? '',
-        '', // Pertenece a itemType el cual no existe en Libro
+        marc21?.itemType ?? '',
         libro.literaryForm ?? '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
+        marc21?.edition ?? '',
+        marc21?.placeOfPublication ?? '',
+        marc21?.publisher ?? '',
+        marc21?.publicationYear ?? '',
+        // Holding
+        marc21?.holding.homeBranch ?? '',
+        marc21?.holding.holdingBranch ?? '',
+        marc21?.holding.publicNote ?? '',
+        marc21?.holding.callNumber ?? '',
+        marc21?.authorCountry ?? '',
+        marc21?.holding.barcode ?? '',
+        marc21?.dewey ?? '',
         libro.fechaDeIngreso ?? '',
     ]
 }
