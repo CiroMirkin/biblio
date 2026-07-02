@@ -123,7 +123,19 @@ export function getDatosDelDewey(codigo: Dewey | undefined | null): { genero: Ge
   }
 }
 
+export function formatCountry(pais: string): string {
+  pais = pais.trim().toLowerCase()
+  if(!pais) return ""
+
+  if(pais === 'arg') pais = 'Argentina'
+  if(['eeuu', 'eu'].includes(pais)) pais = 'Estados unidos'
+  if(['uk', 'inglaterra'].includes(pais)) pais = 'Reino Unido'
+  
+  return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
 export function getDeweyPorPaisYGenero(pais: string, genero: Genero): Dewey | null {
+  pais = formatCountry(pais)
   const entrada = deweyPaises.find(
     (item) => item.genero === genero && item.paises.includes(pais)
   )

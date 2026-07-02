@@ -1,3 +1,4 @@
+import { formatCountry } from "./dewey"
 
 /** 
  * Signatura topográfica en formato Dewey + Cutter, con extensiones locales.
@@ -60,7 +61,7 @@ export function cutterFromAuthor(author: string): string {
  * Retorna null si el string está vacío.
  */
 export function countryToPrefix(country: string): string {
-  const words = country
+  const words = formatCountry(country)
     .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

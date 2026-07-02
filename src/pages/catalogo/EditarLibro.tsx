@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
-import { countryToPrefix, cutterFromAuthor, isMarc21, isValidNumeroInventario, makeBlankMark21, type Libro, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, formatCountry, isMarc21, isValidNumeroInventario, makeBlankMark21, type Libro, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
@@ -43,7 +43,7 @@ export function EditarLibro() {
         placeOfPublication: formatName(form.placeOfPublication?.value || ""),
         publisher: formatName(form.publisher?.value || ""),
         publicationYear: form.publicationYear?.value || "",
-        authorCountry: formatName(form.callNumberPrefix?.value || ""),
+        authorCountry: formatCountry(form.callNumberPrefix?.value || ""),
         dewey: parseFloat(form.dewey?.value || ""),
         holding: {
           homeBranch,

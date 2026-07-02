@@ -2,7 +2,7 @@ import { CheckIcon, Marc21Form, Spinner } from "@/components"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { countryToPrefix, cutterFromAuthor, isValidNumeroInventario, makeBlankMark21, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, formatCountry, isValidNumeroInventario, makeBlankMark21, type Marc21 } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatName, formatTitulo } from "@/utils"
 import { validateISBN } from "@shared/utils"
@@ -43,7 +43,7 @@ export function IngresoMarc21() {
             placeOfPublication: formatName(form.placeOfPublication?.value) || "",
             publisher: formatName(form.publisher?.value) || "",
             publicationYear: form.publicationYear?.value || "",
-            authorCountry: formatTitulo(form.callNumberPrefix?.value) || "",
+            authorCountry: formatCountry(form.callNumberPrefix?.value) || "",
             dewey: parseFloat(form.dewey?.value || ""),
             holding: {
                 homeBranch,
