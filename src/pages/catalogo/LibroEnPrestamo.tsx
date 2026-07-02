@@ -1,4 +1,4 @@
-import { isMarc21, parceLiteraryForm, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
+import { isMarc21, formatLiteraryForm, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
 import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
@@ -36,7 +36,7 @@ export function LibroEnPrestamo({ libro }: Props) {
                                 libro.literaryForm ? "block" : "hidden"
                             )}
                         >
-                        { parceLiteraryForm(libro.literaryForm) }
+                        { formatLiteraryForm(libro.literaryForm) }
                         </span>
                     }
                 </div>

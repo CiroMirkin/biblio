@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react"
-import { formatCallNumber, isMarc21, parceLiteraryForm, type Libro, type LibroRegistrado, type Marc21 } from "@shared/models"
+import { formatCallNumber, isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatNro } from "@/utils"
@@ -90,7 +90,7 @@ export function DetallesLibro({ libro }: Props) {
 function MarkDetalles({ libro }: { libro: Marc21 }) {
     const publicNote = libro.holding.publicNote
     const authorCountry = libro.authorCountry
-    const literaryForm = parceLiteraryForm(libro.literaryForm)
+    const literaryForm = formatLiteraryForm(libro.literaryForm)
 
     return (
         <ul className="pt-2 list-disc pl-6 text-base">

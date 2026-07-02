@@ -1,4 +1,4 @@
-import { isMarc21, parceLiteraryForm, type Libro } from "@shared/models"
+import { isMarc21, formatLiteraryForm, type Libro } from "@shared/models"
 import { DetallesLibro } from "./DetallesLibro"
 import { cn } from "@/utils"
 
@@ -22,7 +22,7 @@ export function LibroDisponible({ libro }: Props) {
                                     libro.literaryForm ? "block" : "hidden"
                                 )}
                             >
-                                { parceLiteraryForm(libro.literaryForm) }
+                                { formatLiteraryForm(libro.literaryForm) }
                             </span>
                         </div>
                     }
