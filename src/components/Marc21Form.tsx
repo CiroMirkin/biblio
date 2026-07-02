@@ -1,9 +1,10 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { type Marc21, type Marc21ItemType } from "@shared/models"
+import { formatLiteraryForm, type LiteraryForm, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 import { CallNumberInput } from "./CallNumberInput"
+import { DeweyInput } from "./DeweyInput"
 
 const ORDER = [
   "titulo", "autor", "numeroInventario", "barcode", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
@@ -40,6 +41,7 @@ export function Marc21Form({
   const [autor, setAutor] = useState(defaultValues?.autor ?? "")
   const [country, setCountry] = useState(defaultValues?.authorCountry ?? "")
   const [dewey, setDewey] = useState(defaultValues?.dewey?.toString() ?? "")
+  const [literaryForm, setLiteraryForm] = useState<LiteraryForm>(defaultValues?.literaryForm ?? "u")
   
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -93,8 +95,8 @@ export function Marc21Form({
         {tipoItem === "BK" && (
           <label className="flex flex-col gap-1 text-base">
             <span className="font-semibold">Forma literaria:</span>
-            <select name="literaryForm" id="literaryForm" defaultValue={defaultValues?.literaryForm ?? ""} className={inputClass}>
-              <option value="">Sin especificar</option>
+            <select onChange={e => setLiteraryForm(e.target.value as LiteraryForm)} name="literaryForm" id="literaryForm" value={literaryForm} className={inputClass}>
+              <option value="u">Desconocido</option>
               <option value="0">No es ficción</option>
               <option value="1">Ficción</option>
               <option value="c">Historieta</option>
@@ -107,7 +109,6 @@ export function Marc21Form({
               <option value="m">Formas mixtas</option>
               <option value="p">Poesía</option>
               <option value="s">Discursos</option>
-              <option value="u">Desconocido</option>
             </select>
           </label>
         )}
@@ -118,10 +119,14 @@ export function Marc21Form({
         </label>
 
         <div className="grid grid-cols-2 gap-4">
-          <label className="flex flex-col gap-1 text-base">
-            <span className="font-semibold">CDD:</span>
-            <input onKeyDown={handleEnter} onChange={e => setDewey(e.target.value)} step="0.01" min={100} type="number" name="dewey" id="dewey" value={dewey} className={inputClass} />
-          </label>
+          <DeweyInput
+            onKeyDown={handleEnter}
+            country={country}
+            genero={formatLiteraryForm(literaryForm)}
+            value={dewey}
+            onChange={setDewey}
+            inputClass={inputClass}
+          />
 
           <CallNumberInput
             mode={mode}
