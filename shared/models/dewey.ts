@@ -127,9 +127,14 @@ export function formatCountry(pais: string): string {
   pais = pais.trim().toLowerCase()
   if(!pais) return ""
 
-  if(pais === 'arg') pais = 'Argentina'
+  if(['arg', 'argentino'].includes(pais)) pais = 'Argentina'
   if(['eeuu', 'eu'].includes(pais)) pais = 'Estados unidos'
-  if(['uk', 'inglaterra'].includes(pais)) pais = 'Reino Unido'
+  if(['uk', 'inglaterra', 'ingles', 'inglesa'].includes(pais)) pais = 'Reino Unido'
+  if(['es', 'español', 'española'].includes(pais)) pais = 'España'
+  if(['ch', 'chileno', 'chilena'].includes(pais)) pais = 'Chile'
+  if(['brazil', 'brasilera', 'brazilera', 'brasilero', 'brazilero'].includes(pais)) pais = 'Brasil'
+  if(['uru'].includes(pais)) pais = 'Uruguay'
+  if(['venezolana', 'venezolano'].includes(pais)) pais = 'Venezuela'
   
   return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
