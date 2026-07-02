@@ -8,7 +8,7 @@ import { Spinner } from "@/components"
 
 type CampoEditable = "dni" | "telefono" | "domicilio" | "email" | "fechaNacimiento" | "fechaIngreso" | "fechaEgreso"
 
-export function SocioDatos() {
+export function Datos() {
     const { socioSeleccionado: socio, editarDatos, cambiarNombre } = useSociosStore()
     const [ loading, setLoading ] = useState(false)
     const [expandido, setExpandido] = useState(false)

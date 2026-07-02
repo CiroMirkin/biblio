@@ -2,30 +2,18 @@ import { CheckIcon } from "@/components"
 import type { NewSocio } from "@shared/models"
 import { useSociosStore } from "@/store"
 import { useRef, useState } from "react"
-import type { KeyboardEvent, SyntheticEvent } from "react"
+import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { formatFecha, formatName } from "@/utils"
 import { format } from "@formkit/tempo"
-
-const ORDER = ["apellidos", "nombres", "dni", "fechaNacimiento", "telefono", "email", "domicilio", "observaciones"]
-
-function focusSiguiente(name: string) {
-  const index = ORDER.indexOf(name)
-  if (index === -1 || index === ORDER.length - 1) return
-  const siguiente = document.getElementById(ORDER[index + 1])
-  siguiente?.focus()
-}
-
-function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
-  if (e.key !== "Enter") return
-  e.preventDefault()
-  focusSiguiente((e.target as HTMLInputElement).name)
-}
+import { InscripcionForm } from "./InscripcionForm"
+import { DatosNecesariosTexto } from "./DatosNecesariosTexto"
 
 export function Inscripcion() {
   const { crearSocio } = useSociosStore()
   const formRef = useRef<HTMLFormElement>(null)
   const [exito, setExito] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
@@ -44,7 +32,10 @@ export function Inscripcion() {
       sociosVinculados: [],
     }
 
+    setLoading(true)
     const newSocio = await crearSocio(socio)
+    setLoading(false)
+
     if (!newSocio) {
       console.error("Error en la creación del socio")
       return
@@ -73,61 +64,13 @@ export function Inscripcion() {
           )}
         </AnimatePresence>
       </h2>
-      
+
       <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
-        <form ref={formRef} className="flex flex-col gap-2 card" onSubmit={handleSubmit}>
-          <div className="w-full grid grid-cols-2 gap-4">
-            <label className="flex flex-col gap-1 text-base">
-              Apellidos: *
-              <input onKeyDown={handleEnter} type="text" name="apellidos" id="apellidos" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Apellidos" required />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-              Nombres: *
-              <input onKeyDown={handleEnter} type="text" name="nombres" id="nombres" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Nombres" required />
-            </label>
-          </div>
-
-          <div className="w-full grid grid-cols-2 gap-4">
-            <label className="flex flex-col gap-1 text-base">
-              DNI:
-              <input onKeyDown={handleEnter} type="text" name="dni" id="dni" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="DNI" />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-              Fecha de nacimiento:
-              <input onKeyDown={handleEnter} type="date" name="fechaNacimiento" id="fechaNacimiento" className="w-full border bg-white border-black rounded p-1 px-2" />
-            </label>
-          </div>
-
-          <div className="w-full grid grid-cols-2 gap-4">
-            <label className="flex flex-col gap-1 text-base">
-              Numero de celular: *
-              <input onKeyDown={handleEnter} type="tel" name="telefono" id="telefono" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Numero de celular" required minLength={10} />
-            </label>
-
-            <label className="flex flex-col gap-1 text-base">
-              Email:
-              <input onKeyDown={handleEnter} type="email" name="email" id="email" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Email" />
-            </label>
-          </div>
-
-          <label className="flex flex-col gap-1 text-base">
-            Dirección:
-            <input onKeyDown={handleEnter} type="text" name="domicilio" id="domicilio" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Dirección" />
-          </label>
-
-          <label className="flex flex-col gap-1 text-base">
-            Observaciones generales:
-            <input onKeyDown={handleEnter} type="text" name="observaciones" id="observaciones" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="" />
-          </label>
-
-          <input type="submit" value="Inscribir" className="px-4 py-2 btn mt-2" />
-        </form>
+        <InscripcionForm formRef={formRef} onSubmit={handleSubmit} loading={loading} success={exito} />
 
         <aside className="sticky top-0 h-fit hidden md:block">
           <section className="p-4 rounded bg-white text-base">
-            <p>El apellido, nombre y numero de celular son los únicos datos 100% necesarios.</p>
+            <DatosNecesariosTexto />
           </section>
         </aside>
       </div>

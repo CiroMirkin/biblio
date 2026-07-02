@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Biblio</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" href="favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
@@ -85,6 +87,7 @@
       background: var(--color-accent);
       border: 2px solid var(--color-accent);
       padding: 1rem 2.5rem;
+      cursor: pointer;
       transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
 
@@ -99,6 +102,39 @@
       outline-offset: 4px;
     }
 
+    .options {
+      display: none;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .options.visible {
+      display: flex;
+    }
+
+    .options .download-btn {
+      background: var(--color-white-accent);
+      border-color: var(--color-white-accent);
+    }
+
+    .options .download-btn:hover {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+    }
+
+    #personal-btn {
+      opacity: 0.6;
+    }
+
+    #personal-btn:hover {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .download-btn { transition: none; }
     }
@@ -109,12 +145,69 @@
     <p class="eyebrow">Sistema de gestión bibliotecaria</p>
     <h1>Biblio</h1>
     <p>Gestiona socios, cuotas y préstamos de libros.<br>Simple y amigable.</p>
+
+    <button type="button" class="download-btn" id="initial-btn">
+      Descargar sistema
+    </button>
+
+    <div class="options" id="options">
+      <a
+        class="download-btn"
+        href="https://forms.gle/e6amqZn1ZCdpzJi3A"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Descargar para biblioteca
+      </a>
+      <a
+        class="download-btn"
+        id="personal-btn"
+        href="https://github.com/CiroMirkin/biblio/releases/latest/download/Biblio-Setup.exe"
+      >
+        Descargar para uso personal
+      </a>
+    </div>
+
     <a
-      class="download-btn"
+      class="download-btn hidden"
+      id="update-btn"
       href="https://github.com/CiroMirkin/biblio/releases/latest/download/Biblio-Setup.exe"
     >
-      Descargar para Windows
+      Descargar actualización del sistema
     </a>
   </main>
+
+  <script>
+    var STORAGE_KEY = 'biblio_download_clicked';
+    var initialBtn = document.getElementById('initial-btn');
+    var options = document.getElementById('options');
+    var updateBtn = document.getElementById('update-btn');
+    var personalBtn = document.getElementById('personal-btn');
+    var libraryBtn = options.querySelector('a[href*="forms.gle"]');
+
+    function showUpdateView() {
+      initialBtn.classList.add('hidden');
+      options.classList.remove('visible');
+      options.classList.add('hidden');
+      updateBtn.classList.remove('hidden');
+    }
+
+    function markClicked() {
+      localStorage.setItem(STORAGE_KEY, 'true');
+    }
+
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+      showUpdateView();
+    }
+
+    initialBtn.addEventListener('click', function () {
+      this.classList.add('hidden');
+      options.classList.add('visible');
+      markClicked();
+    });
+
+    personalBtn.addEventListener('click', markClicked);
+    libraryBtn.addEventListener('click', markClicked);
+  </script>
 </body>
 </html>

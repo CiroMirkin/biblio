@@ -1,9 +1,7 @@
-import { cn } from "@/utils"
 import { type Marc21LiteraryForm } from "@shared/models"
 import type { KeyboardEvent, SyntheticEvent } from "react"
 import { useRef, useState } from "react"
-import { motion } from "motion/react"
-import { CheckIcon, Spinner } from "@/components"
+import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 
 const ORDER = ["numeroInventario", "titulo", "autor"]
@@ -90,23 +88,15 @@ export function LibroForm({
         </label>
       </div>
 
-      <motion.button
+      <SubmitButton
         type="submit"
-        disabled={ submitDisabled || nroInvalido || loading }
-        animate={{
-          backgroundColor: success ? "#00a63e" : "",
-          color: success ? "#fff" : "",
-        }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className={cn(
-          "px-4 py-2 btn mt-2 flex items-center justify-center gap-2",
-          (submitDisabled || nroInvalido || loading) && "btn-disabled",
-        )}
+        disabled={submitDisabled || nroInvalido}
+        loading={loading}
+        success={success}
+        className="px-4 py-2 btn mt-2"
       >
-        { success && <CheckIcon size={20} className="pt-0.5 text-[#fff]" /> }
-        { loading && <Spinner /> }
-        { submitLabel }
-      </motion.button>
+        {submitLabel}
+      </SubmitButton> 
     </form>
   )
 }
