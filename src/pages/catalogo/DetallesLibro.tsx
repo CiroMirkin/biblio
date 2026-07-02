@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
-import { cn, formatNro } from "@/utils"
+import { cn, formatFecha, formatNro } from "@/utils"
 
 interface Props {
     libro: LibroRegistrado | Libro | Marc21
@@ -46,6 +46,12 @@ export function DetallesLibro({ libro }: Props) {
                             <p className="text-base opacity-80 mt-1">
                                 <span className="mr-1 font-semibold">N° </span>
                                 { libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
+                            </p>
+                        }
+                        { (!isMarc && numerosDeInventarioExternos && libro.fechaDeIngreso !== null) && 
+                            <p className="text-base opacity-80 mt-1">
+                                <span className="mr-1 font-semibold">Fecha de Ingreso al sistema </span>
+                                { formatFecha(libro.fechaDeIngreso) }
                             </p>
                         }
                     </motion.div>
@@ -170,6 +176,11 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
             { libro.publicationYear && 
                 <li className="group flex items-center justify-start opacity-75 cursor-default">
                     Año de publicación: { libro.publicationYear }
+                </li>
+            }
+            { libro.fechaDeIngreso !== null && 
+                <li className="group flex items-center justify-start opacity-75 cursor-default">
+                    Fecha de ingreso al sistema: { formatFecha(libro.fechaDeIngreso) }
                 </li>
             }
         </ul>

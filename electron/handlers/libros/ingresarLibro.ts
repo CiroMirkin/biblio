@@ -24,6 +24,7 @@ export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => {
         ...ingreso,
         titulo: ingreso.titulo,
         numeroInventario: ingreso.numeroInventario || generarIdSinInventariar(),
+        fechaDeIngreso: new Date(),
     }
     const targetRow = worksheet.getRow(worksheet.rowCount + 1)
     writeLibro(targetRow, newLibro)

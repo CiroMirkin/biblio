@@ -12,6 +12,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         numeroSocio: Number(row.getCell(2).value ?? null),
         fechaDePrestamo: getFechaDePrestamoFromRow(row),
         literaryForm: (String(row.getCell(8).value ?? '') || undefined) as LiteraryForm | undefined,
+        fechaDeIngreso: getFechaDeIngresoFromRow(row),
     }
 
     const itemType = String(row.getCell(7).value ?? '') as Marc21ItemType
@@ -49,6 +50,13 @@ export const getFechaDePrestamoFromRow = (row: ExcelJS.Row): Date | null => {
     return null
 }
 
+export const getFechaDeIngresoFromRow = (row: ExcelJS.Row): Date | null => {
+    const rawFecha = row.getCell(20).value
+    if (rawFecha instanceof Date) return rawFecha
+    if (rawFecha) return new Date(String(rawFecha))
+    return null
+}
+
 export const getNroDeInventarioFromRow = (row: ExcelJS.Row): string => row.getCell(6).value?.toString() ?? '' 
 
 export function libroToRow(libro: LibroRegistrado): (string | number | Date | null)[] {
@@ -74,9 +82,10 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
             libro.authorCountry ?? '',
             libro.holding.barcode ?? '',
             libro.dewey ?? '',
+            libro.fechaDeIngreso ?? '',
         ]
     }
- 
+    
     return [
         libro.nombreSocio ?? '',
         libro.numeroSocio ?? null,
@@ -86,6 +95,18 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
         libro.numeroInventario ?? '',
         '', // Pertenece a itemType el cual no existe en Libro
         libro.literaryForm ?? '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        libro.fechaDeIngreso ?? '',
     ]
 }
 
@@ -93,6 +114,9 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.nombreSocio !== undefined) row.getCell(1).value = libro.nombreSocio
     if (libro.numeroSocio !== undefined) row.getCell(2).value = libro.numeroSocio
     if (libro.fechaDePrestamo !== undefined) row.getCell(3).value = libro.fechaDePrestamo
+    if (libro.fechaDeIngreso !== undefined && libro.fechaDeIngreso !== null) {
+        row.getCell(20).value = libro.fechaDeIngreso
+    }
 
     if (libro.autor !== undefined) row.getCell(4).value = libro.autor
     if (libro.titulo !== undefined) row.getCell(5).value = libro.titulo

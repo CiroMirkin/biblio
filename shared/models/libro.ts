@@ -7,6 +7,8 @@ export interface Libro {
     autor?: string
     numeroInventario?: number | string
     literaryForm?: LiteraryForm
+
+    fechaDeIngreso?: Date | null
 }
 
 export type LibroEnPrestamo = Libro & DatosPrestamo

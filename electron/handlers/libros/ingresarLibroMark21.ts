@@ -23,7 +23,10 @@ export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | nul
     if (!ingreso.numeroInventario || !ingreso.holding.homeBranch) return null
 
     const targetRow = worksheet.getRow(worksheet.rowCount + 1)
-    writeLibro(targetRow, ingreso)
+    writeLibro(targetRow, {
+        ...ingreso,
+        fechaDeIngreso: new Date(),
+    })
     await writeWorkbook()
     return ingreso
 }
