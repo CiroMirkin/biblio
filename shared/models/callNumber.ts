@@ -1,3 +1,4 @@
+import type { Dewey } from "./dewey"
 
 /**
  * Signatura topográfica en formato Dewey + Cutter, con extensiones locales.
@@ -38,7 +39,7 @@
  */
 export interface CallNumber {
   prefix?: string
-  dewey: string
+  dewey: Dewey
   cutter: string
   volume?: string
 }
@@ -75,7 +76,7 @@ export function parseStrToCallNumber(callNumber: string): CallNumber | null {
 
   return {
     prefix: match[1],
-    dewey: match[2],
+    dewey: parseFloat(match[2]),
     cutter: originalCutter?.[1] ?? match[3],
     volume: match[4],
   }
