@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from "motion/react"
-import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm } from "@shared/models"
+import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatNro } from "@/utils"
-import { getDatosDelDewey } from "@shared/models/dewey"
 
 interface Props {
     libro: LibroRegistrado | Libro | Marc21
@@ -27,6 +26,8 @@ export function DetallesLibro({ libro }: Props) {
          </div>   
         )
     }
+
+    const genero = isMarc21(libro) ? getDatosDelDewey(libro?.dewey).genero : ""
 
     return (
         <>
@@ -61,8 +62,8 @@ export function DetallesLibro({ libro }: Props) {
             >
                 { isMarc && 
                     <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
-                        <span className="font-normal">{ formatNro(libro.numeroInventario) }</span>
-                        <span>{ getDatosDelDewey(libro?.dewey).genero }</span>
+                        <span className="font-normal">N° { formatNro(libro.numeroInventario) }</span>
+                        { genero !== "Desconocido" && <span>{ genero }</span> }
                         <span className="opacity-70">{ libro.authorCountry }</span>
                     </span>
                 }
@@ -98,12 +99,14 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
 
     return (
         <ul className="pt-2 list-disc pl-6 text-base">
-            <li className="group flex items-center justify-start">
-                <span className="flex gap-2 font-semibold opacity-80 cursor-default mr-1">
-                    <span>CDD:</span>
-                    <span>{ dewey }</span>
-                </span>
-             </li>
+            { dewey &&
+                <li className="group flex items-center justify-start">
+                    <span className="flex gap-2 font-semibold opacity-80 cursor-default mr-1">
+                        <span>CDD:</span>
+                        <span>{ dewey }</span>
+                    </span>
+                </li>
+             }
             <li className="group flex items-center justify-start">
                 <span className="cursor-default mr-1">
                     <span className="font-semibold mr-2">N° de inventario:</span>
