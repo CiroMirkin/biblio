@@ -14,6 +14,7 @@ import { EstableceTipoDeCatalogacion } from "./EstableceTipoDeCatalogacion";
 import { NombreBiblioteca } from "./NombreBiblioteca";
 import { ImportarArchivoMrc } from "./ImportarArchivoMrc";
 import { AjustarCamposDeInscripcion } from "./AjustarCamposDeInscripcion";
+import { ImportarCopiaCompleta } from "./ImportarCopiaCompleta";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -43,6 +44,7 @@ export function Ajustes() {
                         </div>
                     }
                     <CopiarExcels />
+                    <ImportarCopiaCompleta />
                     <DescargarArchivoMrc />
                     <ImportarArchivoMrc />
                     <ActualizarApp />

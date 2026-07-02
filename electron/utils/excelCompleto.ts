@@ -37,6 +37,49 @@ export const exportarExcelCompleto = async () => {
     return true
 }
 
+export const importarExcelCompleto = async () => {
+    const { filePaths, canceled } = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: [{ name: 'Excel', extensions: ['xlsx'] }],
+    })
+
+    if (canceled || filePaths.length === 0) {
+        return {
+            ok: false,
+            message: "",
+        }
+    }
+
+    const origenWb = new ExcelJS.Workbook()
+    await origenWb.xlsx.readFile(filePaths[0])
+
+    const hojasFaltantes = Object.values(ARCHIVOS)
+        .filter(({ hojaDestino }) => !origenWb.getWorksheet(hojaDestino))
+        .map(({ hojaDestino }) => hojaDestino)
+
+    if (hojasFaltantes.length > 0) {
+        const prural = hojasFaltantes.length === 1
+        return {
+            ok: false,
+            message: `El archivo no tiene ${prural ? 'la hoja' : 'las hojas'}: ${hojasFaltantes.join(', ')}.`,
+        }
+    }
+
+    for (const { path: destinoPath, hojaOrigen, hojaDestino } of Object.values(ARCHIVOS)) {
+        const hoja = origenWb.getWorksheet(hojaDestino)!
+
+        const destinoWb = new ExcelJS.Workbook()
+        copiarHoja(destinoWb, hoja, hojaOrigen)
+
+        await destinoWb.xlsx.writeFile(destinoPath)
+    }
+
+    return {
+        ok: true,
+        message: "¡Importado exitosamente!"
+    }
+}
+
 function copiarHoja(destino: ExcelJS.Workbook, hojaOrigen: ExcelJS.Worksheet, nombreHoja: string): void {
     const hojaDestino = destino.addWorksheet(nombreHoja)
 

@@ -24,4 +24,8 @@ export class ExcelExportService {
   static async copiaDeSeguridad(): Promise<boolean> {
     return window.electronAPI.exportarExcelCompleto()
   }
+
+  static async importarCopiaDeSeguridad() {
+    return window.electronAPI.importarExcelCompleto()
+  }
 }

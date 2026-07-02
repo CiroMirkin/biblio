@@ -52,6 +52,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   obtenerArchivoMrc: () => ipcRenderer.invoke('obtenerArchivoMrc'),
   importarMrc: (filePath: string) => ipcRenderer.invoke('importarMrc', filePath),
   exportarExcelCompleto: () => ipcRenderer.invoke('exportarExcelCompleto'),
+  importarExcelCompleto: () => ipcRenderer.invoke('importarExcelCompleto'),
   
   settingsGetAll: () => ipcRenderer.invoke('settings:getAll'),
   settingsGet: (key: string) => ipcRenderer.invoke('settings:get', key),

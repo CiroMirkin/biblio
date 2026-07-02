@@ -47,6 +47,7 @@ declare global {
       createSocio: (socio: NewSocio) => Promise<Socio>
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
       exportarExcelCompleto: () => Promise<boolean>
+      importarExcelCompleto: () => Promise<{ ok: boolean, message: string }>
       obtenerArchivoMrc: () => Promise<void>
       importarMrc: (filePath: string) => Promise<ImportarMrcResult>
       settingsGetAll: () => Promise<SettingsSchema>
