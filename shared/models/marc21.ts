@@ -44,19 +44,26 @@ export interface Marc21 extends Libro {
 
 export type Marc21EnPrestamo = Marc21 & DatosPrestamo
 
+function tieneValor(valor: unknown): boolean {
+  if (typeof valor === "number") return !isNaN(valor)
+  return valor !== undefined && valor !== null && valor !== ""
+}
+
 export function isMarc21(libro: LibroRegistrado | undefined): libro is Marc21EnPrestamo {
-  if(!libro) return false
+  if (!libro) return false
 
-  if('itemType' in libro && 'holding' in libro) {
-    const holding = libro.holding
-    
-    if('callNumber' in holding) {
-      const callNumber = holding.callNumber
-      return callNumber !== undefined && callNumber !== null
-    }
-  }
+  if (!('itemType' in libro)) return false
 
-  return false
+  return (
+    tieneValor(libro?.edition) ||
+    tieneValor(libro?.placeOfPublication) ||
+    tieneValor(libro?.publisher) ||
+    tieneValor(libro?.publicationYear) ||
+    tieneValor(libro?.authorCountry) ||
+    tieneValor(libro?.dewey) ||
+    tieneValor(libro.holding?.callNumber) ||
+    tieneValor(libro.holding?.barcode)
+  )
 }
 
 export function makeBlankMark21(libro: Libro | LibroEnPrestamo): Marc21 {
