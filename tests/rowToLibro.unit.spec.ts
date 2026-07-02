@@ -76,11 +76,7 @@ describe('rowToLibro', () => {
 
         const result = rowToLibro(row)
 
-        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual({
-            prefix: 'A',
-            dewey:  '863',
-            cutter: 'HER',
-        })
+        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual('A863 HER')
     })
 
     it('Parsea el callNumber con volumen desde la celda', () => {
@@ -95,11 +91,7 @@ describe('rowToLibro', () => {
 
         const result = rowToLibro(row)
 
-        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual({
-            dewey:  '982',
-            cutter: 'COO',
-            volume: 'v.2',
-        })
+        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual('982 COO v.2')
     })
 
     it('Retorna callNumber undefined cuando la celda esta vacia', () => {

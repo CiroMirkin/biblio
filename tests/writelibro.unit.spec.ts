@@ -10,7 +10,7 @@ const crearRowEnBlanco = (): ExcelJS.Row => {
 }
 
 const callNumber: CallNumber = "863 AVE"
-const callNumberConPrefijo: CallNumber = "A 863 AGU"
+const callNumberConPrefijo: CallNumber = "A863 AGU"
 const callNumberConVolumen: CallNumber = "982 COO v.2"
 
 describe('writeLibro', () => {
