@@ -1,5 +1,6 @@
 import type { CallNumber } from "./callNumber";
-import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21LiteraryForm } from "./libro";
+import type { Libro, LibroEnPrestamo, LibroRegistrado } from "./libro";
+import type { Marc21LiteraryForm } from "./literaryForm";
 import type { DatosPrestamo } from "./prestamo";
 
 export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
@@ -93,20 +94,6 @@ export function parceLiteraryForm(lf: Marc21LiteraryForm | undefined) {
     ["u", "Desconocido"],
     ["m", "Formas mixtas"],
     ["s", "Discursos"],
-  ]
-  
-  return literaryFors.find(f => f[0] === lf)?.[1] ?? ""
-}
-
-export function getLiteraryFormInCallNumber(lf: Marc21LiteraryForm | undefined) {
-  if(!lf) return ""
-  
-  const literaryFors = [
-    ["e", "E"],
-    ["j", "CU"],
-    ["c", "CO"],
-    ["f", "N"],
-    ["p", "P"],
   ]
   
   return literaryFors.find(f => f[0] === lf)?.[1] ?? ""

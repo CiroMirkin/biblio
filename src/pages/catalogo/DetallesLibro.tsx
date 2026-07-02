@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react"
-import { formatCallNumber, getLiteraryFormInCallNumber, isMarc21, parceLiteraryForm, type Libro, type LibroRegistrado, type Marc21 } from "@shared/models"
+import { formatCallNumber, isMarc21, parceLiteraryForm, type Libro, type LibroRegistrado, type Marc21 } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatNro } from "@/utils"
@@ -61,7 +61,6 @@ export function DetallesLibro({ libro }: Props) {
                 { isMarc && 
                     <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
                         <span className="font-normal">{ formatNro(libro.numeroInventario) }</span>
-                        { getLiteraryFormInCallNumber(libro.literaryForm) }
                         <span>{ formatCallNumber(libro.holding.callNumber) }</span>
                     </span>
                 }
@@ -98,7 +97,6 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
             <li className="group flex items-center justify-start">
                 <span className="flex gap-2 font-semibold opacity-80 cursor-default mr-1">
                     <span>Signatura:</span>
-                    { getLiteraryFormInCallNumber(libro.literaryForm) }
                     <span>{ formatCallNumber(libro.holding.callNumber) }</span>
                 </span>
              </li>
