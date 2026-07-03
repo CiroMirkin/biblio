@@ -20,6 +20,7 @@ interface SociosState {
     showDetallesSocio: boolean
     sociosActivos: number
     sociosInactivos: number
+    loadingSocios: boolean
 
     inicializar: () => Promise<void>
     buscar: (apellido: string, options?: {
@@ -61,6 +62,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     showDetallesSocio: false,
     sociosActivos: 0,
     sociosInactivos: 0,
+    loadingSocios: true,
 
     inicializar: async () => {
         const socios = await cargarSocios()
@@ -82,20 +84,22 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             sociosConLibros,
             sociosActivos,
             sociosInactivos,
+            sociosFiltrados: [...sociosConLibros],
+            loadingSocios: false,
         })
     },
 
     buscar: (apellido, options = {}) => {
-        const { socios } = get()
+        const { socios, sociosConLibros } = get()
         const { showDetallesSocio } = options
 
         if (!apellido.trim()) {
-            set({ sociosFiltrados: [], showDetallesSocio: showDetallesSocio !== false })
+            set({ sociosFiltrados: [...sociosConLibros], showDetallesSocio: showDetallesSocio !== false })
             return
         }
 
         const query = apellido.toLowerCase().trim()
-        if(!query) set({ sociosFiltrados: [] })
+        if(!query) set({ sociosFiltrados:  [...sociosConLibros] })
 
         const filtrados = buscarSocio({ dato: query, socios })
         set({ sociosFiltrados: filtrados, showDetallesSocio: showDetallesSocio !== false })

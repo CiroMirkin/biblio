@@ -6,30 +6,38 @@ import { Spinner } from "@/components";
 const PAGINA = 10
 
 export function ListaSocios() {
-  const { sociosFiltrados, sociosConLibros, seleccionar } = useSociosStore()
+  const { sociosFiltrados, seleccionar, loadingSocios } = useSociosStore()
   const [cantidad, setCantidad] = useState(PAGINA)
   const loaderRef = useRef<HTMLDivElement>(null)
 
-  const socios = sociosFiltrados.length ? sociosFiltrados : sociosConLibros
-
   useEffect(() => {
     setCantidad(PAGINA)
-  }, [socios])
+  }, [sociosFiltrados])
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        setCantidad(prev => Math.min(prev + PAGINA, socios.length))
+        setCantidad(prev => Math.min(prev + PAGINA, sociosFiltrados.length))
       }
     })
 
     if (loaderRef.current) observer.observe(loaderRef.current)
     return () => observer.disconnect()
-  }, [socios.length])
+  }, [sociosFiltrados.length])
 
+  if(loadingSocios) {
+    return <div className="flex gap-2 items-center text-lg">
+      <Spinner  /> Cargando...
+    </div>
+  }
+
+  if(!sociosFiltrados.length) {
+    return <p className="tracking-wide text-lg">No se encontraron coincidencias, verifica el nombre o el apellido escrito.</p>
+  }
+  
   return (
     <ul className="w-full flex flex-col pb-4 mt-2">
-      {socios.slice(0, cantidad).map((socio, index) => (
+      {sociosFiltrados.slice(0, cantidad).map((socio, index) => (
         <li
           key={`${socio.nroSocio}-${socio.nombreYApellido}`}
           className={cn(
@@ -44,7 +52,7 @@ export function ListaSocios() {
           </button>
         </li>
       ))}
-      {cantidad < socios.length && (
+      {cantidad < sociosFiltrados.length && (
         <div ref={loaderRef} className="py-4 flex items-center justify-center gap-1.5 text-sm text-gray-400">
           <Spinner /> Cargando ...
         </div>
