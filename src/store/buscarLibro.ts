@@ -2,14 +2,23 @@ import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
 import { levenshtein, normailzarTexto } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
 
+const dias = [ "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" ]
+const busquedaPorDiaKeys = dias.map(dia => `prestamos del ${dia}`)
+
 interface Params {
   libros: LibroRegistrado[]
   dato: string
 }
 
 export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
-  if (dato.toLocaleLowerCase().trim() === "prestamos de hoy") {
+  dato = dato.toLocaleLowerCase().trim()
+  
+  if (dato === "prestamos de hoy") {
     return buscarLibrosDeHoy(libros)
+  }
+
+  if(busquedaPorDiaKeys.includes(dato)) {
+    return buscarLibrosDelDia(dato, libros)
   }
 
   if (!isNaN(Number(dato))) {
@@ -33,6 +42,28 @@ function buscarLibrosDeHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
   return libros.filter(
     libro => libro.fechaDePrestamo != null && esMismaFecha(libro.fechaDePrestamo, hoy)
   )
+}
+
+function buscarLibrosDelDia(dato: string, libros: LibroRegistrado[]): LibroRegistrado[] {
+  const dia = dato.split(' ')[2]
+  const fechaBuscada = obtenerFechaDelDiaMasReciente(dia)
+
+  return libros.filter(libro => {
+    if(libro.fechaDePrestamo) {
+      return esMismaFecha(libro.fechaDePrestamo, fechaBuscada)
+    } 
+  })
+}
+
+function obtenerFechaDelDiaMasReciente(nombreDia: string): Date {
+  const hoy = new Date()
+  const diaHoyIndex = (hoy.getDay() + 6) % 7
+  const diaBuscadoIndex = dias.indexOf(nombreDia)
+  const diferencia = (diaHoyIndex - diaBuscadoIndex + 7) % 7
+
+  const fecha = new Date(hoy)
+  fecha.setDate(hoy.getDate() - diferencia)
+  return fecha
 }
 
 function esMismaFecha(fecha: Date, otra: Date): boolean {
