@@ -135,6 +135,61 @@
       display: none;
     }
 
+    .libraries-section {
+      margin-top: 4rem;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      box-sizing: border-box;
+    }
+
+    .libraries-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .libraries-status {
+      text-align: center;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+    
+    .libraries-list {
+      width: 100%;
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .libraries-list li {
+      text-overflow: ellipsis;
+      background: var(--color-gray);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+    }
+
+    .library-name {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .library-location {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .download-btn { transition: none; }
     }
@@ -175,6 +230,12 @@
     >
       Descargar actualización del sistema
     </a>
+
+    <section class="libraries-section">
+      <h2>Bibliotecas que usan Biblio</h2>
+      <p class="libraries-status" id="libraries-status">Cargando bibliotecas...</p>
+      <ul class="libraries-list hidden" id="libraries-list"></ul>
+    </section>
   </main>
 
   <script>
@@ -208,6 +269,115 @@
 
     personalBtn.addEventListener('click', markClicked);
     libraryBtn.addEventListener('click', markClicked);
+
+    var LIBRARIES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTE1s6-PpXEkH_ZqkXfROa9gTX-qA-DFgQaZWlHWJ_63e2cWJzAoAGqLrVzW7QOyZ5KBmnQR21SiKs/pub?gid=1921314640&single=true&output=csv';
+    var librariesStatus = document.getElementById('libraries-status');
+    var librariesList = document.getElementById('libraries-list');
+
+    function parseCsv(text) {
+      var rows = [];
+      var row = [];
+      var field = '';
+      var insideQuotes = false;
+
+      for (var i = 0; i < text.length; i++) {
+        var char = text[i];
+
+        if (insideQuotes) {
+          if (char === '"') {
+            if (text[i + 1] === '"') {
+              field += '"';
+              i++;
+            } else {
+              insideQuotes = false;
+            }
+          } else {
+            field += char;
+          }
+        } else {
+          if (char === '"') {
+            insideQuotes = true;
+          } else if (char === ',') {
+            row.push(field);
+            field = '';
+          } else if (char === '\r') {
+            continue;
+          } else if (char === '\n') {
+            row.push(field);
+            rows.push(row);
+            row = [];
+            field = '';
+          } else {
+            field += char;
+          }
+        }
+      }
+
+      if (field.length > 0 || row.length > 0) {
+        row.push(field);
+        rows.push(row);
+      }
+
+      return rows;
+    }
+
+    function renderLibraries(libraries) {
+      if (libraries.length === 0) {
+        librariesStatus.textContent = 'Todavía no hay bibliotecas registradas.';
+        return;
+      }
+
+      librariesStatus.classList.add('hidden');
+      librariesList.classList.remove('hidden');
+
+      libraries.forEach(function (library) {
+        var item = document.createElement('li');
+
+        var name = document.createElement('div');
+        name.className = 'library-name';
+        name.textContent = library.nombre;
+
+        var location = document.createElement('div');
+        location.className = 'library-location';
+        location.textContent = [library.ciudad, library.provincia].filter(Boolean).join(', ');
+
+        item.appendChild(name);
+        item.appendChild(location);
+        librariesList.appendChild(item);
+      });
+    }
+
+    fetch(LIBRARIES_CSV_URL)
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('No se pudo obtener la lista de bibliotecas');
+        }
+        return response.text();
+      })
+      .then(function (csvText) {
+        var rows = parseCsv(csvText);
+        rows.shift();
+
+        var libraries = rows
+          .filter(function (row) {
+            return row.length >= 4 && row[1].trim() !== '';
+          })
+          .map(function (row) {
+            return {
+              nombre: row[1].trim(),
+              ciudad: row[2].trim(),
+              provincia: row[3].trim()
+            };
+          })
+          .sort(function (a, b) {
+            return a.nombre.localeCompare(b.nombre, 'es');
+          });
+
+        renderLibraries(libraries);
+      })
+      .catch(function () {
+        librariesStatus.textContent = 'No se pudo cargar la lista de bibliotecas en este momento.';
+      });
   </script>
 </body>
 </html>
