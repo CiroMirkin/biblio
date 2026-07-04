@@ -1,4 +1,5 @@
 import type { LiteraryForm } from "./literaryForm"
+import type { LiteraryGenre } from "./literaryGenre"
 import type { Marc21EnPrestamo } from "./marc21"
 import type { DatosPrestamo } from "./prestamo"
 
@@ -6,7 +7,9 @@ export interface Libro {
     titulo: string
     autor?: string
     numeroInventario?: number | string
+    
     literaryForm?: LiteraryForm
+    literaryGenres?: LiteraryGenre[]
 
     fechaDeIngreso?: Date | null
 }
