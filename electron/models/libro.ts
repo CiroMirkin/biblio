@@ -143,7 +143,7 @@ export function getLiteraryGenres(row: ExcelJS.Row): LiteraryGenre[] {
     const value = getCellString(cell)
     if (!value.trim()) return []
 
-    return value.toString().split('-').map(g => String(g || ''))
+    return value.toString().split('-').map(g => String(g || '') as LiteraryGenre)
 }
 
 export function formatLiteraryGenres(genres: LiteraryGenre[]): string {
