@@ -17,7 +17,9 @@
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
     "prepare": "husky",
-    "clean": "tsx clean.ts"
+    "clean": "tsx clean.ts",
+    "preversion": "git pull --tags",
+    "postversion": "git push && git push --tags"
   },
   "build": {
     "publish": [
