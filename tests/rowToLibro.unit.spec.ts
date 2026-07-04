@@ -127,6 +127,7 @@ describe('rowToLibro', () => {
             numeroSocio:      7,
             fechaDeIngreso: null,
             literaryForm: undefined,
+            literaryGenres: [],
             fechaDePrestamo:  fecha,
             autor:            'Julio Cortazar',
             titulo:           'Rayuela',
