@@ -13,6 +13,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 811, genero: "Poesía", paises: ["Estados Unidos"] },
   { codigo: 812, genero: "Dramas", paises: ["Estados Unidos"] },
   { codigo: 813, genero: "Novela", paises: ["Estados Unidos"] },
+  { codigo: 813, genero: "Cuentos", paises: ["Estados Unidos"] },
   { codigo: 814, genero: "Ensayo", paises: ["Estados Unidos"] },
   { codigo: 815, genero: "Discursos", paises: ["Estados Unidos"] },
   { codigo: 816, genero: "Cartas", paises: ["Estados Unidos"] },
@@ -23,6 +24,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 821, genero: "Poesía", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
   { codigo: 822, genero: "Dramas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
   { codigo: 823, genero: "Novela", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
+  { codigo: 823, genero: "Cuentos", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
   { codigo: 824, genero: "Ensayo", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
   { codigo: 825, genero: "Discursos", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
   { codigo: 826, genero: "Cartas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
@@ -34,6 +36,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 831, genero: "Poesía", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 832, genero: "Dramas", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 833, genero: "Novela", paises: ["Alemania", "Austria", "Suiza alemana"] },
+  { codigo: 833, genero: "Cuentos", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 834, genero: "Ensayo", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 835, genero: "Discursos", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 836, genero: "Cartas", paises: ["Alemania", "Austria", "Suiza alemana"] },
@@ -41,21 +44,23 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 838, genero: "Formas mixtas", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 839, genero: "Ficción", paises: ["Países Bajos", "Suecia", "Dinamarca", "Noruega", "Islandia"] },
 
-  { codigo: 840, genero: "Ficción", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 841, genero: "Poesía", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 842, genero: "Dramas", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 843, genero: "Novela", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 844, genero: "Ensayo", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 845, genero: "Discursos", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 846, genero: "Cartas", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 847, genero: "Humor, sátiras, etc.", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
-  { codigo: 848, genero: "Formas mixtas", paises: ["Francia", "Bélgica francófona", "Suiza francesa"] },
+  { codigo: 840, genero: "Ficción", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 841, genero: "Poesía", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 842, genero: "Dramas", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 843, genero: "Novela", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 843, genero: "Cuentos", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 844, genero: "Ensayo", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 845, genero: "Discursos", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 846, genero: "Cartas", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 847, genero: "Humor, sátiras, etc.", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
+  { codigo: 848, genero: "Formas mixtas", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
   { codigo: 849, genero: "Ficción", paises: ["España (occitano/catalán)", "Francia (provenzal)"] },
 
   { codigo: 850, genero: "Ficción", paises: ["Italia"] },
   { codigo: 851, genero: "Poesía", paises: ["Italia"] },
   { codigo: 852, genero: "Dramas", paises: ["Italia"] },
   { codigo: 853, genero: "Novela", paises: ["Italia"] },
+  { codigo: 853, genero: "Cuentos", paises: ["Italia"] },
   { codigo: 854, genero: "Ensayo", paises: ["Italia"] },
   { codigo: 855, genero: "Discursos", paises: ["Italia"] },
   { codigo: 856, genero: "Cartas", paises: ["Italia"] },
@@ -79,6 +84,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 871, genero: "Poesía", paises: ["Roma antigua"] },
   { codigo: 872, genero: "Dramas", paises: ["Roma antigua"] },
   { codigo: 873, genero: "Novela", paises: ["Roma antigua"] },
+  { codigo: 873, genero: "Cuentos", paises: ["Roma antigua"] },
   { codigo: 874, genero: "Poesía", paises: ["Roma antigua"] },
   { codigo: 875, genero: "Discursos", paises: ["Roma antigua"] },
   { codigo: 876, genero: "Cartas", paises: ["Roma antigua"] },
@@ -90,6 +96,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 881, genero: "Poesía", paises: ["Grecia"] },
   { codigo: 882, genero: "Dramas", paises: ["Grecia"] },
   { codigo: 883, genero: "Novela", paises: ["Grecia"] },
+  { codigo: 883, genero: "Cuentos", paises: ["Grecia"] },
   { codigo: 884, genero: "Poesía", paises: ["Grecia"] },
   { codigo: 885, genero: "Discursos", paises: ["Grecia"] },
   { codigo: 886, genero: "Cartas", paises: ["Grecia"] },
@@ -135,6 +142,9 @@ export function formatCountry(pais: string): string {
   if(['brazil', 'brasilera', 'brazilera', 'brasilero', 'brazilero'].includes(pais)) pais = 'Brasil'
   if(['uru'].includes(pais)) pais = 'Uruguay'
   if(['venezolana', 'venezolano'].includes(pais)) pais = 'Venezuela'
+  if(['mexico', 'mx'].includes(pais)) pais = 'México'
+  if(['roma'].includes(pais)) pais = 'Roma antigua'
+  if(['Panama'].includes(pais)) pais = 'Panamá'
   
   return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
