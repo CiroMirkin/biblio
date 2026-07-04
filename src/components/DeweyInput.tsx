@@ -1,10 +1,10 @@
 import type { KeyboardEvent } from "react"
-import { getDeweyPorPaisYGenero, type Genero } from "@shared/models"
+import { getDeweyPorPaisYGenero, type LiteraryFormLabel } from "@shared/models"
 import { formatName } from "@/utils"
 
 interface Props {
   country: string
-  genero: Genero
+  genero: LiteraryFormLabel
   value: string
   onChange: (value: string) => void
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void

@@ -1,10 +1,10 @@
-import type { Genero } from "./literaryForm"
+import type { LiteraryFormLabel } from "./literaryForm"
 
 export type Dewey = number
 
 interface DeweyEntrada {
   codigo: Dewey
-  genero: Genero
+  genero: LiteraryFormLabel
   paises: string[]
 }
 
@@ -107,7 +107,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 890, genero: "Ficción", paises: ["Diversos"] },
 ]
 
-export function getDatosDelDewey(codigo: Dewey | undefined | null): { genero: Genero, paises: string[] } {
+export function getDatosDelDewey(codigo: Dewey | undefined | null): { genero: LiteraryFormLabel, paises: string[] } {
   if (!codigo) {
     return {
       genero: "Desconocido",
@@ -149,7 +149,7 @@ export function formatCountry(pais: string): string {
   return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
 
-export function getDeweyPorPaisYGenero(pais: string, genero: Genero): Dewey | null {
+export function getDeweyPorPaisYGenero(pais: string, genero: LiteraryFormLabel): Dewey | null {
   pais = formatCountry(pais)
   const entrada = deweyPaises.find(
     (item) => item.genero === genero && item.paises.includes(pais)

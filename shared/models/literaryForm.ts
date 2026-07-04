@@ -15,7 +15,7 @@ export type LiteraryForm =
     "s" | // Discursos
     "u" // Desconocido
 
-export type Genero = 
+export type LiteraryFormLabel = 
     "No ficción" |
     "Ficción" |
     "Historieta" |
@@ -30,7 +30,7 @@ export type Genero =
     "Discursos" |
     "Desconocido"
 
-export const marc21LiteraryForm: Record<LiteraryForm, Genero> = {
+export const marc21LiteraryForm: Record<LiteraryForm, LiteraryFormLabel> = {
     "0": "No ficción",
     "1": "Ficción",
     "c": "Historieta",
@@ -46,7 +46,7 @@ export const marc21LiteraryForm: Record<LiteraryForm, Genero> = {
     "u": "Desconocido",
 }
 
-export function formatLiteraryForm(lf: LiteraryForm | undefined): Genero {
+export function formatLiteraryForm(lf: LiteraryForm | undefined): LiteraryFormLabel {
   if (!lf) return "Desconocido"
   return marc21LiteraryForm[lf] ?? "Desconocido"
 }
