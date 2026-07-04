@@ -49,7 +49,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   createSocio: (socio: NewSocio) => ipcRenderer.invoke('createSocio', socio),
   
   copiarExcel: (key: 'socios' | 'cuotas' | 'libros') => ipcRenderer.invoke('copiarExcel', key),
-  obtenerArchivoMrc: () => ipcRenderer.invoke('obtenerArchivoMrc'),
+  obtenerArchivoMrc: (excluirSinIsbn?: boolean) => ipcRenderer.invoke(
+    'obtenerArchivoMrc', excluirSinIsbn
+  ),
   importarMrc: (filePath: string) => ipcRenderer.invoke('importarMrc', filePath),
   exportarExcelCompleto: () => ipcRenderer.invoke('exportarExcelCompleto'),
   importarExcelCompleto: () => ipcRenderer.invoke('importarExcelCompleto'),

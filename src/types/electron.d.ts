@@ -48,7 +48,7 @@ declare global {
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
       exportarExcelCompleto: () => Promise<boolean>
       importarExcelCompleto: () => Promise<{ ok: boolean, message: string }>
-      obtenerArchivoMrc: () => Promise<void>
+      obtenerArchivoMrc: (excluirSinIsbn?: boolean) => Promise<void>
       importarMrc: (filePath: string) => Promise<ImportarMrcResult>
       settingsGetAll: () => Promise<SettingsSchema>
       settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>

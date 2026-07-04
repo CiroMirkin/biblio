@@ -6,7 +6,7 @@ import { type Marc21 } from "@shared/models/marc21"
 import { get } from '../settings'
 
 
-export async function excelAMrc(outputPath: string): Promise<void> {
+export async function excelAMrc(outputPath: string, excluirSinIsbn = true): Promise<void> {
     const libros = await getLibros()
 
     if (libros.length === 0) {
@@ -14,7 +14,16 @@ export async function excelAMrc(outputPath: string): Promise<void> {
         return
     }
 
-    const chunks = libros.map(libro => {
+    const librosFiltrados = excluirSinIsbn
+        ? libros.filter(libro => isMarc21(libro) && !!libro.holding.barcode)
+        : libros
+
+    if (librosFiltrados.length === 0) {
+        console.log('No se encontraron registros validos.')
+        return
+    }
+
+    const chunks = librosFiltrados.map(libro => {
         if(isMarc21(libro)) {
             const raw = libroToRecord(libro).as('iso2709')
             return Buffer.from(raw, 'utf8')

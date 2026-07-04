@@ -59,7 +59,7 @@ const cuotasIpcHandlers = {
 
 const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
-  obtenerArchivoMrc: (_: unknown) => descargarMrc(),
+  obtenerArchivoMrc: (_: unknown, excluirSinIsbn?: boolean) => descargarMrc(excluirSinIsbn),
   importarMrc: (_: unknown, filePath: string) => importarMrc(filePath),
   exportarExcelCompleto: (_: unknown) => exportarExcelCompleto(),
   importarExcelCompleto: (_: unknown) => importarExcelCompleto(),
