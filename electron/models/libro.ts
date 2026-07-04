@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
 import { isMarc21 } from "@shared/models"
 import type { LibroRegistrado, LibroEnPrestamo, LiteraryForm, Marc21ItemType  } from "@shared/models"
+import type { LiteraryGenre } from "@shared/models/literaryGenre"
+import { getCellString } from "../utils/excelhelpers"
 
 export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
     const libroSimple: LibroEnPrestamo = {
@@ -13,6 +15,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         fechaDePrestamo: getFechaDePrestamoFromRow(row),
         literaryForm: (String(row.getCell(8).value ?? '') || undefined) as LiteraryForm | undefined,
         fechaDeIngreso: getFechaDeIngresoFromRow(row),
+        literaryGenres: getLiteraryGenres(row),
     }
 
     const itemType = String(row.getCell(7).value ?? '') as Marc21ItemType
@@ -84,6 +87,7 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
         marc21?.holding.barcode ?? '',
         marc21?.dewey ?? '',
         libro.fechaDeIngreso ?? '',
+        formatLiteraryGenres(libro?.literaryGenres || []),
     ]
 }
 
@@ -99,6 +103,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.titulo !== undefined) row.getCell(5).value = libro.titulo
     if (libro.numeroInventario !== undefined) row.getCell(6).value = libro.numeroInventario
     if (libro.literaryForm !== undefined) row.getCell(8).value = libro.literaryForm
+    if (libro.literaryGenres !== undefined) row.getCell(21).value = formatLiteraryGenres(libro.literaryGenres)
 
     if(isMarc21(libro)) {
         if (libro.holding?.homeBranch !== undefined) row.getCell(13).value = libro.holding.homeBranch
@@ -134,3 +139,15 @@ export function generarIdSinInventariar(): string {
   return `SN-${randomUUID()}`
 }
 
+export function getLiteraryGenres(row: ExcelJS.Row): LiteraryGenre[] {
+    const cell = row.getCell(21)
+    const value = getCellString(cell)
+    if (!value.trim()) return []
+
+    return value.toString().split('-').map(g => String(g || ''))
+}
+
+export function formatLiteraryGenres(genres: LiteraryGenre[]): string {
+  if (!genres.length) return ''
+  return genres.join('-')
+}
