@@ -159,35 +159,35 @@ export function getDeweyPorPaisYGenero(pais: string, genero: LiteraryFormLabel):
 
 export const gruposLiterarios = [
   {
-    label: "literatura germana",
+    label: "Literatura germana",
     paises: ["Alemania", "Austria", "Suiza"]
   },
   {
-    label: "literatura asiatica",
+    label: "Literatura asiatica",
     paises: ["Japon", "China", "Corea del Sur", "India", "Vietnam"]
   },
   {
-    label: "literatura latinoamericana",
+    label: "Literatura latinoamericana",
     paises: ["Argentina", "Mexico", "Colombia", "Chile", "Peru", "Cuba", "Uruguay", "Brasil"]
   },
   {
-    label: "literatura anglosajona",
+    label: "Literatura anglosajona",
     paises: ["Estados Unidos", "Reino Unido", "Canada", "Australia"]
   },
   {
-    label: "literatura francofona",
+    label: "Literatura francofona",
     paises: ["Francia", "Belgica", "Suiza", "Canada"]
   },
   {
-    label: "literatura nórdica",
+    label: "Literatura nórdica",
     paises: ["Suecia", "Noruega", "Dinamarca", "Finlandia", "Islandia"]
   },
   {
-    label: "literatura eslava",
+    label: "Literatura eslava",
     paises: ["Rusia", "Polonia", "Republica Checa", "Ucrania"]
   },
   {
-    label: "literatura mediterranea",
+    label: "Literatura mediterranea",
     paises: ["Italia", "España", "Grecia", "Portugal"]
   }
 ]
