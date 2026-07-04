@@ -43,6 +43,7 @@ export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Pr
       autor: libro.autor,
       titulo: libro.titulo,
       numeroInventario,
+      fechaDeIngreso: new Date(),
     }))
     newRow.commit()
   }
