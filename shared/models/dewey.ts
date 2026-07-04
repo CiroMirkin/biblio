@@ -20,16 +20,16 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 817, genero: "Humor, sátiras, etc.", paises: ["Estados Unidos"] },
   { codigo: 818, genero: "Formas mixtas", paises: ["Estados Unidos"] },
 
-  { codigo: 820, genero: "Ficción", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 821, genero: "Poesía", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 822, genero: "Dramas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 823, genero: "Novela", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 823, genero: "Cuentos", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 824, genero: "Ensayo", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 825, genero: "Discursos", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 826, genero: "Cartas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 827, genero: "Humor, sátiras, etc.", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
-  { codigo: 828, genero: "Formas mixtas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudáfrica", "India"] },
+  { codigo: 820, genero: "Ficción", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 821, genero: "Poesía", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 822, genero: "Dramas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 823, genero: "Novela", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 823, genero: "Cuentos", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 824, genero: "Ensayo", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 825, genero: "Discursos", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 826, genero: "Cartas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 827, genero: "Humor, sátiras, etc.", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
+  { codigo: 828, genero: "Formas mixtas", paises: ["Reino Unido", "Irlanda", "Australia", "Nueva Zelanda", "Sudafrica", "India"] },
   { codigo: 829, genero: "No ficción", paises: ["Reino Unido"] },
 
   { codigo: 830, genero: "Ficción", paises: ["Alemania", "Austria", "Suiza alemana"] },
@@ -42,7 +42,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 836, genero: "Cartas", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 837, genero: "Humor, sátiras, etc.", paises: ["Alemania", "Austria", "Suiza alemana"] },
   { codigo: 838, genero: "Formas mixtas", paises: ["Alemania", "Austria", "Suiza alemana"] },
-  { codigo: 839, genero: "Ficción", paises: ["Países Bajos", "Suecia", "Dinamarca", "Noruega", "Islandia"] },
+  { codigo: 839, genero: "Ficción", paises: ["Paises Bajos", "Suecia", "Dinamarca", "Noruega", "Islandia"] },
 
   { codigo: 840, genero: "Ficción", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
   { codigo: 841, genero: "Poesía", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
@@ -54,7 +54,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 846, genero: "Cartas", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
   { codigo: 847, genero: "Humor, sátiras, etc.", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
   { codigo: 848, genero: "Formas mixtas", paises: ["Francia", "Belgica francofona", "Suiza francesa"] },
-  { codigo: 849, genero: "Ficción", paises: ["España (occitano/catalán)", "Francia (provenzal)"] },
+  { codigo: 849, genero: "Ficción", paises: ["España (occitano/catalan)", "Francia (provenzal)"] },
 
   { codigo: 850, genero: "Ficción", paises: ["Italia"] },
   { codigo: 851, genero: "Poesía", paises: ["Italia"] },
@@ -68,16 +68,16 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 858, genero: "Formas mixtas", paises: ["Italia"] },
   { codigo: 859, genero: "Ficción", paises: ["Rumania"] },
 
-  { codigo: 860, genero: "Ficción", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 861, genero: "Poesía", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 862, genero: "Dramas", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 863, genero: "Novela", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 863, genero: "Cuentos", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 864, genero: "Ensayo", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 865, genero: "Discursos", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 866, genero: "Cartas", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 867, genero: "Humor, sátiras, etc.", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
-  { codigo: 868, genero: "Formas mixtas", paises: ["España", "México", "Argentina", "Colombia", "Chile", "Perú", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "República Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panamá", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 860, genero: "Ficción", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 861, genero: "Poesía", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 862, genero: "Dramas", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 863, genero: "Novela", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 863, genero: "Cuentos", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 864, genero: "Ensayo", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 865, genero: "Discursos", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 866, genero: "Cartas", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 867, genero: "Humor, sátiras, etc.", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
+  { codigo: 868, genero: "Formas mixtas", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
   { codigo: 869, genero: "Ficción", paises: ["Portugal", "Brasil"] },
 
   { codigo: 870, genero: "Ficción", paises: ["Roma antigua"] },
@@ -90,7 +90,7 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 876, genero: "Cartas", paises: ["Roma antigua"] },
   { codigo: 877, genero: "Humor, sátiras, etc.", paises: ["Roma antigua"] },
   { codigo: 878, genero: "Formas mixtas", paises: ["Roma antigua"] },
-  { codigo: 879, genero: "Ficción", paises: ["Italia (lenguas itálicas antiguas)"] },
+  { codigo: 879, genero: "Ficción", paises: ["Italia (lenguas italicas antiguas)"] },
 
   { codigo: 880, genero: "Ficción", paises: ["Grecia"] },
   { codigo: 881, genero: "Poesía", paises: ["Grecia"] },
@@ -137,14 +137,13 @@ export function formatCountry(pais: string): string {
   if(['arg', 'argentino'].includes(pais)) pais = 'Argentina'
   if(['eeuu', 'eu'].includes(pais)) pais = 'Estados unidos'
   if(['uk', 'inglaterra', 'ingles', 'inglesa'].includes(pais)) pais = 'Reino Unido'
-  if(['es', 'español', 'española'].includes(pais)) pais = 'España'
+  if(['es', 'espanol', 'espanola', 'espana'].includes(pais)) pais = 'España'
   if(['ch', 'chileno', 'chilena'].includes(pais)) pais = 'Chile'
   if(['brazil', 'brasilera', 'brazilera', 'brasilero', 'brazilero'].includes(pais)) pais = 'Brasil'
   if(['uru'].includes(pais)) pais = 'Uruguay'
   if(['venezolana', 'venezolano'].includes(pais)) pais = 'Venezuela'
-  if(['mexico', 'mx'].includes(pais)) pais = 'México'
+  if(['mx'].includes(pais)) pais = 'México'
   if(['roma'].includes(pais)) pais = 'Roma antigua'
-  if(['Panama'].includes(pais)) pais = 'Panamá'
   
   return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
@@ -156,6 +155,51 @@ export function getDeweyPorPaisYGenero(pais: string, genero: LiteraryFormLabel):
   )
 
   return entrada ? entrada.codigo : null
+}
+
+export const gruposLiterarios = [
+  {
+    label: "literatura germana",
+    paises: ["Alemania", "Austria", "Suiza"]
+  },
+  {
+    label: "literatura asiatica",
+    paises: ["Japon", "China", "Corea del Sur", "India", "Vietnam"]
+  },
+  {
+    label: "literatura latinoamericana",
+    paises: ["Argentina", "Mexico", "Colombia", "Chile", "Peru", "Cuba", "Uruguay", "Brasil"]
+  },
+  {
+    label: "literatura anglosajona",
+    paises: ["Estados Unidos", "Reino Unido", "Canada", "Australia"]
+  },
+  {
+    label: "literatura francofona",
+    paises: ["Francia", "Belgica", "Suiza", "Canada"]
+  },
+  {
+    label: "literatura nórdica",
+    paises: ["Suecia", "Noruega", "Dinamarca", "Finlandia", "Islandia"]
+  },
+  {
+    label: "literatura eslava",
+    paises: ["Rusia", "Polonia", "Republica Checa", "Ucrania"]
+  },
+  {
+    label: "literatura mediterranea",
+    paises: ["Italia", "España", "Grecia", "Portugal"]
+  }
+]
+
+export function getGrupoLiterario(pais: string | undefined) {
+  if(!pais) return ""
+
+  pais = formatCountry(pais)
+  const grupo = gruposLiterarios.find(g =>
+    g.paises.some(p => p === pais)
+  )
+  return grupo ? grupo.label : ""
 }
 
 export { deweyPaises }

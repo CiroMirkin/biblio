@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react"
-import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber } from "@shared/models"
+import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber, getGrupoLiterario } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatFecha, formatNro } from "@/utils"
@@ -102,6 +102,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
     const dewey = (libro?.dewey ?? getDeweyFromCallNumber(signatura)) || ""
     const authorCountry = libro.authorCountry
     const literaryForm = formatLiteraryForm(libro.literaryForm)
+    const grupoLiterario = getGrupoLiterario(libro?.authorCountry)
 
     return (
         <ul className="pt-2 list-disc pl-6 text-base">
@@ -132,6 +133,14 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                     <span className="cursor-default mr-1">
                         <span className="font-semibold mr-2">País de origen del autor:</span>
                         { authorCountry }
+                    </span>
+                </li>
+            }
+            { grupoLiterario && 
+                <li className="group flex items-center justify-start">
+                    <span className="cursor-default mr-1">
+                        <span className="font-semibold mr-2">Grupo literario:</span>
+                        { grupoLiterario }
                     </span>
                 </li>
             }
