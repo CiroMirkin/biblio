@@ -28,6 +28,7 @@
 
     html, body {
       height: 100%;
+      overflow-x: hidden;
     }
 
     body {
@@ -35,7 +36,7 @@
       color: var(--color-black);
       font-family: 'Inter', sans-serif;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       min-height: 100vh;
       padding: 2rem;
@@ -45,6 +46,7 @@
       max-width: 520px;
       width: 100%;
       text-align: center;
+      padding-top: 3rem;
     }
 
     .eyebrow {
@@ -142,6 +144,7 @@
       border-radius: 12px;
       padding: 2rem 1.5rem;
       width: 100vw;
+      max-width: 100vw;
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
       box-sizing: border-box;
@@ -154,13 +157,13 @@
       text-align: center;
       margin-bottom: 1.5rem;
     }
-    
+
     .libraries-status {
       text-align: center;
       font-size: 0.85rem;
       opacity: 0.7;
     }
-    
+
     .libraries-list {
       width: 100%;
       list-style: none;
@@ -188,6 +191,42 @@
     .library-location {
       font-size: 0.8rem;
       opacity: 0.7;
+    }
+
+    .video-section {
+      margin-top: 3rem;
+      background: var(--color-white);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      box-sizing: border-box;
+    }
+
+    .video-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .video-section-wrapper {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      aspect-ratio: 1440 / 810;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .hero-video {
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -228,13 +267,26 @@
       id="update-btn"
       href="https://github.com/CiroMirkin/biblio/releases/latest/download/Biblio-Setup.exe"
     >
-      Descargar actualización del sistema
+      Descargar última version
     </a>
 
     <section class="libraries-section">
       <h2>Bibliotecas que usan Biblio</h2>
       <p class="libraries-status" id="libraries-status">Cargando bibliotecas...</p>
       <ul class="libraries-list hidden" id="libraries-list"></ul>
+    </section>
+
+    <section class="video-section">
+      <h2>Video demostrativo</h2>
+      <div class="video-section-wrapper">
+        <iframe
+          id="showcase-video"
+          class="hero-video"
+          src="https://www.youtube.com/embed/rCJWjuUWqt4?autoplay=1&mute=1&controls=0&loop=1&playlist=rCJWjuUWqt4&modestbranding=1&rel=0&playsinline=1&enablejsapi=1"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+        ></iframe>
+      </div>
     </section>
   </main>
 
@@ -243,7 +295,6 @@
     var initialBtn = document.getElementById('initial-btn');
     var options = document.getElementById('options');
     var updateBtn = document.getElementById('update-btn');
-    var personalBtn = document.getElementById('personal-btn');
     var libraryBtn = options.querySelector('a[href*="forms.gle"]');
 
     function showUpdateView() {
@@ -267,7 +318,6 @@
       markClicked();
     });
 
-    personalBtn.addEventListener('click', markClicked);
     libraryBtn.addEventListener('click', markClicked);
 
     var LIBRARIES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQTE1s6-PpXEkH_ZqkXfROa9gTX-qA-DFgQaZWlHWJ_63e2cWJzAoAGqLrVzW7QOyZ5KBmnQR21SiKs/pub?gid=1921314640&single=true&output=csv';
@@ -378,6 +428,31 @@
       .catch(function () {
         librariesStatus.textContent = 'No se pudo cargar la lista de bibliotecas en este momento.';
       });
+
+    var youtubeApiScript = document.createElement('script');
+    youtubeApiScript.src = 'https://www.youtube.com/iframe_api';
+    document.body.appendChild(youtubeApiScript);
+
+    function forceHeroVideoQuality(player) {
+      player.setPlaybackQuality('hd1080');
+    }
+
+    window.onYouTubeIframeAPIReady = function () {
+      var showcasePlayer = new YT.Player('showcase-video', {
+        events: {
+          onReady: function (event) {
+            event.target.mute();
+            event.target.playVideo();
+            forceHeroVideoQuality(event.target);
+          },
+          onStateChange: function (event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+              forceHeroVideoQuality(event.target);
+            }
+          }
+        }
+      });
+    };
   </script>
 </body>
 </html>
