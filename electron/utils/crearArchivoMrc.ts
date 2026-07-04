@@ -52,6 +52,10 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
 
     record.append(['040', '  ', 'a', 'LOCAL', 'b', 'spa', 'c', 'LOCAL'])
 
+    if (libro.holding.barcode) {
+        record.append(['020', '  ', 'a', libro.holding.barcode])
+    }
+
     if (libro.autor) {
         record.append(['100', '1 ', 'a', libro.autor])
     }
@@ -84,7 +88,6 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
 
     const subs952: string[] = [
         'b', libro.holding.homeBranch || 'CENTRAL',
-        ...(libro.holding.barcode ? ['p', libro.holding.barcode] : []),
         'y', itemType,
     ]
     if (libro.holding.holdingBranch) subs952.push('a', libro.holding.holdingBranch)

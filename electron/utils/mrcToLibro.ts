@@ -1,4 +1,4 @@
-import type { LiteraryForm, Marc21EnPrestamo, Marc21ItemType } from '@shared/models'
+import { getDeweyFromCallNumber, type LiteraryForm, type Marc21EnPrestamo, type Marc21ItemType } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
@@ -87,10 +87,19 @@ export type MrcParseResult = {
  * Se extrae el número del prefijo y se valida que tenga 5 dígitos o menos.
  * Si un ejemplar no tiene 952$x, o el número supera los 5 dígitos, se descarta.
  *
- * ### Código de barras: 952$p (ISBN del ejemplar)
- * El campo 952$p contiene el código de barras, que en esta instancia de Koha corresponde al ISBN.
+ * ### ISBN: 020$a
+ * El ISBN se ubica en el campo bibliográfico estándar 020$a. Al ser un dato
+ * bibliográfico (no del ejemplar), se lee una sola vez por registro y se
+ * comparte entre todos los ejemplares (952) de ese mismo registro.
  * Se valida con el algoritmo del dígito verificador (ISBN-10 módulo 11, ISBN-13 módulo 10 con pesos alternados 1-3).
  * Si no pasa la validación se descarta silenciosamente y el barcode queda vacío.
+ *
+ * ### Signatura (callNumber): 082$a
+ * En esta instancia de Koha la signatura topográfica completa (Dewey + corte
+ * de autor, ej. "813 AUS") se carga en el campo bibliográfico 082$a en vez
+ * de 952$o. Al ser un dato bibliográfico se lee una sola vez por registro y
+ * se comparte entre todos los ejemplares. El número Dewey puro se deriva de
+ * la signatura con `getDeweyFromCallNumber`.
  *
  * ### Tipo de ítem: 942$c → 952$y → "BK" como fallback
  * El campo estándar para el tipo de material en Koha es 942$c. Sin embargo,
@@ -132,6 +141,14 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     const placeOfPublication = getSubfieldFromRecord(record, '260', 'a')?.replace(/\s*[:;,]\s*$/, '').trim() || undefined
     const publisher = getSubfieldFromRecord(record, '260', 'b')?.replace(/\s*[:;,]\s*$/, '').trim() || undefined
 
+    const isbnRaw = getSubfieldFromRecord(record, '020', 'a')
+    const barcode = isbnRaw && validateISBN(isbnRaw)
+      ? isbnRaw.replace(/[-\s]/g, '')
+      : undefined
+
+    const callNumber = getSubfieldFromRecord(record, '082', 'a')?.trim() || undefined
+    const dewey = getDeweyFromCallNumber(callNumber)
+
     const holding952s = getAllFields(record, '952')
 
     if (holding952s.length === 0) {
@@ -140,10 +157,6 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     }
 
     holding952s.forEach((field952, holdingIndex) => {
-      const barcodeRaw = getSubfield(field952, 'p') || undefined
-      const barcode = barcodeRaw && validateISBN(barcodeRaw)
-        ? barcodeRaw.replace(/[-\s]/g, '')
-        : undefined
       const rawX = getSubfield(field952, 'x')
 
       if (!rawX) {
@@ -167,8 +180,6 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
         || (getSubfield(field952, 'y') as Marc21ItemType | undefined)
         || 'BK'
 
-      const callNumberRaw = getSubfield(field952, 'o')
-
       const libro: Marc21EnPrestamo = {
         numeroInventario,
         titulo,
@@ -180,12 +191,13 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
         placeOfPublication,
         publisher,
         publicationYear,
+        dewey,
         holding: {
           homeBranch,
           holdingBranch: getSubfield(field952, 'a') || homeBranch,
           barcode: barcode ?? '',
           publicNote: getSubfield(field952, 'z') || undefined,
-          callNumber: callNumberRaw ? callNumberRaw : undefined,
+          callNumber,
         },
         nombreSocio: undefined,
         numeroSocio: undefined,
