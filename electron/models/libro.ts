@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
 import { isMarc21 } from "@shared/models"
-import type { LibroRegistrado, LibroEnPrestamo, LiteraryForm, Marc21ItemType  } from "@shared/models"
-import type { LiteraryGenre } from "@shared/models/literaryGenre"
+import type { LibroRegistrado, LibroEnPrestamo, LiteraryForm, Marc21ItemType, LiteraryGenre  } from "@shared/models"
 import { getCellString } from "../utils/excelhelpers"
 
 export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
