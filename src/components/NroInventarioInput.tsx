@@ -48,7 +48,6 @@ export function NroInventarioInput({
       return
     }
 
-    setEsLibroNuevo(true)
     onNroInvalid(false)
     setMensajeDeError(null)
   }
