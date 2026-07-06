@@ -9,7 +9,7 @@ export interface Libro {
     numeroInventario?: number | string
     
     literaryForm?: LiteraryForm
-    literaryGenres?: LiteraryGenre[]
+    literaryGenres?: LiteraryGenre
 
     fechaDeIngreso?: Date | null
 }
