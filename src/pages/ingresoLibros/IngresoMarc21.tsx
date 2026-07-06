@@ -91,7 +91,6 @@ export function IngresoMarc21() {
             onSubmit={handleSubmit}
             submitLabel="Ingresar Libro"
             mode="ingreso"
-            homeBranch={nombreBiblioteca}
             submitDisabled={loading || nroInvalido || !homeBranch}
             defaultValues={makeBlankMark21({ numeroInventario: nroParaLibroNuevo, titulo:"" })}
             onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
@@ -102,6 +101,7 @@ export function IngresoMarc21() {
         <section className="card mb-4 flex flex-col gap-2">
             { !homeBranch && <p className="font-semibold">El nombre de la biblioteca debe definirse dentro de ajustes.</p> }
             <p>Aquí puedes registrar nuevos libros dentro del inventario, <strong>esta sección no es para registrar prestamos.</strong></p>
+            { homeBranch && <p>El libro es propiedad de "{nombreBiblioteca}"</p> }
         </section>
       </aside>
     </div>
