@@ -1,5 +1,5 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { formatLiteraryForm, type LiteraryForm, type Marc21, type Marc21ItemType } from "@shared/models"
+import { formatLiteraryForm, getDeweyFromCallNumber, type LiteraryForm, type Marc21, type Marc21ItemType } from "@shared/models"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
@@ -24,14 +24,13 @@ interface Props {
   mode: "ingreso" | "edicion"
   submitLabel: string
   onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
-  homeBranch: string
   submitDisabled?: boolean
   defaultValues?: Marc21
   onSuccess?: () => void
 }
 
 export function Marc21Form({
-  mode, submitLabel, onSubmit, submitDisabled, homeBranch, defaultValues, onSuccess = () => {}
+  mode, submitLabel, onSubmit, submitDisabled, defaultValues, onSuccess = () => {}
 }: Props) {
   const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
   const [ nroInvalido, setNroComoInvalido ] = useState(false)
@@ -40,7 +39,8 @@ export function Marc21Form({
 
   const [autor, setAutor] = useState(defaultValues?.autor ?? "")
   const [country, setCountry] = useState(defaultValues?.authorCountry ?? "")
-  const [dewey, setDewey] = useState(defaultValues?.dewey?.toString() ?? "")
+  const d = defaultValues?.dewey?.toString() ?? getDeweyFromCallNumber(defaultValues?.holding?.callNumber)?.toString()
+  const [dewey, setDewey] = useState(d || "")
   const [literaryForm, setLiteraryForm] = useState<LiteraryForm>(defaultValues?.literaryForm ?? "u")
   
   const formRef = useRef<HTMLFormElement>(null)
@@ -68,6 +68,13 @@ export function Marc21Form({
 
   return (
     <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
+      <NroInventarioInput 
+        mode={mode}
+        onKeyDown={handleEnter}
+        defaultValue={defaultValues?.numeroInventario ?? ""}
+        inputClass={inputClass}
+        onNroInvalid={setNroComoInvalido}
+      />
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Título: <span className="text-red">*</span></span>
@@ -78,14 +85,6 @@ export function Marc21Form({
           <span className="font-semibold">Autor:</span>
           <input onKeyDown={handleEnter} onChange={e => setAutor(e.target.value)} type="text" name="autor" id="autor" value={autor} className={inputClass} placeholder="Apellido, nombre" />
         </label>
-
-        <NroInventarioInput 
-          mode={mode}
-          onKeyDown={handleEnter}
-          defaultValue={defaultValues?.numeroInventario ?? ""}
-          inputClass={inputClass}
-          onNroInvalid={setNroComoInvalido}
-        />
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Código de barras (ISBN):</span>
@@ -138,17 +137,12 @@ export function Marc21Form({
           />
         </div>
 
-        <label className="flex flex-col gap-1 text-base opacity-50">
-          <span>Biblioteca propietaria:</span>
-          <input type="text" value={!homeBranch ? "El nombre se define en AJUSTES" : homeBranch} disabled name="homeBranch" id="homeBranch" required className={`${inputClass} disabled:opacity-50 disabled:cursor-not-allowed`} />
-        </label>
-
-        <label className="mt-4 flex flex-col gap-1 text-base">
+        <label className="mt-5 flex flex-col gap-1 text-base">
           <span className="font-semibold">Nombre de la Editorial:</span>
           <input onKeyDown={handleEnter} type="text" name="publisher" id="publisher" defaultValue={defaultValues?.publisher ?? ""} className={inputClass} />
         </label>
 
-        <label className="mt-4 flex flex-col gap-1 text-base">
+        <label className="mt-5 flex flex-col gap-1 text-base">
           <span className="font-semibold">Lugar de publicación:</span>
           <input onKeyDown={handleEnter} type="text" name="placeOfPublication" id="placeOfPublication" defaultValue={defaultValues?.placeOfPublication ?? ""} className={inputClass} />
         </label>
