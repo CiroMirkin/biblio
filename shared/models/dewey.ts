@@ -105,6 +105,83 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 889, genero: "Ficción", paises: ["Grecia"] },
 
   { codigo: 890, genero: "Ficción", paises: ["Diversos"] },
+
+  { codigo: 891, genero: "Ficción", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Poesía", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Dramas", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Novela", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Cuentos", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Ensayo", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Discursos", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Cartas", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Humor, sátiras, etc.", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+  { codigo: 891, genero: "Formas mixtas", paises: ["Rusia", "Ucrania", "Polonia", "Republica Checa", "Eslovaquia", "Iran", "India (sanscrito e hindi)"] },
+
+  { codigo: 892, genero: "Ficción", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Poesía", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Dramas", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Novela", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Cuentos", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Ensayo", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Discursos", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Cartas", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Humor, sátiras, etc.", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+  { codigo: 892, genero: "Formas mixtas", paises: ["Israel", "Arabia Saudita", "Egipto", "Siria", "Iraq", "Marruecos", "Etiopia"] },
+
+  { codigo: 893, genero: "Ficción", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Poesía", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Dramas", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Novela", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Cuentos", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Ensayo", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Discursos", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Cartas", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Humor, sátiras, etc.", paises: ["Argelia", "Tunez", "Libia"] },
+  { codigo: 893, genero: "Formas mixtas", paises: ["Argelia", "Tunez", "Libia"] },
+
+  { codigo: 894, genero: "Ficción", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Poesía", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Dramas", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Novela", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Cuentos", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Ensayo", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Discursos", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Cartas", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Humor, sátiras, etc.", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+  { codigo: 894, genero: "Formas mixtas", paises: ["Turquia", "Hungria", "Finlandia", "Estonia", "Mongolia"] },
+
+  { codigo: 895, genero: "Ficción", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Poesía", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Dramas", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Novela", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Cuentos", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Ensayo", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Discursos", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Cartas", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Humor, sátiras, etc.", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+  { codigo: 895, genero: "Formas mixtas", paises: ["Japon", "China", "Corea del Sur", "Corea del Norte", "Vietnam", "Tailandia"] },
+
+  { codigo: 896, genero: "Ficción", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Poesía", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Dramas", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Novela", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Cuentos", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Ensayo", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Discursos", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Cartas", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Humor, sátiras, etc.", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+  { codigo: 896, genero: "Formas mixtas", paises: ["Nigeria", "Kenia", "Ghana", "Sudan", "Sudafrica (lenguas africanas)"] },
+
+  { codigo: 899, genero: "Ficción", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Poesía", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Dramas", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Novela", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Cuentos", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Ensayo", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Discursos", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Cartas", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Humor, sátiras, etc.", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
+  { codigo: 899, genero: "Formas mixtas", paises: ["Indonesia", "Filipinas", "Malasia", "Camboya"] },
 ]
 
 export function getDatosDelDewey(codigo: Dewey | undefined | null): { genero: LiteraryFormLabel, paises: string[] } {
@@ -134,16 +211,19 @@ export function formatCountry(pais: string): string {
   pais = pais.trim().toLowerCase()
   if(!pais) return ""
 
-  if(['arg', 'argentino'].includes(pais)) pais = 'Argentina'
-  if(['eeuu', 'eu'].includes(pais)) pais = 'Estados unidos'
-  if(['uk', 'inglaterra', 'ingles', 'inglesa'].includes(pais)) pais = 'Reino Unido'
-  if(['es', 'espanol', 'espanola', 'espana'].includes(pais)) pais = 'España'
+  if(['arg', 'argentino', 'a', 'ar'].includes(pais)) pais = 'Argentina'
+  if(['eeuu', 'eu', 'ee uu', 'ee.uu'].includes(pais)) pais = 'Estados unidos'
+  if(['uk', 'inglaterra', 'ingles', 'inglesa', 'britanico', 'britanica'].includes(pais)) pais = 'Reino Unido'
+  if(['es', 'espanol', 'espanola', 'espana', 'esp'].includes(pais)) pais = 'España'
   if(['ch', 'chileno', 'chilena'].includes(pais)) pais = 'Chile'
   if(['brazil', 'brasilera', 'brazilera', 'brasilero', 'brazilero'].includes(pais)) pais = 'Brasil'
   if(['uru'].includes(pais)) pais = 'Uruguay'
   if(['venezolana', 'venezolano'].includes(pais)) pais = 'Venezuela'
-  if(['mx'].includes(pais)) pais = 'México'
+  if(['mx', 'mexicano', 'mexicana'].includes(pais)) pais = 'Mexico'
   if(['roma'].includes(pais)) pais = 'Roma antigua'
+  if(['japones', 'japonesa', 'nipon'].includes(pais)) pais = 'Japon'
+  if(['aleman', 'alemana'].includes(pais)) pais = 'Alemania'
+  if(['arabia'].includes(pais)) pais = 'Arabia Saudita'
   
   return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
