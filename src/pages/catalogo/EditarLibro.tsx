@@ -106,7 +106,6 @@ export function EditarLibro() {
             submitLabel="Guardar Cambios"
             onSubmit={handleSubmit}
             mode="edicion"
-            homeBranch={homeBranch}
             defaultValues={
               !isMarc21(libroSeleccionado) ? makeBlankMark21(libroSeleccionado) : libroSeleccionado
             }
