@@ -7,7 +7,7 @@ import { CallNumberInput } from "./CallNumberInput"
 import { DeweyInput } from "./DeweyInput"
 
 const ORDER = [
-  "titulo", "autor", "numeroInventario", "barcode", "literaryGenres", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
+  "numeroInventario", "titulo", "autor", "barcode", "genres", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
 ]
 
 function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
