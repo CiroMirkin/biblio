@@ -39,6 +39,7 @@ export function IngresoMarc21() {
             autor: formatName(form.autor?.value) || "",
             itemType: "BK",
             literaryForm: form.literaryForm?.value || "u",
+            literaryGenres: form.genres?.value || "",
             edition: form.edition?.value || "",
             placeOfPublication: formatName(form.placeOfPublication?.value) || "",
             publisher: formatName(form.publisher?.value) || "",

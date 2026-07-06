@@ -29,6 +29,7 @@ export function IngresoSimple() {
       titulo: formatTitulo(form.titulo.value),
       autor: formatName(form.autor?.value) || "",
       literaryForm: form.literaryForm?.value || "u",
+      literaryGenres: form.genres?.value || "",
     }
 
     setLoading(true)

@@ -42,6 +42,12 @@ export function DetallesLibro({ libro }: Props) {
                     onClick={() => setExpandido((prev) => !prev)}
                     >
                         { isMarc && <MarkDetalles libro={libro} /> }
+                        { (!isMarc && libro?.literaryGenres) && 
+                            <p className="text-base opacity-80 mt-1">
+                                <span className="mr-1 font-semibold">Genero literario: </span>
+                                { libro?.literaryGenres }
+                            </p>
+                        }
                         { (!isMarc && numerosDeInventarioExternos) && 
                             <p className="text-base opacity-80 mt-1">
                                 <span className="mr-1 font-semibold">N° </span>
@@ -50,7 +56,7 @@ export function DetallesLibro({ libro }: Props) {
                         }
                         { (!isMarc && numerosDeInventarioExternos && libro.fechaDeIngreso !== null) && 
                             <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1 font-semibold">Fecha de Ingreso al sistema </span>
+                                <span className="mr-1 font-semibold">Fecha de Ingreso al sistema: </span>
                                 { formatFecha(libro.fechaDeIngreso) }
                             </p>
                         }
@@ -103,6 +109,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
     const authorCountry = libro.authorCountry
     const literaryForm = formatLiteraryForm(libro.literaryForm)
     const grupoLiterario = getGrupoLiterario(libro?.authorCountry)
+    const genres = libro?.literaryGenres || ""
 
     return (
         <ul className="pt-2 list-disc pl-6 text-base">
@@ -117,7 +124,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
             <li className="group flex items-center justify-start">
                 <span className="cursor-default mr-1">
                     <span className="font-semibold mr-2">N° de inventario:</span>
-                    { formatNro(libro.numeroInventario) }
+                    {  libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
                 </span>
              </li>
             { literaryForm && 
@@ -149,6 +156,14 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                     <span className="cursor-default mr-1">
                         <span className="mr-2">Signatura:</span>
                         { signatura }
+                    </span>
+                </li>
+            }
+            { genres &&
+                <li className="group flex items-center justify-start opacity-75">
+                    <span className="cursor-default mr-1">
+                        <span className="mr-2">Genero literario:</span>
+                        { genres }
                     </span>
                 </li>
             }

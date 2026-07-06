@@ -30,6 +30,7 @@ export function EditarLibro() {
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
       autor: formatName(form.autor?.value) || libroSeleccionado.autor,
       literaryForm: form.literaryForm?.value || "u",
+      literaryGenres: form.genres?.value || "",
     }
     
     if(!catalogacionSimple) {

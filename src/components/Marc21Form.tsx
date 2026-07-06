@@ -7,7 +7,7 @@ import { CallNumberInput } from "./CallNumberInput"
 import { DeweyInput } from "./DeweyInput"
 
 const ORDER = [
-  "titulo", "autor", "numeroInventario", "barcode", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
+  "titulo", "autor", "numeroInventario", "barcode", "literaryGenres", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
 ]
 
 function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
@@ -91,6 +91,12 @@ export function Marc21Form({
           <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" minLength={8} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
         </label>
 
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Genero literario:</span>
+          <input onKeyDown={handleEnter} type="text" name="genres" id="genres" defaultValue={defaultValues?.literaryGenres ?? ""} className={inputClass} />
+        </label>
+
+
         {tipoItem === "BK" && (
           <label className="flex flex-col gap-1 text-base">
             <span className="font-semibold">Forma literaria:</span>
@@ -136,6 +142,8 @@ export function Marc21Form({
             inputClass={inputClass}
           />
         </div>
+
+        <div></div>
 
         <label className="mt-5 flex flex-col gap-1 text-base">
           <span className="font-semibold">Nombre de la Editorial:</span>
