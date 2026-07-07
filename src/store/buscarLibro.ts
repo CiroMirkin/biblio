@@ -17,6 +17,10 @@ export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
     return buscarLibrosDeHoy(libros)
   }
 
+  if(dato === "ingresos de hoy") {
+    return buscarLibrosRegistradosHoy(libros)
+  }
+
   if(busquedaPorDiaKeys.includes(dato)) {
     return buscarLibrosDelDia(dato, libros)
   }
@@ -41,6 +45,13 @@ function buscarLibrosDeHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
   const hoy = new Date()
   return libros.filter(
     libro => libro.fechaDePrestamo != null && esMismaFecha(libro.fechaDePrestamo, hoy)
+  )
+}
+
+function buscarLibrosRegistradosHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
+  const hoy = new Date()
+  return libros.filter(
+    libro => libro.fechaDeIngreso != null && esMismaFecha(libro.fechaDeIngreso, hoy)
   )
 }
 
