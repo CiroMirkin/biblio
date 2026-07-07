@@ -104,7 +104,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
         subs952.push('o', libro.holding.callNumber)
     }
     if (libro.holding.publicNote)    subs952.push('z', libro.holding.publicNote)
-    if (libro.numeroInventario)      subs952.push('x', `Inv. Interno ${libro.numeroInventario}`)
+    if (libro.numeroInventario)      subs952.push('p', `Inv. Interno ${libro.numeroInventario}`)
 
     record.append(['952', '  ', ...subs952])
 

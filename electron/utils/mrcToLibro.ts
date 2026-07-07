@@ -1,4 +1,4 @@
-import { getDeweyFromCallNumber, type LiteraryForm, type Marc21EnPrestamo, type Marc21ItemType } from '@shared/models'
+import { getDeweyFromCallNumber, type LiteraryForm, type Marc21EnPrestamo } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
@@ -134,8 +134,6 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
       ? literaryFormRaw as LiteraryForm
       : undefined
 
-    const itemTypeFromRecord = (getSubfieldFromRecord(record, '942', 'c') ?? '') as Marc21ItemType
-
     const autor = getSubfieldFromRecord(record, '100', 'a')?.replace(/\s*[,;.]\s*$/, '').trim() || undefined
     const edition = getSubfieldFromRecord(record, '250', 'a')?.replace(/\s*[,;.]\s*$/, '').trim() || undefined
     const placeOfPublication = getSubfieldFromRecord(record, '260', 'a')?.replace(/\s*[:;,]\s*$/, '').trim() || undefined
@@ -157,7 +155,7 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     }
 
     holding952s.forEach((field952, holdingIndex) => {
-      const rawX = getSubfield(field952, 'x')
+      const rawX = getSubfield(field952, 'x') || getSubfield(field952, 'p')
 
       if (!rawX) {
         errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Sin número de inventario (952$x)` })
@@ -176,16 +174,12 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
         return
       }
 
-      const itemType: Marc21ItemType = itemTypeFromRecord
-        || (getSubfield(field952, 'y') as Marc21ItemType | undefined)
-        || 'BK'
-
       const libro: Marc21EnPrestamo = {
         numeroInventario,
         titulo,
         autor,
         authorCountry: undefined,
-        itemType,
+        itemType: 'BK',
         literaryForm,
         edition,
         placeOfPublication,
