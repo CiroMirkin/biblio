@@ -7,17 +7,19 @@ export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
 
 /**
  * Registro de un libro en formato MARC 21.
-| Columna Excel          | Campo MARC 21 | Descripción                    |
-|------------------------|---------------|-------------------------------|
-| `245$a Título`         | 245 $a        | Título (R)                       |
-| `942$c Tipo ítem`      | 942 $c        | Tipo de material (R)             |
-| `952$b Sede`           | 952 $b        | Biblioteca / sede (R)            |
-| `952$p Código barras`  | 952 $p        | Código de barras del ejemplar (R) |
+| Columna Excel          | Campo MARC 21 | Descripción                       |
+|------------------------|---------------|------------------------------------|
+| `245$a Título`         | 245 $a        | Título (R)                        |
+| `942$c Tipo ítem`      | 942 $c        | Tipo de material (R)              |
+| `952$a Sede`           | 952 $a        | Biblioteca de origen / sede (R)   |
+| `952$p N° inventario`  | 952 $p        | Código de barras / N° de inventario del ejemplar (R) |
 | `100$a Autor`          | 100 $a        | Autor principal  (op)             |
+| `020$a ISBN`           | 020 $a        | ISBN                (op)          |
 | `250$a Edición`        | 250 $a        | Mención de edición (op)           |
 | `260$a Lugar`          | 260 $a        | Lugar de publicación  (op)        |
 | `260$b Editor`         | 260 $b        | Editorial          (op)           |
 | `260$c Año`            | 260 $c        | Año de publicación (op)           |
+| `952$b Sede retención` | 952 $b        | Biblioteca de retención    (op)   |
 | `952$z Observaciones`  | 952 $z        | Nota pública              (op)    |
 | `952$o Signatura`      | 952 $o        | Signatura topográfica    (op)     |
  */
