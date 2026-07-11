@@ -2,7 +2,7 @@
 export function validateISBN(raw: string): boolean {
     if(!raw) return false
     
-    const cleaned = raw.replace(/[-\s]/g, '')
+    const cleaned = raw.replace(/[-\s]/g, '').toUpperCase()
 
     if (cleaned.length === 13) {
         if (!/^\d{13}$/.test(cleaned)) return false
