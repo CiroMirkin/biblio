@@ -49,7 +49,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     const record = new Record()
     const leader = '01197nam  22002891  4500'
     record.leader = leader.substring(0, 9) + 'a' + leader.substring(10)
-    const itemType = libro.itemType || 'BK'
+    const itemType = libro.itemType || 'LIB'
 
     // Deberia asignarlo Koha al importar los datos
     record.append(['001', ""])
@@ -96,15 +96,15 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     record.append(['942', '  ', 'c', itemType])
 
     const subs952: string[] = [
-        'b', libro.holding.homeBranch || 'CENTRAL',
-        'y', itemType,
+        'a', libro.holding.homeBranch || 'CENTRAL',
     ]
-    if (libro.holding.holdingBranch) subs952.push('a', libro.holding.holdingBranch)
+    if (libro.holding.holdingBranch) subs952.push('b', libro.holding.holdingBranch)
+    subs952.push('y', itemType)
     if (libro.holding.callNumber) {
         subs952.push('o', libro.holding.callNumber)
     }
     if (libro.holding.publicNote)    subs952.push('z', libro.holding.publicNote)
-    if (libro.numeroInventario)      subs952.push('p', `Inv. Interno ${libro.numeroInventario}`)
+    if (libro.numeroInventario)      subs952.push('p', String(libro.numeroInventario))
 
     record.append(['952', '  ', ...subs952])
 

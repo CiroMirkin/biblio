@@ -81,6 +81,10 @@ export type MrcParseResult = {
  * un `Marc21EnPrestamo` por cada campo 952, todos compartiendo los datos
  * bibliográficos del registro padre (título, autor, año, etc.).
  *
+ * ### Sede: 952$a (homebranch) y 952$b (holdingbranch)
+ * $a es la sede de origen del ejemplar y $b la sede donde se encuentra
+ * actualmente. Si $b no está presente se asume igual a $a.
+ *
  * ### Número de inventario: 952$x
  * El número de inventario se ingresa manualmente en Koha en el campo
  * "Inventario" (952$x), exportado con el formato "Inv. Interno NNNNN".
@@ -168,9 +172,9 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
         return
       }
 
-      const homeBranch = getSubfield(field952, 'b')
+      const homeBranch = getSubfield(field952, 'a')
       if (!homeBranch) {
-        errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Sin sede (952$b)` })
+        errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Sin sede (952$a)` })
         return
       }
 
@@ -188,7 +192,7 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
         dewey,
         holding: {
           homeBranch,
-          holdingBranch: getSubfield(field952, 'a') || homeBranch,
+          holdingBranch: getSubfield(field952, 'b') || homeBranch,
           barcode: barcode ?? '',
           publicNote: getSubfield(field952, 'z') || undefined,
           callNumber,
