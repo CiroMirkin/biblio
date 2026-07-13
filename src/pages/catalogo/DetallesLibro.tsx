@@ -2,7 +2,8 @@ import { AnimatePresence, motion } from "motion/react"
 import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber, getGrupoLiterario } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
-import { cn, formatFecha, formatNro } from "@/utils"
+import { cn, formatFecha, formatNro, formatTitulo } from "@/utils"
+import { formatISBN } from "@shared/utils"
 
 interface Props {
     libro: LibroRegistrado | Libro | Marc21
@@ -131,7 +132,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                 <li className="group flex items-center justify-start">
                     <span className="cursor-default mr-1">
                         <span className="font-semibold mr-2">Forma literaria:</span>
-                        { literaryForm }
+                        { literaryForm === "Desconocido" ? getDatosDelDewey(libro?.dewey).genero : literaryForm }
                     </span>
                 </li>
             }
@@ -147,15 +148,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                 <li className="group flex items-center justify-start">
                     <span className="cursor-default mr-1">
                         <span className="font-semibold mr-2">Grupo literario:</span>
-                        { grupoLiterario }
-                    </span>
-                </li>
-            }
-            { signatura &&
-                <li className="group flex items-center justify-start opacity-75">
-                    <span className="cursor-default mr-1">
-                        <span className="mr-2">Signatura:</span>
-                        { signatura }
+                        { formatTitulo(grupoLiterario) }
                     </span>
                 </li>
             }
@@ -176,10 +169,16 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                 </li>
             }
             <span className="block w-full h-2.5" />
+            { signatura &&
+                <li className="group flex items-center justify-start opacity-75">
+                    <span className="cursor-default mr-1">Signatura:</span>
+                    { signatura }
+                </li>
+            }
             { libro.holding.barcode && 
                 <li className="group flex items-center justify-start opacity-75">
                     <span className="cursor-default mr-1">Código de barras / ISBN:</span>
-                    { libro.holding.barcode }
+                    { formatISBN(libro.holding.barcode) }
                 </li>
             }
             { libro.publisher && 
