@@ -292,16 +292,16 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 895.67, genero: "Humor, sátiras, etc.", paises: ["Japon"] },
   { codigo: 895.68, genero: "Formas mixtas", paises: ["Japon"] },
 
-  { codigo: 895.7, genero: "Ficción", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.71, genero: "Poesía", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.72, genero: "Dramas", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.73, genero: "Novela", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.73, genero: "Cuentos", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.74, genero: "Ensayo", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.75, genero: "Discursos", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.76, genero: "Cartas", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.77, genero: "Humor, sátiras, etc.", paises: ["Corea del Sur", "Corea del Norte"] },
-  { codigo: 895.78, genero: "Formas mixtas", paises: ["Corea del Sur", "Corea del Norte"] },
+  { codigo: 895.7, genero: "Ficción", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.71, genero: "Poesía", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.72, genero: "Dramas", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.73, genero: "Novela", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.73, genero: "Cuentos", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.74, genero: "Ensayo", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.75, genero: "Discursos", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.76, genero: "Cartas", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.77, genero: "Humor, sátiras, etc.", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
+  { codigo: 895.78, genero: "Formas mixtas", paises: ["Corea del Sur", "Corea del Norte", "Corea"] },
 
   { codigo: 895.9223, genero: "Ficción", paises: ["Vietnam"] },
   { codigo: 895.92231, genero: "Poesía", paises: ["Vietnam"] },
@@ -410,6 +410,10 @@ export function formatCountry(pais: string): string {
   if(['japones', 'japonesa', 'nipon'].includes(pais)) pais = 'Japon'
   if(['aleman', 'alemana'].includes(pais)) pais = 'Alemania'
   if(['arabia'].includes(pais)) pais = 'Arabia Saudita'
+  if(['vietnamita'].includes(pais)) pais = 'Vietnam'
+
+  if(['corea del sur'].includes(pais)) return 'Corea del Sur'
+  if(['corea del norte'].includes(pais)) return 'Corea del Norte'
   
   return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }

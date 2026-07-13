@@ -32,7 +32,7 @@ export function DeweyInput({ country, genero, value, onChange, onKeyDown, inputC
         onKeyDown={onKeyDown}
         onChange={handleChange}
         onFocus={handleFocus}
-        step="0.01"
+        step="0.00001"
         min={100}
         type="number"
         name="dewey"
