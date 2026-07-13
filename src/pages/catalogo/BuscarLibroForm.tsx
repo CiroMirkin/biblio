@@ -12,7 +12,7 @@ export function BuscarLibroForm() {
   }
 
   const placeholder = numerosDeInventarioExternos
-    ? "Nombre del libro, autor o  N° de inventario"
+    ? "Nombre del libro, autor o N° de inventario"
     : "Nombre del libro o autor"
 
   return (
