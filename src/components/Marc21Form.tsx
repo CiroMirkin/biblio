@@ -5,6 +5,7 @@ import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 import { CallNumberInput } from "./CallNumberInput"
 import { DeweyInput } from "./DeweyInput"
+import { IsbnInput } from "./IsbnInput"
 
 const ORDER = [
   "numeroInventario", "titulo", "autor", "barcode", "genres", "callNumberPrefix", "dewey", "publisher", "placeOfPublication", "edition", "publicationYear", "publicNote",
@@ -42,6 +43,7 @@ export function Marc21Form({
   const d = defaultValues?.dewey?.toString() ?? getDeweyFromCallNumber(defaultValues?.holding?.callNumber)?.toString()
   const [dewey, setDewey] = useState(d || "")
   const [literaryForm, setLiteraryForm] = useState<LiteraryForm>(defaultValues?.literaryForm ?? "u")
+  const [isbn, setIsbn] = useState(defaultValues?.holding?.barcode ?? "")
   
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -86,10 +88,7 @@ export function Marc21Form({
           <input onKeyDown={handleEnter} onChange={e => setAutor(e.target.value)} type="text" name="autor" id="autor" value={autor} className={inputClass} placeholder="Apellido, nombre" />
         </label>
 
-        <label className="flex flex-col gap-1 text-base">
-          <span className="font-semibold">Código de barras (ISBN):</span>
-          <input onKeyDown={handleEnter} type="text" name="barcode" id="barcode" minLength={8} defaultValue={defaultValues?.holding.barcode ?? ""} className={inputClass} />
-        </label>
+        <IsbnInput onKeyDown={handleEnter} value={isbn} inputClass={inputClass} onChange={setIsbn} />
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Genero literario:</span>
