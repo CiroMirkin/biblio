@@ -28,7 +28,10 @@ export function DetallesLibro({ libro }: Props) {
         )
     }
 
-    const genero = isMarc21(libro) ? getDatosDelDewey(libro?.dewey).genero : ""
+    let literaryForm = formatLiteraryForm(libro.literaryForm)
+    if(isMarc21(libro)) {
+        literaryForm = formatLiteraryForm(libro.literaryForm) ?? getDatosDelDewey(libro?.dewey).genero
+    }
 
     return (
         <>
@@ -43,21 +46,27 @@ export function DetallesLibro({ libro }: Props) {
                     onClick={() => setExpandido((prev) => !prev)}
                     >
                         { isMarc && <MarkDetalles libro={libro} /> }
-                        { (!isMarc && libro?.literaryGenres) && 
-                            <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1 font-semibold">Genero literario: </span>
-                                { libro?.literaryGenres }
-                            </p>
-                        }
                         { (!isMarc && numerosDeInventarioExternos) && 
                             <p className="text-base opacity-80 mt-1">
                                 <span className="mr-1 font-semibold">N° </span>
                                 { libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
                             </p>
                         }
+                        { (!isMarc && literaryForm) && 
+                            <p className="text-base opacity-80 mt-1">
+                                <span className="mr-1 font-semibold">Forma literaria: </span>
+                                { literaryForm }
+                            </p>
+                        }
+                        { (!isMarc && libro?.literaryGenres) && 
+                            <p className="text-base opacity-80 mt-1">
+                                <span className="mr-1">Genero literario: </span>
+                                { libro?.literaryGenres }
+                            </p>
+                        }
                         { (!isMarc && numerosDeInventarioExternos && libro.fechaDeIngreso !== null) && 
                             <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1 font-semibold">Fecha de Ingreso al sistema: </span>
+                                <span className="mr-1">Fecha de Ingreso al sistema: </span>
                                 { formatFecha(libro.fechaDeIngreso) }
                             </p>
                         }
@@ -76,7 +85,7 @@ export function DetallesLibro({ libro }: Props) {
                 { isMarc && 
                     <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
                         <span className="font-normal">N° { formatNro(libro.numeroInventario) }</span>
-                        { genero !== "Desconocido" && <span>{ genero }</span> }
+                        { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
                         <span className="opacity-70">{ libro.authorCountry }</span>
                     </span>
                 }
