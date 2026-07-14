@@ -1,4 +1,4 @@
-import { getDeweyFromCallNumber, type LiteraryForm, type Marc21EnPrestamo } from '@shared/models'
+import { getDeweyFromCallNumber, isValidNumeroInventario, type LiteraryForm, type Marc21EnPrestamo } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
@@ -167,7 +167,7 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
       }
 
       const numeroInventario = parseNumeroInventario(rawX)
-      if (!numeroInventario) {
+      if (!numeroInventario || !isValidNumeroInventario(numeroInventario)) {
         errores.push({ index: index + holdingIndex, reason: `"${titulo}" — Número de inventario inválido: "${rawX}"` })
         return
       }

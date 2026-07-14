@@ -18,7 +18,9 @@ export type LibroEnPrestamo = Libro & DatosPrestamo
 
 export type LibroRegistrado = LibroEnPrestamo | Marc21EnPrestamo
 
-export function isValidNumeroInventario(value: string | number): boolean {
+export function isValidNumeroInventario(value: string | number | undefined): boolean {
+  if (!value) return false
+  
   const str = String(value).trim()
   if (!str) return false
 
