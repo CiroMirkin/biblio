@@ -1,5 +1,5 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { formatLiteraryForm, getDeweyFromCallNumber, type LiteraryForm, type Marc21, type Marc21ItemType } from "@shared/models"
+import { formatLiteraryForm, getDeweyFromCallNumber, type LiteraryForm, type Marc21 } from "@shared/models"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
@@ -33,7 +33,6 @@ interface Props {
 export function Marc21Form({
   mode, submitLabel, onSubmit, submitDisabled, defaultValues, onSuccess = () => {}
 }: Props) {
-  const [tipoItem, setTipoItem] = useState<Marc21ItemType>(defaultValues?.itemType ?? "BK")
   const [ nroInvalido, setNroComoInvalido ] = useState(false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -44,6 +43,7 @@ export function Marc21Form({
   const [dewey, setDewey] = useState(d || "")
   const [literaryForm, setLiteraryForm] = useState<LiteraryForm>(defaultValues?.literaryForm ?? "u")
   const [isbn, setIsbn] = useState(defaultValues?.holding?.barcode ?? "")
+  const [resetKey, setResetKey] = useState(0)
   
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -57,10 +57,12 @@ export function Marc21Form({
 
     if (mode === "ingreso") {
       formRef.current?.reset()
-      setTipoItem("BK")
       setAutor("")
       setCountry("")
       setDewey("")
+      setIsbn("")
+      setNroComoInvalido(false)
+      setResetKey(k => k + 1)
     }
 
     setSuccess(true)
@@ -71,6 +73,7 @@ export function Marc21Form({
   return (
     <form ref={formRef} className="flex flex-col gap-2" onSubmit={handleSubmit}>
       <NroInventarioInput 
+        key={resetKey}
         mode={mode}
         onKeyDown={handleEnter}
         defaultValue={defaultValues?.numeroInventario ?? ""}
@@ -95,27 +98,24 @@ export function Marc21Form({
           <input onKeyDown={handleEnter} type="text" name="genres" id="genres" defaultValue={defaultValues?.literaryGenres ?? ""} className={inputClass} />
         </label>
 
-
-        {tipoItem === "BK" && (
-          <label className="flex flex-col gap-1 text-base">
-            <span className="font-semibold">Forma literaria:</span>
-            <select onChange={e => setLiteraryForm(e.target.value as LiteraryForm)} name="literaryForm" id="literaryForm" value={literaryForm} className={inputClass}>
-              <option value="u">Desconocido</option>
-              <option value="0">No es ficción</option>
-              <option value="1">Ficción</option>
-              <option value="c">Historieta</option>
-              <option value="d">Drama</option>
-              <option value="e">Ensayo</option>
-              <option value="f">Novela</option>
-              <option value="h">Humor, sátira, etc.</option>
-              <option value="i">Cartas</option>
-              <option value="j">Cuentos</option>
-              <option value="m">Formas mixtas</option>
-              <option value="p">Poesía</option>
-              <option value="s">Discursos</option>
-            </select>
-          </label>
-        )}
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Forma literaria:</span>
+          <select onChange={e => setLiteraryForm(e.target.value as LiteraryForm)} name="literaryForm" id="literaryForm" value={literaryForm} className={inputClass}>
+            <option value="u">Desconocido</option>
+            <option value="0">No es ficción</option>
+            <option value="1">Ficción</option>
+            <option value="c">Historieta</option>
+            <option value="d">Drama</option>
+            <option value="e">Ensayo</option>
+            <option value="f">Novela</option>
+            <option value="h">Humor, sátira, etc.</option>
+            <option value="i">Cartas</option>
+            <option value="j">Cuentos</option>
+            <option value="m">Formas mixtas</option>
+            <option value="p">Poesía</option>
+            <option value="s">Discursos</option>
+          </select>
+        </label>
 
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">País de origen del autor:</span>
