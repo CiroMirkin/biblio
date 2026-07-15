@@ -26,7 +26,7 @@ export function RecuentoLibros() {
                         { librosDisponibles.length }
                     </li>
                 }
-                <li>
+                <li className="mt-1">
                     <span className="font-semibold opacity-65">Total de Libros: </span>
                     { libros.length }
                 </li>

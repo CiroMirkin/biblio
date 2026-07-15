@@ -4,6 +4,7 @@ import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 import { RecuentoLibros } from "./RecuentoLibros"
 import { EditarLibro } from "./EditarLibro"
 import { cn } from "@/utils"
+import MovimientosDelDia from "./MovimientosDelDia"
 
 export function Catalogo() {
     const { limiteDeDias } = useSettingsStore()
@@ -45,6 +46,7 @@ export function Catalogo() {
                     </> }
                 </section>
 
+                { !showDetallesLibro && <MovimientosDelDia className="mb-4" /> }
                 { !showDetallesLibro && <RecuentoLibros /> }
             </aside>
         </div>
