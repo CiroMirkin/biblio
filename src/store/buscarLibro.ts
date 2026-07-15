@@ -1,5 +1,5 @@
 import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
-import { levenshtein, normailzarTexto } from "@/utils"
+import { esMismaFecha, levenshtein, normailzarTexto } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
 
 const dias = [ "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" ]
@@ -75,14 +75,6 @@ function obtenerFechaDelDiaMasReciente(nombreDia: string): Date {
   const fecha = new Date(hoy)
   fecha.setDate(hoy.getDate() - diferencia)
   return fecha
-}
-
-function esMismaFecha(fecha: Date, otra: Date): boolean {
-  return (
-    fecha.getFullYear() === otra.getFullYear() &&
-    fecha.getMonth() === otra.getMonth() &&
-    fecha.getDate() === otra.getDate()
-  )
 }
 
 function buscarPorTitulo(libros: LibroEnPrestamo[], dato: string): LibroEnPrestamo[] {
