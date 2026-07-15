@@ -229,35 +229,40 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   actualizarListados: (updated, options) => {
     if(!updated) return
 
+    const { limiteDeDias } = useSettingsStore.getState()
     const nroViejo = options?.nroViejo
     const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
+
+    const updatedPrestamo = updated as LibroEnPrestamo
+    const disponible = updatedPrestamo.fechaDePrestamo === null || updatedPrestamo.fechaDePrestamo === undefined
+    const vencido = !disponible && calcularDiasDesdePrestamo(updatedPrestamo.fechaDePrestamo!) > limiteDeDias
+    const prestado = !disponible && !vencido
+
     set({
-      libros: actualizarListaLibros(
-        libros, updated as LibroEnPrestamo, { nroViejo }
-      ),
-      librosDisponibles: actualizarListaLibros(
-        librosDisponibles, updated as Libro, { nroViejo }
-      ),
-      librosPrestados: actualizarListaLibros(
-        librosPrestados, updated as LibroEnPrestamo, { nroViejo }
-      ),
-      librosVencidos: actualizarListaLibros(
-        librosVencidos, updated as LibroEnPrestamo, { nroViejo }
-      ),
-      librosFiltrados: actualizarListaLibros(
-        librosFiltrados, updated as LibroEnPrestamo, { nroViejo }
-      ),
+      libros: actualizarListaLibros(libros, updated as LibroEnPrestamo, true, nroViejo),
+      librosDisponibles: actualizarListaLibros(librosDisponibles, updated as Libro, disponible, nroViejo),
+      librosPrestados: actualizarListaLibros(librosPrestados, updated as LibroEnPrestamo, prestado, nroViejo),
+      librosVencidos: actualizarListaLibros(librosVencidos, updated as LibroEnPrestamo, vencido, nroViejo),
+      librosFiltrados: actualizarListaLibros(librosFiltrados, updated as LibroEnPrestamo, vencido, nroViejo),
     })
   }
 }))
 
 function actualizarListaLibros<T extends Libro>(
-  libros: T[], updated?: T, options?: { nroViejo?: string }
+  lista: T[], updated: T, pertenece: boolean, nroViejo?: string
 ): T[] {
-  if(!updated) return libros
+  const nro = nroViejo ?? String(updated.numeroInventario)
+  const existe = lista.some(l => String(l.numeroInventario) === nro)
 
-  let nrolibro = updated.numeroInventario
-  if(options?.nroViejo) nrolibro = options?.nroViejo
+  if (pertenece) {
+    if (existe) {
+      return lista.map(l => String(l.numeroInventario) === nro ? updated : l)
+    }
+    return [...lista, updated]
+  }
 
-  return libros.map(l => l.numeroInventario === nrolibro ? updated : l)
+  if (existe) {
+    return lista.filter(l => String(l.numeroInventario) !== nro)
+  }
+  return lista
 }
