@@ -21,6 +21,10 @@ export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
     return buscarLibrosRegistradosHoy(libros)
   }
 
+  if (dato === "numeros de inventario repetidos") {
+    return buscarNrosRepetidos(libros)
+  }
+
   if(busquedaPorDiaKeys.includes(dato)) {
     return buscarLibrosDelDia(dato, libros)
   }
@@ -61,6 +65,19 @@ function obtenerFechaDelDiaMasReciente(nombreDia: string): Date {
   const fecha = new Date(hoy)
   fecha.setDate(hoy.getDate() - diferencia)
   return fecha
+}
+
+function buscarNrosRepetidos(libros: LibroRegistrado[]): LibroRegistrado[] {
+  const conteo = new Map<string, number>()
+
+  libros.forEach(libro => {
+    const nro = String(libro.numeroInventario)
+    conteo.set(nro, (conteo.get(nro) ?? 0) + 1)
+  })
+
+  return libros
+    .filter(libro => (conteo.get(String(libro.numeroInventario)) ?? 0) > 1)
+    .sort((a, b) => String(a.numeroInventario).localeCompare(String(b.numeroInventario), 'es', { numeric: true }))
 }
 
 function buscarPorTitulo(libros: LibroEnPrestamo[], dato: string): LibroEnPrestamo[] {
