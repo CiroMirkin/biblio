@@ -33,6 +33,8 @@ export function DetallesLibro({ libro }: Props) {
         literaryForm = formatLiteraryForm(libro.literaryForm) ?? getDatosDelDewey(libro?.dewey).genero
     }
 
+    const nroInventario = formatNro(libro.numeroInventario)
+
     return (
         <>
             <AnimatePresence>
@@ -48,8 +50,8 @@ export function DetallesLibro({ libro }: Props) {
                         { isMarc && <MarkDetalles libro={libro} /> }
                         { (!isMarc && numerosDeInventarioExternos) && 
                             <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1 font-semibold">N° </span>
-                                { libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
+                                { nroInventario && <span className="mr-1 font-semibold">N° { nroInventario }</span> }
+                                { !nroInventario && <span className="mr-1">S/N</span> }
                             </p>
                         }
                         { (!isMarc && literaryForm) && 
@@ -76,17 +78,21 @@ export function DetallesLibro({ libro }: Props) {
 
             <div
                 className={cn(
-                    "mt-0.5 flex", 
-                    (!isMarc && !expandido) && "justify-end",
-                    isMarc && "justify-between",
-                    expandido && "justify-between",
+                    "mt-0.5 flex justify-between"
                 )}
             >
                 { isMarc && 
                     <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
-                        <span className="font-normal">N° { formatNro(libro.numeroInventario) }</span>
+                        { nroInventario && <span className="font-normal">N° { nroInventario }</span> }
+                        { !nroInventario && <span className="font-normal">S/N</span> }
                         { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
                         <span className="opacity-70">{ libro.authorCountry }</span>
+                    </span>
+                }
+                { !isMarc && 
+                    <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
+                        { nroInventario && <span className="font-normal">N° { nroInventario }</span> }
+                        { !nroInventario && <span className="font-normal">S/N</span> }
                     </span>
                 }
                 <button
@@ -134,7 +140,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
             <li className="group flex items-center justify-start">
                 <span className="cursor-default mr-1">
                     <span className="font-semibold mr-2">N° de inventario:</span>
-                    {  libro.numeroInventario ? formatNro(libro.numeroInventario) : "S/N" }
+                    {  formatNro(libro.numeroInventario) || "S/N" }
                 </span>
              </li>
             { literaryForm && 
