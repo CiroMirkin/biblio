@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -35,6 +36,20 @@
       }
     };
   </script>
+  <style>
+    .biblio-swiper .swiper-button-next,
+    .biblio-swiper .swiper-button-prev {
+      color: #210501;
+      background: #fef0c6cc;
+      width: 44px;
+      height: 44px;
+      border-radius: 9999px;
+    }
+    .biblio-swiper .swiper-button-next::after,
+    .biblio-swiper .swiper-button-prev::after {
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body class="bg-cream text-ink font-sans min-h-screen overflow-x-hidden flex items-start justify-center p-8">
   <main class="max-w-5xl w-full pt-12">
@@ -96,16 +111,26 @@
     </div>
 
     <section class="w-full mt-20 flex justify-center">
-      <div class="max-w-4xl">
-        <img
-          src="biblio.webp"
-          alt="Biblio"
-          class="w-full h-auto rounded-lg shadow-lg"
-        />
+      <div class="max-w-4xl w-full">
+        <div class="biblio-swiper swiper">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <img src="biblio.webp" alt="Biblio - Registro de prestamos" class="w-full h-auto rounded-lg shadow-lg" />
+            </div>
+            <div class="swiper-slide">
+              <img src="catalogo.webp" alt="Biblio - Catalogo de prestamos" class="w-full h-auto rounded-lg shadow-lg" />
+            </div>
+            <div class="swiper-slide">
+              <img src="busqueda_en_catalogo.webp" alt="Biblio - Búsqueda de un libro en préstamo dentro del catalogo" class="w-full h-auto rounded-lg shadow-lg" />
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
       </div>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
   <script>
     var STORAGE_KEY = 'biblio_download_clicked';
     var initialBtn = document.getElementById('initial-btn');
@@ -247,6 +272,18 @@
       .catch(function () {
         librariesStatus.textContent = 'No se pudo cargar la lista de bibliotecas en este momento.';
       });
+
+    var biblioSwiper = new Swiper('.biblio-swiper', {
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      }
+    });
   </script>
 </body>
 </html>
