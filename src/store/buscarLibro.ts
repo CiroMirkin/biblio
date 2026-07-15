@@ -1,5 +1,5 @@
 import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
-import { esMismaFecha, levenshtein, normailzarTexto } from "@/utils"
+import { esMismaFecha, levenshtein, normailzarTexto, buscarLibrosDeHoy, buscarLibrosRegistradosHoy } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
 
 const dias = [ "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" ]
@@ -39,20 +39,6 @@ export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
     : [porTitulo, porAutor]
 
   return [...new Set([...primero, ...segundo])]
-}
-
-function buscarLibrosDeHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
-  const hoy = new Date()
-  return libros.filter(
-    libro => libro.fechaDePrestamo != null && esMismaFecha(libro.fechaDePrestamo, hoy)
-  )
-}
-
-function buscarLibrosRegistradosHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
-  const hoy = new Date()
-  return libros.filter(
-    libro => libro.fechaDeIngreso != null && esMismaFecha(libro.fechaDeIngreso, hoy)
-  )
 }
 
 function buscarLibrosDelDia(dato: string, libros: LibroRegistrado[]): LibroRegistrado[] {
