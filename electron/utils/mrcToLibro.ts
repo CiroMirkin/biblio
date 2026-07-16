@@ -123,6 +123,11 @@ export type MrcParseResult = {
  * tipo en 952$y (a nivel de ejemplar). Si ninguno está presente se asigna
  * "BK" (libro) como valor por defecto para no descartar el registro.
  *
+ * Koha usa el código "LIB" para este tipo de ítem, mientras que el sistema
+ * usa internamente "BK". `itemTypeDesdeKoha` traduce "LIB" a "BK"; cualquier
+ * otro código que no sea "LIB" ni "BK" se ignora y cae al default "BK".
+ * La conversión inversa ("BK" → "LIB") se hace al exportar, en `crearArchivoMrc.ts`.
+ *
  * ### Puntuación catalográfica
  * MARC21 incluye puntuación al final de subcampos como 245$a (`/`),
  * 100$a (`,`), 260$a (`:`), 260$b (`,`) según las reglas ISBD. Se elimina

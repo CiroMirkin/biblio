@@ -30,6 +30,8 @@
 
 > El **ISBN** está en el campo 020 (subcampo $a) y el **numero de inventario** esta en el campo 952 (subcampo $p, ej: $p12032) como barcode/código de barras del ítem.
 
+> El **tipo de item** ("LIB" en 942$c y 952$y) es el código propio de esta instancia de Koha. El sistema lo traduce internamente a su propio código ("BK") al importar, y lo traduce de vuelta a "LIB" al exportar hacia Koha. Ver la tabla de conversión en `mrcToLibro.ts` y `crearArchivoMrc.ts`.
+
 ## Campos propios de Koha (locales)
 
 | Campo | Subcampo | Contenido | Significado |
