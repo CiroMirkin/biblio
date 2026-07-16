@@ -1,4 +1,4 @@
-import { getDeweyFromCallNumber, isValidNumeroInventario, type LiteraryForm, type Marc21EnPrestamo } from '@shared/models'
+import { getDeweyFromCallNumber, isValidNumeroInventario, type LiteraryForm, type Marc21EnPrestamo, type Marc21ItemType } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
@@ -6,6 +6,18 @@ type MarcField = [string, ...string[]]
 type MarcRecord = {
   leader: string
   fields: MarcField[]
+}
+
+/* Koha usa sus propios codigos de itemtype, distintos a los del sistema.
+   Codigos no reconocidos se ignoran y caen al default 'BK' */
+const ITEM_TYPE_KOHA_A_SISTEMA: Record<string, string> = {
+  LIB: 'BK',
+  BK: 'BK',
+}
+
+function itemTypeDesdeKoha(codigo: string | undefined): string {
+  if (!codigo) return 'BK'
+  return ITEM_TYPE_KOHA_A_SISTEMA[codigo] ?? 'BK'
 }
 
 function getControlField(record: MarcRecord, tag: string): string | undefined {
@@ -151,6 +163,8 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
     const callNumber = getSubfieldFromRecord(record, '082', 'a')?.trim() || undefined
     const dewey = getDeweyFromCallNumber(callNumber)
 
+    const itemTypeBib = getSubfieldFromRecord(record, '942', 'c')
+
     const holding952s = getAllFields(record, '952')
 
     if (holding952s.length === 0) {
@@ -178,12 +192,14 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
         return
       }
 
+      const itemType = itemTypeDesdeKoha(itemTypeBib || getSubfield(field952, 'y')) as Marc21ItemType
+
       const libro: Marc21EnPrestamo = {
         numeroInventario,
         titulo,
         autor,
         authorCountry: undefined,
-        itemType: 'BK',
+        itemType,
         literaryForm,
         edition,
         placeOfPublication,

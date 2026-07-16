@@ -5,6 +5,19 @@ import { isMarc21 } from "@shared/models"
 import { type Marc21 } from "@shared/models/marc21"
 import { get } from '../settings'
 
+/**
+ * El sistema usa sus propios codigos de itemtype, distintos a los de Koha.
+ * 
+ * Biblio usa "BK" y Koha usa "LIB".
+ */
+const ITEM_TYPE_SISTEMA_A_KOHA: { [codigo: string]: string } = {
+    BK: 'LIB',
+}
+
+function itemTypeHaciaKoha(codigo: string | undefined): string {
+    if (!codigo) return 'LIB'
+    return ITEM_TYPE_SISTEMA_A_KOHA[codigo] ?? codigo
+}
 
 export async function excelAMrc(outputPath: string, excluirSinIsbn = true): Promise<void> {
     const libros = await getLibros()
@@ -49,7 +62,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     const record = new Record()
     const leader = '01197nam  22002891  4500'
     record.leader = leader.substring(0, 9) + 'a' + leader.substring(10)
-    const itemType = libro.itemType || 'LIB'
+    const itemType = itemTypeHaciaKoha(libro.itemType)
 
     // Deberia asignarlo Koha al importar los datos
     record.append(['001', ""])
