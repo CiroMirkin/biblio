@@ -2,6 +2,7 @@ import ExcelJS from 'exceljs'
 import type { LibroEnPrestamo } from "@shared/models/libro"
 import { generarIdSinInventariar, getFechaDePrestamoFromRow, getNroDeInventarioFromRow, libroToRow, rowToLibro, writeLibro } from "../../models/libro"
 import { LIBROS_XLSX_PATH } from '../../constants'
+import { insertarHistorial } from '../historial'
 
 export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Promise<LibroEnPrestamo | null> {
   const workbook = new ExcelJS.Workbook()
@@ -49,6 +50,10 @@ export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Pr
   }
 
   await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
+
+  if (libro.numeroSocio) {
+    await insertarHistorial(date, libro.numeroSocio, String(numeroInventario))
+  }
 
   return {
     ...libro,
