@@ -17,6 +17,7 @@ import {
   changeObservaciones,
 } from './socios'
 import { getCuotasSocio, toggleCuota } from './cuotas'
+import { getHistorialSocio, getHistorialLibro, eliminarHistorialAnio } from './historial'
 import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
 import type { Libro, LibroRegistrado } from "@shared/models/libro"
@@ -57,6 +58,12 @@ const cuotasIpcHandlers = {
   toggleCuota: (_: unknown, nroSocio: number, anio: number, mesIndex: number) => toggleCuota(nroSocio, anio, mesIndex),
 }
 
+const historialIpcHandlers = {
+  getHistorialSocio: (_: unknown, nroSocio: number) => getHistorialSocio(nroSocio),
+  getHistorialLibro: (_: unknown, nroLibro: string) => getHistorialLibro(nroLibro),
+  eliminarHistorialAnio: (_: unknown, anio: number) => eliminarHistorialAnio(anio),
+}
+
 const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
   obtenerArchivoMrc: (_: unknown, excluirSinIsbn?: boolean) => descargarMrc(excluirSinIsbn),
@@ -70,5 +77,6 @@ export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {
   ...prestamosIpcHandlers,
   ...sociosIpcHandlers,
   ...cuotasIpcHandlers,
+  ...historialIpcHandlers,
   ...archivosIpcHandlers,
 }
