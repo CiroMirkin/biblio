@@ -61,6 +61,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   settingsSet: (key: string, value: unknown) => ipcRenderer.invoke('settings:set', key, value),
   
   openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
+
+  getHistorialSocio: (nroSocio: number) => ipcRenderer.invoke('getHistorialSocio', nroSocio),
+  getHistorialLibro: (nroLibro: string) => ipcRenderer.invoke('getHistorialLibro', nroLibro),
+  eliminarHistorialAnio: (anio: number) => ipcRenderer.invoke('eliminarHistorialAnio', anio),
 })
 
 contextBridge.exposeInMainWorld('updater', {

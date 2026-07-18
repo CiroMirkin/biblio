@@ -1,4 +1,4 @@
-import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21, NewSocio, Socio } from "@/models"
+import type { HistorialEntry, Libro, LibroEnPrestamo, LibroRegistrado, Marc21, NewSocio, Socio } from "@/models"
 import type { Settings as SettingsSchema } from "@/services/settingsService"
 
 export {}
@@ -55,6 +55,10 @@ declare global {
       settingsSet: <K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]) => Promise<void>
       
       openExternal: (url: string) => Promise<void>
+
+      getHistorialSocio: (nroSocio: number) => Promise<HistorialEntry[]>
+      getHistorialLibro: (nroLibro: string) => Promise<HistorialEntry[]>
+      eliminarHistorialAnio: (anio: number) => Promise<number>
     }
   }
 }
