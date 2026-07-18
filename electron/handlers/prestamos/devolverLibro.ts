@@ -35,6 +35,6 @@ export async function devolverLibro(numeroInventario: number | string): Promise<
   }
 
   await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
-  await actualizarFechaDevolucion(String(numeroInventario))
+  if(!esSinInventariar(numeroInventario)) await actualizarFechaDevolucion(String(numeroInventario))
   return true
 }
