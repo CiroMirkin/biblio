@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { LIBROS_XLSX_PATH } from '../../constants'
 import { esSinInventariar, getNroDeInventarioFromRow, limpiarPrestamo } from "../../models/libro"
+import { actualizarFechaDevolucion } from '../historial'
 
 export async function devolverLibro(numeroInventario: number | string): Promise<boolean> {
   const workbook = new ExcelJS.Workbook()
@@ -34,5 +35,6 @@ export async function devolverLibro(numeroInventario: number | string): Promise<
   }
 
   await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
+  await actualizarFechaDevolucion(String(numeroInventario))
   return true
 }
