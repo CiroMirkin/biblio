@@ -2,22 +2,27 @@ import { getHistorialWorksheet } from '../../constants'
 import { getHistorialLibro } from './getHistorialLibro'
 
 export async function actualizarFechaDevolucion(numeroInventario: string): Promise<boolean> {
-  const { worksheet, writeWorkbook } = await getHistorialWorksheet()
-  if (!worksheet) throw new Error('No se pudo obtener la hoja de historial')
+  try {
+    const { worksheet, writeWorkbook } = await getHistorialWorksheet()
+    if (!worksheet) throw new Error('No se pudo obtener la hoja de historial')
 
-  const entries = await getHistorialLibro(String(numeroInventario))
-  const historyEntry = entries.find(e => e.fechaDevolucion === null)
-  const idPrestamo = historyEntry!.idPrestamo
-    
-  const fechaDevolucion = new Date()
-  for (let i = 1; i <= worksheet.actualRowCount; i++) {
-    const row = worksheet.getRow(i)
-    if (String(row.getCell(1).value ?? '') === idPrestamo) {
-      row.getCell(3).value = fechaDevolucion
-      row.commit()
-      await writeWorkbook()
-      return true
+    const entries = await getHistorialLibro(String(numeroInventario))
+    const historyEntry = entries.find(e => e.fechaDevolucion === null)
+    const idPrestamo = historyEntry!.idPrestamo
+      
+    const fechaDevolucion = new Date()
+    for (let i = 1; i <= worksheet.actualRowCount; i++) {
+      const row = worksheet.getRow(i)
+      if (String(row.getCell(1).value ?? '') === idPrestamo) {
+        row.getCell(3).value = fechaDevolucion
+        row.commit()
+        await writeWorkbook()
+        return true
+      }
     }
+    return false
   }
-  return false
+  catch {
+    return false
+  }
 }
