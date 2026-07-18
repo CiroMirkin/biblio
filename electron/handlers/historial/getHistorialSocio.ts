@@ -1,5 +1,6 @@
+import type { HistorialEntry } from '@shared/models'
 import { getHistorialWorksheet } from '../../constants'
-import { rowToHistorialEntry, type HistorialEntry } from '../../models/historial'
+import { rowToHistorialEntry } from '../../models/historial'
 
 export async function getHistorialSocio(nroSocio: number): Promise<HistorialEntry[]> {
   const { worksheet } = await getHistorialWorksheet()

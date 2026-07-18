@@ -1,12 +1,5 @@
+import type { HistorialEntry } from '@shared/models'
 import type ExcelJS from 'exceljs'
-
-export interface HistorialEntry {
-  idPrestamo: string
-  fechaPrestamo: Date
-  fechaDevolucion: Date | null
-  nroSocio: number
-  nroLibro: string
-}
 
 function parseFecha(value: ExcelJS.CellValue): Date | null {
   const fecha = value instanceof Date ? value : new Date(String(value ?? ''))
