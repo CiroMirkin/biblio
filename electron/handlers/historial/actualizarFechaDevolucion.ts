@@ -8,8 +8,9 @@ export async function actualizarFechaDevolucion(numeroInventario: string): Promi
 
     const entries = await getHistorialLibro(String(numeroInventario))
     const historyEntry = entries.find(e => e.fechaDevolucion === null)
-    const idPrestamo = historyEntry!.idPrestamo
-      
+    if (!historyEntry) return false
+
+    const idPrestamo = historyEntry.idPrestamo
     const fechaDevolucion = new Date()
     for (let i = 1; i <= worksheet.actualRowCount; i++) {
       const row = worksheet.getRow(i)
