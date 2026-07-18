@@ -1,6 +1,6 @@
 # SPEC 05 — Historial de préstamos (persistencia Electron)
 
-**Estado:** Approved · **Dependencias:** Ninguna · **Fecha:** 2026-07-18
+**Estado:** Implemented · **Dependencias:** Ninguna · **Fecha:** 2026-07-18
 **Objetivo:** Persistir en `prestamos_historial.xlsx` el registro de cada préstamo y devolución, integrando con los handlers existentes `addLibroPrestado` y `devolverLibro`, exponiendo funciones de consulta por socio y por libro, eliminación por año, todo en la capa de Electron sin UI.
 
 ---
