@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import path from 'node:path'
 import { app } from 'electron'
+import { existsSync } from 'node:fs'
 
 type Worksheet = { 
   workbook: ExcelJS.Workbook,
@@ -79,7 +80,22 @@ export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
 
 export async function getHistorialWorksheet(): Promise<Worksheet> {
   const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+
+  if (existsSync(PRESTAMOS_HISTORIAL_XLSX_PATH)) {
+    await workbook.xlsx.readFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  }
+  else {
+    const worksheet = workbook.addWorksheet('prestamos')
+    worksheet.columns = [
+      { header: 'idPrestamo', key: 'idPrestamo' },
+      { header: 'fechaPrestamo', key: 'fechaPrestamo' },
+      { header: 'fechaDevolucion', key: 'fechaDevolucion' },
+      { header: 'nroSocio', key: 'nroSocio' },
+      { header: 'nroLibro', key: 'nroLibro' },
+    ]
+    await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  }
+
   const worksheet = workbook.getWorksheet('prestamos')
   const writeWorkbook = async () => await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
   return { workbook, worksheet, writeWorkbook }
