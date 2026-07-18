@@ -74,7 +74,7 @@ const PRESTAMOS_HISTORIAL_XLSX_DEFAULT = IS_DEV
   : path.join(app.getPath('userData'), 'prestamos_historial.xlsx')
 
 export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
-  ? path.join(FIXTURES_PATH, 'prestamos-historial-template.xlsx')
+  ? path.join(FIXTURES_PATH, 'prestamos-historial-test.xlsx')
   : PRESTAMOS_HISTORIAL_XLSX_DEFAULT
 
 export async function getHistorialWorksheet(): Promise<Worksheet> {
