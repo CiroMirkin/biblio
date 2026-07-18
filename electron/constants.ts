@@ -69,4 +69,20 @@ export async function getLibrosWorksheet(): Promise<Worksheet> {
   return { workbook, worksheet, writeWorkbook }
 }
 
+const PRESTAMOS_HISTORIAL_XLSX_DEFAULT = IS_DEV
+  ? path.join(RESOURCES_PATH, 'prestamos_historial.xlsx')
+  : path.join(app.getPath('userData'), 'prestamos_historial.xlsx')
+
+export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
+  ? path.join(FIXTURES_PATH, 'prestamos-historial-template.xlsx')
+  : PRESTAMOS_HISTORIAL_XLSX_DEFAULT
+
+export async function getHistorialWorksheet(): Promise<Worksheet> {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  const worksheet = workbook.getWorksheet('prestamos')
+  const writeWorkbook = async () => await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  return { workbook, worksheet, writeWorkbook }
+}
+
 export const TEMPLATES_PATH = RESOURCES_PATH
