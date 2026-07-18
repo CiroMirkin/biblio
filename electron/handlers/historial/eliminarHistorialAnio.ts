@@ -1,11 +1,11 @@
-import { getHistorialWorksheet } from '../../constants'
+import { getHistorialWorksheet } from "../../constants"
 
-export async function getHistorialSocio(anio: number): Promise<number> {
+export async function eliminarHistorialAnio(anio: number): Promise<number> {
   const { worksheet, writeWorkbook } = await getHistorialWorksheet()
   if (!worksheet) throw new Error('No se pudo obtener la hoja de historial')
 
   const filasAEliminar: number[] = []
-  for (let i = 1; i <= worksheet.actualRowCount; i++) {
+  for (let i = 2; i <= worksheet.actualRowCount; i++) {
     const row = worksheet.getRow(i)
     const fecha = row.getCell(2).value
     if (fecha instanceof Date && fecha.getFullYear() === anio) {
