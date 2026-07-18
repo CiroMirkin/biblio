@@ -10,7 +10,7 @@ import { cn, formatPrice } from "@/utils"
 import { motion, AnimatePresence } from "motion/react"
 import { SociosVinculados } from "./SociosVinculados/SociosVinculados"
 import { ExplicacionSocioInactivo } from "./ExplicacionSocioInactivo"
-
+import { HistorialPrestamos } from "./HistorialPrestamos"
 
 const anioActual: number = new Date().getFullYear()
 
@@ -53,6 +53,7 @@ export function DetalleSocio() {
           { !caracterSocio.estado && <Observaciones /> }
           
           { vincularSocios && <SociosVinculados /> }
+          <HistorialPrestamos />
         </div>
 
         <div className="flex flex-col gap-4">

@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import path from 'node:path'
 import { app } from 'electron'
+import { existsSync } from 'node:fs'
 
 type Worksheet = { 
   workbook: ExcelJS.Workbook,
@@ -66,6 +67,37 @@ export async function getLibrosWorksheet(): Promise<Worksheet> {
   await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
   const worksheet = workbook.getWorksheet('Hoja1')
   const writeWorkbook = async () => await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
+  return { workbook, worksheet, writeWorkbook }
+}
+
+const PRESTAMOS_HISTORIAL_XLSX_DEFAULT = IS_DEV
+  ? path.join(RESOURCES_PATH, 'prestamos_historial.xlsx')
+  : path.join(app.getPath('userData'), 'prestamos_historial.xlsx')
+
+export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
+  ? path.join(FIXTURES_PATH, 'prestamos-historial-test.xlsx')
+  : PRESTAMOS_HISTORIAL_XLSX_DEFAULT
+
+export async function getHistorialWorksheet(): Promise<Worksheet> {
+  const workbook = new ExcelJS.Workbook()
+
+  if (existsSync(PRESTAMOS_HISTORIAL_XLSX_PATH)) {
+    await workbook.xlsx.readFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  }
+  else {
+    const worksheet = workbook.addWorksheet('prestamos')
+    worksheet.columns = [
+      { header: 'idPrestamo', key: 'idPrestamo' },
+      { header: 'fechaPrestamo', key: 'fechaPrestamo' },
+      { header: 'fechaDevolucion', key: 'fechaDevolucion' },
+      { header: 'nroSocio', key: 'nroSocio' },
+      { header: 'nroLibro', key: 'nroLibro' },
+    ]
+    await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  }
+
+  const worksheet = workbook.getWorksheet('prestamos')
+  const writeWorkbook = async () => await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
   return { workbook, worksheet, writeWorkbook }
 }
 

@@ -4,6 +4,7 @@ import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLi
 import { type Libro, type LibroRegistrado } from "@shared/models/libro"
 import { isMarc21 } from "@shared/models"
 import { type Marc21 } from "@shared/models/marc21"
+import { actualizarNroLibroEnHistorial } from '../historial'
 
 export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<Libro | Marc21 | null> => {
     const { worksheet, writeWorkbook } = await getLibrosWorksheet()
@@ -61,5 +62,10 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
 
     writeLibro(targetRow, newLibro)
     await writeWorkbook()
+
+    if (String(nroInventario) !== String(numeroInventarioFinal)) {
+      await actualizarNroLibroEnHistorial(String(nroInventario), String(numeroInventarioFinal))
+    }
+
     return newLibro
 }
