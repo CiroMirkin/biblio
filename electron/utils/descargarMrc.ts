@@ -1,10 +1,10 @@
 import { dialog } from 'electron'
 import fs from 'node:fs/promises'
-import { excelAMrc } from './crearArchivoMrc'
+import { excelAMrc, type PeriodoDeIngreso } from './crearArchivoMrc'
 import os from 'node:os'
 import path from 'node:path'
 
-export const descargarMrc = async (excluirSinIsbn?: boolean) => {
+export const descargarMrc = async (excluirSinIsbn?: boolean, periodoDeIngreso?: PeriodoDeIngreso) => {
   const fecha = new Date().toLocaleDateString(
     'es-AR',
     { day: '2-digit', month: '2-digit', year: '2-digit' }
@@ -23,6 +23,7 @@ export const descargarMrc = async (excluirSinIsbn?: boolean) => {
     await excelAMrc({
       outputPath: tmp,
       excluirSinIsbn,
+      periodoDeIngreso,
     })
     await fs.copyFile(tmp, filePath)
     

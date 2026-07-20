@@ -3,15 +3,24 @@ import { ExcelExportService } from "@/services";
 import { cn } from "@/utils"
 import { useState } from "react"
 
+const OPCIONES_FECHA: { value: PeriodoDeIngreso; label: string }[] = [
+    { value: 'todos', label: 'Todas las existencias' },
+    { value: 'hoy', label: 'Ingresados hoy' },
+    { value: 'semana', label: 'Ingresados la última semana' },
+    { value: 'mes', label: 'Ingresados el último mes' },
+    { value: 'año', label: 'Ingresados el último año' },
+]
+
 export function DescargarArchivoMrc() {
     const [loading, setCargando] = useState<boolean>(false)
     const [ excluirSinISBN, setExcluirSinISBN ] = useState(true)
+    const [ fecha, setfecha ] = useState<PeriodoDeIngreso>('todos')
 
     async function handleDescargar() {
         if(loading) return;
 
         setCargando(true)
-        await ExcelExportService.descargarInventarioEnMRC(excluirSinISBN)
+        await ExcelExportService.descargarInventarioEnMRC({ excluirSinISBN, periodoDeIngreso: fecha })
         setCargando(false)
     }
 
@@ -27,9 +36,28 @@ export function DescargarArchivoMrc() {
                     name="excluir-sin-ISBN"
                 />
             </div>
+
+            <div className="mb-2 flex flex-col gap-1">
+                <span className="text-sm font-medium">Filtrar registros</span>
+                <div className="flex flex-col flex-wrap">
+                    { OPCIONES_FECHA.map(opcion => (
+                        <label key={opcion.value} className="flex items-center gap-1.5 cursor-pointer">
+                            <input
+                                type="radio"
+                                name="fecha-mrc"
+                                value={opcion.value}
+                                checked={fecha === opcion.value}
+                                onChange={() => setfecha(opcion.value)}
+                            />
+                            <span>{opcion.label}</span>
+                        </label>
+                    )) }
+                </div>
+            </div>
+
             <div className="flex gap-2">
                 <button
-                    className={cn("btn flex items-center justify-center gap-1.5", loading && "btn-disabled")}
+                    className={cn("btn py-1 flex items-center justify-center gap-1.5", loading && "btn-disabled")}
                     disabled={loading}
                     onClick={() => handleDescargar()}
                 >

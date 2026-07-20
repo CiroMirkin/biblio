@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import type { Libro } from "@shared/models/libro"
 import type { NewSocio, Socio } from '@shared/models/socio'
 import type { Marc21 } from "@shared/models/marc21"
+import type { PeriodoDeIngreso } from './utils/crearArchivoMrc'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getSocios: () => ipcRenderer.invoke('getSocios'),
@@ -49,8 +50,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   createSocio: (socio: NewSocio) => ipcRenderer.invoke('createSocio', socio),
   
   copiarExcel: (key: 'socios' | 'cuotas' | 'libros') => ipcRenderer.invoke('copiarExcel', key),
-  obtenerArchivoMrc: (excluirSinIsbn?: boolean) => ipcRenderer.invoke(
-    'obtenerArchivoMrc', excluirSinIsbn
+  obtenerArchivoMrc: (excluirSinIsbn?: boolean, periodoDeIngreso?: PeriodoDeIngreso) => ipcRenderer.invoke(
+    'obtenerArchivoMrc', excluirSinIsbn, periodoDeIngreso
   ),
   importarMrc: (filePath: string) => ipcRenderer.invoke('importarMrc', filePath),
   exportarExcelCompleto: () => ipcRenderer.invoke('exportarExcelCompleto'),

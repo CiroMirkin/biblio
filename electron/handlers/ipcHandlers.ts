@@ -26,6 +26,7 @@ import type { Marc21 } from "@shared/models/marc21"
 import { descargarMrc } from '../utils/descargarMrc'
 import { importarMrc } from '../utils/importarMrc'
 import { exportarExcelCompleto, importarExcelCompleto } from '../utils/excelCompleto'
+import type { PeriodoDeIngreso } from '../utils/crearArchivoMrc'
 
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
@@ -66,7 +67,7 @@ const historialIpcHandlers = {
 
 const archivosIpcHandlers = {
   copiarExcel: (_: unknown, key: ArchivoKey) => copiarExcel(key),
-  obtenerArchivoMrc: (_: unknown, excluirSinIsbn?: boolean) => descargarMrc(excluirSinIsbn),
+  obtenerArchivoMrc: (_: unknown, excluirSinIsbn?: boolean, periodoDeIngreso?: PeriodoDeIngreso) => descargarMrc(excluirSinIsbn, periodoDeIngreso),
   importarMrc: (_: unknown, filePath: string) => importarMrc(filePath),
   exportarExcelCompleto: (_: unknown) => exportarExcelCompleto(),
   importarExcelCompleto: (_: unknown) => importarExcelCompleto(),

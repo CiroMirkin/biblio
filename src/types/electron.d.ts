@@ -12,6 +12,7 @@ export type ImportarMrcResult = {
 
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros' | 'completo'
+  type PeriodoDeIngreso = 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
   type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
   interface Window {
     electronAPI: {
@@ -48,7 +49,7 @@ declare global {
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
       exportarExcelCompleto: () => Promise<boolean>
       importarExcelCompleto: () => Promise<{ ok: boolean, message: string }>
-      obtenerArchivoMrc: (excluirSinIsbn?: boolean) => Promise<void>
+      obtenerArchivoMrc: (excluirSinIsbn?: boolean, periodoDeIngreso?: PeriodoDeIngreso) => Promise<void>
       importarMrc: (filePath: string) => Promise<ImportarMrcResult>
       settingsGetAll: () => Promise<SettingsSchema>
       settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>

@@ -20,10 +20,12 @@ function itemTypeHaciaKoha(codigo: string | undefined): string {
     return ITEM_TYPE_SISTEMA_A_KOHA[codigo] ?? codigo
 }
 
+export type PeriodoDeIngreso = 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
+
 interface Params {
   outputPath: string
   excluirSinIsbn?: boolean
-  periodoDeIngreso?: 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
+  periodoDeIngreso?: PeriodoDeIngreso
 }
 
 export async function excelAMrc({ outputPath, excluirSinIsbn = true, periodoDeIngreso = 'todos' }: Params): Promise<void> {
