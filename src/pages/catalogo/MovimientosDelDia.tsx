@@ -1,6 +1,6 @@
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { buscarLibrosDeHoy, cn } from "@/utils"
-import { buscarLibrosRegistradosHoy } from "@shared/utils"
+import { filtrarLibrosRegistradosHoy } from "@shared/utils"
 
 interface Props {
     className?: string
@@ -14,7 +14,7 @@ export default function MovimientosDelDia({ className = "" }: Props) {
     const { numerosDeInventarioExternos } = useSettingsStore()
 
     const librosPrestadosHoy = buscarLibrosDeHoy(librosPrestados).length
-    const ingresadosHoy = buscarLibrosRegistradosHoy(libros).length
+    const ingresadosHoy = filtrarLibrosRegistradosHoy(libros).length
 
     return (
         <section className={cn("w-60 card card-secondary", className)}>
