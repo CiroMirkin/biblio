@@ -64,6 +64,10 @@
       {
         "from": "templates/libros.xlsx",
         "to": "templates/libros.xlsx"
+      },
+      {
+        "from": "templates/prestamos_historial.xlsx",
+        "to": "templates/prestamos_historial.xlsx"
       }
     ],
     "directories": {
