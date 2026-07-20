@@ -1,5 +1,5 @@
-import { esMismaFecha } from "@/utils";
 import type { LibroRegistrado } from "@shared/models";
+import { esMismaFecha } from "./esMismaFecha";
 
 export function buscarLibrosRegistradosHoy(libros: LibroRegistrado[]): LibroRegistrado[] {
   const hoy = new Date()

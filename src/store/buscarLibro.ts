@@ -1,6 +1,7 @@
 import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
-import { esMismaFecha, levenshtein, normailzarTexto, buscarLibrosDeHoy, buscarLibrosRegistradosHoy } from "@/utils"
+import { levenshtein, normailzarTexto, buscarLibrosDeHoy } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
+import { buscarLibrosRegistradosHoy, esMismaFecha } from "@shared/utils"
 
 const dias = [ "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" ]
 const busquedaPorDiaKeys = dias.map(dia => `prestamos del ${dia}`)

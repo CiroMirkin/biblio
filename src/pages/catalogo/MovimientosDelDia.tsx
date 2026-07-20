@@ -1,5 +1,6 @@
 import { useLibrosStore, useSettingsStore } from "@/store"
-import { buscarLibrosDeHoy, buscarLibrosRegistradosHoy, cn } from "@/utils"
+import { buscarLibrosDeHoy, cn } from "@/utils"
+import { buscarLibrosRegistradosHoy } from "@shared/utils"
 
 interface Props {
     className?: string
