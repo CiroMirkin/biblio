@@ -1,9 +1,10 @@
 import fs from 'fs'
 import { Record } from 'marcjs'
 import { getLibros } from '../handlers/libros'
-import { isMarc21 } from "@shared/models"
+import { isMarc21, type LibroRegistrado } from "@shared/models"
 import { type Marc21 } from "@shared/models/marc21"
 import { get } from '../settings'
+import { filtrarLibrosRegistrados } from '@shared/utils'
 
 /**
  * El sistema usa sus propios codigos de itemtype, distintos a los de Koha.
@@ -19,7 +20,15 @@ function itemTypeHaciaKoha(codigo: string | undefined): string {
     return ITEM_TYPE_SISTEMA_A_KOHA[codigo] ?? codigo
 }
 
-export async function excelAMrc(outputPath: string, excluirSinIsbn = true): Promise<void> {
+export type PeriodoDeIngreso = 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
+
+interface Params {
+  outputPath: string
+  excluirSinIsbn?: boolean
+  periodoDeIngreso?: PeriodoDeIngreso
+}
+
+export async function excelAMrc({ outputPath, excluirSinIsbn = true, periodoDeIngreso = 'todos' }: Params): Promise<void> {
     const libros = await getLibros()
 
     if (libros.length === 0) {
@@ -27,9 +36,24 @@ export async function excelAMrc(outputPath: string, excluirSinIsbn = true): Prom
         return
     }
 
+    const librosPorFecha: LibroRegistrado[] = (() => {
+        switch (periodoDeIngreso) {
+            case 'hoy': return filtrarLibrosRegistrados.hoy(libros)
+            case 'semana': return filtrarLibrosRegistrados.ultimaSemana(libros)
+            case 'mes': return filtrarLibrosRegistrados.ultimoMes(libros)
+            case 'año': return filtrarLibrosRegistrados.ultimoAnio(libros)
+            case 'todos': return libros
+        }
+    })()
+
+    if (librosPorFecha.length === 0) {
+        console.log('No se encontraron registros validos.')
+        return
+    }
+
     const librosFiltrados = excluirSinIsbn
-        ? libros.filter(libro => isMarc21(libro) && !!libro.holding.barcode)
-        : libros
+        ? librosPorFecha.filter(libro => isMarc21(libro) && !!libro.holding.barcode)
+        : librosPorFecha
 
     if (librosFiltrados.length === 0) {
         console.log('No se encontraron registros validos.')

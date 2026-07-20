@@ -1,4 +1,4 @@
-import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21, NewSocio, Socio } from "@/models"
+import type { HistorialEntry, Libro, LibroEnPrestamo, LibroRegistrado, Marc21, NewSocio, Socio } from "@/models"
 import type { Settings as SettingsSchema } from "@/services/settingsService"
 
 export {}
@@ -12,6 +12,7 @@ export type ImportarMrcResult = {
 
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros' | 'completo'
+  type PeriodoDeIngreso = 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
   type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
   interface Window {
     electronAPI: {
@@ -48,13 +49,17 @@ declare global {
       copiarExcel: (key: ArchivoKey) => Promise<boolean>
       exportarExcelCompleto: () => Promise<boolean>
       importarExcelCompleto: () => Promise<{ ok: boolean, message: string }>
-      obtenerArchivoMrc: (excluirSinIsbn?: boolean) => Promise<void>
+      obtenerArchivoMrc: (excluirSinIsbn?: boolean, periodoDeIngreso?: PeriodoDeIngreso) => Promise<void>
       importarMrc: (filePath: string) => Promise<ImportarMrcResult>
       settingsGetAll: () => Promise<SettingsSchema>
       settingsGet: <K extends keyof SettingsSchema>(key: K) => Promise<SettingsSchema[K]>
       settingsSet: <K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]) => Promise<void>
       
       openExternal: (url: string) => Promise<void>
+
+      getHistorialSocio: (nroSocio: number) => Promise<HistorialEntry[]>
+      getHistorialLibro: (nroLibro: string) => Promise<HistorialEntry[]>
+      eliminarHistorialAnio: (anio: number) => Promise<number>
     }
   }
 }
