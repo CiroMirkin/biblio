@@ -20,7 +20,10 @@ export const descargarMrc = async (excluirSinIsbn?: boolean) => {
   const tmp = path.join(os.tmpdir(), `koha_${Date.now()}.mrc`)
 
   try {
-    await excelAMrc(tmp, excluirSinIsbn)
+    await excelAMrc({
+      outputPath: tmp,
+      excluirSinIsbn,
+    })
     await fs.copyFile(tmp, filePath)
     
     return true

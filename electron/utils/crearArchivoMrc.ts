@@ -19,7 +19,12 @@ function itemTypeHaciaKoha(codigo: string | undefined): string {
     return ITEM_TYPE_SISTEMA_A_KOHA[codigo] ?? codigo
 }
 
-export async function excelAMrc(outputPath: string, excluirSinIsbn = true): Promise<void> {
+interface Params {
+  outputPath: string
+  excluirSinIsbn?: boolean
+}
+
+export async function excelAMrc({ outputPath, excluirSinIsbn = true }: Params): Promise<void> {
     const libros = await getLibros()
 
     if (libros.length === 0) {
