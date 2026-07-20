@@ -3,11 +3,12 @@ import { useHistorialStore, useSettingsStore, useSociosStore } from "@/store"
 import { motion, AnimatePresence } from "motion/react"
 import { Spinner } from "@/components"
 import { formatFecha } from "@/utils"
+import { isMarc21 } from "@shared/models"
 
 export function HistorialPrestamos() {
   const { socioSeleccionado } = useSociosStore()
   const { entriesConLibro, loading, error, buscarPorSocio } = useHistorialStore()
-  const { numerosDeInventarioExternos } = useSettingsStore()
+  const { numerosDeInventarioExternos, catalogacionSimple } = useSettingsStore()
   const [consultado, setConsultado] = useState(false)
 
   const handleConsultar = async () => {
@@ -84,6 +85,7 @@ export function HistorialPrestamos() {
                   <th className="pb-2">Nro</th>
                   <th className="pb-2">Titulo</th>
                   <th className="pb-2">Autor</th>
+                  { !catalogacionSimple && <th className="pb-2">Signatura</th> }
                   <th className="pb-2 truncate">Préstamo</th>
                   <th className="pb-2 truncate">Devolución</th>
                 </tr>
@@ -92,8 +94,13 @@ export function HistorialPrestamos() {
                 {entriesConLibro.map(entry => (
                   <tr key={entry.idPrestamo} className="border-t border-black/10">
                     <td className="py-2 truncate">{entry.nroLibro}</td>
-                    <td className="py-2">{entry.titulo}</td>
+                    <td className="py-2 truncate">{entry.titulo}</td>
                     <td className="py-2 truncate">{entry?.autor || ""}</td>
+                    { !catalogacionSimple && 
+                      <td className="py-2">
+                        { isMarc21(entry) ? entry.holding?.callNumber : "" }
+                      </td>
+                    }
                     <td className="py-2">{formatFecha(entry.fechaPrestamo)}</td>
                     <td className="py-2">
                       {entry.fechaDevolucion
