@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useHistorialStore, useSettingsStore, useSociosStore } from "@/store"
 import { motion, AnimatePresence } from "motion/react"
 import { Spinner } from "@/components"
-import { formatFecha } from "@/utils"
+import { cn, formatFecha } from "@/utils"
 import { isMarc21 } from "@shared/models"
 
 export function HistorialPrestamos() {
@@ -79,33 +79,34 @@ export function HistorialPrestamos() {
             exit={{ opacity: 0, height: 0 }}
             style={{ overflow: "hidden" }}
           >
-            <table className="w-full text-left">
+            <table className="w-full text-left table-fixed">
               <thead>
-                <tr className="opacity-70 text-sm">
-                  <th className="pb-2">Nro</th>
-                  <th className="pb-2">Titulo</th>
-                  <th className="pb-2">Autor</th>
-                  { !catalogacionSimple && <th className="pb-2">Signatura</th> }
-                  <th className="pb-2 truncate">Préstamo</th>
-                  <th className="pb-2 truncate">Devolución</th>
-                </tr>
+                  <tr className="opacity-70 text-sm">
+                    <th className="pb-2 pr-4 w-16">Nro</th>
+                    <th className="pb-2 pr-3 w-1/3">Titulo</th>
+                    <th className="pb-2 pr-2 w-1/4">Autor</th>
+                    { !catalogacionSimple && <th className="pb-2 px-2 truncate">Signatura</th> }
+                    <th className="pb-2 px-2 w-20 truncate">Préstamo</th>
+                    <th className="pb-2 pl-2 w-20 truncate">Devolución</th>
+                  </tr>
               </thead>
               <tbody>
                 {entriesConLibro.map(entry => (
                   <tr key={entry.idPrestamo} className="border-t border-black/10">
-                    <td className="py-2 truncate">{entry.nroLibro}</td>
-                    <td className="py-2 truncate">{entry.titulo}</td>
-                    <td className="py-2 truncate">{entry?.autor || ""}</td>
-                    { !catalogacionSimple && 
-                      <td className="py-2">
+                    <td className="py-2 pr-4 truncate opacity-95">{entry.nroLibro}</td>
+                    <td className="py-2 pr-3 truncate font-semibold">{entry.titulo}</td>
+                    <td className="py-2 pr-2 truncate">{entry?.autor || ""}</td>
+                    {!catalogacionSimple && 
+                      <td className="py-2 px-2 opacity-95">
                         { isMarc21(entry) ? entry.holding?.callNumber : "" }
                       </td>
                     }
-                    <td className="py-2">{formatFecha(entry.fechaPrestamo)}</td>
-                    <td className="py-2">
-                      {entry.fechaDevolucion
+                    <td className="py-2 px-2">{formatFecha(entry.fechaPrestamo)}</td>
+                    <td className={cn("py-2 pl-2", !entry.fechaDevolucion && "opacity-60 truncate")}>
+                      { entry.fechaDevolucion
                         ? formatFecha(entry.fechaDevolucion)
-                        : <span className="opacity-60">Pendiente</span>}
+                        : "Pendiente"
+                      }
                     </td>
                   </tr>
                 ))}
