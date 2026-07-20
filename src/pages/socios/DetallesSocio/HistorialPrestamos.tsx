@@ -22,9 +22,9 @@ export function HistorialPrestamos() {
   }
 
   return (
-    <div className="flex flex-col gap-4 card shadow-lg mr-2.5">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Historial</h2>
+    <div className="flex flex-col gap-4 card card-secondary w-full">
+      <div className="flex justify-between items-center opacity-95">
+        <h2 className="text-lg font-semibold">Historial de prestamos</h2>
         <button
           onClick={handleConsultar}
           disabled={loading || !socioSeleccionado?.nroSocio}
@@ -41,7 +41,7 @@ export function HistorialPrestamos() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="py-6 flex justify-center items-center opacity-70"
+            className="py-6 flex justify-center items-center gap-1 opacity-70"
           >
             <Spinner /> Cargando historial...
           </motion.div>
@@ -53,7 +53,7 @@ export function HistorialPrestamos() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="py-4 text-red-600"
+            className="py-2 text-red-600"
           >
             {error}
           </motion.div>
@@ -65,9 +65,9 @@ export function HistorialPrestamos() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="py-4 opacity-70"
+            className="py-2 opacity-70"
           >
-            No se encontraron registros.
+            El historia aún esta vació.
           </motion.div>
         )}
 
