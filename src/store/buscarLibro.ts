@@ -1,7 +1,7 @@
 import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
 import { levenshtein, normailzarTexto, buscarLibrosDeHoy } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
-import { filtrarLibrosRegistradosHoy, esMismaFecha } from "@shared/utils"
+import { filtrarLibrosRegistrados, esMismaFecha } from "@shared/utils"
 
 const dias = [ "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" ]
 const busquedaPorDiaKeys = dias.map(dia => `prestamos del ${dia}`)
@@ -19,7 +19,7 @@ export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
   }
 
   if(dato === "ingresos de hoy") {
-    return filtrarLibrosRegistradosHoy(libros)
+    return filtrarLibrosRegistrados.hoy(libros)
   }
 
   if (dato === "numeros de inventario repetidos") {
