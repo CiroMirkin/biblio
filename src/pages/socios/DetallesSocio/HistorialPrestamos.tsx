@@ -71,7 +71,7 @@ export function HistorialPrestamos() {
           </motion.div>
         )}
 
-        {!loading && !error && entriesConLibro.length > 0 && (
+        {!loading && !error && consultado && entriesConLibro.length > 0 && (
           <motion.div
             key="tabla"
             initial={{ opacity: 0, height: 0 }}

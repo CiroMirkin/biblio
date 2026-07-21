@@ -1,14 +1,12 @@
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { useHistorialStore, useSociosStore } from "@/store"
+import { useSociosStore } from "@/store"
 import { Spinner } from "@/components";
-import type { Socio } from "@shared/models";
 
 const PAGINA = 10
 
 export function ListaSocios() {
   const { sociosFiltrados, seleccionar, loadingSocios } = useSociosStore()
-  const { limpiarBusquedaEnHistorial } = useHistorialStore()
   const [cantidad, setCantidad] = useState(PAGINA)
   const loaderRef = useRef<HTMLDivElement>(null)
 
@@ -26,11 +24,6 @@ export function ListaSocios() {
     if (loaderRef.current) observer.observe(loaderRef.current)
     return () => observer.disconnect()
   }, [sociosFiltrados.length])
-
-  const handleSeleccion = (socio: Socio) => {
-    limpiarBusquedaEnHistorial()
-    seleccionar(socio)
-  }
 
   if(loadingSocios) {
     return <div className="flex gap-2 items-center text-lg">
@@ -51,7 +44,7 @@ export function ListaSocios() {
             "px-4 py-4 flex gap-2 justify-between hover:pl-6 border-l-2 border-transparent hover:border-l-black transition-all ease-in duration-100",
             index % 2 === 0 ? "bg-white" : "bg-white/50"
           )}
-          onClick={() => handleSeleccion(socio)}
+          onClick={() => seleccionar(socio)}
         >
           <span className="w-full text-lg cursor-default select-none">{socio.nombreYApellido}</span>
           <button className="btn">

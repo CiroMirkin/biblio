@@ -16,7 +16,6 @@ interface HistorialState {
   buscarPorSocio: (nroSocio: number) => Promise<void>
   buscarPorLibro: (nroLibro: string) => Promise<void>
   eliminarAnio: (anio: number) => Promise<number>
-  limpiarBusquedaEnHistorial: () => void
 }
 
 export const useHistorialStore = create<HistorialState>((set) => ({
@@ -75,12 +74,4 @@ export const useHistorialStore = create<HistorialState>((set) => ({
       return 0
     }
   },
-
-  limpiarBusquedaEnHistorial: () => {
-    set({
-      entriesConSocio: [],
-      entriesConLibro: [],
-      error: null,
-    })
-  }
 }))
