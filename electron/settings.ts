@@ -11,6 +11,7 @@ export interface SettingsSchema {
   vincularSocios: boolean
   catalogacionSimple: boolean
   nombreBiblioteca: string
+  sugerirNuevosNumerosDeInventario: boolean
 }
 
 const store = new Store<SettingsSchema>({
@@ -26,6 +27,7 @@ const store = new Store<SettingsSchema>({
     vincularSocios: { type: 'boolean' },
     catalogacionSimple: { type: 'boolean' },
     nombreBiblioteca: { type: 'string', minLength: 6, maxLength: 40, },
+    sugerirNuevosNumerosDeInventario: { type: 'boolean' },
   },
   defaults: {
     limiteDeDias: 40,
@@ -38,6 +40,7 @@ const store = new Store<SettingsSchema>({
     vincularSocios: false,
     catalogacionSimple: true,
     nombreBiblioteca: 'Biblioteca ...',
+    sugerirNuevosNumerosDeInventario: true,
   },
 })
 
@@ -53,6 +56,7 @@ export function getAll(): SettingsSchema {
     vincularSocios: store.get('vincularSocios'),
     catalogacionSimple: store.get('catalogacionSimple'),
     nombreBiblioteca: store.get('nombreBiblioteca'),
+    sugerirNuevosNumerosDeInventario: store.get('sugerirNuevosNumerosDeInventario'),
   }
 }
 
