@@ -2,6 +2,7 @@ import { useLibrosStore, useSettingsStore } from "@/store"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 import { RecuentoLibros } from "./RecuentoLibros"
+import { SincronizarDesdeSheets } from "./SincronizarDesdeSheets"
 import { EditarLibro } from "./EditarLibro"
 import { cn } from "@/utils"
 import MovimientosDelDia from "./MovimientosDelDia"
@@ -48,6 +49,7 @@ export function Catalogo() {
 
                 { !showDetallesLibro && <MovimientosDelDia className="mb-4" /> }
                 { !showDetallesLibro && <RecuentoLibros /> }
+                { !showDetallesLibro && <SincronizarDesdeSheets /> }
             </aside>
         </div>
     )
