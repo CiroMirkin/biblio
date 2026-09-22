@@ -81,7 +81,7 @@ foreach ($fila in $csv) {
     if ($existentes.Contains($nro)) { continue }
 
     $filaOrdenada = [ordered]@{}
-    for ($i = 0; $i -lt $headers.Count; $i++) { $filaOrdenada[$headers[$i]] = '' }
+    for ($i = 0; $i -lt $headers.Count; $i++) { if ($headers[$i]) { $filaOrdenada[$headers[$i]] = '' } }
     $filaOrdenada[$headers[$idxInventario]] = $nro
     $filaOrdenada[$headers[$idxTitulo]] = $titulo
     $filaOrdenada[$headers[$idxAutor]] = "$($fila.Autor)".Trim()
