@@ -34,11 +34,16 @@ export function SincronizarDesdeSheets() {
             >
                 { cargando ? 'Sincronizando...' : 'Sincronizar desde Sheets' }
             </button>
-            { resultado &&
-                <span className={cn("text-sm font-semibold", resultado.ok ? "text-green" : "text-red")}>
-                    { resultado.mensaje }
-                </span>
-            }
+            <div className="w-full flex flex-col text-sm">
+                { resultado &&
+                    <span className={cn("font-semibold", resultado.ok ? "text-green" : "text-red")}>
+                        { resultado.mensaje }
+                    </span>
+                }
+                { resultado?.ok &&
+                    <span className="text-wrap">Para ver los ingresos cierra y vuelve a abrir el sistema.</span>
+                }
+            </div>
         </section>
     )
 }
