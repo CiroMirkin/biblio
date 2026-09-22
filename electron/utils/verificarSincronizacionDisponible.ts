@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import fs from 'node:fs'
 import { SHEET_URL_TXT_PATH } from '../constants'
+import { esUrlCsvSheetValida } from './validarUrlSheet'
 
 const execFileAsync = promisify(execFile)
 
@@ -20,7 +21,7 @@ async function hayPowerShellConImportExcel(): Promise<boolean> {
 
 function haySheetUrlConfigurada(): boolean {
   try {
-    return fs.readFileSync(SHEET_URL_TXT_PATH, 'utf8').trim().length > 0
+    return esUrlCsvSheetValida(fs.readFileSync(SHEET_URL_TXT_PATH, 'utf8').trim())
   } catch {
     return false
   }

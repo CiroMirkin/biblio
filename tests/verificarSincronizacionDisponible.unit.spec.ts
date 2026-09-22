@@ -14,13 +14,22 @@ describe('sincronizacionDisponible', () => {
     vi.resetModules()
   })
 
-  // Disponible solo si hay PowerShell+ImportExcel Y sheet-url.txt tiene contenido
-  it('true cuando PowerShell/ImportExcel responden ok y sheet-url.txt no está vacío', async () => {
+  // Disponible solo si hay PowerShell+ImportExcel Y sheet-url.txt tiene una URL de exportación CSV válida
+  it('true cuando PowerShell/ImportExcel responden ok y sheet-url.txt tiene una URL de export CSV', async () => {
     mockExecFile.mockImplementation((_cmd, _args, cb) => cb(null, { stdout: 'ok\n', stderr: '' }))
-    mockReadFileSync.mockReturnValue('https://sheet-url\n')
+    mockReadFileSync.mockReturnValue('https://docs.google.com/spreadsheets/d/abc/export?format=csv&gid=1\n')
 
     const { sincronizacionDisponible } = await import('../electron/utils/verificarSincronizacionDisponible')
     expect(await sincronizacionDisponible()).toBe(true)
+  })
+
+  // La URL de edición (.../edit?gid=...) devuelve HTML, no CSV: no debe pasar el chequeo
+  it('false cuando sheet-url.txt tiene la URL de edición en vez de la de exportación CSV', async () => {
+    mockExecFile.mockImplementation((_cmd, _args, cb) => cb(null, { stdout: 'ok\n', stderr: '' }))
+    mockReadFileSync.mockReturnValue('https://docs.google.com/spreadsheets/d/abc/edit?gid=1#gid=1')
+
+    const { sincronizacionDisponible } = await import('../electron/utils/verificarSincronizacionDisponible')
+    expect(await sincronizacionDisponible()).toBe(false)
   })
 
   // Si falta el módulo ImportExcel (execFile falla), no está disponible
