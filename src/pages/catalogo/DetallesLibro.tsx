@@ -15,7 +15,7 @@ export function DetallesLibro({ libro }: Props) {
     const { catalogacionSimple, numerosDeInventarioExternos } = useSettingsStore()
     const isMarc = isMarc21(libro)
 
-    if(catalogacionSimple) {
+    if(catalogacionSimple && !isMarc) {
         return (
          <div className="w-full flex justify-end">
             <button
