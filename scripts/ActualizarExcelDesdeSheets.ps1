@@ -37,7 +37,11 @@ try {
 }
 
 try {
-    $contenido = (Invoke-WebRequest -Uri $SheetCsvUrl -UseBasicParsing).Content
+    $respuesta = Invoke-WebRequest -Uri $SheetCsvUrl -UseBasicParsing
+    # .Content decodifica con la codificacion que PowerShell adivina del Content-Type;
+    # el CSV de Sheets no declara charset y PowerShell 5.1 asume Latin-1, corrompiendo
+    # tildes/enies. Se decodifican los bytes crudos como UTF-8 para evitarlo.
+    $contenido = [System.Text.Encoding]::UTF8.GetString($respuesta.RawContentStream.ToArray())
 } catch {
     Fail "Error al descargar el Sheet: $($_.Exception.Message)"
 }
