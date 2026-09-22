@@ -22,6 +22,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   vincularSocios: false,
   catalogacionSimple: true,
   nombreBiblioteca: bibliotecaNombrePorDefecto,
+  sugerirNuevosNumerosDeInventario: true,
 
   inicializar: async () => {
     const settings = await settingsService.getAll()

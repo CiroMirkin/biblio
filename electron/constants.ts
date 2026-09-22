@@ -101,4 +101,14 @@ export async function getHistorialWorksheet(): Promise<Worksheet> {
   return { workbook, worksheet, writeWorkbook }
 }
 
+const SCRIPTS_PATH = IS_DEV
+  ? path.join(process.cwd(), 'scripts')
+  : path.join(process.resourcesPath, 'scripts')
+
+export const SCRIPT_SINCRONIZAR_SHEETS_PATH = path.join(SCRIPTS_PATH, 'ActualizarExcelDesdeSheets.ps1')
+
+const SINCRONIZACION_DIR = path.dirname(LIBROS_XLSX_PATH)
+export const SHEET_URL_TXT_PATH = path.join(SINCRONIZACION_DIR, 'sheet-url.txt')
+export const SINCRONIZACION_LOG_PATH = path.join(SINCRONIZACION_DIR, 'log.txt')
+
 export const TEMPLATES_PATH = RESOURCES_PATH

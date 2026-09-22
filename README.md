@@ -30,10 +30,9 @@ Opcional: puede ser necesario crear o actualizar algun servicio dentro de `src\s
 Para agregar nuevos ajustes al sistema modificar:
 
 1. *SettingsSchema* y el *store* en `electron\settings.ts`
-2. *SettingsSchema* en `src\types\electron.d.ts`
-3. *Settings* en `src\services\settingsService.ts`
-4. Actualiza las pruebas en `tests\settings.spec.ts` y en `tests\ipcHandlers.spec.ts`.
-5. Si es necesario actualiza `src\store\useSettingsStore.ts`.
+2. *Settings* en `src\services\settingsService.ts`
+3. Actualiza las pruebas en `tests\settings.spec.ts` y en `tests\ipcHandlers.spec.ts`.
+4. Actualiza `src\store\useSettingsStore.ts`.
 
 Luego si se usa el componente `Form` en conjunto con el store, el action dentro del store debe devolver el valor luego de ser actualizado, esto permite que `Form` se mantenga actualizado y no sobreescriba los valores.
 
@@ -86,3 +85,39 @@ git push origin main --tags
 ```
 
 > **Requisito:** El secret `GITHUB_TOKEN` se configura automáticamente en el repositorio. No requiere acción manual.
+
+---
+
+## Arquitectura (C4)
+
+**Contexto (Nivel 1)**
+
+```mermaid
+graph LR
+    A["Bibliotecario"] --> B["Biblio (desktop)"]
+    B --> C["Archivos XLSX locales<br/>(socios, cuotas, libros, prestamos_historial)"]
+    B --> D["electron-store<br/>(settings.json)"]
+    B --> E["GitHub Releases<br/>(auto-actualizaciones)"]
+    B --> F["Archivos .mrc<br/>(Koha ILS)"]
+```
+
+**Contenedores (Nivel 2)**
+
+```mermaid
+graph TB
+    subgraph Main["Main Process (Node.js)"]
+        A["ipcHandlers<br/>(socios, libros, prestamos, cuotas,<br/>historial, archivos, settings, updater)"]
+        B["exceljs → XLSX<br/>electron-store → settings.json"]
+        C["electron-updater → GitHub Releases"]
+    end
+
+    Main <-->|"contextBridge<br/>(electronAPI + updater)"| Renderer
+
+    subgraph Renderer["Renderer (React SPA)"]
+        D["5 vistas conmutables (sin router)"]
+        E["Zustand (6 stores) → Services (7) → window.electronAPI"]
+        F["Tailwind CSS + motion"]
+    end
+```
+
+El **Main Process** es el único que accede al sistema de archivos. El **Renderer** se comunica exclusivamente via `ipcRenderer.invoke` a través del preload. Los datos viajan serializados (JSON); las fechas se parsean en la capa de servicios del renderer.

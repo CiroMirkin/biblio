@@ -12,6 +12,7 @@ export interface Settings {
   vincularSocios: boolean
   catalogacionSimple: boolean
   nombreBiblioteca: string
+  sugerirNuevosNumerosDeInventario: boolean
 }
 
 export async function getAll(): Promise<Settings> {

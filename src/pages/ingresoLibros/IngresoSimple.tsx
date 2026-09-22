@@ -10,19 +10,20 @@ export function IngresoSimple() {
   const { ingresoSimple, getUltimoNumeroInventario } = useLibrosStore()
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [formKey, setFormKey] = useState(0)
   const nroParaLibroNuevo = String(getUltimoNumeroInventario() + 1)
-  
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     const form = e.target as HTMLFormElement
-    if(loading) return
-    if(!form.titulo.value.trim()) return;
-    
+    if(loading) return false
+    if(!form.titulo.value.trim()) return false
+
     let numeroInventario: string = form.numeroInventario.value.trim()
     if(!numeroInventario) {
       numeroInventario = nroParaLibroNuevo
     }
-    if(!isValidNumeroInventario(numeroInventario)) return;
+    if(!isValidNumeroInventario(numeroInventario)) return false
 
     const libro: Libro = {
       numeroInventario,
@@ -37,8 +38,9 @@ export function IngresoSimple() {
     setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")
-      return
+      return false
     }
+    return true
   }
 
   return (
@@ -63,6 +65,7 @@ export function IngresoSimple() {
         </h2>
 
         <LibroForm
+          key={formKey}
           submitLabel="Ingresar Libro"
           onSubmit={handleSubmit}
           mode="ingreso"
@@ -70,7 +73,11 @@ export function IngresoSimple() {
           defaultValues={{
             numeroInventario: nroParaLibroNuevo,
           }}
-          onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
+          onSuccess={() => {
+            setExito(true)
+            setTimeout(() => setExito(false), 1200)
+            setFormKey(k => k + 1)
+          }}
         />
       </div>
       <aside className="sticky top-0 h-fit hidden md:block">

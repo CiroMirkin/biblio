@@ -1,4 +1,4 @@
-import { useLibrosStore } from "@/store"
+import { useLibrosStore, useSettingsStore } from "@/store"
 import { isValidNumeroInventario } from "@shared/models"
 import { useState, type KeyboardEvent } from "react"
 import { Toggle } from "./Toggle"
@@ -20,6 +20,7 @@ export function NroInventarioInput({
   )
   const [ error, setMensajeDeError ] = useState<string[] | null>(null)
   const { esNroInventarioExistente } = useLibrosStore()
+  const { sugerirNuevosNumerosDeInventario } = useSettingsStore()
 
   const handleChangeNro = (valor: string) => {
     setNro(valor)
@@ -60,7 +61,8 @@ export function NroInventarioInput({
       const valorSugerido = String(defaultValue ?? "")
       setNro(valorSugerido)
       onNroInvalid(valorSugerido === "")
-    } else {
+    }
+    else {
       setNro("")
       onNroInvalid(true)
     }
@@ -90,7 +92,7 @@ export function NroInventarioInput({
           required={mode === "ingreso"}
         />
       </label>
-      { mode === "ingreso" &&
+      { (mode === "ingreso" && sugerirNuevosNumerosDeInventario) &&
         <div className="pt-4">
           <Toggle
             labelOn="Libro nuevo."

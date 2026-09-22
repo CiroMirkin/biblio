@@ -53,7 +53,7 @@ export function DetalleSocio() {
           { !caracterSocio.estado && <Observaciones /> }
           
           { vincularSocios && <SociosVinculados /> }
-          <HistorialPrestamos />
+          <HistorialPrestamos key={socioSeleccionado?.nroSocio} />
         </div>
 
         <div className="flex flex-col gap-4">
