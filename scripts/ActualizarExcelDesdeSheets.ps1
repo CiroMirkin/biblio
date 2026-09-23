@@ -50,7 +50,8 @@ if ($contenido -match '<html|<!DOCTYPE') {
     Fail "La URL configurada en sheet-url.txt es incorrecta: devolvio HTML en vez de CSV. Verificar que use el formato /export?format=csv&gid=... (no /edit)."
 }
 
-$csv = $contenido | ConvertFrom-Csv -Header Fecha, NroInventario, Autor, Titulo | Select-Object -Skip 1
+# La cabecera del Sheet ("AUTOR / TITULO / N Inventario") esta en la fila 4
+$csv = $contenido | ConvertFrom-Csv -Header Fecha, NroInventario, Autor, Titulo | Select-Object -Skip 4
 
 # Headers reales de libros.xlsx (ej. "N Inventario (6)", "Titulo (5)"), leidos
 # dinamicamente para no depender de tildes/simbolos hardcodeados en este archivo.
