@@ -12,7 +12,7 @@
 - **`ActualizarExcelDesdeSheets.ps1`** (empaquetado como recurso de la app, vía `build.extraResources` en `package.json`, mismo mecanismo que `templates/socios.xlsx`):
   - Recibe como parámetros: `-SheetCsvUrl`, `-ExcelPath`, `-LogPath` (nada hardcodeado adentro del script)
   - Descarga el Sheet como CSV (export público, sin autenticación), forzando `[Net.ServicePointManager]::SecurityProtocol = Tls12` dentro de un `try/catch` (si el `.NET` de la PC es viejo y no soporta el enum, se ignora y sigue)
-  - `Import-Csv -Encoding UTF8 -Header Fecha,NroInventario,Autor,Titulo | Select-Object -Skip 1`
+  - `Import-Csv -Encoding UTF8 -Header Fecha,NroInventario,Autor,Titulo | Select-Object -Skip 4`
   - Normaliza `Fecha` (formato del Sheet: `DD/MM/AAAA`)
   - Lee el N° Inventario ya existente en `-ExcelPath` (vía `Import-Excel`)
   - Inserta en `-ExcelPath` **solo** las filas con N° Inventario y Título presentes, y cuyo N° Inventario no esté ya en el Excel; Autor puede ir vacío; filas incompletas se ignoran sin marcar (se reintentan solas la próxima vez que se presione el botón, si se completa el dato en el Sheet)
@@ -42,7 +42,7 @@
 
 ## Data model
 
-**Columnas del Google Sheet (CSV export):** A=Fecha, B=N° Inventario, C=Autor, D=Título (fila 1 se descarta).
+**Columnas del Google Sheet (CSV export):** A=Fecha, B=N° Inventario, C=Autor, D=Título (filas 1-4 se descartan - la cabecera está en la fila 4).
 
 **`libros.xlsx` (runtime, `LIBROS_XLSX_PATH`, hoja `Hoja1`):** se lee la columna de N° Inventario existente para dedup, y se hace `Export-Excel -Append` agregando N° Inventario, Título y Autor de las filas nuevas.
 

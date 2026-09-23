@@ -32,7 +32,7 @@ export function SincronizarDesdeSheets() {
                 disabled={cargando}
                 onClick={handleClick}
             >
-                { cargando ? 'Sincronizando...' : 'Sincronizar desde Sheets' }
+                { cargando ? 'Sincronizando...' : 'Sincronizar con inventario' }
             </button>
             <div className="w-full flex flex-col text-sm">
                 { resultado &&

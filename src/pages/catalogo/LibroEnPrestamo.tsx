@@ -1,4 +1,4 @@
-import { isMarc21, formatLiteraryForm, type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
+import { type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
 import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"
@@ -29,16 +29,6 @@ export function LibroEnPrestamo({ libro }: Props) {
                 <div>
                     <p className="font-semibold text-xl">{libro.titulo}</p>
                     <p className="text-base font-semibold ">{libro.autor}</p>
-                    { !isMarc21(libro) &&
-                        <span
-                            className={cn(
-                                "mr-1 font-semibold opacity-85",
-                                libro.literaryForm ? "block" : "hidden"
-                            )}
-                        >
-                        { formatLiteraryForm(libro.literaryForm) }
-                        </span>
-                    }
                 </div>
                 <span className={cn(
                     "flex flex-col items-end text-base font-semibold",
