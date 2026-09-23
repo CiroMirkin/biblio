@@ -27,6 +27,8 @@ import { descargarMrc } from '../utils/descargarMrc'
 import { importarMrc } from '../utils/importarMrc'
 import { exportarExcelCompleto, importarExcelCompleto } from '../utils/excelCompleto'
 import type { PeriodoDeIngreso } from '../utils/crearArchivoMrc'
+import { sincronizacionDisponible } from '../utils/verificarSincronizacionDisponible'
+import { ejecutarSincronizacionDesdeSheets } from '../utils/ejecutarSincronizacionDesdeSheets'
 
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
@@ -73,6 +75,11 @@ const archivosIpcHandlers = {
   importarExcelCompleto: (_: unknown) => importarExcelCompleto(),
 }
 
+const sincronizacionIpcHandlers = {
+  sincronizacionDisponible: () => sincronizacionDisponible(),
+  ejecutarSincronizacionDesdeSheets: () => ejecutarSincronizacionDesdeSheets(),
+}
+
 export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {
   ...librosIpcHandlers,
   ...prestamosIpcHandlers,
@@ -80,4 +87,5 @@ export const ipcHandlers: Record<string, (...args: any[]) => unknown> = {
   ...cuotasIpcHandlers,
   ...historialIpcHandlers,
   ...archivosIpcHandlers,
+  ...sincronizacionIpcHandlers,
 }

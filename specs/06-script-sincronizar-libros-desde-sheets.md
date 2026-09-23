@@ -102,6 +102,23 @@
 |--------|-----------|
 | `libros.xlsx` abierto por otro proceso de la propia app (ExcelJS) justo cuando corre el `.ps1` | El botón corre bajo demanda con la app abierta; si `Export-Excel` falla por lock, se registra en `log.txt` y se muestra el error, el usuario reintenta al toque |
 | PC del usuario no tiene PowerShell 3.0+ o `ImportExcel` instalado | El botón no aparece (Q20/Q21); requiere setup manual una vez por PC, fuera del alcance de este spec |
-| `sheet-url.txt` con contenido inválido (no es una URL válida) | No contemplado explícitamente — el `.ps1` va a fallar la descarga y quedar en `log.txt`/toast como cualquier otro error de red |
+| `sheet-url.txt` con contenido inválido (no es una URL válida) | El `.ps1` valida que la respuesta no sea HTML (ver incidente 2026-09-22) antes de parsearla como CSV; cualquier otro error de red queda en `log.txt`/toast |
 | N° Inventario con espacios/formato distinto entre Sheet y Excel | Hacer `.Trim()` sobre el N° Inventario de ambos lados antes de comparar |
 | `child_process.exec` con `ExecutionPolicy` restrictiva en la PC destino | Invocar con `powershell.exe -ExecutionPolicy Bypass -File ...` desde el handler IPC |
+
+---
+
+## Incidentes
+
+### 2026-09-22 — `sheet-url.txt` con URL de edición en vez de exportación CSV
+
+**Síntoma:** al presionar "Sincronizar desde Sheets" se insertaron filas con HTML/JS de la página de Google Sheets al final de `libros.xlsx` (8 filas: 4 vacías + 4 con marcado HTML), en vez de libros nuevos.
+
+**Causa raíz:** `sheet-url.txt` (en `%APPDATA%\biblio\`, no `%APPDATA%\Biblio\` — `app.getPath('userData')` usa el campo `name` del `package.json`, no `productName`) tenía la URL de edición del Sheet (`.../edit?gid=...#gid=...`). `Invoke-WebRequest` devolvió el HTML de la interfaz interactiva de Sheets en vez del CSV; el script lo parseó igual con `ConvertFrom-Csv`, generando filas basura que pasaron el chequeo de dedup (N° Inventario y Título "no vacíos", aunque sin sentido) y se insertaron en el Excel real.
+
+**Corrección aplicada:**
+- `sheet-url.txt` de producción corregido a `.../export?format=csv&gid=...`
+- `ActualizarExcelDesdeSheets.ps1`: si la respuesta descargada contiene `<html` o `<!DOCTYPE`, el script falla explícitamente con mensaje "La URL configurada en sheet-url.txt es incorrecta: devolvio HTML en vez de CSV" (registrado en `log.txt` y devuelto por `stderr`), en vez de parsearla como CSV
+- Se limpiaron las 8 filas basura del `libros.xlsx` de producción (backup tomado antes en `libros.backup-20260922-175828.xlsx`)
+
+**Pendiente / no incluido:** validar en el chequeo de disponibilidad al arrancar (Q26) que la URL en `sheet-url.txt` tenga el formato `/export?format=csv`, para bloquear el botón antes del primer clic en vez de solo fallar en tiempo de ejecución — fuera de alcance de este incidente, evaluar si vale la pena en una futura spec.

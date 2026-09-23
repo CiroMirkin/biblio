@@ -5,6 +5,7 @@ import path from 'node:path'
 import { ipcHandlers } from './handlers/ipcHandlers'
 import { initializeDataFiles } from './utils/initializeDataFiles'
 import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
+import { sincronizacionDisponible } from './utils/verificarSincronizacionDisponible'
 import { IS_DEV } from './constants'
 
 const __dirname = path.dirname(__filename)
@@ -101,6 +102,7 @@ function createWindow() {
 app.whenReady().then(() => {
   registerSettingsHandlers()
   initializeDataFiles()
+  sincronizacionDisponible() // chequeo en background, cacheado, no bloquea el arranque
   createWindow()
 })
 
