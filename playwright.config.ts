@@ -1,0 +1,10 @@
+import { defineConfig } from '@playwright/test'
+
+export default defineConfig({
+    testDir: 'tests/e2e',
+    testMatch: '**/*.e2e.ts',
+    // la app escribe los mismos archivos de fixtures, no se puede paralelizar
+    workers: 1,
+    timeout: 60000,
+    use: { trace: 'retain-on-failure' },
+})
