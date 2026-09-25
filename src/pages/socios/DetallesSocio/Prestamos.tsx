@@ -266,6 +266,7 @@ export function Prestamos({ onSuccess }: Props) {
                   calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias && "bg-[#f582ae59] px-1.5! self-center rounded"
                 )}
                 title={`${ getDia(libro.fechaDePrestamo) } hace ${ calcularDiasDesdePrestamo(libro.fechaDePrestamo!) } dias`}
+                data-vencido={calcularDiasDesdePrestamo(libro.fechaDePrestamo!) > limiteDeDias}
               >
                 {formatFecha(libro.fechaDePrestamo)}
               </span>

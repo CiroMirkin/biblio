@@ -16,6 +16,7 @@
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
+    "test:e2e": "vite build && playwright test",
     "prepare": "husky",
     "clean": "tsx clean.ts",
     "preversion": "git pull --tags",
@@ -98,6 +99,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.63.0",
     "@types/glob": "^8.1.0",
     "@types/node": "^24.12.4",
     "@types/react": "^19.2.14",

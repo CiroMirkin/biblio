@@ -6,7 +6,8 @@
 |`npm run dev` | Dev server con hot-reload (Vite + Electron) |
 |`npm run build` | Compila TS + Vite |
 |`npm run dist` | Build + empaqueta con electron-builder (Electron 22, ia32) |
-|`npm test` | Ejecuta pruebas sobre los handlers de electron|
+|`npm test` | Ejecuta pruebas sobre los handlers de electron |
+|`npm run test:e2e` | Ejecuta pruebas E2E (compila y ejecuta las pruebas) |
 
 Ejecutar Git Bash como administrador antes de ejecutar `npm run dist`.
 
@@ -57,6 +58,32 @@ npm run dist
 Genera `release/Biblio-Setup.exe` (solo ia32, Electron 22). Compatible con Windows 7 y Windows 10/11.
 
 > **Nota:** Este proyecto se compila exclusivamente para Windows 7 (32 bits). Aunque el instalador funciona en versiones posteriores de Windows, Electron 22 es la última versión con soporte para Windows 7.
+
+## Pruebas E2E
+
+```bash
+npm run test:e2e
+```
+
+Si solo cambiaste las pruebas, podés saltear la compilación:
+
+```bash
+npx playwright test
+```
+
+Para correr una parte:
+
+```bash
+npx playwright test prestamos               # solo un archivo
+npx playwright test prestamos devoluciones  # varios archivos
+npx playwright test --list                  # listar las pruebas sin correrlas
+```
+
+Si una prueba falla, Playwright guarda una traza en `test-results/` se abre con:
+
+```bash
+npx playwright show-trace test-results/<carpeta-de-la-prueba>/trace.zip
+```
 
 ---
 
