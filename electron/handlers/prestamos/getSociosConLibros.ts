@@ -1,13 +1,10 @@
-import ExcelJS from 'exceljs'
-import { LIBROS_XLSX_PATH } from '../../constants'
+import { getLibrosWorksheet } from '../../constants'
 import type { Socio } from '@shared/models/socio'
 
 type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
 
 export const getSociosConLibros =  async (): Promise<SocioConLibros[]> => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
+  const { worksheet } = await getLibrosWorksheet()
   if (!worksheet) return []
 
   const socios: SocioConLibros[] = []
