@@ -12,7 +12,7 @@ interface Props {
 export function DetallesLibro({ libro }: Props) {
     const [expandido, setExpandido] = useState(false)
     const { verDetallesLibro, verHistorialLibro } = useLibrosStore()
-    const { catalogacionSimple, numerosDeInventarioExternos } = useSettingsStore()
+    const { numerosDeInventarioExternos } = useSettingsStore()
     const isMarc = isMarc21(libro)
     const verHistorial = numerosDeInventarioExternos && !!libro.numeroInventario
 
@@ -21,33 +21,6 @@ export function DetallesLibro({ libro }: Props) {
     let literaryForm = formatLiteraryForm(libro.literaryForm)
     if(isMarc21(libro)) {
         literaryForm = formatLiteraryForm(libro.literaryForm) ?? getDatosDelDewey(libro?.dewey).genero
-    }
-
-    if(catalogacionSimple && !isMarc) {
-        return (
-         <div className="w-full flex justify-between">
-            <span className="flex gap-2 font-semibold opacity-80 mt-1">
-                <span className="font-normal">{ nroInventario ? `N° ${nroInventario}` : "S/N" }</span>
-                { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
-            </span>
-            <span className="flex gap-4">
-                <button
-                    className="mb-2 btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                    onClick={() => verDetallesLibro(libro)}
-                >
-                    Editar Libro
-                </button>
-                { verHistorial &&
-                    <button
-                        className="mb-2 btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                        onClick={() => verHistorialLibro(libro)}
-                    >
-                        Ver historial
-                    </button>
-                }
-            </span>
-         </div>
-        )
     }
 
     return (
@@ -69,7 +42,7 @@ export function DetallesLibro({ libro }: Props) {
                                 { !nroInventario && <span className="mr-1">S/N</span> }
                             </p>
                         }
-                        { (!isMarc && literaryForm) && 
+                        { (!isMarc && literaryForm && literaryForm !== "Desconocido") && 
                             <p className="text-base opacity-80 mt-1">
                                 <span className="mr-1 font-semibold">Forma literaria: </span>
                                 { literaryForm }
@@ -87,6 +60,22 @@ export function DetallesLibro({ libro }: Props) {
                                 { formatFecha(libro.fechaDeIngreso) }
                             </p>
                         }
+                        <span className="mt-4 flex gap-4">
+                            <button
+                                className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                                onClick={() => verDetallesLibro(libro)}
+                            >
+                                Editar Libro
+                            </button>
+                            { verHistorial &&
+                                <button
+                                    className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                                    onClick={() => verHistorialLibro(libro)}
+                                >
+                                    Ver historial
+                                </button>
+                            }
+                        </span>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -111,24 +100,8 @@ export function DetallesLibro({ libro }: Props) {
                         { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
                     </span>
                 }
-                <span className={cn("mt-4 self-start gap-4", expandido ? "flex" : "hidden")}>
-                    <button
-                        className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                        onClick={() => verDetallesLibro(libro)}
-                    >
-                        Editar Libro
-                    </button>
-                    { verHistorial &&
-                        <button
-                            className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                            onClick={() => verHistorialLibro(libro)}
-                        >
-                            Ver historial
-                        </button>
-                    }
-                </span>
                 <button
-                    className="text-sm self-end opacity-60 hover:opacity-100 transition-opacity hover:underline"
+                    className="ml-auto text-sm self-end opacity-60 hover:opacity-100 transition-opacity hover:underline"
                     onClick={() => setExpandido(prev => !prev)}
                 >
                     { isMarc
