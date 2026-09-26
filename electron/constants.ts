@@ -3,10 +3,18 @@ import path from 'node:path'
 import { app } from 'electron'
 import { existsSync } from 'node:fs'
 
-type Worksheet = { 
+type HojaExcel = {
   workbook: ExcelJS.Workbook,
   worksheet: ExcelJS.Worksheet | undefined,
   writeWorkbook: () => Promise<void>,
+}
+
+async function abrirHoja(xlsxPath: string, hoja: string): Promise<HojaExcel> {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(xlsxPath)
+  const worksheet = workbook.getWorksheet(hoja)
+  const writeWorkbook = async () => await workbook.xlsx.writeFile(xlsxPath)
+  return { workbook, worksheet, writeWorkbook }
 }
 
 export const MESES = Object.freeze(
@@ -30,13 +38,7 @@ export const SOCIOS_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'socios-test.xlsx')
   : SOCIOS_XLSX_DEFAULT
 
-export async function getSociosWorksheet(): Promise<Worksheet> {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
-  const writeWorkbook = async () => await workbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
-  return { workbook, worksheet, writeWorkbook }
-}
+export const getSociosWorksheet = () => abrirHoja(SOCIOS_XLSX_PATH, 'Hoja1')
 
 const CUOTAS_XLSX_DEFAULT = IS_DEV
   ? path.join(RESOURCES_PATH, 'cuotas.xlsx')
@@ -46,13 +48,7 @@ export const CUOTAS_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'cuotas-test.xlsx')
   : CUOTAS_XLSX_DEFAULT
 
-export async function getCuotasWorksheet(): Promise<Worksheet> {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('original')
-  const writeWorkbook = async () => await workbook.xlsx.writeFile(CUOTAS_XLSX_PATH)
-  return { workbook, worksheet, writeWorkbook }
-}
+export const getCuotasWorksheet = () => abrirHoja(CUOTAS_XLSX_PATH, 'original')
 
 const LIBROS_XLSX_DEFAULT = IS_DEV
   ? path.join(RESOURCES_PATH, 'libros.xlsx')
@@ -62,13 +58,7 @@ export const LIBROS_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'libros-test.xlsx')
   : LIBROS_XLSX_DEFAULT
 
-export async function getLibrosWorksheet(): Promise<Worksheet> {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
-  const writeWorkbook = async () => await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
-  return { workbook, worksheet, writeWorkbook }
-}
+export const getLibrosWorksheet = () => abrirHoja(LIBROS_XLSX_PATH, 'Hoja1')
 
 const PRESTAMOS_HISTORIAL_XLSX_DEFAULT = IS_DEV
   ? path.join(RESOURCES_PATH, 'prestamos_historial.xlsx')
@@ -78,13 +68,9 @@ export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'prestamos-historial-test.xlsx')
   : PRESTAMOS_HISTORIAL_XLSX_DEFAULT
 
-export async function getHistorialWorksheet(): Promise<Worksheet> {
-  const workbook = new ExcelJS.Workbook()
-
-  if (existsSync(PRESTAMOS_HISTORIAL_XLSX_PATH)) {
-    await workbook.xlsx.readFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
-  }
-  else {
+export async function getHistorialWorksheet(): Promise<HojaExcel> {
+  if (!existsSync(PRESTAMOS_HISTORIAL_XLSX_PATH)) {
+    const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet('prestamos')
     worksheet.columns = [
       { header: 'idPrestamo', key: 'idPrestamo' },
@@ -96,9 +82,7 @@ export async function getHistorialWorksheet(): Promise<Worksheet> {
     await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
   }
 
-  const worksheet = workbook.getWorksheet('prestamos')
-  const writeWorkbook = async () => await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
-  return { workbook, worksheet, writeWorkbook }
+  return abrirHoja(PRESTAMOS_HISTORIAL_XLSX_PATH, 'prestamos')
 }
 
 const SCRIPTS_PATH = IS_DEV
