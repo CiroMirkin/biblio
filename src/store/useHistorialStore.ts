@@ -15,7 +15,6 @@ interface HistorialState {
 
   buscarPorSocio: (nroSocio: number) => Promise<void>
   buscarPorLibro: (nroLibro: string) => Promise<void>
-  eliminarAnio: (anio: number) => Promise<number>
 }
 
 export const useHistorialStore = create<HistorialState>((set) => ({
@@ -58,20 +57,6 @@ export const useHistorialStore = create<HistorialState>((set) => ({
     }
     catch {
       set({ error: "Error al cargar historial del libro", loading: false })
-    }
-  },
-
-  eliminarAnio: async (anio) => {
-    set({ loading: true, error: null })
-
-    try {
-      const eliminadas = await historialService.eliminarHistorialAnio(anio)
-      set({ loading: false })
-      return eliminadas
-    }
-    catch {
-      set({ error: "Error al eliminar historial", loading: false })
-      return 0
     }
   },
 }))

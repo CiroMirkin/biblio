@@ -59,7 +59,6 @@ declare global {
 
       getHistorialSocio: (nroSocio: number) => Promise<HistorialEntry[]>
       getHistorialLibro: (nroLibro: string) => Promise<HistorialEntry[]>
-      eliminarHistorialAnio: (anio: number) => Promise<number>
 
       sincronizacionDisponible: () => Promise<boolean>
       ejecutarSincronizacionDesdeSheets: () => Promise<{ ok: true, cantidad: number } | { ok: false, error: string }>

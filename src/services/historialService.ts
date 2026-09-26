@@ -19,7 +19,3 @@ export async function getHistorialSocio(nroSocio: number): Promise<HistorialEntr
 export async function getHistorialLibro(nroLibro: string): Promise<HistorialEntry[]> {
   return fetchHistorial(() => window.electronAPI.getHistorialLibro(nroLibro))
 }
-
-export async function eliminarHistorialAnio(anio: number): Promise<number> {
-  return window.electronAPI.eliminarHistorialAnio(anio)
-}
