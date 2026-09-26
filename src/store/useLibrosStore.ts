@@ -15,11 +15,13 @@ interface LibrosState {
   librosPrestados: LibroRegistrado[]
   
   showDetallesLibro: boolean
+  showHistorialLibro: boolean
   libroSeleccionado: Libro | Marc21 |LibroRegistrado | null
-  
+
   inicializar: () => Promise<void>
-  
+
   verDetallesLibro: (libro: Libro | LibroRegistrado) => void
+  verHistorialLibro: (libro: Libro | LibroRegistrado) => void
   editarLibro: (libro: Partial<LibroRegistrado>) => Promise<Libro | LibroRegistrado | null>
   
   verCatalogo: () => void
@@ -50,6 +52,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosPrestados: [],
 
   showDetallesLibro: false,
+  showHistorialLibro: false,
   libroSeleccionado: null,
 
   inicializar: async () => {
@@ -90,7 +93,16 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     set({ librosFiltrados: filtrados })
   },
 
-  verCatalogo: () => set({ showDetallesLibro: false, libroSeleccionado: null, }),
+  verCatalogo: () => set({ showDetallesLibro: false, showHistorialLibro: false, libroSeleccionado: null, }),
+
+  verHistorialLibro: (libro) => {
+    if(!libro) return;
+
+    set({
+      showHistorialLibro: true,
+      libroSeleccionado: { ...libro },
+    })
+  },
 
   verDetallesLibro: (libro) => {
     if(!libro) return;

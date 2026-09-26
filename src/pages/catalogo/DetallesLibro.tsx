@@ -11,9 +11,10 @@ interface Props {
 
 export function DetallesLibro({ libro }: Props) {
     const [expandido, setExpandido] = useState(false)
-    const { verDetallesLibro } = useLibrosStore()
+    const { verDetallesLibro, verHistorialLibro } = useLibrosStore()
     const { catalogacionSimple, numerosDeInventarioExternos } = useSettingsStore()
     const isMarc = isMarc21(libro)
+    const verHistorial = numerosDeInventarioExternos && !!libro.numeroInventario
 
     const nroInventario = formatNro(libro.numeroInventario)
 
@@ -29,13 +30,23 @@ export function DetallesLibro({ libro }: Props) {
                 <span className="font-normal">{ nroInventario ? `N° ${nroInventario}` : "S/N" }</span>
                 { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
             </span>
-            <button
-                className="mb-2 btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                onClick={() => verDetallesLibro(libro)}
-            >
-                Editar Libro
-            </button>
-         </div>   
+            <span className="flex gap-4">
+                <button
+                    className="mb-2 btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                    onClick={() => verDetallesLibro(libro)}
+                >
+                    Editar Libro
+                </button>
+                { verHistorial &&
+                    <button
+                        className="mb-2 btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                        onClick={() => verHistorialLibro(libro)}
+                    >
+                        Ver historial
+                    </button>
+                }
+            </span>
+         </div>
         )
     }
 
@@ -100,15 +111,22 @@ export function DetallesLibro({ libro }: Props) {
                         { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
                     </span>
                 }
-                <button
-                    className={cn(
-                        "mt-4 self-start btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline",
-                        expandido ? "block" : "hidden"
-                    )}
-                    onClick={() => verDetallesLibro(libro)}
-                >
-                    Editar Libro
-                </button>
+                <span className={cn("mt-4 self-start gap-4", expandido ? "flex" : "hidden")}>
+                    <button
+                        className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                        onClick={() => verDetallesLibro(libro)}
+                    >
+                        Editar Libro
+                    </button>
+                    { verHistorial &&
+                        <button
+                            className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                            onClick={() => verHistorialLibro(libro)}
+                        >
+                            Ver historial
+                        </button>
+                    }
+                </span>
                 <button
                     className="text-sm self-end opacity-60 hover:opacity-100 transition-opacity hover:underline"
                     onClick={() => setExpandido(prev => !prev)}

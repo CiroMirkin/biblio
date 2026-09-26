@@ -49,8 +49,7 @@ export const useHistorialStore = create<HistorialState>((set) => ({
       const socios = useSociosStore.getState().socios
       const entriesConSocio: HistorialEntryConSocio[] = entries.map(e => {
         const socio = socios.find(s => s.nroSocio === e.nroSocio)
-        if (!socio) throw new Error(`Socio no encontrado: ${e.nroSocio}`)
-        return { ...e, ...socio }
+        return { ...e, ...socio } as HistorialEntryConSocio
       })
 
       set({ entriesConSocio, loading: false })

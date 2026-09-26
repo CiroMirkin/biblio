@@ -31,7 +31,7 @@ export function LibroEnPrestamo({ libro }: Props) {
                     <p className="text-base font-semibold ">{libro.autor}</p>
                 </div>
                 <span className={cn(
-                    "flex flex-col items-end text-base font-semibold",
+                    "pb-2 flex flex-col items-end text-base font-semibold",
                     dias > limiteDeDias ? "text-red" : "text-greem"
                 )}>
                     <span className="text-lg">{ formatDiasRelativo(dias) }</span>
