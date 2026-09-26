@@ -1,12 +1,9 @@
-import ExcelJS from 'exceljs'
 import { rowToLibro } from '../../models/libro'
 import { type LibroRegistrado } from "@shared/models/libro"
-import { LIBROS_XLSX_PATH } from '../../constants'
+import { getLibrosWorksheet } from '../../constants'
 
 export const getLibros = async (): Promise<LibroRegistrado[]> => {
-    const workbook = new ExcelJS.Workbook()
-    await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-    const worksheet = workbook.getWorksheet('Hoja1')
+    const { worksheet } = await getLibrosWorksheet()
     if (!worksheet) return []
 
     const libros: LibroRegistrado[] = []
