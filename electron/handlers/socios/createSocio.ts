@@ -1,12 +1,9 @@
-import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH } from '../../constants'
+import { getSociosWorksheet, getCuotasWorksheet } from '../../constants'
 import { writeSocio } from '../../models/socio'
 import type { NewSocio, Socio } from '@shared/models/socio'
 
 export const createSocio = async (socioData: NewSocio): Promise<Socio> => {
-  const sociosWorkbook = new ExcelJS.Workbook()
-  await sociosWorkbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-  const sociosSheet = sociosWorkbook.getWorksheet('Hoja1')
+  const { worksheet: sociosSheet, writeWorkbook: writeSocios } = await getSociosWorksheet()
   if (!sociosSheet) throw new Error('No se encontró la hoja "Hoja1"')
 
   let lastNroSocio = 0
@@ -26,20 +23,18 @@ export const createSocio = async (socioData: NewSocio): Promise<Socio> => {
   newRow.getCell(1).value = newNroSocio
   writeSocio(newRow, newSocio)
 
-  await sociosWorkbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
+  await writeSocios()
 
   // INSERTA SOCIO EN REGISTRO DE CUOTAS
 
-  const cuotasWorkbook = new ExcelJS.Workbook()
-  await cuotasWorkbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-  const cuotasSheet = cuotasWorkbook.getWorksheet('original')
+  const { worksheet: cuotasSheet, writeWorkbook: writeCuotas } = await getCuotasWorksheet()
   if (!cuotasSheet) throw new Error('No se encontró la hoja "original"')
 
   const newCuotasRow = cuotasSheet.addRow([])
   newCuotasRow.getCell(3).value = newNroSocio
   newCuotasRow.getCell(4).value = socioData.nombreYApellido
 
-  await cuotasWorkbook.xlsx.writeFile(CUOTAS_XLSX_PATH)
+  await writeCuotas()
 
   return newSocio
 }

@@ -1,13 +1,10 @@
-import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH } from '../../constants'
+import { getSociosWorksheet } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
 import type { Socio } from '@shared/models/socio'
 
 export const editarDatosSocio = async (nroSocio: number, datos: Partial<Socio>): Promise<boolean> => {
-    const workbook = new ExcelJS.Workbook()
-    await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-    const worksheet = workbook.getWorksheet('Hoja1')
+    const { worksheet, writeWorkbook } = await getSociosWorksheet()
     if (!worksheet) return false
 
     let found = false
@@ -28,7 +25,7 @@ export const editarDatosSocio = async (nroSocio: number, datos: Partial<Socio>):
     })
 
     if (found) {
-        await workbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
+        await writeWorkbook()
     }
 
     return found

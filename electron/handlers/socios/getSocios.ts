@@ -1,11 +1,8 @@
-import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH } from '../../constants'
+import { getSociosWorksheet } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 
 export const getSocios = async () => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('Hoja1')
+  const { worksheet } = await getSociosWorksheet()
   if (!worksheet) return []
 
   const socios: unknown[] = []

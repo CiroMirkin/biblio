@@ -1,12 +1,9 @@
-import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH } from '../../constants'
+import { getSociosWorksheet } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
 
 export const reactivarSocio = async (nroSocio: number): Promise<boolean> => {
-    const workbook = new ExcelJS.Workbook()
-    await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-    const worksheet = workbook.getWorksheet('Hoja1')
+    const { worksheet, writeWorkbook } = await getSociosWorksheet()
     if (!worksheet) return false
 
     let found = false
@@ -21,6 +18,6 @@ export const reactivarSocio = async (nroSocio: number): Promise<boolean> => {
         }
     })
 
-    if (found) await workbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
+    if (found) await writeWorkbook()
     return found
 }

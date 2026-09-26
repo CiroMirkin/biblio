@@ -1,15 +1,8 @@
-import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH } from '../../constants'
 import type { Socio } from '@shared/models/socio'
 import { editarDatosSocio } from './editarDatosSocio'
 
 export const vincularSocios = async (socio1: Socio, socio2: Socio): Promise<boolean> => {
     if(!socio1.nroSocio || !socio2.nroSocio) return false
-
-    const workbook = new ExcelJS.Workbook()
-    await workbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-    const worksheet = workbook.getWorksheet('Hoja1')
-    if (!worksheet) return false
 
     const newSocio1: Socio = {
         ...socio1,

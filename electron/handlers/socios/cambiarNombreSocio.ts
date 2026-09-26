@@ -1,12 +1,9 @@
-import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH } from '../../constants'
+import { getSociosWorksheet, getCuotasWorksheet, getLibrosWorksheet } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
 
 export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string): Promise<boolean> => {
-    const sociosWorkbook = new ExcelJS.Workbook()
-    await sociosWorkbook.xlsx.readFile(SOCIOS_XLSX_PATH)
-    const sociosSheet = sociosWorkbook.getWorksheet('Hoja1')
+    const { worksheet: sociosSheet, writeWorkbook: writeSocios } = await getSociosWorksheet()
     if (!sociosSheet) return false
     if(!nuevoNombre.trim() || !nroSocio) return false
 
@@ -23,11 +20,9 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
 
     if (!found) return false
 
-    await sociosWorkbook.xlsx.writeFile(SOCIOS_XLSX_PATH)
+    await writeSocios()
 
-    const cuotasWorkbook = new ExcelJS.Workbook()
-    await cuotasWorkbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-    const cuotasSheet = cuotasWorkbook.getWorksheet('original')
+    const { worksheet: cuotasSheet, writeWorkbook: writeCuotas } = await getCuotasWorksheet()
     if (!cuotasSheet) return false
 
     cuotasSheet.eachRow((row, rowIndex) => {
@@ -37,11 +32,9 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
         }
     })
 
-    await cuotasWorkbook.xlsx.writeFile(CUOTAS_XLSX_PATH)
+    await writeCuotas()
 
-    const librosWorkbook = new ExcelJS.Workbook()
-    await librosWorkbook.xlsx.readFile(LIBROS_XLSX_PATH)
-    const librosSheet = librosWorkbook.getWorksheet('Hoja1')
+    const { worksheet: librosSheet, writeWorkbook: writeLibros } = await getLibrosWorksheet()
     if (!librosSheet) return false
 
     librosSheet.eachRow((row, rowIndex) => {
@@ -51,7 +44,7 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
         }
     })
 
-    await librosWorkbook.xlsx.writeFile(LIBROS_XLSX_PATH)
+    await writeLibros()
 
     return true
 }
