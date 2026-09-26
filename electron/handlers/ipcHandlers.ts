@@ -17,7 +17,7 @@ import {
   changeObservaciones,
 } from './socios'
 import { getCuotasSocio, toggleCuota } from './cuotas'
-import { getHistorialSocio, getHistorialLibro, eliminarHistorialAnio } from './historial'
+import { getHistorialSocio, getHistorialLibro } from './historial'
 import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
 import type { Libro, LibroRegistrado } from "@shared/models/libro"
@@ -64,7 +64,6 @@ const cuotasIpcHandlers = {
 const historialIpcHandlers = {
   getHistorialSocio: (_: unknown, nroSocio: number) => getHistorialSocio(nroSocio),
   getHistorialLibro: (_: unknown, nroLibro: string) => getHistorialLibro(nroLibro),
-  eliminarHistorialAnio: (_: unknown, anio: number) => eliminarHistorialAnio(anio),
 }
 
 const archivosIpcHandlers = {

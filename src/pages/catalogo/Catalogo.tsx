@@ -4,12 +4,14 @@ import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 import { RecuentoLibros } from "./RecuentoLibros"
 import { SincronizarDesdeSheets } from "./SincronizarDesdeSheets"
 import { EditarLibro } from "./EditarLibro"
+import { HistorialLibro } from "./HistorialLibro"
 import { cn } from "@/utils"
 import MovimientosDelDia from "./MovimientosDelDia"
 
 export function Catalogo() {
     const { limiteDeDias } = useSettingsStore()
-    const { showDetallesLibro } = useLibrosStore()
+    const { showDetallesLibro, showHistorialLibro } = useLibrosStore()
+    const enCatalogo = !showDetallesLibro && !showHistorialLibro
 
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
@@ -18,7 +20,12 @@ export function Catalogo() {
                     <EditarLibro />
                 </section>
             }
-            { !showDetallesLibro && 
+            { showHistorialLibro &&
+                <section>
+                    <HistorialLibro />
+                </section>
+            }
+            { enCatalogo && 
                 <section>
                     <div className="sticky inset-y-0 z-50 bg-white">
                         <div className="bg-[#d26fb9c9]">
@@ -34,22 +41,25 @@ export function Catalogo() {
             <aside className="sticky top-0 h-fit hidden md:flex flex-col">
                 <div className={cn(
                     "w-full bg-transparent",
-                    showDetallesLibro ? "h-15.5" : "h-4"
+                    !enCatalogo ? "h-15.5" : "h-4"
                 )} />
                 <section className="card mb-4 flex flex-col gap-2">
                     { showDetallesLibro && <>
                         <p>Ahora puedes cambiar el N° de inventario, titulo y autor del libro.</p>
                         <p>Si el libro esta en préstamo la información del préstamo no se perderá.</p>
                     </> }
-                    { !showDetallesLibro && <>
+                    { showHistorialLibro &&
+                        <p>Aquí puedes ver los socios que tuvieron este libro en préstamo.</p>
+                    }
+                    { enCatalogo && <>
                         <p>En esta sección puede buscar un libro por su titulo, si el libro esta en préstamo puede saber quien lo tiene.</p>
                         <p>Si un libro esta prestado hace mas de {limiteDeDias} días se marca en rojo como adeudado.</p>
                     </> }
                 </section>
 
-                { !showDetallesLibro && <MovimientosDelDia className="mb-4" /> }
-                { !showDetallesLibro && <RecuentoLibros /> }
-                { !showDetallesLibro && <SincronizarDesdeSheets /> }
+                { enCatalogo && <MovimientosDelDia className="mb-4" /> }
+                { enCatalogo && <RecuentoLibros /> }
+                { enCatalogo && <SincronizarDesdeSheets /> }
             </aside>
         </div>
     )

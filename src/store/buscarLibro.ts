@@ -1,6 +1,8 @@
 import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
 import { levenshtein, normailzarTexto, buscarLibrosDeHoy } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
+import { filtrarLibrosVencidos } from "./filtrarLibrosVencidos"
+import { useSettingsStore } from "./useSettingsStore"
 import { filtrarLibrosRegistrados, esMismaFecha } from "@shared/utils"
 
 const dias = [ "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" ]
@@ -24,6 +26,22 @@ export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
 
   if (dato === "numeros de inventario repetidos") {
     return buscarNrosRepetidos(libros)
+  }
+
+  if(dato === "adeudados recientes") {
+    return filtrarLibrosVencidos({
+      libros,
+      limiteDeDias: useSettingsStore.getState().limiteDeDias,
+      order: 'asc',
+    })
+  }
+
+  if(dato === "adeudados antiguos") {
+    return filtrarLibrosVencidos({
+      libros,
+      limiteDeDias: useSettingsStore.getState().limiteDeDias,
+      order: 'desc',
+    })
   }
 
   if(busquedaPorDiaKeys.includes(dato)) {

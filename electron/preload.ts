@@ -65,7 +65,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   getHistorialSocio: (nroSocio: number) => ipcRenderer.invoke('getHistorialSocio', nroSocio),
   getHistorialLibro: (nroLibro: string) => ipcRenderer.invoke('getHistorialLibro', nroLibro),
-  eliminarHistorialAnio: (anio: number) => ipcRenderer.invoke('eliminarHistorialAnio', anio),
 
   sincronizacionDisponible: () => ipcRenderer.invoke('sincronizacionDisponible'),
   ejecutarSincronizacionDesdeSheets: () => ipcRenderer.invoke('ejecutarSincronizacionDesdeSheets'),
