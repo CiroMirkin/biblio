@@ -1,11 +1,9 @@
-import ExcelJS from 'exceljs'
-import { CUOTAS_XLSX_PATH, MESES } from '../../constants'
+import type ExcelJS from 'exceljs'
+import { getCuotasWorksheet, MESES } from '../../constants'
 import { construirIndiceMeses, migrarFaltaDeTextoEnCuota, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
 
 export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('original')
+  const { worksheet } = await getCuotasWorksheet()
   if (!worksheet) return []
 
   const headerRow = worksheet.getRow(1)
