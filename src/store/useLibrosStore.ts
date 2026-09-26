@@ -5,6 +5,7 @@ import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
 import { useSettingsStore } from "./useSettingsStore"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
+import { filtrarLibrosVencidos } from "./filtrarLibrosVencidos"
 
 interface LibrosState {
   libros: LibroRegistrado[]
@@ -54,26 +55,22 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   inicializar: async () => {
     const { limiteDeDias } = useSettingsStore.getState()
 
-    const librosVencidos: LibroRegistrado[] = []
+    const libros = await cargarLibrosEnPrestamo()
+    const librosVencidos: LibroRegistrado[] = filtrarLibrosVencidos({ libros, limiteDeDias })
     const librosDisponibles: Libro[] = []
     const librosPrestados: LibroRegistrado[] = []
 
-    const libros = await cargarLibrosEnPrestamo()
     libros.forEach(libro => {
       if (libro.fechaDePrestamo === null) {
         librosDisponibles.push(libro)
       }
       else if (calcularDiasDesdePrestamo(libro.fechaDePrestamo) > limiteDeDias) {
-        librosVencidos.push(libro)
+        return;
       }
       else {
         librosPrestados.push(libro)
       }
     })
-
-    librosVencidos.sort((a, b) =>
-      calcularDiasDesdePrestamo(b.fechaDePrestamo!) - calcularDiasDesdePrestamo(a.fechaDePrestamo!)
-    )
 
     set({ libros, librosVencidos, librosDisponibles, librosPrestados, librosFiltrados: [...librosVencidos] })
   },
