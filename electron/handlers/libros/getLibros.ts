@@ -1,9 +1,8 @@
 import { rowToLibro } from '../../models/libro'
 import { type LibroRegistrado } from "@shared/models/libro"
-import { getLibrosWorksheet } from '../../constants'
+import { leerLibros } from '../../constants'
 
-export const getLibros = async (): Promise<LibroRegistrado[]> => {
-    const { worksheet } = await getLibrosWorksheet()
+export const getLibros = async (): Promise<LibroRegistrado[]> => leerLibros(({ worksheet }) => {
     if (!worksheet) return []
 
     const libros: LibroRegistrado[] = []
@@ -12,4 +11,4 @@ export const getLibros = async (): Promise<LibroRegistrado[]> => {
         libros.push(rowToLibro(row))
     })
     return libros
-}
+})
