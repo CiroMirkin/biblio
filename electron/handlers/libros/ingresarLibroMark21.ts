@@ -1,4 +1,4 @@
-import { modificarLibros } from "../../constants"
+import { modificarLibros } from "../../utils/datosExcel"
 import { getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
 import type { Marc21 } from "@shared/models/marc21"
 

@@ -1,4 +1,4 @@
-import { modificarHistorial } from '../../constants'
+import { modificarHistorial } from '../../utils/datosExcel'
 
 export async function actualizarNroLibroEnHistorial(viejoNro: string, nuevoNro: string): Promise<string> {
   try {

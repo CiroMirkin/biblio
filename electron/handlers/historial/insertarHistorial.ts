@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { modificarHistorial } from '../../constants'
+import { modificarHistorial } from '../../utils/datosExcel'
 
 export async function insertarHistorial(fechaPrestamo: Date, nroSocio: number, nroLibro: string): Promise<string> {
   try {

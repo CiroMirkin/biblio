@@ -1,4 +1,4 @@
-import { modificarHistorial } from '../../constants'
+import { modificarHistorial } from '../../utils/datosExcel'
 import { getHistorialLibro } from './getHistorialLibro'
 
 export async function actualizarFechaDevolucion(numeroInventario: string): Promise<boolean> {

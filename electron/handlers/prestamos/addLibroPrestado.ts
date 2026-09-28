@@ -1,7 +1,7 @@
 import type ExcelJS from 'exceljs'
 import type { LibroEnPrestamo } from "@shared/models/libro"
 import { esSinInventariar, generarIdSinInventariar, getFechaDePrestamoFromRow, getNroDeInventarioFromRow, libroToRow, rowToLibro, writeLibro } from "../../models/libro"
-import { modificarLibros } from '../../constants'
+import { modificarLibros } from '../../utils/datosExcel'
 import { insertarHistorial } from '../historial'
 
 export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Promise<LibroEnPrestamo | null> {

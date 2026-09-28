@@ -1,4 +1,4 @@
-import { modificarCuotas } from '../../constants'
+import { modificarCuotas } from '../../utils/datosExcel'
 import { construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
 export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: number) => {

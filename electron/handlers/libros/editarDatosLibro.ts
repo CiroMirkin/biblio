@@ -1,5 +1,5 @@
 import type ExcelJS from 'exceljs'
-import { modificarLibros } from "../../constants"
+import { modificarLibros } from "../../utils/datosExcel"
 import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
 import { type Libro, type LibroRegistrado } from "@shared/models/libro"
 import { isMarc21 } from "@shared/models"

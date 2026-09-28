@@ -1,5 +1,6 @@
 import type ExcelJS from 'exceljs'
-import { leerCuotas, MESES } from '../../constants'
+import { MESES } from '../../constants'
+import { leerCuotas } from '../../utils/datosExcel'
 import { construirIndiceMeses, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
 
 export const getCuotasSocio = async (nroSocio: number, anio?: number) => leerCuotas(({ worksheet }) => {

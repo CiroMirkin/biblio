@@ -1,4 +1,4 @@
-import { leerLibros } from '../../constants'
+import { leerLibros } from '../../utils/datosExcel'
 import type { Socio } from '@shared/models/socio'
 
 type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>

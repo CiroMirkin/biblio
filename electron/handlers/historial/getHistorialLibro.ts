@@ -1,5 +1,5 @@
 import type { HistorialEntry } from '@shared/models'
-import { leerHistorial } from '../../constants'
+import { leerHistorial } from '../../utils/datosExcel'
 import { rowToHistorialEntry } from '../../models/historial'
 
 export async function getHistorialLibro(nroLibro: string): Promise<HistorialEntry[]> {

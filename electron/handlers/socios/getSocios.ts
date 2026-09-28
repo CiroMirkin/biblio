@@ -1,4 +1,4 @@
-import { leerSocios } from '../../constants'
+import { leerSocios } from '../../utils/datosExcel'
 import { rowToSocio } from '../../models/socio'
 
 export const getSocios = async () => leerSocios(({ worksheet }) => {

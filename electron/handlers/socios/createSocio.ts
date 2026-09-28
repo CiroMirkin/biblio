@@ -1,4 +1,4 @@
-import { modificarSocios, modificarCuotas } from '../../constants'
+import { modificarSocios, modificarCuotas } from '../../utils/datosExcel'
 import { writeSocio } from '../../models/socio'
 import type { NewSocio, Socio } from '@shared/models/socio'
 

@@ -1,4 +1,4 @@
-import { modificarLibros } from '../../constants'
+import { modificarLibros } from '../../utils/datosExcel'
 import { esSinInventariar, getNroDeInventarioFromRow, limpiarPrestamo } from "../../models/libro"
 import { actualizarFechaDevolucion } from '../historial'
 

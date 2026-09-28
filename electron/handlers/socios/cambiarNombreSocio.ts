@@ -1,4 +1,4 @@
-import { modificarSocios, modificarCuotas, modificarLibros } from '../../constants'
+import { modificarSocios, modificarCuotas, modificarLibros } from '../../utils/datosExcel'
 import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
 
