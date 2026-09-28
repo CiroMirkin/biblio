@@ -22,7 +22,7 @@ async function leerValorDeDisco(xlsxPath: string) {
     return wb.getWorksheet(HOJA)!.getCell('A1').value
 }
 
-const leerValor = () => leerHoja(archivo, HOJA, ({ worksheet }) => worksheet!.getCell('A1').value)
+const leerValor = () => leerHoja(archivo, HOJA, ({ worksheet }) => worksheet.getCell('A1').value)
 
 describe('hojaExcel (unit)', () => {
     beforeEach(async () => {
@@ -39,9 +39,13 @@ describe('hojaExcel (unit)', () => {
     })
 
     it('Reusa el workbook en memoria si el archivo no cambió', async () => {
-        const wb1 = await leerHoja(archivo, HOJA, ({ worksheet }) => worksheet!.workbook)
-        const wb2 = await leerHoja(archivo, HOJA, ({ worksheet }) => worksheet!.workbook)
+        const wb1 = await leerHoja(archivo, HOJA, ({ worksheet }) => worksheet.workbook)
+        const wb2 = await leerHoja(archivo, HOJA, ({ worksheet }) => worksheet.workbook)
         expect(wb2).toBe(wb1)
+    })
+
+    it('Falla si la hoja no existe', async () => {
+        await expect(leerHoja(archivo, 'noExiste', () => 'no debería llegar')).rejects.toThrow('noExiste')
     })
 
     it('Relee de disco si otro proceso modificó el archivo', async () => {
@@ -52,7 +56,7 @@ describe('hojaExcel (unit)', () => {
 
     it('Serializa ediciones concurrentes sobre el mismo archivo', async () => {
         const incrementar = () => modificarHoja(archivo, HOJA, async ({ worksheet, writeWorkbook }) => {
-            const celda = worksheet!.getCell('A1')
+            const celda = worksheet.getCell('A1')
             const actual = Number(celda.value)
             await new Promise(r => setTimeout(r, 10))
             celda.value = actual + 1
@@ -65,7 +69,7 @@ describe('hojaExcel (unit)', () => {
 
     it('Descarta una mutación que no se guardó', async () => {
         await modificarHoja(archivo, HOJA, ({ worksheet }) => {
-            worksheet!.getCell('A1').value = 99
+            worksheet.getCell('A1').value = 99
         })
         expect(await leerValor()).toBe(1)
     })
@@ -74,7 +78,7 @@ describe('hojaExcel (unit)', () => {
         let ejecuciones = 0
         const fallar = modificarHoja(archivo, HOJA, ({ worksheet }) => {
             ejecuciones++
-            worksheet!.getCell('A1').value = 99
+            worksheet.getCell('A1').value = 99
             throw new Error('boom')
         })
 
@@ -87,7 +91,7 @@ describe('hojaExcel (unit)', () => {
         const orden: string[] = []
         const edicion = modificarHoja(archivo, HOJA, async ({ worksheet, writeWorkbook }) => {
             await new Promise(r => setTimeout(r, 10))
-            worksheet!.getCell('A1').value = 2
+            worksheet.getCell('A1').value = 2
             await writeWorkbook()
             orden.push('edicion')
         })
@@ -103,7 +107,7 @@ describe('hojaExcel (unit)', () => {
 
     it('Leer el mismo archivo dentro de una edición no se bloquea y ve los cambios sin guardar', async () => {
         const visto = await modificarHoja(archivo, HOJA, async ({ worksheet, writeWorkbook }) => {
-            worksheet!.getCell('A1').value = 5
+            worksheet.getCell('A1').value = 5
             const valor = await leerValor()
             await writeWorkbook()
             return valor
