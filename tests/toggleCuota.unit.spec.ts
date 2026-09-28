@@ -7,10 +7,12 @@ vi.mock('exceljs', async () => {
 })
 
 import { toggleCuota } from '../electron/handlers/cuotas/toggleCuota'
+import { vaciarCache } from '../electron/utils/hojaExcel'
 
 describe('toggleCuota (unit)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vaciarCache()
   })
 
   it('Cambia el estado de pago de una cuota existente (pago -> adeuda)', async () => {

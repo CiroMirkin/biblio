@@ -1,9 +1,8 @@
 import type ExcelJS from 'exceljs'
-import { getCuotasWorksheet, MESES } from '../../constants'
-import { construirIndiceMeses, migrarFaltaDeTextoEnCuota, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
+import { leerCuotas, MESES } from '../../constants'
+import { construirIndiceMeses, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
 
-export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
-  const { worksheet } = await getCuotasWorksheet()
+export const getCuotasSocio = async (nroSocio: number, anio?: number) => leerCuotas(({ worksheet }) => {
   if (!worksheet) return []
 
   const headerRow = worksheet.getRow(1)
@@ -44,7 +43,7 @@ export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
     meses: extraerMesesDeAnio(worksheet, indiceMeses, nroSocio, anioActual),
     anio: anioActual,
   }
-}
+})
 
 const extraerMesesDeAnio = (
   worksheet: ExcelJS.Worksheet,
@@ -65,10 +64,9 @@ const extraerMesesDeAnio = (
       const col = columnasSocio.find(c => c.mes === mesIndex)
       if (!col) return { [nombre]: false }
 
-      const cell = row.getCell(col.colIndex)
-      migrarFaltaDeTextoEnCuota(cell)
-
-      return { [nombre]: cell.value === 'pago' }
+      return {
+        [nombre]: row.getCell(col.colIndex).value === 'pago'
+      }
     })
   })
 

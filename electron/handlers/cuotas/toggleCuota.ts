@@ -1,16 +1,8 @@
-import { getCuotasWorksheet } from '../../constants'
+import { modificarCuotas } from '../../constants'
 import { construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
-let writeQueue: Promise<unknown> = Promise.resolve()
-
-function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
-  writeQueue = writeQueue.then(fn).catch(fn)
-  return writeQueue
-}
-
 export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: number) => {
-  return enqueueWrite(async () => {
-    const { worksheet, writeWorkbook } = await getCuotasWorksheet()
+  return modificarCuotas(async ({ worksheet, writeWorkbook }) => {
     if (!worksheet) throw new Error('Hoja de cuotas no encontrada')
 
     const headerRow = worksheet.getRow(1)

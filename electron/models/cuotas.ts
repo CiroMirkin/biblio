@@ -5,13 +5,6 @@ export type CalendarioDeCuotas = Cuota[]
 
 export type HistorialDeCuotas = Map< number, { anio: number; mes: number} >
 
-export function migrarFaltaDeTextoEnCuota(cell: ExcelJS.Cell): void {
-  if (cell.value === 'pago' || cell.value === 'adeuda') return
-  if (cell.value === null || String(cell.value).trim() === '') {
-    cell.value = 'adeuda'
-  }
-}
-
 export function toggleCeldaPago(cell: ExcelJS.Cell): boolean {
   if (cell.value === 'pago') {
     cell.value = 'adeuda'
@@ -26,6 +19,7 @@ export function construirIndiceMeses(headerRow: ExcelJS.Row): HistorialDeCuotas 
 
   headerRow.eachCell({ includeEmpty: false }, (cell, colIndex) => {
     if (!(cell.value instanceof Date)) return
+
     const fecha = cell.value as Date
     indice.set(colIndex, {
       anio: fecha.getUTCFullYear(),
