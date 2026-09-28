@@ -1,6 +1,7 @@
 import { dialog } from 'electron'
 import fs from 'node:fs/promises'
 import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from '../constants'
+import { modificarArchivo } from './hojaExcel'
 
 const ARCHIVOS = {
   socios: SOCIOS_XLSX_PATH,
@@ -25,6 +26,6 @@ export const copiarExcel = async (key: ArchivoKey) => {
 
   if (canceled || !filePath) return false
 
-  await fs.copyFile(origen, filePath)
+  await modificarArchivo(origen, () => fs.copyFile(origen, filePath))
   return true
 }
