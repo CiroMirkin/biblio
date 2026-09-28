@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caché y cola por archivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #fef0c6;
+      --color-ink:    #210501;
+      --color-muted:  #6b4a3a;
+      --color-accent: #e48329;
+      --font-sans:    'Inter', system-ui, sans-serif;
+      --font-serif:   'Playfair Display', serif;
+      --font-mono:    'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 760px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Flujo de datos · hojaExcel.ts</p>
+    <h1>Caché en memoria y cola por archivo</h1>
+
+    <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flujo-cache-y-cola-title flujo-cache-y-cola-desc">
+      <title id="flujo-cache-y-cola-title">Caché en memoria y cola por archivo</title>
+      <desc id="flujo-cache-y-cola-desc">Los handlers de lectura, los de edición y los escritores externos entran a la cola de cada archivo; con el turno, cargar() compara mtime y tamaño y reusa el workbook en caché o lo relee de disco, y un error, una edición sin guardar o modificarArchivo descartan la caché.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4a3a"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#e48329"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1f6f78"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#fef0c6"/>
+
+      <!-- ===== Arrows (drawn before nodes) ===== -->
+
+      <!-- Lectura (center y 128) → queue left edge at y 188 -->
+      <path d="M 240,128 H 272 Q 280,128 280,136 V 180 Q 280,188 288,188 H 320" fill="none" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- Edición (center y 232) → queue at y 232 -->
+      <line x1="240" y1="232" x2="320" y2="232" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- Externos (center y 336) → queue at y 276 -->
+      <path d="M 240,336 H 272 Q 280,336 280,328 V 284 Q 280,276 288,276 H 320" fill="none" stroke="#1f6f78" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+
+      <!-- Queue → cargar -->
+      <line x1="520" y1="232" x2="600" y2="232" stroke="#e48329" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+      <rect x="532" y="208" width="56" height="12" rx="2" fill="#fef0c6"/>
+      <text x="560" y="217" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">TURNO</text>
+
+      <!-- cargar → caché (up) -->
+      <line x1="680" y1="192" x2="680" y2="136" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="688" y="152" width="96" height="12" rx="2" fill="#fef0c6"/>
+      <text x="692" y="161" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">SIN CAMBIOS</text>
+
+      <!-- cargar → readFile (down) -->
+      <line x1="680" y1="272" x2="680" y2="328" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="688" y="292" width="96" height="12" rx="2" fill="#fef0c6"/>
+      <text x="692" y="301" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">CAMBIÓ</text>
+
+      <!-- Queue → caché: invalida (dashed) -->
+      <path d="M 480,144 V 108 Q 480,100 488,100 H 600" fill="none" stroke="#6b4a3a" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="508" y="76" width="72" height="12" rx="2" fill="#fef0c6"/>
+      <text x="544" y="85" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">INVALIDA</text>
+
+      <!-- ===== Nodes ===== -->
+
+      <!-- Lectura (input) -->
+      <rect x="40" y="96" width="200" height="64" rx="6" fill="#fef0c6"/>
+      <rect x="40" y="96" width="200" height="64" rx="6" fill="rgba(107,74,58,0.10)" stroke="#7d5f4f" stroke-width="1"/>
+      <rect x="48" y="102" width="28" height="12" rx="2" fill="transparent" stroke="rgba(125,95,79,0.40)" stroke-width="0.8"/>
+      <text x="62" y="111" fill="#7d5f4f" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IPC</text>
+      <text x="140" y="132" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Handlers de lectura</text>
+      <text x="140" y="148" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">leerX(fn)</text>
+
+      <!-- Edición (input) -->
+      <rect x="40" y="200" width="200" height="64" rx="6" fill="#fef0c6"/>
+      <rect x="40" y="200" width="200" height="64" rx="6" fill="rgba(107,74,58,0.10)" stroke="#7d5f4f" stroke-width="1"/>
+      <rect x="48" y="206" width="28" height="12" rx="2" fill="transparent" stroke="rgba(125,95,79,0.40)" stroke-width="0.8"/>
+      <text x="62" y="215" fill="#7d5f4f" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IPC</text>
+      <text x="140" y="236" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Handlers de edición</text>
+      <text x="140" y="252" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">modificarX(fn) · writeWorkbook</text>
+
+      <!-- Externos (external) -->
+      <rect x="40" y="304" width="200" height="64" rx="6" fill="#fef0c6"/>
+      <rect x="40" y="304" width="200" height="64" rx="6" fill="rgba(33,5,1,0.03)" stroke="rgba(33,5,1,0.30)" stroke-width="1"/>
+      <rect x="48" y="310" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.30)" stroke-width="0.8"/>
+      <text x="62" y="319" fill="#7d5f4f" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXT</text>
+      <text x="140" y="340" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Sheets · importar · copiar</text>
+      <text x="140" y="356" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">modificarArchivo(fn)</text>
+
+      <!-- Cola (focal) -->
+      <rect x="320" y="144" width="200" height="176" rx="6" fill="#fef0c6"/>
+      <rect x="320" y="144" width="200" height="176" rx="6" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1.2"/>
+      <rect x="328" y="150" width="36" height="12" rx="2" fill="transparent" stroke="rgba(228,131,41,0.60)" stroke-width="0.8"/>
+      <text x="346" y="159" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COLA</text>
+      <text x="420" y="188" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Cola por archivo</text>
+      <text x="420" y="204" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">conArchivoOcupado(path)</text>
+      <!-- slots -->
+      <rect x="348" y="220" width="40" height="24" rx="4" fill="#ffffff" stroke="rgba(228,131,41,0.60)" stroke-width="0.8"/>
+      <text x="368" y="236" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">op 3</text>
+      <rect x="400" y="220" width="40" height="24" rx="4" fill="#ffffff" stroke="rgba(228,131,41,0.60)" stroke-width="0.8"/>
+      <text x="420" y="236" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">op 2</text>
+      <rect x="452" y="220" width="40" height="24" rx="4" fill="rgba(228,131,41,0.25)" stroke="#e48329" stroke-width="0.8"/>
+      <text x="472" y="236" fill="#210501" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">op 1</text>
+      <text x="420" y="268" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">1 operación a la vez</text>
+      <text x="420" y="284" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">lecturas y escrituras</text>
+      <text x="420" y="300" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">socios ∥ cuotas ∥ libros</text>
+
+      <!-- cargar (step) -->
+      <rect x="600" y="192" width="160" height="80" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="192" width="160" height="80" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="608" y="198" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="622" y="207" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FN</text>
+      <text x="680" y="236" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">cargar()</text>
+      <text x="680" y="252" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">fs.stat(path)</text>
+
+      <!-- Caché (store) -->
+      <rect x="600" y="64" width="160" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="64" width="160" height="72" rx="6" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <rect x="608" y="70" width="40" height="12" rx="2" fill="transparent" stroke="rgba(107,74,58,0.40)" stroke-width="0.8"/>
+      <text x="628" y="79" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CACHÉ</text>
+      <text x="680" y="104" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Workbook en memoria</text>
+      <text x="680" y="120" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">{ workbook, mtimeMs, size }</text>
+
+      <!-- readFile (store / disk) -->
+      <rect x="600" y="328" width="160" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="328" width="160" height="72" rx="6" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <rect x="608" y="334" width="40" height="12" rx="2" fill="transparent" stroke="rgba(107,74,58,0.40)" stroke-width="0.8"/>
+      <text x="628" y="343" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISCO</text>
+      <text x="680" y="368" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Relee el .xlsx</text>
+      <text x="680" y="384" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">readFile → guarda en caché</text>
+
+      <!-- ===== Legend ===== -->
+      <line x1="40" y1="424" x2="760" y2="424" stroke="rgba(33,5,1,0.10)" stroke-width="0.8"/>
+      <text x="40" y="448" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEYENDA</text>
+
+      <rect x="120" y="440" width="16" height="12" rx="2" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1"/>
+      <text x="144" y="449" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">punto de serialización</text>
+
+      <line x1="280" y1="446" x2="304" y2="446" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <text x="312" y="449" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">flujo interno</text>
+
+      <line x1="400" y1="446" x2="424" y2="446" stroke="#1f6f78" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+      <text x="432" y="449" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">escritor externo</text>
+
+      <line x1="540" y1="446" x2="564" y2="446" stroke="#6b4a3a" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <text x="572" y="449" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">error · sin guardar · modificarArchivo</text>
+    </svg>
+  </div>
+</body>
+</html>
