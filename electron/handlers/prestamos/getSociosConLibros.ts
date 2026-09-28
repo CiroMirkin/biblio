@@ -1,10 +1,9 @@
-import { getLibrosWorksheet } from '../../constants'
+import { leerLibros } from '../../constants'
 import type { Socio } from '@shared/models/socio'
 
 type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
 
-export const getSociosConLibros =  async (): Promise<SocioConLibros[]> => {
-  const { worksheet } = await getLibrosWorksheet()
+export const getSociosConLibros =  async (): Promise<SocioConLibros[]> => leerLibros(({ worksheet }) => {
   if (!worksheet) return []
 
   const socios: SocioConLibros[] = []
@@ -25,4 +24,4 @@ export const getSociosConLibros =  async (): Promise<SocioConLibros[]> => {
   })
 
   return socios
-}
+})

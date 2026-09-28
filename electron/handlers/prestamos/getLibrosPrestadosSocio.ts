@@ -1,9 +1,8 @@
-import { getLibrosWorksheet } from '../../constants'
+import { leerLibros } from '../../constants'
 import { rowToLibro } from '../../models/libro'
 import { type Libro } from "@shared/models/libro"
 
-export const getLibrosPrestadosSocio =  async (nroSocio: number) => {
-  const { worksheet } = await getLibrosWorksheet()
+export const getLibrosPrestadosSocio =  async (nroSocio: number) => leerLibros(({ worksheet }) => {
   if (!worksheet) return []
 
   const libros: Libro[] = []
@@ -18,4 +17,4 @@ export const getLibrosPrestadosSocio =  async (nroSocio: number) => {
   })
 
   return libros
-}
+})
