@@ -42,7 +42,7 @@ Los callbacks pueden ser síncronos o `async` (`T | Promise<T>`). El callback re
 `{ worksheet }` (lectura) o `{ worksheet, writeWorkbook }` (edición); `worksheet` es `undefined` si
 la hoja no existe.
 
-### Envoltorios en `electron/constants.ts`
+### Envoltorios en `electron/utils/datosExcel.ts`
 
 Cada archivo tiene un par que fija ruta y nombre de hoja:
 
