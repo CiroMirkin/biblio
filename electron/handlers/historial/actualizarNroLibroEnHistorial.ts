@@ -3,8 +3,6 @@ import { modificarHistorial } from '../../utils/datosExcel'
 export async function actualizarNroLibroEnHistorial(viejoNro: string, nuevoNro: string): Promise<string> {
   try {
     return await modificarHistorial(async ({ worksheet, writeWorkbook }) => {
-      if (!worksheet) throw new Error('No se pudo obtener la hoja de historial')
-
       let contador = 0
       for (let i = 1; i <= worksheet.actualRowCount; i++) {
         const row = worksheet.getRow(i)

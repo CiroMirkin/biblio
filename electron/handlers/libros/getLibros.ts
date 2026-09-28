@@ -3,8 +3,6 @@ import { type LibroRegistrado } from "@shared/models/libro"
 import { leerLibros } from '../../utils/datosExcel'
 
 export const getLibros = async (): Promise<LibroRegistrado[]> => leerLibros(({ worksheet }) => {
-    if (!worksheet) return []
-
     const libros: LibroRegistrado[] = []
     worksheet.eachRow((row, rowIndex) => {
         if (rowIndex === 1) return

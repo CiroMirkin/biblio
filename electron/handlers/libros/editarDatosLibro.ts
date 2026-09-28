@@ -8,8 +8,6 @@ import { actualizarNroLibroEnHistorial } from '../historial'
 
 export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<Libro | Marc21 | null> => {
     const newLibro = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
-        if (!worksheet) return null
-
         let targetRow: ExcelJS.Row | null = null
         const {
             nombreSocio: _,

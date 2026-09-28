@@ -3,8 +3,6 @@ import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
 
 export const reactivarSocio = async (nroSocio: number): Promise<boolean> => modificarSocios(async ({ worksheet, writeWorkbook }) => {
-    if (!worksheet) return false
-
     let found = false
 
     worksheet.eachRow((row, rowIndex) => {

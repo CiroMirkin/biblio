@@ -3,8 +3,6 @@ import { construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
 export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: number) => {
   return modificarCuotas(async ({ worksheet, writeWorkbook }) => {
-    if (!worksheet) throw new Error('Hoja de cuotas no encontrada')
-
     const headerRow = worksheet.getRow(1)
     const indiceMeses = construirIndiceMeses(headerRow)
 

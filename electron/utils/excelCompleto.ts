@@ -28,9 +28,7 @@ export const exportarExcelCompleto = async () => {
     const destino = new ExcelJS.Workbook()
 
     for (const { path: origen, hojaOrigen, hojaDestino } of Object.values(ARCHIVOS)) {
-        await leerHoja(origen, hojaOrigen, ({ worksheet }) => {
-            if (worksheet) copiarHoja(destino, worksheet, hojaDestino)
-        })
+        await leerHoja(origen, hojaOrigen, ({ worksheet }) => copiarHoja(destino, worksheet, hojaDestino))
     }
 
     crearHojaAjustes(destino, getAll())

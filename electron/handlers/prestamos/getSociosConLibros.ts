@@ -4,8 +4,6 @@ import type { Socio } from '@shared/models/socio'
 type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
 
 export const getSociosConLibros =  async (): Promise<SocioConLibros[]> => leerLibros(({ worksheet }) => {
-  if (!worksheet) return []
-
   const socios: SocioConLibros[] = []
 
   worksheet.eachRow((row, rowIndex) => {

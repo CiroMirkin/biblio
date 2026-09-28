@@ -4,8 +4,6 @@ import { writeSocio } from '../../models/socio'
 import type { Socio } from '@shared/models/socio'
 
 export const editarDatosSocio = async (nroSocio: number, datos: Partial<Socio>): Promise<boolean> => modificarSocios(async ({ worksheet, writeWorkbook }) => {
-    if (!worksheet) return false
-
     let found = false
 
     const {

@@ -2,8 +2,6 @@ import { leerSocios } from '../../utils/datosExcel'
 import { rowToSocio } from '../../models/socio'
 
 export const getSocios = async () => leerSocios(({ worksheet }) => {
-  if (!worksheet) return []
-
   const socios: unknown[] = []
 
   worksheet.eachRow((row, rowIndex) => {

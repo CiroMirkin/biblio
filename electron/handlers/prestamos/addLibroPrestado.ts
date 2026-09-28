@@ -9,8 +9,6 @@ export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Pr
   const numeroInventario = libro.numeroInventario || generarIdSinInventariar()
 
   const prestado = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
-    if (!worksheet) return false
-
     if(!libro.titulo) return false
 
     let targetRow: ExcelJS.Row | null = null

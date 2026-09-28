@@ -4,8 +4,6 @@ import { actualizarFechaDevolucion } from '../historial'
 
 export async function devolverLibro(numeroInventario: number | string): Promise<boolean> {
   const devuelto = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
-    if (!worksheet) return false
-
     let found = false
     const rowsToDelete: number[] = []
 

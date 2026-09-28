@@ -4,8 +4,6 @@ import { leerCuotas } from '../../utils/datosExcel'
 import { construirIndiceMeses, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
 
 export const getCuotasSocio = async (nroSocio: number, anio?: number) => leerCuotas(({ worksheet }) => {
-  if (!worksheet) return []
-
   const headerRow = worksheet.getRow(1)
   const indiceMeses = construirIndiceMeses(headerRow)
 

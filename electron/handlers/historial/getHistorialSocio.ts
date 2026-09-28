@@ -4,8 +4,6 @@ import { rowToHistorialEntry } from '../../models/historial'
 
 export async function getHistorialSocio(nroSocio: number): Promise<HistorialEntry[]> {
   return leerHistorial(({ worksheet }) => {
-    if (!worksheet) throw new Error('No se pudo obtener la hoja de historial')
-
     const results: HistorialEntry[] = []
     for (let i = 1; i <= worksheet.actualRowCount; i++) {
       const row = worksheet.getRow(i)

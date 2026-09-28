@@ -3,8 +3,6 @@ import { getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
 import type { Marc21 } from "@shared/models/marc21"
 
 export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | null> => modificarLibros(async ({ worksheet, writeWorkbook }) => {
-    if (!worksheet) return null
-
     let nroInventarioDuplicado = false
     const idLibro = ingreso.numeroInventario
 

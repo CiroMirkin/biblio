@@ -4,8 +4,6 @@ import { getHistorialLibro } from './getHistorialLibro'
 export async function actualizarFechaDevolucion(numeroInventario: string): Promise<boolean> {
   try {
     return await modificarHistorial(async ({ worksheet, writeWorkbook }) => {
-      if (!worksheet) throw new Error('No se pudo obtener la hoja de historial')
-
       // No se bloquea esperando su propio turno porque hojaExcel deja pasar accesos al mismo archivo desde dentro de la operación.
       // En cambio leer otro archivo lanzaría un error.
       const entries = await getHistorialLibro(String(numeroInventario))
