@@ -10,9 +10,18 @@ const ARCHIVOS = ['socios', 'cuotas', 'libros', 'prestamos-historial']
 
 export const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
+/** pisa los archivos de la app con las fixtures originales */
+export function restaurarFixtures() {
+    for (const nombre of ARCHIVOS) {
+        fs.copyFileSync(path.join(FIXTURES, `${nombre}-template.xlsx`), path.join(FIXTURES, `${nombre}-test.xlsx`))
+    }
+}
+
 type Fixtures = {
     ajustes: Partial<SettingsSchema>
     abrirApp: () => Promise<Page>
+    /** la app abierta ahora (cambia al reabrir) - para mockear el proceso main */
+    electronApp: () => ElectronApplication
     page: Page
     /** cierra la app y la vuelve a abrir con los mismos archivos y ajustes */
     reabrirApp: () => Promise<Page>
@@ -20,17 +29,17 @@ type Fixtures = {
 
 // cada test abre la app con copias nuevas de las fixtures
 // 'ajustes' se escribe en el settings.json de electron-store antes de abrir la app
+// una sola app abierta a la vez (workers: 1)
+let app: ElectronApplication | undefined
+
 export const test = base.extend<Fixtures>({
     ajustes: [{}, { option: true }],
     abrirApp: async ({ ajustes }, use) => {
-        for (const nombre of ARCHIVOS) {
-            fs.copyFileSync(path.join(FIXTURES, `${nombre}-template.xlsx`), path.join(FIXTURES, `${nombre}-test.xlsx`))
-        }
+        restaurarFixtures()
         // userData aislado - ajustes propios y sin tocar los de la app instalada
         const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'biblio-e2e-'))
         fs.writeFileSync(path.join(userData, 'settings.json'), JSON.stringify(ajustes))
 
-        let app: ElectronApplication | undefined
         await use(async () => {
             await app?.close()
             app = await electron.launch({
@@ -42,11 +51,13 @@ export const test = base.extend<Fixtures>({
         })
 
         await app?.close()
+        app = undefined
         fs.rmSync(userData, { recursive: true, force: true })
         for (const nombre of ARCHIVOS) fs.rmSync(path.join(FIXTURES, `${nombre}-test.xlsx`), { force: true })
     },
     page: async ({ abrirApp }, use) => use(await abrirApp()),
     reabrirApp: async ({ abrirApp, page: _page }, use) => use(abrirApp),
+    electronApp: async ({ page: _page }, use) => use(() => app!),
 })
 
 export { expect }
