@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblio en contexto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #fef0c6;
+      --color-ink:    #210501;
+      --color-muted:  #6b4a3a;
+      --font-sans:    'Inter', system-ui, sans-serif;
+      --font-serif:   'Playfair Display', serif;
+      --font-mono:    'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 760px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Arquitectura C4 · Nivel 1</p>
+    <h1>Biblio en contexto</h1>
+
+    <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="c4-contexto-title c4-contexto-desc">
+      <title id="c4-contexto-title">Biblio en contexto (C4 nivel 1)</title>
+      <desc id="c4-contexto-desc">El bibliotecario usa Biblio, una app de escritorio que lee y escribe las planillas XLSX locales de socios, cuotas, libros e historial de préstamos, guarda sus ajustes en settings.json, busca actualizaciones en GitHub Releases e importa y exporta catálogos en archivos .mrc compatibles con Koha.</desc>
+      <defs>
+        <marker id="c4ctx-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4a3a"/></marker>
+        <marker id="c4ctx-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#e48329"/></marker>
+        <marker id="c4ctx-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1f6f78"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#fef0c6"/>
+
+      <!-- ===== Arrows (drawn before nodes) ===== -->
+
+      <!-- Bibliotecario → Biblio -->
+      <line x1="184" y1="220" x2="240" y2="220" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4ctx-arrow)"/>
+      <rect x="196" y="200" width="32" height="12" rx="2" fill="#fef0c6"/>
+      <text x="212" y="209" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">USA</text>
+
+      <!-- Biblio → XLSX (primary data) -->
+      <path d="M 440,184 H 464 Q 472,184 472,176 V 80 Q 472,72 480,72 H 600" fill="none" stroke="#e48329" stroke-width="1.2" marker-end="url(#c4ctx-arrow-accent)"/>
+      <rect x="500" y="52" width="80" height="12" rx="2" fill="#fef0c6"/>
+      <text x="540" y="61" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">LEE · ESCRIBE</text>
+
+      <!-- Biblio → settings.json -->
+      <path d="M 440,208 H 496 Q 504,208 504,200 V 184 Q 504,176 512,176 H 600" fill="none" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4ctx-arrow)"/>
+      <rect x="524" y="156" width="64" height="12" rx="2" fill="#fef0c6"/>
+      <text x="556" y="165" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">AJUSTES</text>
+
+      <!-- Biblio → GitHub Releases -->
+      <path d="M 440,232 H 496 Q 504,232 504,240 V 272 Q 504,280 512,280 H 600" fill="none" stroke="#1f6f78" stroke-width="1.2" marker-end="url(#c4ctx-arrow-link)"/>
+      <rect x="520" y="260" width="72" height="12" rx="2" fill="#fef0c6"/>
+      <text x="556" y="269" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ACTUALIZA</text>
+
+      <!-- Biblio → .mrc -->
+      <path d="M 440,256 H 464 Q 472,256 472,264 V 376 Q 472,384 480,384 H 600" fill="none" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4ctx-arrow)"/>
+      <rect x="492" y="364" width="96" height="12" rx="2" fill="#fef0c6"/>
+      <text x="540" y="373" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">IMPORTA · EXPORTA</text>
+
+      <!-- ===== Nodes ===== -->
+
+      <!-- Bibliotecario (user) -->
+      <rect x="40" y="184" width="144" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="40" y="184" width="144" height="72" rx="6" fill="rgba(107,74,58,0.10)" stroke="#7d5f4f" stroke-width="1"/>
+      <rect x="48" y="190" width="44" height="12" rx="2" fill="transparent" stroke="rgba(125,95,79,0.40)" stroke-width="0.8"/>
+      <text x="70" y="199" fill="#7d5f4f" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PERSONA</text>
+      <text x="112" y="228" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Bibliotecario</text>
+      <text x="112" y="244" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">préstamos · socios</text>
+
+      <!-- Biblio (focal) -->
+      <rect x="240" y="160" width="200" height="120" rx="6" fill="#fef0c6"/>
+      <rect x="240" y="160" width="200" height="120" rx="6" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1.2"/>
+      <rect x="248" y="166" width="28" height="12" rx="2" fill="transparent" stroke="rgba(228,131,41,0.60)" stroke-width="0.8"/>
+      <text x="262" y="175" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+      <text x="340" y="216" fill="#210501" font-size="16" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Biblio</text>
+      <text x="340" y="236" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">desktop · Electron 22</text>
+      <text x="340" y="252" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Windows 7+ · ia32</text>
+
+      <!-- XLSX (store) -->
+      <rect x="600" y="36" width="160" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="36" width="160" height="72" rx="6" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <rect x="608" y="42" width="40" height="12" rx="2" fill="transparent" stroke="rgba(107,74,58,0.40)" stroke-width="0.8"/>
+      <text x="628" y="51" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISCO</text>
+      <text x="680" y="72" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Archivos XLSX</text>
+      <text x="680" y="88" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">socios · cuotas · libros</text>
+      <text x="680" y="100" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">prestamos_historial</text>
+
+      <!-- settings.json (store) -->
+      <rect x="600" y="140" width="160" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="140" width="160" height="72" rx="6" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <rect x="608" y="146" width="40" height="12" rx="2" fill="transparent" stroke="rgba(107,74,58,0.40)" stroke-width="0.8"/>
+      <text x="628" y="155" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISCO</text>
+      <text x="680" y="180" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">electron-store</text>
+      <text x="680" y="196" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">settings.json</text>
+
+      <!-- GitHub Releases (external) -->
+      <rect x="600" y="244" width="160" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="244" width="160" height="72" rx="6" fill="rgba(33,5,1,0.03)" stroke="rgba(33,5,1,0.30)" stroke-width="1"/>
+      <rect x="608" y="250" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.30)" stroke-width="0.8"/>
+      <text x="622" y="259" fill="#7d5f4f" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXT</text>
+      <text x="680" y="284" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">GitHub Releases</text>
+      <text x="680" y="300" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">auto-actualizaciones</text>
+
+      <!-- .mrc (external) -->
+      <rect x="600" y="348" width="160" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="600" y="348" width="160" height="72" rx="6" fill="rgba(33,5,1,0.03)" stroke="rgba(33,5,1,0.30)" stroke-width="1"/>
+      <rect x="608" y="354" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.30)" stroke-width="0.8"/>
+      <text x="622" y="363" fill="#7d5f4f" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXT</text>
+      <text x="680" y="388" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Archivos .mrc</text>
+      <text x="680" y="404" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Koha ILS · MARC21</text>
+
+      <!-- ===== Legend ===== -->
+      <line x1="40" y1="440" x2="760" y2="440" stroke="rgba(33,5,1,0.10)" stroke-width="0.8"/>
+      <text x="40" y="464" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEYENDA</text>
+
+      <rect x="120" y="456" width="16" height="12" rx="2" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1"/>
+      <text x="144" y="465" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">el sistema</text>
+
+      <rect x="232" y="456" width="16" height="12" rx="2" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <text x="256" y="465" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">archivo local</text>
+
+      <line x1="356" y1="462" x2="380" y2="462" stroke="#e48329" stroke-width="1.2" marker-end="url(#c4ctx-arrow-accent)"/>
+      <text x="388" y="465" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">datos principales</text>
+
+      <line x1="496" y1="462" x2="520" y2="462" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4ctx-arrow)"/>
+      <text x="528" y="465" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">local</text>
+
+      <line x1="584" y1="462" x2="608" y2="462" stroke="#1f6f78" stroke-width="1.2" marker-end="url(#c4ctx-arrow-link)"/>
+      <text x="616" y="465" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">red (opcional)</text>
+</svg>
+  </div>
+</body>
+</html>

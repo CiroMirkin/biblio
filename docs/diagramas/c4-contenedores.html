@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contenedores de Biblio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #fef0c6;
+      --color-ink:    #210501;
+      --color-muted:  #6b4a3a;
+      --font-sans:    'Inter', system-ui, sans-serif;
+      --font-serif:   'Playfair Display', serif;
+      --font-mono:    'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 760px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Arquitectura C4 · Nivel 2</p>
+    <h1>Contenedores de Biblio</h1>
+
+    <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="c4-contenedores-title c4-contenedores-desc">
+      <title id="c4-contenedores-title">Contenedores de Biblio (C4 nivel 2)</title>
+      <desc id="c4-contenedores-desc">En el Renderer, las cinco vistas de React usan seis stores de Zustand que llaman a siete servicios sobre window.electronAPI; el preload expone esa API con contextBridge y la pasa por IPC a los ipcHandlers del Main Process, el único que toca el disco a través de exceljs para los XLSX, electron-store para settings.json y electron-updater para GitHub Releases.</desc>
+      <defs>
+        <marker id="c4cont-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4a3a"/></marker>
+        <marker id="c4cont-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#e48329"/></marker>
+        <marker id="c4cont-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1f6f78"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#fef0c6"/>
+
+      <!-- ===== Zones ===== -->
+
+      <!-- Renderer -->
+      <rect x="24" y="24" width="752" height="120" rx="8" fill="rgba(33,5,1,0.02)" stroke="rgba(33,5,1,0.10)" stroke-width="0.8"/>
+      <rect x="52" y="28" width="116" height="12" rx="2" fill="#fef0c6"/>
+      <text x="110" y="37" fill="rgba(33,5,1,0.55)" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">RENDERER · REACT SPA</text>
+
+      <!-- Main Process -->
+      <rect x="24" y="264" width="752" height="264" rx="8" fill="rgba(33,5,1,0.02)" stroke="rgba(33,5,1,0.10)" stroke-width="0.8"/>
+      <rect x="56" y="268" width="124" height="12" rx="2" fill="#fef0c6"/>
+      <text x="118" y="277" fill="rgba(33,5,1,0.55)" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">MAIN PROCESS · NODE.JS</text>
+
+      <!-- ===== Arrows (drawn before nodes) ===== -->
+
+      <!-- Vistas → Zustand -->
+      <line x1="240" y1="92" x2="300" y2="92" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4cont-arrow)"/>
+      <!-- Zustand → Services -->
+      <line x1="500" y1="92" x2="560" y2="92" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4cont-arrow)"/>
+
+      <!-- Services → Preload -->
+      <line x1="660" y1="128" x2="660" y2="184" stroke="#e48329" stroke-width="1.2" marker-end="url(#c4cont-arrow-accent)"/>
+      <rect x="668" y="152" width="48" height="12" rx="2" fill="#fef0c6"/>
+      <text x="672" y="161" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">INVOKE</text>
+
+      <!-- Preload → ipcHandlers -->
+      <line x1="660" y1="256" x2="660" y2="296" stroke="#e48329" stroke-width="1.2" marker-end="url(#c4cont-arrow-accent)"/>
+      <rect x="668" y="268" width="32" height="12" rx="2" fill="#fef0c6"/>
+      <text x="672" y="277" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">IPC</text>
+
+      <!-- ipcHandlers → exceljs -->
+      <line x1="660" y1="392" x2="660" y2="440" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4cont-arrow)"/>
+      <!-- ipcHandlers → electron-store -->
+      <path d="M 560,360 H 408 Q 400,360 400,368 V 440" fill="none" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#c4cont-arrow)"/>
+      <!-- ipcHandlers → electron-updater -->
+      <path d="M 560,328 H 148 Q 140,328 140,336 V 440" fill="none" stroke="#1f6f78" stroke-width="1.2" marker-end="url(#c4cont-arrow-link)"/>
+
+      <!-- ===== Nodes ===== -->
+
+      <!-- Vistas -->
+      <rect x="40" y="56" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="40" y="56" width="200" height="72" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="48" y="62" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="62" y="71" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">UI</text>
+      <text x="140" y="96" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">5 vistas conmutables</text>
+      <text x="140" y="112" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">sin router · Tailwind · motion</text>
+
+      <!-- Zustand -->
+      <rect x="300" y="56" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="300" y="56" width="200" height="72" rx="6" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <rect x="308" y="62" width="40" height="12" rx="2" fill="transparent" stroke="rgba(107,74,58,0.40)" stroke-width="0.8"/>
+      <text x="328" y="71" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ESTADO</text>
+      <text x="400" y="96" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Zustand</text>
+      <text x="400" y="112" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">6 stores</text>
+
+      <!-- Services -->
+      <rect x="560" y="56" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="560" y="56" width="200" height="72" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="568" y="62" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="582" y="71" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SVC</text>
+      <text x="660" y="96" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Services (7)</text>
+      <text x="660" y="112" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">window.electronAPI</text>
+
+      <!-- Preload (focal) -->
+      <rect x="560" y="184" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="560" y="184" width="200" height="72" rx="6" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1.2"/>
+      <rect x="568" y="190" width="52" height="12" rx="2" fill="transparent" stroke="rgba(228,131,41,0.60)" stroke-width="0.8"/>
+      <text x="594" y="199" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PRELOAD</text>
+      <text x="660" y="224" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">contextBridge</text>
+      <text x="660" y="240" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">electronAPI + updater</text>
+
+      <!-- Editorial aside -->
+      <text x="40" y="212" fill="#6b4a3a" font-size="14" font-style="italic" font-family="'Playfair Display', serif">Solo el Main Process toca el disco;</text>
+      <text x="40" y="232" fill="#6b4a3a" font-size="14" font-style="italic" font-family="'Playfair Display', serif">los datos viajan como JSON por el preload.</text>
+
+      <!-- ipcHandlers -->
+      <rect x="560" y="296" width="200" height="96" rx="6" fill="#fef0c6"/>
+      <rect x="560" y="296" width="200" height="96" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="568" y="302" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="582" y="311" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IPC</text>
+      <text x="660" y="332" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">ipcHandlers</text>
+      <text x="660" y="348" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">socios · libros · prestamos</text>
+      <text x="660" y="360" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">cuotas · historial · archivos</text>
+      <text x="660" y="372" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">settings · updater</text>
+
+      <!-- electron-updater -->
+      <rect x="40" y="440" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="40" y="440" width="200" height="72" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="48" y="446" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="62" y="455" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LIB</text>
+      <text x="140" y="480" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">electron-updater</text>
+      <text x="140" y="496" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">→ GitHub Releases</text>
+
+      <!-- electron-store -->
+      <rect x="300" y="440" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="300" y="440" width="200" height="72" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="308" y="446" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="322" y="455" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LIB</text>
+      <text x="400" y="480" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">electron-store</text>
+      <text x="400" y="496" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">→ settings.json</text>
+
+      <!-- exceljs -->
+      <rect x="560" y="440" width="200" height="72" rx="6" fill="#fef0c6"/>
+      <rect x="560" y="440" width="200" height="72" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <rect x="568" y="446" width="28" height="12" rx="2" fill="transparent" stroke="rgba(33,5,1,0.40)" stroke-width="0.8"/>
+      <text x="582" y="455" fill="#6b4a3a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LIB</text>
+      <text x="660" y="480" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">exceljs</text>
+      <text x="660" y="496" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">→ archivos XLSX</text>
+
+      <!-- ===== Legend ===== -->
+      <line x1="40" y1="552" x2="760" y2="552" stroke="rgba(33,5,1,0.10)" stroke-width="0.8"/>
+      <text x="40" y="576" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEYENDA</text>
+
+      <rect x="120" y="568" width="16" height="12" rx="2" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1"/>
+      <text x="144" y="577" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">frontera renderer ↔ main</text>
+
+      <rect x="292" y="568" width="16" height="12" rx="2" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <text x="316" y="577" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">estado en memoria</text>
+
+      <line x1="436" y1="574" x2="460" y2="574" stroke="#e48329" stroke-width="1.2" marker-end="url(#c4cont-arrow-accent)"/>
+      <text x="468" y="577" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">ipcRenderer.invoke</text>
+
+      <line x1="584" y1="574" x2="608" y2="574" stroke="#1f6f78" stroke-width="1.2" marker-end="url(#c4cont-arrow-link)"/>
+      <text x="616" y="577" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">red</text>
+</svg>
+  </div>
+</body>
+</html>
