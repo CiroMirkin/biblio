@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decisiones de conArchivoOcupado()</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #fef0c6;
+      --color-ink:    #210501;
+      --color-muted:  #6b4a3a;
+      --color-accent: #e48329;
+      --font-sans:    'Inter', system-ui, sans-serif;
+      --font-serif:   'Playfair Display', serif;
+      --font-mono:    'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 760px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Diagrama de flujo · hojaExcel.ts</p>
+    <h1>Qué hace conArchivoOcupado() con cada operación</h1>
+
+    <svg viewBox="0 0 880 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flujo-tomar-title flujo-tomar-desc">
+      <title id="flujo-tomar-title">Qué hace conArchivoOcupado() con cada operación</title>
+      <desc id="flujo-tomar-desc">Una operación sobre el mismo archivo que ya ocupa su contexto se ejecuta directo, una sobre otro archivo se rechaza, y el resto espera su turno en la cola, carga el workbook, ejecuta y descarta la caché si falló o editó sin guardar.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b4a3a"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#e48329"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1f6f78"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#fef0c6"/>
+
+      <!-- ===== Arrows ===== -->
+
+      <!-- start → dec1 -->
+      <line x1="440" y1="72" x2="440" y2="96" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- dec1 → reentrante (right) -->
+      <line x1="540" y1="140" x2="620" y2="140" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="552" y="116" width="56" height="12" rx="2" fill="#fef0c6"/>
+      <text x="580" y="125" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">MISMO</text>
+
+      <!-- dec1 → rechaza (left) -->
+      <line x1="340" y1="140" x2="260" y2="140" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="272" y="116" width="56" height="12" rx="2" fill="#fef0c6"/>
+      <text x="300" y="125" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">OTRO</text>
+
+      <!-- dec1 → turno (down) -->
+      <line x1="440" y1="184" x2="440" y2="224" stroke="#e48329" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+      <rect x="448" y="196" width="56" height="12" rx="2" fill="#fef0c6"/>
+      <text x="452" y="205" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">NINGUNO</text>
+
+      <!-- turno → ejecutar -->
+      <line x1="440" y1="288" x2="440" y2="328" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- ejecutar → dec2 -->
+      <line x1="440" y1="384" x2="440" y2="424" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- dec2 → descarta (right) -->
+      <line x1="540" y1="468" x2="620" y2="468" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="560" y="444" width="40" height="12" rx="2" fill="#fef0c6"/>
+      <text x="580" y="453" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">SÍ</text>
+
+      <!-- dec2 → merge (down) -->
+      <line x1="440" y1="512" x2="440" y2="580" stroke="#6b4a3a" stroke-width="1.2"/>
+      <rect x="448" y="536" width="24" height="12" rx="2" fill="#fef0c6"/>
+      <text x="452" y="545" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">NO</text>
+
+      <!-- descarta → merge -->
+      <path d="M 700,496 V 576 Q 700,584 692,584 H 444" fill="none" stroke="#6b4a3a" stroke-width="1.2"/>
+
+      <!-- merge → end -->
+      <line x1="440" y1="588" x2="440" y2="624" stroke="#6b4a3a" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- reentrante → end (right side, dashed: no pasa por la cola) -->
+      <path d="M 800,168 V 640 Q 800,648 792,648 H 540" fill="none" stroke="#6b4a3a" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="808" y="396" width="64" height="12" rx="2" fill="#fef0c6"/>
+      <text x="812" y="405" fill="#7d5f4f" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.06em">SIN COLA</text>
+
+      <!-- ===== Nodes ===== -->
+
+      <!-- start -->
+      <rect x="330" y="32" width="220" height="40" rx="20" fill="#fef0c6"/>
+      <rect x="330" y="32" width="220" height="40" rx="20" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="440" y="56" fill="#210501" font-size="12" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">conArchivoOcupado(path, fn)</text>
+
+      <!-- dec1 -->
+      <polygon points="440,96 540,140 440,184 340,140" fill="#fef0c6"/>
+      <polygon points="440,96 540,140 440,184 340,140" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="440" y="136" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">¿Qué archivo ocupa</text>
+      <text x="440" y="152" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">el contexto?</text>
+
+      <!-- reentrante -->
+      <rect x="620" y="112" width="200" height="56" rx="6" fill="#fef0c6"/>
+      <rect x="620" y="112" width="200" height="56" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="720" y="136" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Ejecuta fn directo</text>
+      <text x="720" y="152" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">reentrante · mismo workbook</text>
+
+      <!-- rechaza (end) -->
+      <rect x="60" y="116" width="200" height="48" rx="20" fill="#fef0c6"/>
+      <rect x="60" y="116" width="200" height="48" rx="20" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="160" y="136" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Rechaza</text>
+      <text x="160" y="152" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Acceso a X dentro de Y</text>
+
+      <!-- turno (focal) -->
+      <rect x="340" y="224" width="200" height="64" rx="6" fill="#fef0c6"/>
+      <rect x="340" y="224" width="200" height="64" rx="6" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1.2"/>
+      <text x="440" y="252" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Espera su turno</text>
+      <text x="440" y="268" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">cola del archivo</text>
+
+      <!-- ejecutar -->
+      <rect x="340" y="328" width="200" height="56" rx="6" fill="#fef0c6"/>
+      <rect x="340" y="328" width="200" height="56" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="440" y="352" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Carga y ejecuta fn</text>
+      <text x="440" y="368" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">stat → caché o readFile</text>
+
+      <!-- dec2 -->
+      <polygon points="440,424 540,468 440,512 340,468" fill="#fef0c6"/>
+      <polygon points="440,424 540,468 440,512 340,468" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="440" y="464" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">¿Falló, o editó</text>
+      <text x="440" y="480" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">sin guardar?</text>
+
+      <!-- descarta -->
+      <rect x="620" y="440" width="160" height="56" rx="6" fill="#fef0c6"/>
+      <rect x="620" y="440" width="160" height="56" rx="6" fill="rgba(33,5,1,0.05)" stroke="#6b4a3a" stroke-width="1"/>
+      <text x="700" y="464" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Descarta la caché</text>
+      <text x="700" y="480" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">cache.delete(path)</text>
+
+      <!-- merge dot -->
+      <circle cx="440" cy="584" r="4" fill="#210501"/>
+
+      <!-- end -->
+      <rect x="340" y="624" width="200" height="48" rx="20" fill="#fef0c6"/>
+      <rect x="340" y="624" width="200" height="48" rx="20" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="440" y="644" fill="#210501" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Devuelve el resultado</text>
+      <text x="440" y="660" fill="#6b4a3a" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">o propaga el error</text>
+
+      <!-- ===== Legend ===== -->
+      <line x1="40" y1="704" x2="840" y2="704" stroke="rgba(33,5,1,0.10)" stroke-width="0.8"/>
+      <text x="40" y="728" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEYENDA</text>
+
+      <rect x="120" y="720" width="24" height="12" rx="6" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="152" y="729" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">inicio / fin</text>
+
+      <polygon points="264,720 276,726 264,732 252,726" fill="#ffffff" stroke="#210501" stroke-width="1"/>
+      <text x="284" y="729" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">decisión</text>
+
+      <rect x="360" y="720" width="16" height="12" rx="2" fill="rgba(228,131,41,0.10)" stroke="#e48329" stroke-width="1"/>
+      <text x="384" y="729" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">camino por la cola</text>
+
+      <line x1="508" y1="726" x2="532" y2="726" stroke="#6b4a3a" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <text x="540" y="729" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">no pasa por la cola</text>
+
+      <circle cx="664" cy="726" r="4" fill="#210501"/>
+      <text x="676" y="729" fill="#6b4a3a" font-size="8" font-family="'Geist Mono', monospace">unión de ramas</text>
+    </svg>
+  </div>
+</body>
+</html>

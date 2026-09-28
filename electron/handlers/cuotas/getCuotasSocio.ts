@@ -1,13 +1,9 @@
-import ExcelJS from 'exceljs'
-import { CUOTAS_XLSX_PATH, MESES } from '../../constants'
-import { construirIndiceMeses, migrarFaltaDeTextoEnCuota, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
+import type ExcelJS from 'exceljs'
+import { MESES } from '../../constants'
+import { leerCuotas } from '../../utils/datosExcel'
+import { construirIndiceMeses, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
 
-export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-  const worksheet = workbook.getWorksheet('original')
-  if (!worksheet) return []
-
+export const getCuotasSocio = async (nroSocio: number, anio?: number) => leerCuotas(({ worksheet }) => {
   const headerRow = worksheet.getRow(1)
   const indiceMeses = construirIndiceMeses(headerRow)
 
@@ -46,7 +42,7 @@ export const getCuotasSocio = async (nroSocio: number, anio?: number) => {
     meses: extraerMesesDeAnio(worksheet, indiceMeses, nroSocio, anioActual),
     anio: anioActual,
   }
-}
+})
 
 const extraerMesesDeAnio = (
   worksheet: ExcelJS.Worksheet,
@@ -67,10 +63,9 @@ const extraerMesesDeAnio = (
       const col = columnasSocio.find(c => c.mes === mesIndex)
       if (!col) return { [nombre]: false }
 
-      const cell = row.getCell(col.colIndex)
-      migrarFaltaDeTextoEnCuota(cell)
-
-      return { [nombre]: cell.value === 'pago' }
+      return {
+        [nombre]: row.getCell(col.colIndex).value === 'pago'
+      }
     })
   })
 

@@ -1,21 +1,8 @@
-import ExcelJS from 'exceljs'
-import { CUOTAS_XLSX_PATH } from '../../constants'
+import { modificarCuotas } from '../../utils/datosExcel'
 import { construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
-let writeQueue: Promise<unknown> = Promise.resolve()
-
-function enqueueWrite(fn: () => Promise<unknown>): Promise<unknown> {
-  writeQueue = writeQueue.then(fn).catch(fn)
-  return writeQueue
-}
-
 export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: number) => {
-  return enqueueWrite(async () => {
-    const workbook = new ExcelJS.Workbook()
-    await workbook.xlsx.readFile(CUOTAS_XLSX_PATH)
-    const worksheet = workbook.getWorksheet('original')
-    if (!worksheet) throw new Error('Hoja de cuotas no encontrada')
-
+  return modificarCuotas(async ({ worksheet, writeWorkbook }) => {
     const headerRow = worksheet.getRow(1)
     const indiceMeses = construirIndiceMeses(headerRow)
 
@@ -39,7 +26,7 @@ export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: numb
 
     if (!found) throw new Error(`Socio ${nroSocio} no encontrado`)
 
-    await workbook.xlsx.writeFile(CUOTAS_XLSX_PATH)
+    await writeWorkbook()
     return newStatus
   })
 }

@@ -1,11 +1,8 @@
-import { getLibrosWorksheet } from "../../constants"
+import { modificarLibros } from "../../utils/datosExcel"
 import { getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
 import type { Marc21 } from "@shared/models/marc21"
 
-export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | null> => {
-    const { worksheet, writeWorkbook } = await getLibrosWorksheet()
-    if (!worksheet) return null
-
+export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | null> => modificarLibros(async ({ worksheet, writeWorkbook }) => {
     let nroInventarioDuplicado = false
     const idLibro = ingreso.numeroInventario
 
@@ -29,4 +26,4 @@ export const ingresarLibroMark21 = async (ingreso: Marc21): Promise<Marc21 | nul
     })
     await writeWorkbook()
     return ingreso
-}
+})

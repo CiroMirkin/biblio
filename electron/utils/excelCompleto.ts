@@ -2,6 +2,7 @@ import { dialog } from 'electron'
 import ExcelJS from 'exceljs'
 import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from '../constants'
 import { getAll, set, type SettingsSchema } from '../settings'
+import { modificarArchivo, leerHoja } from './hojaExcel'
 
 const ARCHIVOS = {
     socios: { path: SOCIOS_XLSX_PATH, hojaOrigen: 'Hoja1', hojaDestino: 'socios' },
@@ -27,13 +28,7 @@ export const exportarExcelCompleto = async () => {
     const destino = new ExcelJS.Workbook()
 
     for (const { path: origen, hojaOrigen, hojaDestino } of Object.values(ARCHIVOS)) {
-        const origenWb = new ExcelJS.Workbook()
-        await origenWb.xlsx.readFile(origen)
-
-        const hoja = origenWb.getWorksheet(hojaOrigen)
-        if (!hoja) continue
-
-        copiarHoja(destino, hoja, hojaDestino)
+        await leerHoja(origen, hojaOrigen, ({ worksheet }) => copiarHoja(destino, worksheet, hojaDestino))
     }
 
     crearHojaAjustes(destino, getAll())
@@ -77,7 +72,7 @@ export const importarExcelCompleto = async () => {
         const destinoWb = new ExcelJS.Workbook()
         copiarHoja(destinoWb, hoja, hojaOrigen)
 
-        await destinoWb.xlsx.writeFile(destinoPath)
+        await modificarArchivo(destinoPath, () => destinoWb.xlsx.writeFile(destinoPath))
     }
 
     importarHojaAjustes(origenWb.getWorksheet(HOJA_AJUSTES)!)

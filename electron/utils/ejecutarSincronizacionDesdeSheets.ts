@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import fs from 'node:fs'
 import { LIBROS_XLSX_PATH, SCRIPT_SINCRONIZAR_SHEETS_PATH, SHEET_URL_TXT_PATH, SINCRONIZACION_LOG_PATH } from '../constants'
+import { modificarArchivo } from './hojaExcel'
 
 const execFileAsync = promisify(execFile)
 
@@ -13,22 +14,33 @@ export async function ejecutarSincronizacionDesdeSheets(): Promise<ResultadoSinc
   let sheetUrl: string
   try {
     sheetUrl = fs.readFileSync(SHEET_URL_TXT_PATH, 'utf8').trim()
-  } catch {
-    return { ok: false, error: `No se encontró ${SHEET_URL_TXT_PATH}` }
+  }
+  catch {
+    return {
+      ok: false,
+      error: `No se encontró ${SHEET_URL_TXT_PATH}`,
+    }
   }
 
   try {
-    const { stdout } = await execFileAsync('powershell.exe', [
+    const { stdout } = await modificarArchivo(LIBROS_XLSX_PATH, () => execFileAsync('powershell.exe', [
       '-NoProfile',
       '-ExecutionPolicy', 'Bypass',
       '-File', SCRIPT_SINCRONIZAR_SHEETS_PATH,
       '-SheetCsvUrl', sheetUrl,
       '-ExcelPath', LIBROS_XLSX_PATH,
       '-LogPath', SINCRONIZACION_LOG_PATH,
-    ])
-    return { ok: true, cantidad: Number(stdout.trim()) || 0 }
-  } catch (error) {
+    ]))
+    return {
+      ok: true,
+      cantidad: Number(stdout.trim()) || 0,
+    }
+  }
+  catch (error) {
     const stderr = (error as { stderr?: string })?.stderr?.trim()
-    return { ok: false, error: stderr || (error as Error).message }
+    return {
+      ok: false,
+      error: stderr || (error as Error).message,
+    }
   }
 }

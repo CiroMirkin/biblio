@@ -1,5 +1,5 @@
-import ExcelJS from 'exceljs'
-import { getLibrosWorksheet } from "../../constants"
+import type ExcelJS from 'exceljs'
+import { modificarLibros } from "../../utils/datosExcel"
 import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
 import { type Libro, type LibroRegistrado } from "@shared/models/libro"
 import { isMarc21 } from "@shared/models"
@@ -7,64 +7,64 @@ import { type Marc21 } from "@shared/models/marc21"
 import { actualizarNroLibroEnHistorial } from '../historial'
 
 export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<Libro | Marc21 | null> => {
-    const { worksheet, writeWorkbook } = await getLibrosWorksheet()
-    if (!worksheet) return null
+    const newLibro = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
+        let targetRow: ExcelJS.Row | null = null
+        const {
+            nombreSocio: _,
+            numeroSocio: __,
+            fechaDePrestamo: ___,
+            ...nuevosDatos
+        } = datos as Partial<LibroRegistrado>
 
-    let targetRow: ExcelJS.Row | null = null
-    const {
-        nombreSocio: _,
-        numeroSocio: __,
-        fechaDePrestamo: ___,
-        ...nuevosDatos
-    } = datos as Partial<LibroRegistrado>
+        worksheet.eachRow((row, rowIndex) => {
+            if (rowIndex === 1) return
+            const nro = getNroDeInventarioFromRow(row)
 
-    worksheet.eachRow((row, rowIndex) => {
-        if (rowIndex === 1) return
-        const nro = getNroDeInventarioFromRow(row)
+            if (nro === String(nroInventario) && !targetRow) {
+                targetRow = row
+            }
+        })
 
-        if (nro === String(nroInventario) && !targetRow) {
-            targetRow = row
+        if (!targetRow) return null
+
+        const libroGuardadoActualmente = rowToLibro(targetRow)
+        if (nuevosDatos.titulo === '' && libroGuardadoActualmente.titulo) return null
+
+        const numeroInventarioFinal = 'numeroInventario' in nuevosDatos
+            ? (nuevosDatos.numeroInventario || generarIdSinInventariar())
+            : libroGuardadoActualmente.numeroInventario
+
+        let nroInventarioDuplicado = false  
+        worksheet.eachRow((row, rowIndex) => {
+            if (rowIndex === 1) return
+            if (row.number === targetRow!.number) return 
+
+            const nro = getNroDeInventarioFromRow(row)
+            if (nro === String(numeroInventarioFinal)) {
+                nroInventarioDuplicado = true
+            }
+        })
+        if (nroInventarioDuplicado) return null
+
+        const newLibro = {
+            ...libroGuardadoActualmente,
+            ...nuevosDatos,
+            numeroInventario: numeroInventarioFinal,
         }
+
+        if (isMarc21(newLibro)) {
+            newLibro.holding = {
+                ...newLibro.holding,
+            }
+        }
+
+        writeLibro(targetRow, newLibro)
+        await writeWorkbook()
+        return newLibro
     })
 
-    if (!targetRow) return null
-
-    const libroGuardadoActualmente = rowToLibro(targetRow)
-    if (nuevosDatos.titulo === '' && libroGuardadoActualmente.titulo) return null
-
-    const numeroInventarioFinal = 'numeroInventario' in nuevosDatos
-        ? (nuevosDatos.numeroInventario || generarIdSinInventariar())
-        : libroGuardadoActualmente.numeroInventario
-
-    let nroInventarioDuplicado = false  
-    worksheet.eachRow((row, rowIndex) => {
-        if (rowIndex === 1) return
-        if (row.number === targetRow!.number) return 
-
-        const nro = getNroDeInventarioFromRow(row)
-        if (nro === String(numeroInventarioFinal)) {
-            nroInventarioDuplicado = true
-        }
-    })
-    if (nroInventarioDuplicado) return null
-
-    const newLibro = {
-        ...libroGuardadoActualmente,
-        ...nuevosDatos,
-        numeroInventario: numeroInventarioFinal,
-    }
-
-    if (isMarc21(newLibro)) {
-        newLibro.holding = {
-            ...newLibro.holding,
-        }
-    }
-
-    writeLibro(targetRow, newLibro)
-    await writeWorkbook()
-
-    if (String(nroInventario) !== String(numeroInventarioFinal)) {
-      await actualizarNroLibroEnHistorial(String(nroInventario), String(numeroInventarioFinal))
+    if (newLibro && String(nroInventario) !== String(newLibro.numeroInventario)) {
+      await actualizarNroLibroEnHistorial(String(nroInventario), String(newLibro.numeroInventario))
     }
 
     return newLibro
