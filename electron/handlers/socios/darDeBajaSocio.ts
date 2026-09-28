@@ -1,9 +1,8 @@
-import { getSociosWorksheet } from '../../constants'
+import { modificarSocios } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 import { writeSocio } from '../../models/socio'
 
-export const darDeBajaSocio = async (nroSocio: number): Promise<boolean> => {
-    const { worksheet, writeWorkbook } = await getSociosWorksheet()
+export const darDeBajaSocio = async (nroSocio: number): Promise<boolean> => modificarSocios(async ({ worksheet, writeWorkbook }) => {
     if (!worksheet) return false
 
     let found = false
@@ -20,4 +19,4 @@ export const darDeBajaSocio = async (nroSocio: number): Promise<boolean> => {
 
     if (found) await writeWorkbook()
     return found
-}
+})

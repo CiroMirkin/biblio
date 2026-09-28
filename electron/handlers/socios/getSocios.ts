@@ -1,8 +1,7 @@
-import { getSociosWorksheet } from '../../constants'
+import { leerSocios } from '../../constants'
 import { rowToSocio } from '../../models/socio'
 
-export const getSocios = async () => {
-  const { worksheet } = await getSociosWorksheet()
+export const getSocios = async () => leerSocios(({ worksheet }) => {
   if (!worksheet) return []
 
   const socios: unknown[] = []
@@ -14,4 +13,4 @@ export const getSocios = async () => {
   })
 
   return socios
-}
+})
