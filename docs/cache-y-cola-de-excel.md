@@ -44,11 +44,10 @@ la hoja no existe.
 
 ### Envoltorios en `electron/utils/datosExcel.ts`
 
-Cada archivo tiene un par que fija ruta y nombre de hoja:
+Cada archivo tiene un par que fija ruta, hoja y `crearSiFalta`, armado por `archivo()`:
 
 ```ts
-export const leerSocios   = <T>(fn: Lectura<T>) => leerHoja(SOCIOS_XLSX_PATH, 'Hoja1', fn)
-export const modificarSocios = <T>(fn: Edicion<T>) => modificarHoja(SOCIOS_XLSX_PATH, 'Hoja1', fn)
+export const { leer: leerSocios, modificar: modificarSocios } = archivo(SOCIOS_XLSX_PATH, 'Hoja1')
 ```
 
 | Archivo | Hoja | Lectura | Edición |
