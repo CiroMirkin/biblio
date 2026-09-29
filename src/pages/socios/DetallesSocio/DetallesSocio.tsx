@@ -5,6 +5,8 @@ import { Datos as SocioDatos } from "./Datos"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
 import { Observaciones } from "./Observaciones"
 import { ChevronLeftIcon } from "@/components"
+import { CheckExito } from "./CheckExito"
+import { useState } from "react"
 import { getCaracterSocio } from "@/models"
 import { cn, formatPrice } from "@/utils"
 import { motion, AnimatePresence } from "motion/react"
@@ -17,6 +19,8 @@ const anioActual: number = new Date().getFullYear()
 export function DetalleSocio() {
   const { anio, showListaSocios, socioSeleccionado } = useSociosStore()
   const { precioCuota, gestionDeCuotas, vincularSocios } = useSettingsStore()
+
+  const [exito, setExito] = useState(false)
 
   const caracterSocio = getCaracterSocio(socioSeleccionado?.caracterSocio)
 
@@ -35,7 +39,10 @@ export function DetalleSocio() {
           <SocioDatos />
 
           <div className="flex flex-col gap-4 card shadow-lg mr-2.5">
-            <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
+            <div className="w-full flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Libros en Préstamo</h2>
+              <CheckExito exito={exito} />
+            </div>
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${socioSeleccionado?.nroSocio}-${socioSeleccionado?.nombreYApellido}`}
@@ -44,7 +51,10 @@ export function DetalleSocio() {
                 exit={{ opacity: 0, height: 0 }}
                 style={{ overflow: "hidden" }}
               >
-                <Prestamos onSuccess={() => {}} />
+                <Prestamos onSuccess={() => {
+                  setExito(true)
+                  setTimeout(() => setExito(false), 3000)
+                }} />
               </motion.div>
             </AnimatePresence>
           </div>
