@@ -1,7 +1,8 @@
 import { type LibroEnPrestamo } from "@shared/models"
 import { cn } from "@/utils"
 import { useLibrosStore, useSettingsStore } from "@/store"
-import { CheckIcon } from "@/components"
+import { CheckIcon, Spinner } from "@/components"
+import { useState } from "react"
 import { FechaPrestamo } from "./FechaPrestamo"
 import { colAutor, colBtn, colNro, colTitulo } from "./types"
 
@@ -16,9 +17,15 @@ export function FilaLibroPrestado({ libro, index, onDevuelto }: Props) {
   const { numerosDeInventarioExternos } = useSettingsStore()
   const bg = index % 2 === 0 ? "#fddc87" : "#fef0c6"
 
+  const [devolviendo, setDevolviendo] = useState(false)
   async function handleDevolver() {
-    await devolverLibro(libro.numeroInventario || "")
-    onDevuelto()
+    setDevolviendo(true)
+    try {
+      await devolverLibro(libro.numeroInventario || "")
+      onDevuelto()
+    } finally {
+      setDevolviendo(false)
+    }
   }
 
   const nroInv = libro.numeroInventario!.toString().startsWith('SN-') || !libro.numeroInventario ? 'S/N' : libro.numeroInventario
@@ -34,13 +41,15 @@ export function FilaLibroPrestado({ libro, index, onDevuelto }: Props) {
       <span className={cn("text-lg wrap-break-word", colTitulo)}>{libro.titulo}</span>
       <span className={cn("text-lg truncate", colAutor)}>{libro.autor}</span>
       <FechaPrestamo fechaDePrestamo={libro.fechaDePrestamo} />
+
       <div className={cn(colBtn, "pl-2.5")}>
         <button
           type="button"
-          className="btn btn-icon p-2 md:px-4"
+          className="grid place-content-center btn btn-icon p-2 md:px-4"
           onClick={handleDevolver}
+          disabled={devolviendo}
         >
-          <CheckIcon className="w-4 md:w-5" />
+          { devolviendo ? <Spinner /> : <CheckIcon className="w-4 md:w-5" /> }
         </button>
       </div>
     </div>
