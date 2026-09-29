@@ -1,5 +1,5 @@
 import { useSettingsStore, useSociosStore } from "@/store"
-import { Prestamos } from "./Prestamos"
+import { Prestamos } from "./Prestamos/Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { Datos as SocioDatos } from "./Datos"
 import { GestionEstadoSocio } from "./GestionEstadoSocio"
