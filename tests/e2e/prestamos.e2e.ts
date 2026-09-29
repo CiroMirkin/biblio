@@ -331,3 +331,18 @@ test('el préstamo queda en el historial como pendiente', async ({ page }) => {
     const fila = page.getByRole('row', { name: /Bar del Infierno/ })
     await expect(fila).toContainText('Pendiente')
 })
+
+test('después del Enter en un N° nuevo el foco no salta al título mientras se escribe el autor', async ({ page }) => {
+    await abrirSocio(page, 'Kevin')
+    const card = cardPrestamos(page)
+    await card.getByPlaceholder('N°').first().fill('500')
+    await card.getByPlaceholder('N°').first().press('Enter')
+
+    // antes el título se enfocaba con un setTimeout y le robaba el foco al autor
+    const autor = card.getByPlaceholder('Autor (Apellido, Nombre)').first()
+    await autor.focus()
+    await page.waitForTimeout(100)
+    await page.keyboard.insertText('Garcia')
+    await expect(autor).toHaveValue('Garcia')
+    await expect(card.getByPlaceholder('Título').first()).toHaveValue('')
+})

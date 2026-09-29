@@ -89,14 +89,12 @@ export function FilaCargaLibro({ ref, index, disabled, onSiguiente }: Props) {
 
       if (libro) {
         completarConLibro(libro)
-        setTimeout(() => {
-          if (!fechaDePrestamoAutomatica) fechaRef.current?.focus()
-          else onSiguiente()
-        }, 50)
+        if (!fechaDePrestamoAutomatica) fechaRef.current?.focus()
+        else onSiguiente()
       }
       else {
         setLocked(false)
-        setTimeout(() => inputRefs.current[1]?.focus(), 50)
+        inputRefs.current[1]?.focus()
       }
       return
     }
