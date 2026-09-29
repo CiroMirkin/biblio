@@ -45,6 +45,13 @@ export default defineConfig({
       },
     ]),
   ],
+  // en dev tailwind emite css anidado y electron 22 (chrome 108) no lo soporta, lightningcss soluciona este fallo
+  css: {
+    transformer: 'lightningcss',
+    lightningcss: {
+      targets: { chrome: 108 << 16 },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
