@@ -16,7 +16,7 @@ export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Pr
     worksheet.eachRow((row, rowIndex) => {
       if (rowIndex === 1) return
 
-      if (getNroDeInventarioFromRow(row) === String(libro.numeroInventario)) {
+      if (libro.numeroInventario && getNroDeInventarioFromRow(row) === String(libro.numeroInventario)) {
         targetRow = row
       }
     })

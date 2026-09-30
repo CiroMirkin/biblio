@@ -98,6 +98,38 @@ describe('addLibroPrestado (integration)', () => {
         expect(filaEncontrada!.getCell(5).value).toBe(tituloOriginal)
     }, 30000)
 
+    it('Agrega una fila nueva si el libro no tiene numero de inventario, aunque existan filas sin numero', async () => {
+        const workbook = new ExcelJS.Workbook()
+        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+        const ws = workbook.getWorksheet('Hoja1')
+        ws!.addRow(['', null, null, 'Autor Viejo', 'Libro Sin Numero', null]).commit()
+        await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
+
+        const libro = (titulo: string) => ({
+            titulo,
+            autor: '',
+            numeroInventario: '',
+            nombreSocio: 'Juan Perez',
+            numeroSocio: 42,
+        })
+
+        const primero = await addLibroPrestado(libro('Primero Sin Numero'))
+        const segundo = await addLibroPrestado(libro('Segundo Sin Numero'))
+
+        expect(primero).not.toBeNull()
+        expect(segundo).not.toBeNull()
+
+        const workbookActualizado = new ExcelJS.Workbook()
+        await workbookActualizado.xlsx.readFile(LIBROS_XLSX_PATH)
+        const titulosPrestados: unknown[] = []
+        workbookActualizado.getWorksheet('Hoja1')!.eachRow((row, rowIndex) => {
+            if (rowIndex === 1) return
+            if (row.getCell(1).value === 'Juan Perez') titulosPrestados.push(row.getCell(5).value)
+        })
+
+        expect(titulosPrestados).toEqual(['Primero Sin Numero', 'Segundo Sin Numero'])
+    }, 30000)
+
     it('Retorna null y no modifica el archivo si el libro no tiene titulo', async () => {
         const libro = {
             titulo: '',
