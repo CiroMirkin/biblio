@@ -1,16 +1,15 @@
 import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
-import { countryToPrefix, cutterFromAuthor, formatCountry, isValidNumeroInventario, tieneDatosMarc, type Libro } from "@shared/models"
+import { isValidNumeroInventario, tieneDatosMarc } from "@shared/models"
+import { libroDesdeLibroForm, type CamposForm } from "@/components/libroDesdeLibroForm"
+import { libroDesdeMarc21Form } from "@/components/libroDesdeMarc21Form"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { formatName, formatTitulo } from "@/utils"
-import { validateISBN } from "@shared/utils"
 
 export function EditarLibro() {
   const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
-  const { nombreBiblioteca, estaDefinidoNombreBiblioteca, catalogacionSimple } = useSettingsStore()
-  const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
+  const { catalogacionSimple } = useSettingsStore()
   const usaMarc = tieneDatosMarc(libroSeleccionado) || !catalogacionSimple
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -26,36 +25,11 @@ export function EditarLibro() {
     const nroValido = isValidNumeroInventario(nro)
     if(!nroValido) return false
 
-    let libro: Partial<Libro> = {
-      numeroInventario: nroValido ? nro : libroSeleccionado.numeroInventario,
-      titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
-      autor: formatName(form.autor?.value) || libroSeleccionado.autor,
-      literaryForm: form.literaryForm?.value || "u",
-      literaryGenres: form.genres?.value || "",
-    }
-    
-    if(usaMarc) {
-      const callNumber = form.callNumber?.value || `${countryToPrefix(form.callNumberPrefix?.value || "")} ${(form.dewey?.value || "").split(',').join('.')} ${cutterFromAuthor(form.autor?.value || "")}`
-      const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
-      libro = {
-        ...libro,
-        itemType: "BK",
-        literaryForm: form.literaryForm?.value || "u",
-        edition: form.edition?.value || "",
-        placeOfPublication: formatName(form.placeOfPublication?.value || ""),
-        publisher: formatName(form.publisher?.value || ""),
-        publicationYear: form.publicationYear?.value || "",
-        authorCountry: formatCountry(form.callNumberPrefix?.value || ""),
-        dewey: parseFloat(form.dewey?.value || ""),
-        holding: {
-          homeBranch,
-          holdingBranch: homeBranch,
-          barcode,
-          publicNote: formatTitulo(form.publicNote?.value || ""),
-          callNumber: callNumber,
-        },
-      }
-    }
+    const campos = Object.fromEntries(new FormData(form)) as CamposForm
+    const datos = usaMarc
+      ? libroDesdeMarc21Form(campos, libroSeleccionado)
+      : libroDesdeLibroForm(campos, libroSeleccionado)
+    const libro = { ...datos, numeroInventario: nro }
 
     setLoading(true)
     const actualizado = await editarLibro(libro)

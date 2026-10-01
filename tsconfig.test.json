@@ -18,5 +18,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["tests", "electron", "shared", "src/store", "src/models", "src/utils", "src/services", "src/types"]
+  "include": ["tests", "electron", "shared", "src/store", "src/models", "src/utils", "src/services", "src/types", "src/components/libroDesdeLibroForm.ts", "src/components/libroDesdeMarc21Form.ts"]
 }

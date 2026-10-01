@@ -1,10 +1,10 @@
 import { CheckIcon, LibroForm, Spinner } from "@/components"
-import { holdingVacio, isValidNumeroInventario, type Libro } from "@shared/models"
+import { libroDesdeLibroForm, type CamposForm } from "@/components/libroDesdeLibroForm"
+import { isValidNumeroInventario } from "@shared/models"
 import { useLibrosStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { formatName, formatTitulo } from "@/utils"
 
 export function IngresoSimple() {
   const { ingresarLibro, getUltimoNumeroInventario } = useLibrosStore()
@@ -25,14 +25,8 @@ export function IngresoSimple() {
     }
     if(!isValidNumeroInventario(numeroInventario)) return false
 
-    const libro: Libro = {
-      numeroInventario,
-      titulo: formatTitulo(form.titulo.value),
-      autor: formatName(form.autor?.value) || "",
-      literaryForm: form.literaryForm?.value || "u",
-      literaryGenres: form.genres?.value || "",
-      holding: holdingVacio(),
-    }
+    const campos = Object.fromEntries(new FormData(form)) as CamposForm
+    const libro = { ...libroDesdeLibroForm(campos), numeroInventario }
 
     setLoading(true)
     const actualizado = await ingresarLibro(libro)

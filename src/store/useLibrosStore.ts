@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Libro, LibroRegistrado } from "@shared/models"
+import type { DatosLibro, Libro, LibroRegistrado } from "@shared/models"
 import { cargarLibrosEnPrestamo } from "@/services"
 import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
@@ -22,7 +22,7 @@ interface LibrosState {
 
   verDetallesLibro: (libro: Libro | LibroRegistrado) => void
   verHistorialLibro: (libro: Libro | LibroRegistrado) => void
-  editarLibro: (libro: Partial<LibroRegistrado>) => Promise<Libro | LibroRegistrado | null>
+  editarLibro: (libro: Partial<DatosLibro>) => Promise<LibroRegistrado | null>
   
   verCatalogo: () => void
   buscar: (query: string) => void
@@ -35,7 +35,7 @@ interface LibrosState {
   devolverLibro: (nroInventario: number | string) => Promise<void>
   getLibroPorInventario: (nroInventario: number | string) => LibroRegistrado | null
 
-  ingresarLibro: (ingreso: Libro) => Promise<boolean>
+  ingresarLibro: (ingreso: DatosLibro) => Promise<boolean>
 
   getUltimoNumeroInventario: () => number
   esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
@@ -164,7 +164,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     return result.length ? result[0] : null
   },
 
-  ingresarLibro: async (ingreso: Libro) => {
+  ingresarLibro: async (ingreso: DatosLibro) => {
     const libroRegistrado = await window.electronAPI.ingresarLibro(ingreso)
     if(!libroRegistrado) return false
     const newLibro = {
