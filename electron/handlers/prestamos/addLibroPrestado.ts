@@ -1,10 +1,10 @@
 import type ExcelJS from 'exceljs'
-import type { LibroEnPrestamo } from "@shared/models/libro"
+import { holdingVacio, type LibroRegistrado } from "@shared/models/libro"
 import { esSinInventariar, generarIdSinInventariar, getFechaDePrestamoFromRow, getNroDeInventarioFromRow, libroToRow, rowToLibro, writeLibro } from "../../models/libro"
 import { modificarLibros } from '../../utils/datosExcel'
 import { insertarHistorial } from '../historial'
 
-export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Promise<LibroEnPrestamo | null> {
+export async function addLibroPrestado(libro: LibroRegistrado, fecha?: Date): Promise<LibroRegistrado | null> {
   const date = fecha ? fecha : new Date()
   const numeroInventario = libro.numeroInventario || generarIdSinInventariar()
 
@@ -42,6 +42,7 @@ export async function addLibroPrestado(libro: LibroEnPrestamo, fecha?: Date): Pr
         titulo: libro.titulo,
         numeroInventario,
         fechaDeIngreso: new Date(),
+        holding: holdingVacio(),
       }))
       newRow.commit()
     }

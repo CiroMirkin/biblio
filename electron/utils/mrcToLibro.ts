@@ -1,4 +1,4 @@
-import { getDeweyFromCallNumber, isValidNumeroInventario, type LiteraryForm, type Marc21EnPrestamo, type Marc21ItemType } from '@shared/models'
+import { getDeweyFromCallNumber, isValidNumeroInventario, type LiteraryForm, type LibroRegistrado, type Marc21ItemType } from '@shared/models'
 import { validateISBN } from '@shared/utils'
 
 type MarcField = [string, ...string[]]
@@ -71,7 +71,7 @@ export type MrcImportError = {
 }
 
 export type MrcImportResult = {
-  libro: Marc21EnPrestamo
+  libro: LibroRegistrado
   numeroInventario: string
   barcode: string | undefined
 }
@@ -82,7 +82,7 @@ export type MrcParseResult = {
 }
 
 /**
- * Convierte registros MARC21 crudos a `Marc21EnPrestamo`.
+ * Convierte registros MARC21 crudos a `LibroRegistrado`.
  *
  * ## Decisiones de mapeo
  *
@@ -90,7 +90,7 @@ export type MrcParseResult = {
  * En MARC21 el registro bibliográfico describe la obra y cada campo 952
  * representa un ejemplar físico. Un mismo libro puede tener múltiples
  * ejemplares (distintos barcodes, sedes o signaturas). Por eso se genera
- * un `Marc21EnPrestamo` por cada campo 952, todos compartiendo los datos
+ * un `LibroRegistrado` por cada campo 952, todos compartiendo los datos
  * bibliográficos del registro padre (título, autor, año, etc.).
  *
  * ### Sede: 952$a (homebranch) y 952$b (holdingbranch)
@@ -199,7 +199,7 @@ export function parseMrcRecords(records: MarcRecord[]): MrcParseResult {
 
       const itemType = itemTypeDesdeKoha(itemTypeBib || getSubfield(field952, 'y')) as Marc21ItemType
 
-      const libro: Marc21EnPrestamo = {
+      const libro: LibroRegistrado = {
         numeroInventario,
         titulo,
         autor,

@@ -1,9 +1,8 @@
 import fs from 'fs'
 import { Record } from 'marcjs'
 import { getLibros } from '../handlers/libros'
-import { isMarc21, type LibroRegistrado } from "@shared/models"
-import { type Marc21 } from "@shared/models/marc21"
-import { get } from '../settings'
+import type { Libro, LibroRegistrado } from "@shared/models"
+import { getSedePorDefecto } from '../settings'
 import { filtrarLibrosRegistrados } from '@shared/utils'
 
 /**
@@ -52,7 +51,7 @@ export async function excelAMrc({ outputPath, excluirSinIsbn = true, periodoDeIn
     }
 
     const librosFiltrados = excluirSinIsbn
-        ? librosPorFecha.filter(libro => isMarc21(libro) && !!libro.holding.barcode)
+        ? librosPorFecha.filter(libro => !!libro.holding.barcode)
         : librosPorFecha
 
     if (librosFiltrados.length === 0) {
@@ -60,29 +59,22 @@ export async function excelAMrc({ outputPath, excluirSinIsbn = true, periodoDeIn
         return
     }
 
+    const sede = getSedePorDefecto()
     const chunks = librosFiltrados.map(libro => {
-        if(isMarc21(libro)) {
-            const raw = libroToRecord(libro).as('iso2709')
-            return Buffer.from(raw, 'utf8')
-        }
-        else {
-            const branch = get('nombreBiblioteca')
-            const markLibro: Marc21 = {
-                ...libro,
-                itemType: 'BK',
-                holding: {
-                    holdingBranch: branch,
-                    homeBranch: branch,
-                }
-            }
-            const raw = libroToRecord(markLibro).as('iso2709')
-            return Buffer.from(raw, 'utf8')
-        }
+        const raw = libroToRecord({
+            ...libro,
+            holding: {
+                ...libro.holding,
+                homeBranch: libro.holding.homeBranch || sede,
+                holdingBranch: libro.holding.holdingBranch || sede,
+            },
+        }).as('iso2709')
+        return Buffer.from(raw, 'utf8')
     })
     fs.writeFileSync(outputPath, Buffer.concat(chunks))
 }
 
-function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
+function libroToRecord(libro: Libro): InstanceType<typeof Record> {
     const record = new Record()
     const leader = '01197nam  22002891  4500'
     record.leader = leader.substring(0, 9) + 'a' + leader.substring(10)
@@ -149,7 +141,7 @@ function libroToRecord(libro: Marc21): InstanceType<typeof Record> {
     return record
 }
 
-function buildField008(libro: Marc21): string {
+function buildField008(libro: Libro): string {
     const year     = (libro.publicationYear ?? '').padEnd(4, ' ').slice(0, 4)
     const literary = libro.literaryForm ?? '0'
     return `000000s${year}    xx            00${literary}0 spa d`.slice(0, 40).padEnd(40, ' ')

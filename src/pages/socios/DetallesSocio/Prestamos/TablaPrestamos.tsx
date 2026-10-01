@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import { type LibroEnPrestamo } from "@shared/models"
+import { type LibroRegistrado } from "@shared/models"
 import { cn } from "@/utils"
 import { useSettingsStore } from "@/store"
 import { BotonRegistrarPrestamo } from "./BotonRegistrarPrestamo"
@@ -18,13 +18,13 @@ import {
 } from "./types"
 
 interface Props {
-  libros: LibroEnPrestamo[]
+  libros: LibroRegistrado[]
   disabled: boolean
   /**
    * Devuelve los resultados en el mismo orden que los inputs, así se sabe qué fila convertir.
    * Las que fallan (null) quedan con lo tipeado permitiendo reintentar.
    */
-  onRegistrar: (inputs: InputLibro[]) => Promise<Array<LibroEnPrestamo | null>>
+  onRegistrar: (inputs: InputLibro[]) => Promise<Array<LibroRegistrado | null>>
 }
 
 export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
@@ -62,7 +62,7 @@ export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
 
     const registrados = await onRegistrar(nuevos.map(n => n.input))
 
-    const agregados = new Map<string, LibroEnPrestamo>()
+    const agregados = new Map<string, LibroRegistrado>()
     nuevos.forEach((n, i) => { 
       const libro = registrados[i]
       if (libro) agregados.set(n.slotId, libro)

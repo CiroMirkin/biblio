@@ -1,4 +1,4 @@
-import { type LibroEnPrestamo } from "@shared/models"
+import { type LibroRegistrado } from "@shared/models"
 import { cn } from "@/utils"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { CheckIcon, Spinner } from "@/components"
@@ -7,7 +7,7 @@ import { FechaPrestamo } from "./FechaPrestamo"
 import { colAutor, colBtn, colNro, colTitulo } from "./types"
 
 interface Props {
-  libro: LibroEnPrestamo
+  libro: LibroRegistrado
   index: number
   onDevuelto: () => void
 }

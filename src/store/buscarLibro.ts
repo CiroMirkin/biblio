@@ -1,4 +1,4 @@
-import type { LibroEnPrestamo, LibroRegistrado } from "@shared/models"
+import type { LibroRegistrado } from "@shared/models"
 import { levenshtein, normailzarTexto, buscarLibrosDeHoy } from "@/utils"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
 import { filtrarLibrosVencidos } from "./filtrarLibrosVencidos"
@@ -99,7 +99,7 @@ function buscarNrosRepetidos(libros: LibroRegistrado[]): LibroRegistrado[] {
     .sort((a, b) => String(a.numeroInventario).localeCompare(String(b.numeroInventario), 'es', { numeric: true }))
 }
 
-function buscarPorTitulo(libros: LibroEnPrestamo[], dato: string): LibroEnPrestamo[] {
+function buscarPorTitulo(libros: LibroRegistrado[], dato: string): LibroRegistrado[] {
   const filtrados = libros.filter(libro => {
     const titulo = normailzarTexto(libro.titulo)
     if (titulo.includes(dato)) return true

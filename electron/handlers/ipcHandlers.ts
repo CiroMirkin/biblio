@@ -1,4 +1,4 @@
-import { getLibros, editarDatosLibro, ingresarLibro, ingresarLibroMark21 } from './libros'
+import { getLibros, editarDatosLibro, ingresarLibro } from './libros'
 import {
   devolverLibro,
   getLibrosPrestadosSocio,
@@ -22,7 +22,6 @@ import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
 import type { Libro, LibroRegistrado } from "@shared/models/libro"
 import type { NewSocio, Socio } from '@shared/models/socio'
-import type { Marc21 } from "@shared/models/marc21"
 import { descargarMrc } from '../utils/descargarMrc'
 import { importarMrc } from '../utils/importarMrc'
 import { exportarExcelCompleto, importarExcelCompleto } from '../utils/excelCompleto'
@@ -35,7 +34,6 @@ const librosIpcHandlers = {
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
   editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<LibroRegistrado>) => editarDatosLibro(nroInventario, datos),
   ingresarLibro: (_: unknown, ingreso: Libro) => ingresarLibro(ingreso),
-  ingresarLibroMark21: (_: unknown, ingreso: Marc21) => ingresarLibroMark21(ingreso),
 }
 
 const prestamosIpcHandlers = {

@@ -1,10 +1,9 @@
 import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
-import { isMarc21 } from "@shared/models"
-import type { LibroRegistrado, LibroEnPrestamo, LiteraryForm, Marc21ItemType  } from "@shared/models"
+import type { LibroRegistrado, LiteraryForm, Marc21ItemType  } from "@shared/models"
 
 export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
-    const libroSimple: LibroEnPrestamo = {
+    return {
         titulo: String(row.getCell(5).value ?? ''),
         autor: String(row.getCell(4).value ?? '') || undefined,
         numeroInventario: String(row.getCell(6).value ?? ''),
@@ -14,14 +13,7 @@ export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
         literaryForm: (String(row.getCell(8).value ?? '') || undefined) as LiteraryForm | undefined,
         fechaDeIngreso: getFechaDeIngresoFromRow(row),
         literaryGenres: String(row.getCell(21) ?? ''),
-    }
-
-    const itemType = String(row.getCell(7).value ?? '') as Marc21ItemType
-    if (!itemType) return libroSimple
-
-    return {
-        ...libroSimple,
-        itemType,
+        itemType: (String(row.getCell(7).value ?? '') || undefined) as Marc21ItemType | undefined,
         authorCountry: String(row.getCell(17) ?? ''),
         edition: String(row.getCell(9).value ?? '') || undefined,
         placeOfPublication: String(row.getCell(10).value ?? '') || undefined,
@@ -61,8 +53,6 @@ export const getFechaDeIngresoFromRow = (row: ExcelJS.Row): Date | null => {
 export const getNroDeInventarioFromRow = (row: ExcelJS.Row): string => row.getCell(6).value?.toString() ?? '' 
 
 export function libroToRow(libro: LibroRegistrado): (string | number | Date | null)[] {
-    const marc21 = isMarc21(libro) ? libro : undefined
-
     return [
         libro.nombreSocio ?? '',
         libro.numeroSocio ?? null,
@@ -70,20 +60,20 @@ export function libroToRow(libro: LibroRegistrado): (string | number | Date | nu
         libro.autor || '',
         libro.titulo,
         libro.numeroInventario ?? '',
-        marc21?.itemType ?? '',
+        libro.itemType ?? '',
         libro.literaryForm ?? '',
-        marc21?.edition ?? '',
-        marc21?.placeOfPublication ?? '',
-        marc21?.publisher ?? '',
-        marc21?.publicationYear ?? '',
+        libro.edition ?? '',
+        libro.placeOfPublication ?? '',
+        libro.publisher ?? '',
+        libro.publicationYear ?? '',
         // Holding
-        marc21?.holding.homeBranch ?? '',
-        marc21?.holding.holdingBranch ?? '',
-        marc21?.holding.publicNote ?? '',
-        marc21?.holding.callNumber ?? '',
-        marc21?.authorCountry ?? '',
-        marc21?.holding.barcode ?? '',
-        marc21?.dewey ?? '',
+        libro.holding.homeBranch ?? '',
+        libro.holding.holdingBranch ?? '',
+        libro.holding.publicNote ?? '',
+        libro.holding.callNumber ?? '',
+        libro.authorCountry ?? '',
+        libro.holding.barcode ?? '',
+        libro.dewey ?? '',
         libro.fechaDeIngreso ?? '',
         libro?.literaryGenres ?? '',
     ]
@@ -103,21 +93,19 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.literaryForm !== undefined) row.getCell(8).value = libro.literaryForm
     if (libro.literaryGenres !== undefined) row.getCell(21).value = String(libro.literaryGenres || '')
 
-    if(isMarc21(libro)) {
-        if (libro.holding?.homeBranch !== undefined) row.getCell(13).value = libro.holding.homeBranch
-        if (libro.holding?.holdingBranch !== undefined) row.getCell(14).value = libro.holding.holdingBranch
-        if (libro.holding?.publicNote !== undefined) row.getCell(15).value = libro.holding.publicNote
-        if (libro.holding?.callNumber !== undefined) row.getCell(16).value = libro.holding.callNumber
-        
-        if (libro.itemType !== undefined) row.getCell(7).value = libro.itemType
-        if (libro.edition !== undefined) row.getCell(9).value = libro.edition
-        if (libro.placeOfPublication !== undefined) row.getCell(10).value = libro.placeOfPublication
-        if (libro.publisher !== undefined) row.getCell(11).value = libro.publisher
-        if (libro.publicationYear !== undefined) row.getCell(12).value = libro.publicationYear
-        if (libro.authorCountry !== undefined) row.getCell(17).value = libro.authorCountry
-        if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
-        if (libro.dewey !== undefined) row.getCell(19).value = String(libro.dewey)
-    }
+    if (libro.holding?.homeBranch !== undefined) row.getCell(13).value = libro.holding.homeBranch
+    if (libro.holding?.holdingBranch !== undefined) row.getCell(14).value = libro.holding.holdingBranch
+    if (libro.holding?.publicNote !== undefined) row.getCell(15).value = libro.holding.publicNote
+    if (libro.holding?.callNumber !== undefined) row.getCell(16).value = libro.holding.callNumber
+    
+    if (libro.itemType !== undefined) row.getCell(7).value = libro.itemType
+    if (libro.edition !== undefined) row.getCell(9).value = libro.edition
+    if (libro.placeOfPublication !== undefined) row.getCell(10).value = libro.placeOfPublication
+    if (libro.publisher !== undefined) row.getCell(11).value = libro.publisher
+    if (libro.publicationYear !== undefined) row.getCell(12).value = libro.publicationYear
+    if (libro.authorCountry !== undefined) row.getCell(17).value = libro.authorCountry
+    if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
+    if (libro.dewey !== undefined) row.getCell(19).value = String(libro.dewey)
 
     row.commit()
 }

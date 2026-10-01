@@ -1,4 +1,4 @@
-import { type LibroEnPrestamo, type LibroRegistrado } from "@shared/models"
+import { type LibroRegistrado } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatDiasRelativo } from "@/utils"
 import { useSettingsStore, useSociosStore } from "@/store"
 import { LibroDisponible } from "./LibroDisponible"

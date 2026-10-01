@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import ExcelJS from 'exceljs'
 import { rowToLibro } from '../electron/models/libro'
-import type { Marc21EnPrestamo } from "@shared/models"
+import { tieneDatosMarc, type LibroRegistrado } from "@shared/models"
 
 const crearRow = (celdas: Record<number, unknown>): ExcelJS.Row => {
     const workbook = new ExcelJS.Workbook()
@@ -14,7 +14,7 @@ const crearRow = (celdas: Record<number, unknown>): ExcelJS.Row => {
 }
 
 describe('rowToLibro', () => {
-    it('Retorna un Marc21EnPrestamo cuando la fila contiene itemType y holding validos', () => {
+    it('Retorna un LibroRegistrado cuando la fila contiene itemType y holding validos', () => {
         const fecha = new Date('2024-06-01')
 
         const row = crearRow({
@@ -61,7 +61,7 @@ describe('rowToLibro', () => {
                 publicNote:    'Buen estado',
                 callNumber:    '863 AVE',
             },
-        } as Marc21EnPrestamo)
+        } as LibroRegistrado)
     })
 
     it('Parsea el callNumber con prefijo desde la celda', () => {
@@ -76,7 +76,7 @@ describe('rowToLibro', () => {
 
         const result = rowToLibro(row)
 
-        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual('A863 HER')
+        expect((result as LibroRegistrado).holding.callNumber).toEqual('A863 HER')
     })
 
     it('Parsea el callNumber con volumen desde la celda', () => {
@@ -91,7 +91,7 @@ describe('rowToLibro', () => {
 
         const result = rowToLibro(row)
 
-        expect((result as Marc21EnPrestamo).holding.callNumber).toEqual('982 COO v.2')
+        expect((result as LibroRegistrado).holding.callNumber).toEqual('982 COO v.2')
     })
 
     it('Retorna callNumber undefined cuando la celda esta vacia', () => {
@@ -105,10 +105,10 @@ describe('rowToLibro', () => {
 
         const result = rowToLibro(row)
 
-        expect((result as Marc21EnPrestamo).holding.callNumber).toBeUndefined()
+        expect((result as LibroRegistrado).holding.callNumber).toBeUndefined()
     })
 
-    it('Retorna un LibroEnPrestamo cuando la fila no tiene itemType ni holding validos', () => {
+    it('Retorna un libro sin datos MARC y con holding vacio cuando la fila solo tiene datos simples', () => {
         const fecha = new Date('2024-07-15')
 
         const row = crearRow({
@@ -122,7 +122,7 @@ describe('rowToLibro', () => {
 
         const result = rowToLibro(row)
 
-        expect(result).toEqual({
+        expect(result).toMatchObject({
             nombreSocio:      'Maria Lopez',
             numeroSocio:      7,
             fechaDeIngreso: null,
@@ -133,8 +133,9 @@ describe('rowToLibro', () => {
             titulo:           'Rayuela',
             numeroInventario: '100001',
         })
-        expect('itemType' in result).toBe(false)
-        expect('holding' in result).toBe(false)
+        expect(result.itemType).toBeUndefined()
+        expect(result.holding).toMatchObject({ homeBranch: '', holdingBranch: '' })
+        expect(tieneDatosMarc(result)).toBe(false)
     })
 
     it('Los campos opcionales de Marc21 son undefined cuando las celdas estan vacias', () => {

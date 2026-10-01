@@ -1,5 +1,5 @@
 import type { KeyboardEvent, SyntheticEvent } from "react"
-import { formatLiteraryForm, getDeweyFromCallNumber, type LiteraryForm, type Marc21 } from "@shared/models"
+import { formatLiteraryForm, getDeweyFromCallNumber, type Libro, type LiteraryForm } from "@shared/models"
 import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
@@ -26,7 +26,7 @@ interface Props {
   submitLabel: string
   onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
   submitDisabled?: boolean
-  defaultValues?: Marc21
+  defaultValues?: Libro
   onSuccess?: () => void
 }
 

@@ -189,34 +189,24 @@ describe('editarDatosLibro (integration)', () => {
         expect(statAfter).toBe(statBefore)
     }, 30000)
 
-    it('Asigna un numero de inventario SN- si se vacia el numero de inventario al editar', async () => {
+    it('Retorna null y no modifica el archivo si se intenta vaciar el numero de inventario', async () => {
         const workbook = new ExcelJS.Workbook()
         await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
         const ws = workbook.getWorksheet('Hoja1')
 
         const nroInventario = ws!.getRow(2).getCell(6).value as number
 
+        const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
+
         const result = await editarDatosLibro(nroInventario, {
             numeroInventario: '',
             titulo: 'Ficciones',
         })
 
-        expect(result).not.toBeNull()
+        expect(result).toBeNull()
 
-        const workbookActualizado = new ExcelJS.Workbook()
-        await workbookActualizado.xlsx.readFile(LIBROS_XLSX_PATH)
-        const wsActualizado = workbookActualizado.getWorksheet('Hoja1')
-
-        let idSinInventariar = ''
-        wsActualizado!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (String(row.getCell(6).value) === String(result!.numeroInventario)) {
-                idSinInventariar = String(row.getCell(6).value)
-            }
-            
-        })
-
-        expect(idSinInventariar.startsWith('SN-')).toBe(true)
+        const statAfter = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
+        expect(statAfter).toBe(statBefore)
     }, 30000)
 
     it('No modifica el numero de inventario si datos no incluye ese campo', async () => {

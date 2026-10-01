@@ -1,7 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { Libro } from "@shared/models/libro"
 import type { NewSocio, Socio } from '@shared/models/socio'
-import type { Marc21 } from "@shared/models/marc21"
 import type { PeriodoDeIngreso } from './utils/crearArchivoMrc'
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -12,7 +11,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   addLibroPrestado: (libro: Libro, fecha?: Date) => ipcRenderer.invoke('addLibroPrestado', libro, fecha),
   ingresarLibro: (ingreso: Libro) => ipcRenderer.invoke('ingresarLibro', ingreso),
-  ingresarLibroMark21: (ingreso: Marc21) => ipcRenderer.invoke('ingresarLibroMark21', ingreso),
   
   getLibrosPrestadosSocio: (nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nroSocio),
   

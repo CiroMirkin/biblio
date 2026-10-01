@@ -1,30 +1,39 @@
 import { modificarLibros } from "../../utils/datosExcel"
-import { generarIdSinInventariar, getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
+import { getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
+import { get, getSedePorDefecto } from "../../settings"
 import { type Libro } from "@shared/models/libro"
 
-export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => modificarLibros(async ({ worksheet, writeWorkbook }) => {
-    let nroInventarioDuplicado = false
-    const newNroInventario = ingreso.numeroInventario
+/** Las reglas dependen del modo de catalogacion de los ajustes. Devuelve null si el libro no las cumple */
+export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => {
+    const modoMarc = !get('catalogacionSimple')
+    const numeroInventario = String(ingreso.numeroInventario ?? '').trim()
+    const sede = ingreso.holding?.homeBranch || getSedePorDefecto()
 
-    worksheet.eachRow((row, rowIndex) => {
-        if (rowIndex === 1) return
-        const nro = getNroDeInventarioFromRow(row)
-        if (newNroInventario !== undefined && newNroInventario !== '' && nro === String(newNroInventario)) {
-            nroInventarioDuplicado = true
+    if (!ingreso.titulo?.trim() || !numeroInventario) return null
+    if (modoMarc && !sede) return null
+
+    return modificarLibros(async ({ worksheet, writeWorkbook }) => {
+        let nroInventarioDuplicado = false
+        worksheet.eachRow((row, rowIndex) => {
+            if (rowIndex === 1) return
+            if (getNroDeInventarioFromRow(row) === numeroInventario) {
+                nroInventarioDuplicado = true
+            }
+        })
+        if (nroInventarioDuplicado) return null
+
+        const newLibro: Libro = {
+            ...ingreso,
+            itemType: ingreso.itemType || (modoMarc ? 'BK' : undefined),
+            fechaDeIngreso: new Date(),
+            holding: {
+                ...ingreso.holding,
+                homeBranch: sede,
+                holdingBranch: ingreso.holding?.holdingBranch || sede,
+            },
         }
+        writeLibro(worksheet.getRow(worksheet.rowCount + 1), newLibro)
+        await writeWorkbook()
+        return newLibro
     })
-
-    if (nroInventarioDuplicado) return null
-    if (!ingreso.titulo?.trim()) return null
-
-    const newLibro: Libro = {
-        ...ingreso,
-        titulo: ingreso.titulo,
-        numeroInventario: ingreso.numeroInventario || generarIdSinInventariar(),
-        fechaDeIngreso: new Date(),
-    }
-    const targetRow = worksheet.getRow(worksheet.rowCount + 1)
-    writeLibro(targetRow, newLibro)
-    await writeWorkbook()
-    return newLibro
-})
+}

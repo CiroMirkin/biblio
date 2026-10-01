@@ -1,12 +1,10 @@
 import type ExcelJS from 'exceljs'
 import { modificarLibros } from "../../utils/datosExcel"
-import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
-import { type Libro, type LibroRegistrado } from "@shared/models/libro"
-import { isMarc21 } from "@shared/models"
-import { type Marc21 } from "@shared/models/marc21"
+import { getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
+import { type LibroRegistrado } from "@shared/models/libro"
 import { actualizarNroLibroEnHistorial } from '../historial'
 
-export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<Libro | Marc21 | null> => {
+export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<LibroRegistrado | null> => {
     const newLibro = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
         let targetRow: ExcelJS.Row | null = null
         const {
@@ -30,8 +28,10 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
         const libroGuardadoActualmente = rowToLibro(targetRow)
         if (nuevosDatos.titulo === '' && libroGuardadoActualmente.titulo) return null
 
+        if ('numeroInventario' in nuevosDatos && !nuevosDatos.numeroInventario) return null
+
         const numeroInventarioFinal = 'numeroInventario' in nuevosDatos
-            ? (nuevosDatos.numeroInventario || generarIdSinInventariar())
+            ? nuevosDatos.numeroInventario
             : libroGuardadoActualmente.numeroInventario
 
         let nroInventarioDuplicado = false  
@@ -50,12 +50,6 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
             ...libroGuardadoActualmente,
             ...nuevosDatos,
             numeroInventario: numeroInventarioFinal,
-        }
-
-        if (isMarc21(newLibro)) {
-            newLibro.holding = {
-                ...newLibro.holding,
-            }
         }
 
         writeLibro(targetRow, newLibro)

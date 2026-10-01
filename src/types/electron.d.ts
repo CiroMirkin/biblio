@@ -1,4 +1,4 @@
-import type { HistorialEntry, Libro, LibroEnPrestamo, LibroRegistrado, Marc21, NewSocio, Socio } from "@/models"
+import type { HistorialEntry, Libro, LibroRegistrado, NewSocio, Socio } from "@/models"
 import type { Settings as SettingsSchema } from "@/services/settingsService"
 
 export {}
@@ -17,12 +17,11 @@ declare global {
   interface Window {
     electronAPI: {
       getSocios: () => Promise<Record<string, unknown>[]>
-      getLibros: () => Promise<LibroEnPrestamo[]>
-      editarDatosLibro: (nroInventario: string, datos: Partial<Libro | LibroRegistrado>) => Promise<Libro | LibroEnPrestamo | null>
+      getLibros: () => Promise<LibroRegistrado[]>
+      editarDatosLibro: (nroInventario: string, datos: Partial<Libro | LibroRegistrado>) => Promise<LibroRegistrado | null>
       ingresarLibro: (libro: Libro) => Promise<Libro | null>
-      ingresarLibroMark21: (libro: Marc21) => Promise<Marc21 | null>
 
-      addLibroPrestado: (libro: Libro, fecha?: Date) => Promise<LibroEnPrestamo | null>
+      addLibroPrestado: (libro: LibroRegistrado, fecha?: Date) => Promise<LibroRegistrado | null>
       
       devolverLibro: (numeroInventario: number | string) => Promise<boolean>
       getLibrosPrestadosSocio: (nroSocio: number) => Promise<Libro[]>

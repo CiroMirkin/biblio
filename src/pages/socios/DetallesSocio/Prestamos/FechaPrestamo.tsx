@@ -1,10 +1,10 @@
-import { type LibroEnPrestamo } from "@shared/models"
+import { type LibroRegistrado } from "@shared/models"
 import { calcularDiasDesdePrestamo, cn, formatFecha, getDia } from "@/utils"
 import { useSettingsStore } from "@/store"
 import { colFecha } from "./types"
 
 interface Props {
-  fechaDePrestamo: LibroEnPrestamo['fechaDePrestamo']
+  fechaDePrestamo: LibroRegistrado['fechaDePrestamo']
 }
 
 export function FechaPrestamo({ fechaDePrestamo }: Props) {
