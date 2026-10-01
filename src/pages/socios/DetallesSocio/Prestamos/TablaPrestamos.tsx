@@ -1,8 +1,9 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { type LibroRegistrado } from "@shared/models"
 import { cn } from "@/utils"
-import { useSettingsStore } from "@/store"
+import { useSettingsStore, useSociosStore } from "@/store"
 import { BotonRegistrarPrestamo } from "./BotonRegistrarPrestamo"
+import { ModalPrestamoSinRegistrar } from "./ModalPrestamoSinRegistrar"
 import { FilaLibroPrestado } from "./FilaLibroPrestado"
 import { FilaCargaLibro, type FilaCargaLibroHandle } from "./FilaCargaLibro"
 import {
@@ -50,15 +51,34 @@ export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
     if (nextSlot) filasRef.current[nextSlot.id]?.focus()
   }
 
-  /** @returns Indica a `BotonRegistrarPrestamo` si mostrar la acción como exitosa. */
-  async function handleAgregar(): Promise<boolean> {
-    const nuevos = getInputSlots().flatMap(s => {
+  function getSlotsEscritos() {
+    return getInputSlots().flatMap(s => {
       const input = filasRef.current[s.id]?.getInput()
-      // Las filas que solo tienen autor se ignoran porque hace falta título o N° para un prestamo.
-      const isSlotValid = input && (input.titulo || input.numeroInventario)
+      const isSlotValid = input && input.titulo
       return isSlotValid ? [{ slotId: s.id, input }] : []
     })
-    if (nuevos.length === 0) return false
+  }
+
+  useEffect(() => {
+    const haySlotsEscritos = () => getSlotsEscritos().length > 0
+    useSociosStore.setState({ hayPrestamoSinRegistrar: haySlotsEscritos })
+    return () => {
+      // al cambiar de socio la tabla nueva se monta antes de que termine de salir la vieja
+      if (useSociosStore.getState().hayPrestamoSinRegistrar === haySlotsEscritos) {
+        useSociosStore.setState({ hayPrestamoSinRegistrar: () => false })
+      }
+    }
+  }, [slots])
+
+  /** @returns Indica a `BotonRegistrarPrestamo` si mostrar la acción como exitosa. */
+  async function handleAgregar(): Promise<boolean> {
+    return (await registrarTipeados()) > 0
+  }
+
+  /** @returns Cantidad de préstamos registrados. */
+  async function registrarTipeados(): Promise<number> {
+    const nuevos = getSlotsEscritos()
+    if (nuevos.length === 0) return 0
 
     const registrados = await onRegistrar(nuevos.map(n => n.input))
 
@@ -67,14 +87,14 @@ export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
       const libro = registrados[i]
       if (libro) agregados.set(n.slotId, libro)
     })
-    if (agregados.size === 0) return false
+    if (agregados.size === 0) return 0
 
     setSlots(prev => prev.map(slot => {
       if (slot.type !== 'input') return slot
       const libro = agregados.get(slot.id)
       return libro ? { type: 'libro', data: libro } satisfies SlotLibro : slot
     }))
-    return true
+    return agregados.size
   }
 
   function reemplazarPorFilaVacia(slotIndex: number) {
@@ -92,6 +112,7 @@ export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
   }
 
   return (
+    <>
     <form className="w-full flex flex-col rounded">
       <div className="flex items-end gap-2 px-2 pb-2 text-sm font-semibold text-gray-600">
         <span className={cn(colNro, "truncate",!numerosDeInventarioExternos && "hidden",)}>
@@ -130,5 +151,8 @@ export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
 
       {!disabled && <BotonRegistrarPrestamo onRegistrar={handleAgregar} />}
     </form>
+
+    <ModalPrestamoSinRegistrar onRegistrar={registrarTipeados} />
+    </>
   )
 }

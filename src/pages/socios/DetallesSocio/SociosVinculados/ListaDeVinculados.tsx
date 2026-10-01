@@ -1,10 +1,10 @@
 import { useSociosStore } from "@/store"
 
 export function ListaDeVinculados() {
-    const { verSocioVinculado, sociosVinculados, desvincularSocio } = useSociosStore()
+    const { verSocioVinculado, sociosVinculados, desvincularSocio, salirDeSocio } = useSociosStore()
 
     const handleVerSocioVinculado = (nro: number) => {
-        verSocioVinculado(nro)
+        salirDeSocio(() => verSocioVinculado(nro))
     }
 
     return sociosVinculados.map(vinculado => (
