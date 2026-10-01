@@ -8,6 +8,7 @@ import { calcularCuotasAdeudadas } from "@/utils"
 import { getCaracterSocio, type Calendario } from "@/models"
 import { buscarSocio } from "./buscarSocio"
 import { useSettingsStore } from "./useSettingsStore"
+import { useLibrosStore } from "./useLibrosStore"
 
 interface SociosState {
     socios: Socio[]
@@ -101,7 +102,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const query = apellido.toLowerCase().trim()
         if(!query) set({ sociosFiltrados:  [...sociosConLibros] })
 
-        const filtrados = buscarSocio({ dato: query, socios })
+        const filtrados = buscarSocio({ dato: query, socios, libros: useLibrosStore.getState().libros })
         set({ sociosFiltrados: filtrados, showDetallesSocio: showDetallesSocio !== false })
     },
 

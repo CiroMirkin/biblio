@@ -1,13 +1,20 @@
-import type { Socio } from "@shared/models"
+import type { LibroRegistrado, Socio } from "@shared/models"
 import { getApellido, levenshtein, normailzarTexto } from "@/utils"
 import { getRelevanciaDelApellido } from "@/utils/getRelevanciaDelApellido"
+import { buscarLibro } from "./buscarLibro"
 
 interface Params {
     socios: Socio[]
     dato: string
+    libros?: LibroRegistrado[]
 }
 
-export function buscarSocio({ socios, dato }: Params): Socio[] {
+export function buscarSocio({ socios, dato, libros = [] }: Params): Socio[] {
+    // prestamo "nombre del libro" -> prestamo crimen y castigo 
+    if (/^prestamo\s+/i.test(dato)) {
+        return buscarPorPrestamo(dato, socios, libros)
+    }
+
     if (!isNaN(Number(dato))) {
         return socios.filter(s => Number(s.nroSocio) === Number(dato))
     }
@@ -81,4 +88,11 @@ export function buscarSocio({ socios, dato }: Params): Socio[] {
     return socios.filter(socio =>
         normailzarTexto(socio.nombreYApellido).includes(datoNormalizado)
     )
+}
+
+function buscarPorPrestamo(dato: string, socios: Socio[], libros: LibroRegistrado[]): Socio[] {
+    const libroBuscado = dato.replace(/^prestamo\s+/i, '')
+    const prestados = libros.filter(l => l.numeroSocio)
+    const nros = new Set(buscarLibro({ libros: prestados, dato: libroBuscado }).map(l => Number(l.numeroSocio)))
+    return socios.filter(s => nros.has(Number(s.nroSocio)))
 }
