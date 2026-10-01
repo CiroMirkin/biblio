@@ -87,3 +87,10 @@ export function getDeweyFromCallNumber(callNumber: string | undefined): Dewey | 
   if(!match) return undefined
   return Number(match[2])
 }
+
+/** La signatura que se autocompleta en el formulario. Vacia si no hay Dewey */
+export function calcularCallNumber(country: string, dewey: string, autor: string): string {
+  return dewey
+    ? normalizeCallNumber(`${countryToPrefix(country)} ${dewey} ${cutterFromAuthor(autor)}`)
+    : ""
+}

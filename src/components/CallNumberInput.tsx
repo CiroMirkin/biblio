@@ -1,4 +1,4 @@
-import { countryToPrefix, cutterFromAuthor, normalizeCallNumber } from "@shared/models"
+import { calcularCallNumber } from "@shared/models"
 import { cn } from "@/utils"
 
 interface Props {
@@ -14,9 +14,7 @@ export function CallNumberInput({ mode, autor, country, dewey, defaultValue, inp
   const tieneValorExistente = !!defaultValue
   const autocompletar = mode === "ingreso" || !tieneValorExistente
 
-  const value = dewey
-    ? normalizeCallNumber(`${countryToPrefix(country)} ${dewey} ${cutterFromAuthor(autor)}`)
-    : ""
+  const value = calcularCallNumber(country, dewey, autor)
 
   return (
     <label className={cn("flex flex-col gap-1 text-base", autocompletar && "opacity-50 font-semibold")}>
