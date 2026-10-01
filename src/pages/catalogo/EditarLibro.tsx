@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/components"
-import { countryToPrefix, cutterFromAuthor, formatCountry, isMarc21, isValidNumeroInventario, makeBlankMark21, type Libro, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, formatCountry, isValidNumeroInventario, tieneDatosMarc, type Libro } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
@@ -11,6 +11,7 @@ export function EditarLibro() {
   const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
   const { nombreBiblioteca, estaDefinidoNombreBiblioteca, catalogacionSimple } = useSettingsStore()
   const homeBranch = estaDefinidoNombreBiblioteca() ? nombreBiblioteca : ''
+  const usaMarc = tieneDatosMarc(libroSeleccionado) || !catalogacionSimple
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -25,7 +26,7 @@ export function EditarLibro() {
     const nroValido = isValidNumeroInventario(nro)
     if(!nroValido) return false
 
-    let libro: Partial<Libro | Marc21> = {
+    let libro: Partial<Libro> = {
       numeroInventario: nroValido ? nro : libroSeleccionado.numeroInventario,
       titulo: formatTitulo(form.titulo.value) || libroSeleccionado.titulo,
       autor: formatName(form.autor?.value) || libroSeleccionado.autor,
@@ -33,7 +34,7 @@ export function EditarLibro() {
       literaryGenres: form.genres?.value || "",
     }
     
-    if(!catalogacionSimple) {
+    if(usaMarc) {
       const callNumber = form.callNumber?.value || `${countryToPrefix(form.callNumberPrefix?.value || "")} ${(form.dewey?.value || "").split(',').join('.')} ${cutterFromAuthor(form.autor?.value || "")}`
       const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
       libro = {
@@ -102,14 +103,12 @@ export function EditarLibro() {
             </AnimatePresence>
         </h2>
 
-        { isMarc21(libroSeleccionado) || !catalogacionSimple
+        { usaMarc
           ? <Marc21Form 
             submitLabel="Guardar Cambios"
             onSubmit={handleSubmit}
             mode="edicion"
-            defaultValues={
-              !isMarc21(libroSeleccionado) ? makeBlankMark21(libroSeleccionado) : libroSeleccionado
-            }
+            defaultValues={libroSeleccionado}
             submitDisabled={loading}
             onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
           /> 

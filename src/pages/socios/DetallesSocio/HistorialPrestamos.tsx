@@ -3,7 +3,6 @@ import { useHistorialStore, useSettingsStore, useSociosStore } from "@/store"
 import { motion, AnimatePresence } from "motion/react"
 import { Spinner } from "@/components"
 import { cn, formatFecha } from "@/utils"
-import { isMarc21 } from "@shared/models"
 
 export function HistorialPrestamos() {
   const { socioSeleccionado } = useSociosStore()
@@ -98,7 +97,7 @@ export function HistorialPrestamos() {
                     <td className="py-2 pr-2 truncate">{entry?.autor || ""}</td>
                     {!catalogacionSimple && 
                       <td className="py-2 px-2 opacity-95">
-                        { isMarc21(entry) ? entry.holding?.callNumber : "" }
+                        { entry.holding?.callNumber }
                       </td>
                     }
                     <td className="py-2 px-2">{formatFecha(entry.fechaPrestamo)}</td>

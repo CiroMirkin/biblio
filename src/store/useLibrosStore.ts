@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Libro, LibroEnPrestamo, LibroRegistrado, Marc21 } from "@shared/models"
+import type { Libro, LibroRegistrado } from "@shared/models"
 import { cargarLibrosEnPrestamo } from "@/services"
 import { calcularDiasDesdePrestamo } from "@/utils"
 import { buscarLibro } from "./buscarLibro"
@@ -11,12 +11,12 @@ interface LibrosState {
   libros: LibroRegistrado[]
   librosFiltrados: LibroRegistrado[]
   librosVencidos: LibroRegistrado[]
-  librosDisponibles: Libro[] | Marc21[]
+  librosDisponibles: LibroRegistrado[]
   librosPrestados: LibroRegistrado[]
   
   showDetallesLibro: boolean
   showHistorialLibro: boolean
-  libroSeleccionado: Libro | Marc21 |LibroRegistrado | null
+  libroSeleccionado: LibroRegistrado | null
 
   inicializar: () => Promise<void>
 
@@ -29,13 +29,13 @@ interface LibrosState {
 
   getLibrosSocio: (nroSocio: number) => Promise<LibroRegistrado[]>
   agregarLibroEnPrestamo: (
-    libro: Libro | Marc21,
+    libro: LibroRegistrado,
     options?: { fechaDePrestamo?: Date },
   ) => Promise<LibroRegistrado | null>
   devolverLibro: (nroInventario: number | string) => Promise<void>
   getLibroPorInventario: (nroInventario: number | string) => LibroRegistrado | null
 
-  ingresoMark21: (ingreso: Marc21) => Promise<boolean>
+  ingresoMark21: (ingreso: Libro) => Promise<boolean>
   ingresoSimple: (ingreso: Libro) => Promise<boolean>
 
   getUltimoNumeroInventario: () => number
@@ -165,7 +165,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     return result.length ? result[0] : null
   },
 
-  ingresoMark21: async (ingreso: Marc21) => {
+  ingresoMark21: async (ingreso: Libro) => {
     if (!ingreso.titulo?.trim() || !ingreso.itemType) return false
     if (!ingreso.numeroInventario || !ingreso.holding.homeBranch) return false
 
@@ -242,17 +242,17 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     const nroViejo = options?.nroViejo
     const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
 
-    const updatedPrestamo = updated as LibroEnPrestamo
+    const updatedPrestamo = updated as LibroRegistrado
     const disponible = updatedPrestamo.fechaDePrestamo === null || updatedPrestamo.fechaDePrestamo === undefined
     const vencido = !disponible && calcularDiasDesdePrestamo(updatedPrestamo.fechaDePrestamo!) > limiteDeDias
     const prestado = !disponible && !vencido
 
     set({
-      libros: actualizarListaLibros(libros, updated as LibroEnPrestamo, true, nroViejo),
+      libros: actualizarListaLibros(libros, updated as LibroRegistrado, true, nroViejo),
       librosDisponibles: actualizarListaLibros(librosDisponibles, updated as Libro, disponible, nroViejo),
-      librosPrestados: actualizarListaLibros(librosPrestados, updated as LibroEnPrestamo, prestado, nroViejo),
-      librosVencidos: actualizarListaLibros(librosVencidos, updated as LibroEnPrestamo, vencido, nroViejo),
-      librosFiltrados: actualizarListaLibros(librosFiltrados, updated as LibroEnPrestamo, vencido, nroViejo),
+      librosPrestados: actualizarListaLibros(librosPrestados, updated as LibroRegistrado, prestado, nroViejo),
+      librosVencidos: actualizarListaLibros(librosVencidos, updated as LibroRegistrado, vencido, nroViejo),
+      librosFiltrados: actualizarListaLibros(librosFiltrados, updated as LibroRegistrado, vencido, nroViejo),
     })
   }
 }))

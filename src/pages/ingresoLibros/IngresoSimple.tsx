@@ -1,5 +1,5 @@
 import { CheckIcon, LibroForm, Spinner } from "@/components"
-import { isValidNumeroInventario, type Libro } from "@shared/models"
+import { holdingVacio, isValidNumeroInventario, type Libro } from "@shared/models"
 import { useLibrosStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
@@ -31,6 +31,7 @@ export function IngresoSimple() {
       autor: formatName(form.autor?.value) || "",
       literaryForm: form.literaryForm?.value || "u",
       literaryGenres: form.genres?.value || "",
+      holding: holdingVacio(),
     }
 
     setLoading(true)

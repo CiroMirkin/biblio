@@ -1,4 +1,4 @@
-import { type LibroEnPrestamo } from "@shared/models"
+import { type LibroRegistrado } from "@shared/models"
 
 export const FIELDS = ['numeroInventario', 'titulo', 'autor'] as const
 
@@ -13,7 +13,7 @@ export type InputLibro = ReturnType<typeof emptyInput>
 
 export type SlotLibro = {
   type: 'libro'
-  data: LibroEnPrestamo
+  data: LibroRegistrado
 }
 export type SlotInput = {
   type: 'input'

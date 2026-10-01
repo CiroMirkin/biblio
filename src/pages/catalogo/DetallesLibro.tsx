@@ -1,27 +1,22 @@
 import { AnimatePresence, motion } from "motion/react"
-import { isMarc21, type Libro, type LibroRegistrado, type Marc21, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber, getGrupoLiterario } from "@shared/models"
+import { type LibroRegistrado, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber, getGrupoLiterario } from "@shared/models"
 import { useState } from "react"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { cn, formatFecha, formatNro, formatTitulo } from "@/utils"
 import { formatISBN } from "@shared/utils"
 
 interface Props {
-    libro: LibroRegistrado | Libro | Marc21
+    libro: LibroRegistrado
 }
 
 export function DetallesLibro({ libro }: Props) {
     const [expandido, setExpandido] = useState(false)
     const { verDetallesLibro, verHistorialLibro } = useLibrosStore()
     const { numerosDeInventarioExternos } = useSettingsStore()
-    const isMarc = isMarc21(libro)
     const verHistorial = numerosDeInventarioExternos && !!libro.numeroInventario
 
     const nroInventario = formatNro(libro.numeroInventario)
-
-    let literaryForm = formatLiteraryForm(libro.literaryForm)
-    if(isMarc21(libro)) {
-        literaryForm = formatLiteraryForm(libro.literaryForm) ?? getDatosDelDewey(libro?.dewey).genero
-    }
+    const literaryForm = formatLiteraryForm(libro.literaryForm) ?? getDatosDelDewey(libro.dewey).genero
 
     return (
         <>
@@ -35,31 +30,7 @@ export function DetallesLibro({ libro }: Props) {
                     style={{ overflow: "hidden", }}
                     onClick={() => setExpandido((prev) => !prev)}
                     >
-                        { isMarc && <MarkDetalles libro={libro} /> }
-                        { !isMarc &&
-                            <p className="text-base opacity-80 mt-1">
-                                { nroInventario && <span className="mr-1 font-semibold">N° { nroInventario }</span> }
-                                { !nroInventario && <span className="mr-1">S/N</span> }
-                            </p>
-                        }
-                        { (!isMarc && literaryForm && literaryForm !== "Desconocido") && 
-                            <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1 font-semibold">Forma literaria: </span>
-                                { literaryForm }
-                            </p>
-                        }
-                        { (!isMarc && libro?.literaryGenres) && 
-                            <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1">Genero literario: </span>
-                                { libro?.literaryGenres }
-                            </p>
-                        }
-                        { (!isMarc && numerosDeInventarioExternos && libro.fechaDeIngreso !== null) && 
-                            <p className="text-base opacity-80 mt-1">
-                                <span className="mr-1">Fecha de Ingreso al sistema: </span>
-                                { formatFecha(libro.fechaDeIngreso) }
-                            </p>
-                        }
+                        <ListaDeDatos libro={libro} />
                         <span className="mt-4 flex gap-4">
                             <button
                                 className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
@@ -85,36 +56,24 @@ export function DetallesLibro({ libro }: Props) {
                     "mt-0.5 flex justify-between"
                 )}
             >
-                { isMarc && 
-                    <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
-                        { nroInventario && <span className="font-normal">N° { nroInventario }</span> }
-                        { !nroInventario && <span className="font-normal">S/N</span> }
-                        { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
-                        <span className="opacity-70">{ libro.authorCountry }</span>
-                    </span>
-                }
-                { !isMarc && 
-                    <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
-                        { nroInventario && <span className="font-normal">N° { nroInventario }</span> }
-                        { !nroInventario && <span className="font-normal">S/N</span> }
-                        { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
-                    </span>
-                }
+                <span className={cn("flex gap-2 font-semibold opacity-80 mt-1", expandido && "hidden")}>
+                    { nroInventario && <span className="font-normal">N° { nroInventario }</span> }
+                    { !nroInventario && <span className="font-normal">S/N</span> }
+                    { literaryForm !== "Desconocido" && <span>{ literaryForm }</span> }
+                    { libro.authorCountry && <span className="opacity-70">{ libro.authorCountry }</span> }
+                </span>
                 <button
                     className="ml-auto text-sm self-end opacity-60 hover:opacity-100 transition-opacity hover:underline"
                     onClick={() => setExpandido(prev => !prev)}
                 >
-                    { isMarc
-                        ? ( expandido ? "Mostrar menos datos" : "Mostrar mas datos" )
-                        : ( expandido ? "Ocultar opciones" : "Mostrar opciones" )
-                    }
+                    { expandido ? "Mostrar menos datos" : "Mostrar mas datos" }
                 </button>
             </div>
         </>
     )
 }
 
-function MarkDetalles({ libro }: { libro: Marc21 }) {
+function ListaDeDatos({ libro }: { libro: LibroRegistrado }) {
     const publicNote = libro.holding.publicNote
     const signatura = libro?.holding?.callNumber || ""
     const dewey = (libro?.dewey ?? getDeweyFromCallNumber(signatura)) || ""
@@ -212,7 +171,7 @@ function MarkDetalles({ libro }: { libro: Marc21 }) {
                     Año de publicación: { libro.publicationYear }
                 </li>
             }
-            { libro.fechaDeIngreso !== null && 
+            { libro.fechaDeIngreso && 
                 <li className="group flex items-center justify-start opacity-75 cursor-default">
                     Fecha de ingreso al sistema: { formatFecha(libro.fechaDeIngreso) }
                 </li>

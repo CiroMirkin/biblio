@@ -2,7 +2,7 @@ import { CheckIcon, Marc21Form, Spinner } from "@/components"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { countryToPrefix, cutterFromAuthor, formatCountry, isValidNumeroInventario, makeBlankMark21, type Marc21 } from "@shared/models"
+import { countryToPrefix, cutterFromAuthor, formatCountry, holdingVacio, isValidNumeroInventario, type Libro } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
 import { formatName, formatTitulo } from "@/utils"
 import { validateISBN } from "@shared/utils"
@@ -33,7 +33,7 @@ export function IngresoMarc21() {
         }
 
         const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
-        const registro: Marc21 = {
+        const registro: Libro = {
             numeroInventario,
             titulo: formatTitulo(form.titulo.value),
             autor: formatName(form.autor?.value) || "",
@@ -93,7 +93,7 @@ export function IngresoMarc21() {
             submitLabel="Ingresar Libro"
             mode="ingreso"
             submitDisabled={loading || nroInvalido || !homeBranch}
-            defaultValues={makeBlankMark21({ numeroInventario: nroParaLibroNuevo, titulo:"" })}
+            defaultValues={{ numeroInventario: nroParaLibroNuevo, titulo: "", itemType: "BK", holding: holdingVacio() }}
             onSuccess={() => { setExito(true); setTimeout(() => setExito(false), 1200) }}
         />
       </div>

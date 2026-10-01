@@ -1,6 +1,6 @@
-import type { LibroEnPrestamo } from "@shared/models"
+import type { LibroRegistrado } from "@shared/models"
 
-export async function cargarLibrosEnPrestamo(): Promise<LibroEnPrestamo[]> {
+export async function cargarLibrosEnPrestamo(): Promise<LibroRegistrado[]> {
   const raw = await window.electronAPI.getLibros()
 
   return (raw as unknown[]).map(l => {
@@ -9,5 +9,5 @@ export async function cargarLibrosEnPrestamo(): Promise<LibroEnPrestamo[]> {
       ...libro,
       fechaDePrestamo: libro.fechaDePrestamo ? new Date(libro.fechaDePrestamo as string) : null,
     }
-  }) as LibroEnPrestamo[]
+  }) as LibroRegistrado[]
 }
