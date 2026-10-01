@@ -11,7 +11,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   addLibroPrestado: (libro: Libro, fecha?: Date) => ipcRenderer.invoke('addLibroPrestado', libro, fecha),
   ingresarLibro: (ingreso: Libro) => ipcRenderer.invoke('ingresarLibro', ingreso),
-  ingresarLibroMark21: (ingreso: Libro) => ipcRenderer.invoke('ingresarLibroMark21', ingreso),
   
   getLibrosPrestadosSocio: (nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nroSocio),
   

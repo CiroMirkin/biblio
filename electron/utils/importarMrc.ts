@@ -2,7 +2,7 @@ import fs from 'fs'
 import { Iso2709Parser } from 'marcjs'
 import type { LibroRegistrado } from '@shared/models'
 import { parseMrcRecords, type MrcImportResult, type MrcImportError } from './mrcToLibro'
-import { getLibros, ingresarLibroMark21, editarDatosLibro } from '../handlers/libros'
+import { getLibros, ingresarLibro, editarDatosLibro } from '../handlers/libros'
 
 export type ImportarMrcResult = {
   agregados: number
@@ -99,7 +99,7 @@ export async function importarMrc(filePath: string): Promise<ImportarMrcResult> 
       }
     }
     else {
-      await ingresarLibroMark21(importado)
+      await ingresarLibro(importado)
       agregados++
     }
   }

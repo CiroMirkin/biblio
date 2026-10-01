@@ -1,4 +1,4 @@
-import { getLibros, editarDatosLibro, ingresarLibro, ingresarLibroMark21 } from './libros'
+import { getLibros, editarDatosLibro, ingresarLibro } from './libros'
 import {
   devolverLibro,
   getLibrosPrestadosSocio,
@@ -34,7 +34,6 @@ const librosIpcHandlers = {
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
   editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<LibroRegistrado>) => editarDatosLibro(nroInventario, datos),
   ingresarLibro: (_: unknown, ingreso: Libro) => ingresarLibro(ingreso),
-  ingresarLibroMark21: (_: unknown, ingreso: Libro) => ingresarLibroMark21(ingreso),
 }
 
 const prestamosIpcHandlers = {
