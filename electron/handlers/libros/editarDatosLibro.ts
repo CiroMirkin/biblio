@@ -1,10 +1,11 @@
 import type ExcelJS from 'exceljs'
 import { modificarLibros } from "../../utils/datosExcel"
 import { getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
-import { type LibroRegistrado } from "@shared/models/libro"
+import { type DatosLibro, type LibroRegistrado } from "@shared/models/libro"
+import { type DatosPrestamo } from "@shared/models/prestamo"
 import { actualizarNroLibroEnHistorial } from '../historial'
 
-export const editarDatosLibro = async (nroInventario: number, datos: Partial<LibroRegistrado>): Promise<LibroRegistrado | null> => {
+export const editarDatosLibro = async (nroInventario: number, datos: Partial<DatosLibro & DatosPrestamo>): Promise<LibroRegistrado | null> => {
     const newLibro = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
         let targetRow: ExcelJS.Row | null = null
         const {
@@ -12,7 +13,7 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
             numeroSocio: __,
             fechaDePrestamo: ___,
             ...nuevosDatos
-        } = datos as Partial<LibroRegistrado>
+        } = datos
 
         worksheet.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
@@ -46,10 +47,11 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
         })
         if (nroInventarioDuplicado) return null
 
-        const newLibro = {
+        const newLibro: LibroRegistrado = {
             ...libroGuardadoActualmente,
             ...nuevosDatos,
             numeroInventario: numeroInventarioFinal,
+            holding: { ...libroGuardadoActualmente.holding, ...nuevosDatos.holding },
         }
 
         writeLibro(targetRow, newLibro)

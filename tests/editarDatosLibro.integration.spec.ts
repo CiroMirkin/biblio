@@ -245,4 +245,35 @@ describe('editarDatosLibro (integration)', () => {
 
         expect(result).toBeNull()
     }, 30000)
+
+    it('Conserva la sede y el itemType si los datos editados no los traen', async () => {
+        const workbook = new ExcelJS.Workbook()
+        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+        const nroInventario = workbook.getWorksheet('Hoja1')!.getRow(2).getCell(6).value as number
+
+        await editarDatosLibro(nroInventario, {
+            itemType: 'DVD',
+            holding: { homeBranch: 'Central', holdingBranch: 'Deposito' },
+        })
+        const result = await editarDatosLibro(nroInventario, {
+            holding: { callNumber: 'A863 COR' },
+        })
+
+        expect(result?.itemType).toBe('DVD')
+        expect(result?.holding).toMatchObject({ homeBranch: 'Central', holdingBranch: 'Deposito', callNumber: 'A863 COR' })
+    }, 30000)
+
+    it('Vaciar el Dewey deja la celda vacia', async () => {
+        const workbook = new ExcelJS.Workbook()
+        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
+        const nroInventario = workbook.getWorksheet('Hoja1')!.getRow(2).getCell(6).value as number
+
+        await editarDatosLibro(nroInventario, { dewey: 863 })
+        await editarDatosLibro(nroInventario, { dewey: undefined })
+
+        const workbookActualizado = new ExcelJS.Workbook()
+        await workbookActualizado.xlsx.readFile(LIBROS_XLSX_PATH)
+        const fila = workbookActualizado.getWorksheet('Hoja1')!.getRow(2)
+        expect(fila.getCell(19).value ?? '').toBe('')
+    }, 30000)
 })

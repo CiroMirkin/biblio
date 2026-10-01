@@ -1,10 +1,10 @@
 import { modificarLibros } from "../../utils/datosExcel"
 import { getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
 import { get, getSedePorDefecto } from "../../settings"
-import { type Libro } from "@shared/models/libro"
+import { type DatosLibro, type Libro } from "@shared/models/libro"
 
 /** Las reglas dependen del modo de catalogacion de los ajustes. Devuelve null si el libro no las cumple */
-export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => {
+export const ingresarLibro = async (ingreso: DatosLibro): Promise<Libro | null> => {
     const modoMarc = !get('catalogacionSimple')
     const numeroInventario = String(ingreso.numeroInventario ?? '').trim()
     const sede = ingreso.holding?.homeBranch || getSedePorDefecto()

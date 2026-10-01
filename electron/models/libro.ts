@@ -105,7 +105,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     if (libro.publicationYear !== undefined) row.getCell(12).value = libro.publicationYear
     if (libro.authorCountry !== undefined) row.getCell(17).value = libro.authorCountry
     if (libro.holding?.barcode !== undefined) row.getCell(18).value = libro.holding.barcode
-    if (libro.dewey !== undefined) row.getCell(19).value = String(libro.dewey)
+    row.getCell(19).value = libro.dewey === undefined ? '' : String(libro.dewey)
 
     row.commit()
 }

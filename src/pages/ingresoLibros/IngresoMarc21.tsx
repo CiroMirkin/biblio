@@ -1,11 +1,11 @@
 import { CheckIcon, Marc21Form, Spinner } from "@/components"
+import { libroDesdeMarc21Form } from "@/components/libroDesdeMarc21Form"
+import { type CamposForm } from "@/components/libroDesdeLibroForm"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { countryToPrefix, cutterFromAuthor, formatCountry, holdingVacio, isValidNumeroInventario, type Libro } from "@shared/models"
+import { holdingVacio, isValidNumeroInventario } from "@shared/models"
 import { useLibrosStore, useSettingsStore } from "@/store"
-import { formatName, formatTitulo } from "@/utils"
-import { validateISBN } from "@shared/utils"
 
 export function IngresoMarc21() {
   const { ingresarLibro } = useLibrosStore()
@@ -32,30 +32,8 @@ export function IngresoMarc21() {
           return false
         }
 
-        const barcode = validateISBN(form.barcode?.value || "") ? form.barcode.value : ""
-        const registro: Libro = {
-            numeroInventario,
-            titulo: formatTitulo(form.titulo.value),
-            autor: formatName(form.autor?.value) || "",
-            itemType: "BK",
-            literaryForm: form.literaryForm?.value || "u",
-            literaryGenres: form.genres?.value || "",
-            edition: form.edition?.value || "",
-            placeOfPublication: formatName(form.placeOfPublication?.value) || "",
-            publisher: formatName(form.publisher?.value) || "",
-            publicationYear: form.publicationYear?.value || "",
-            authorCountry: formatCountry(form.callNumberPrefix?.value) || "",
-            dewey: parseFloat(form.dewey?.value || ""),
-            holding: {
-                homeBranch,
-                holdingBranch: homeBranch,
-                barcode,
-                publicNote: formatTitulo(form.publicNote?.value) || "",
-                callNumber: (
-                  `${countryToPrefix(form.callNumberPrefix?.value || "")} ${(form.dewey?.value || "").split(',').join('.')} ${cutterFromAuthor(form.autor?.value || "")}`
-                )
-            },
-        }
+        const campos = Object.fromEntries(new FormData(form)) as CamposForm
+        const registro = { ...libroDesdeMarc21Form(campos), numeroInventario }
 
         setLoading(true)
         const ingresado = await ingresarLibro(registro)

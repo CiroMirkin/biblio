@@ -26,7 +26,7 @@ function tieneValor(valor: unknown): boolean {
   return valor !== undefined && valor !== null && valor !== ""
 }
 
-/** La sede y el itemType no cuentan porque un libro cargado en modo simple tambien puede tenerlos */
+/** La sede, el itemType, la nacionalidad y las observaciones no cuentan porque un libro cargado en modo simple tambien puede tenerlos */
 export function tieneDatosMarc(libro: Libro | undefined | null): boolean {
   if (!libro) return false
 
@@ -35,10 +35,8 @@ export function tieneDatosMarc(libro: Libro | undefined | null): boolean {
     tieneValor(libro.placeOfPublication) ||
     tieneValor(libro.publisher) ||
     tieneValor(libro.publicationYear) ||
-    tieneValor(libro.authorCountry) ||
     tieneValor(libro.dewey) ||
     tieneValor(libro.holding?.callNumber) ||
-    tieneValor(libro.holding?.barcode) ||
-    tieneValor(libro.holding?.publicNote)
+    tieneValor(libro.holding?.barcode)
   )
 }

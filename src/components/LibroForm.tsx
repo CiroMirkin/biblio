@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 import { SubmitButton } from "@/components"
 import { NroInventarioInput } from "./NroInventarioInput"
 
-const ORDER = ["numeroInventario", "titulo", "autor"]
+const ORDER = ["numeroInventario", "titulo", "autor", "callNumberPrefix", "publicNote"]
 
 function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
   if (e.key !== "Enter") return
@@ -20,6 +20,7 @@ interface Props {
   onSubmit: (e: SyntheticEvent) => Promise<boolean | void>
   defaultValues?: {
     numeroInventario?: string | number; titulo?: string; autor?: string, literaryForm?: LiteraryForm
+    authorCountry?: string; holding?: { publicNote?: string }
   }
   submitDisabled?: boolean
   onSuccess?: () => void
@@ -85,6 +86,14 @@ export function LibroForm({
         <label className="flex flex-col gap-1 text-base">
           <span className="font-semibold">Autor:</span>
           <input onKeyDown={handleEnter} type="text" name="autor" id="autor" defaultValue={defaultValues.autor ?? ""} className="w-full border bg-white border-black rounded p-1 px-2 placeholder:opacity-85" placeholder="Apellido, nombre" />
+        </label>
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Nacionalidad del autor:</span>
+          <input onKeyDown={handleEnter} type="text" name="callNumberPrefix" id="callNumberPrefix" defaultValue={defaultValues.authorCountry ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
+        </label>
+        <label className="flex flex-col gap-1 text-base">
+          <span className="font-semibold">Observaciones:</span>
+          <input onKeyDown={handleEnter} type="text" name="publicNote" id="publicNote" defaultValue={defaultValues.holding?.publicNote ?? ""} className="w-full border bg-white border-black rounded p-1 px-2" />
         </label>
       </div>
 
