@@ -14,6 +14,8 @@ export interface SettingsSchema {
   sugerirNuevosNumerosDeInventario: boolean
 }
 
+const NOMBRE_BIBLIOTECA_POR_DEFECTO = 'Biblioteca ...'
+
 const store = new Store<SettingsSchema>({
   name: 'settings',
   schema: {
@@ -39,7 +41,7 @@ const store = new Store<SettingsSchema>({
     numerosDeInventarioExternos: true,
     vincularSocios: false,
     catalogacionSimple: true,
-    nombreBiblioteca: 'Biblioteca ...',
+    nombreBiblioteca: NOMBRE_BIBLIOTECA_POR_DEFECTO,
     sugerirNuevosNumerosDeInventario: true,
   },
 })
@@ -66,4 +68,10 @@ export function get<K extends keyof SettingsSchema>(key: K): SettingsSchema[K] {
 
 export function set<K extends keyof SettingsSchema>(key: K, value: SettingsSchema[K]): void {
   store.set(key, value)
+}
+
+/** '' si la biblioteca todavia no tiene nombre */
+export function getSedePorDefecto(): string {
+  const nombre = store.get('nombreBiblioteca')
+  return nombre === NOMBRE_BIBLIOTECA_POR_DEFECTO ? '' : nombre
 }

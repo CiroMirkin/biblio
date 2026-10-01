@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { ingresarLibroMark21 } from '../electron/handlers/libros/ingresarLibroMark21'
 import { LIBROS_XLSX_PATH } from '../electron/constants'
-import type { Marc21 } from "@shared/models"
+import type { Libro } from "@shared/models"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'libros-template.xlsx')
@@ -22,7 +22,7 @@ describe('ingresarLibroMark21 (integration)', () => {
     })
 
     it('Ingresa el libro y lo persiste en el archivo si los datos son correctos y el barcode no existe', async () => {
-        const ingreso: Marc21 = {
+        const ingreso: Libro = {
             numeroInventario: "205",
             titulo: 'El Senor de los Anillos',
             itemType: 'BK',
@@ -59,7 +59,7 @@ describe('ingresarLibroMark21 (integration)', () => {
     it('Retorna null y no modifica el archivo si faltan datos requeridos', async () => {
         const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
 
-        const ingreso: Marc21 = {
+        const ingreso: Libro = {
             titulo: '   ',
             itemType: 'BK',
             holding: {
@@ -87,7 +87,7 @@ describe('ingresarLibroMark21 (integration)', () => {
 
         const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
 
-        const ingreso: Marc21 = {
+        const ingreso: Libro = {
             titulo: 'Titulo Duplicado',
             itemType: 'BK',
             holding: {

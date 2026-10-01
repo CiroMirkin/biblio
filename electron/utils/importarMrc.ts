@@ -1,7 +1,6 @@
 import fs from 'fs'
 import { Iso2709Parser } from 'marcjs'
-import { isMarc21 } from '@shared/models'
-import type { Marc21EnPrestamo } from '@shared/models/marc21'
+import type { LibroRegistrado } from '@shared/models'
 import { parseMrcRecords, type MrcImportResult, type MrcImportError } from './mrcToLibro'
 import { getLibros, ingresarLibroMark21, editarDatosLibro } from '../handlers/libros'
 
@@ -28,10 +27,10 @@ function readMrcFile(filePath: string): Promise<MarcRecord[]> {
   })
 }
 
-function mergeMarc21(
-  existente: Marc21EnPrestamo,
-  importado: Marc21EnPrestamo
-): { merged: Marc21EnPrestamo; changed: boolean } {
+function mergeLibro(
+  existente: LibroRegistrado,
+  importado: LibroRegistrado
+): { merged: LibroRegistrado; changed: boolean } {
   let changed = false
 
   function fill<T>(existing: T, incoming: T): T {
@@ -46,15 +45,17 @@ function mergeMarc21(
     return existing
   }
 
-  const merged: Marc21EnPrestamo = {
+  const merged: LibroRegistrado = {
     ...existente,
     autor: fill(existente.autor, importado.autor),
+    itemType: fill(existente.itemType, importado.itemType),
     authorCountry: fill(existente.authorCountry, importado.authorCountry),
     literaryForm: fill(existente.literaryForm, importado.literaryForm),
     edition: fill(existente.edition, importado.edition),
     placeOfPublication: fill(existente.placeOfPublication, importado.placeOfPublication),
     publisher: fill(existente.publisher, importado.publisher),
     publicationYear: fill(existente.publicationYear, importado.publicationYear),
+    dewey: fill(existente.dewey, importado.dewey),
     holding: {
       ...existente.holding,
       barcode: fill(existente.holding.barcode, importado.holding.barcode),
@@ -82,20 +83,12 @@ export async function importarMrc(filePath: string): Promise<ImportarMrcResult> 
 
     const existente = librosExistentes.find(l => {
       if (numeroInventario && l.numeroInventario && String(l.numeroInventario) === String(numeroInventario)) return true
-      if (barcode && isMarc21(l) && l.holding.barcode === barcode) return true
+      if (barcode && l.holding.barcode === barcode) return true
       return false
     })
 
     if (existente) {
-      if (!isMarc21(existente)) {
-        errores.push({
-          index: -1,
-          reason: `El libro con inventario "${numeroInventario ?? barcode}" existe pero no es MARC21`,
-        })
-        continue
-      }
-
-      const { merged, changed } = mergeMarc21(existente, importado)
+      const { merged, changed } = mergeLibro(existente, importado)
 
       if (changed) {
         await editarDatosLibro(existente.numeroInventario as number, merged)

@@ -1,5 +1,6 @@
 import { modificarLibros } from "../../utils/datosExcel"
 import { generarIdSinInventariar, getNroDeInventarioFromRow, writeLibro } from "../../models/libro"
+import { getSedePorDefecto } from "../../settings"
 import { type Libro } from "@shared/models/libro"
 
 export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => modificarLibros(async ({ worksheet, writeWorkbook }) => {
@@ -17,11 +18,17 @@ export const ingresarLibro = async (ingreso: Libro): Promise<Libro | null> => mo
     if (nroInventarioDuplicado) return null
     if (!ingreso.titulo?.trim()) return null
 
+    const sede = getSedePorDefecto()
     const newLibro: Libro = {
         ...ingreso,
         titulo: ingreso.titulo,
         numeroInventario: ingreso.numeroInventario || generarIdSinInventariar(),
         fechaDeIngreso: new Date(),
+        holding: {
+            ...ingreso.holding,
+            homeBranch: ingreso.holding?.homeBranch || sede,
+            holdingBranch: ingreso.holding?.holdingBranch || sede,
+        },
     }
     const targetRow = worksheet.getRow(worksheet.rowCount + 1)
     writeLibro(targetRow, newLibro)

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import ExcelJS from 'exceljs'
 import { writeLibro } from '../electron/models/libro'
-import type { CallNumber, Marc21EnPrestamo } from "@shared/models"
+import type { CallNumber, LibroRegistrado } from "@shared/models"
 
 const crearRowEnBlanco = (): ExcelJS.Row => {
     const workbook = new ExcelJS.Workbook()
@@ -14,10 +14,10 @@ const callNumberConPrefijo: CallNumber = "A863 AGU"
 const callNumberConVolumen: CallNumber = "982 COO v.2"
 
 describe('writeLibro', () => {
-    it('Escribe un Marc21EnPrestamo en las columnas que corresponden segun el mapeo', () => {
+    it('Escribe un LibroRegistrado en las columnas que corresponden segun el mapeo', () => {
         const row = crearRowEnBlanco()
 
-        const libro: Marc21EnPrestamo = {
+        const libro: LibroRegistrado = {
             titulo: 'Cien anos de soledad',
             autor: 'Gabriel Garcia Marquez',
             numeroInventario: 1001,
@@ -65,7 +65,7 @@ describe('writeLibro', () => {
     it('Escribe el callNumber con prefijo correctamente', () => {
         const row = crearRowEnBlanco()
 
-        const libro: Marc21EnPrestamo = {
+        const libro: LibroRegistrado = {
             titulo: 'El Aleph',
             itemType: 'BK',
             holding: {
@@ -87,7 +87,7 @@ describe('writeLibro', () => {
     it('Escribe el callNumber con volumen correctamente', () => {
         const row = crearRowEnBlanco()
 
-        const libro: Marc21EnPrestamo = {
+        const libro: LibroRegistrado = {
             titulo: 'Historia Universal',
             itemType: 'BK',
             holding: {
@@ -109,7 +109,7 @@ describe('writeLibro', () => {
     it('No escribe en celdas cuyos campos opcionales no fueron especificados', () => {
         const row = crearRowEnBlanco()
 
-        const libro: Marc21EnPrestamo = {
+        const libro: LibroRegistrado = {
             titulo: 'Rayuela',
             itemType: 'BK',
             holding: {
@@ -144,7 +144,7 @@ describe('writeLibro', () => {
         row.getCell(9).value = 'Edicion Previa'
         row.getCell(11).value = 'Editorial Previa'
 
-        const libro: Marc21EnPrestamo = {
+        const libro: LibroRegistrado = {
             titulo: 'Ficciones',
             itemType: 'BK',
             holding: {
@@ -164,5 +164,21 @@ describe('writeLibro', () => {
         expect(row.getCell(4).value).toBe('Jorge Luis Borges')
         expect(row.getCell(9).value).toBe('Edicion Previa')
         expect(row.getCell(11).value).toBe('Editorial Previa')
+    })
+
+    it('Escribe itemType y sede aunque el libro no tenga otros datos MARC', () => {
+        const row = crearRowEnBlanco()
+
+        const libro: LibroRegistrado = {
+            titulo: 'Rayuela',
+            itemType: 'BK',
+            holding: { homeBranch: 'Popular', holdingBranch: 'Popular' },
+        }
+
+        writeLibro(row, libro)
+
+        expect(row.getCell(7).value).toBe('BK')
+        expect(row.getCell(13).value).toBe('Popular')
+        expect(row.getCell(14).value).toBe('Popular')
     })
 })

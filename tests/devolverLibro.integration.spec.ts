@@ -6,6 +6,7 @@ import ExcelJS from 'exceljs'
 import { devolverLibro } from '../electron/handlers/prestamos/devolverLibro'
 import { addLibroPrestado } from '../electron/handlers/prestamos/addLibroPrestado'
 import { LIBROS_XLSX_PATH } from '../electron/constants'
+import { holdingVacio } from '@shared/models'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'libros-template.xlsx')
@@ -26,6 +27,7 @@ describe('devolverLibro (integration)', () => {
             titulo: 'Aquel dia en el bosque',
             nombreSocio: 'Prueba,Oscar',
             numeroSocio: 14,
+            holding: holdingVacio(),
         }
         const prestamo = await addLibroPrestado(libro)
         expect(prestamo).not.toBeNull()

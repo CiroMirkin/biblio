@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { addLibroPrestado } from '../electron/handlers/prestamos/addLibroPrestado'
 import { LIBROS_XLSX_PATH } from '../electron/constants'
+import { holdingVacio } from '@shared/models'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'libros-template.xlsx')
@@ -27,6 +28,7 @@ describe('addLibroPrestado (integration)', () => {
             numeroInventario: 9999,
             nombreSocio: 'Juan Perez',
             numeroSocio: 42,
+            holding: holdingVacio(),
         }
         const fecha = new Date('2024-06-01')
 
@@ -68,6 +70,7 @@ describe('addLibroPrestado (integration)', () => {
             numeroInventario: inventarioExistente as number,
             nombreSocio: 'Maria Lopez',
             numeroSocio: 7,
+            holding: holdingVacio(),
         }
         const fecha = new Date('2024-07-15')
 
@@ -111,6 +114,7 @@ describe('addLibroPrestado (integration)', () => {
             numeroInventario: '',
             nombreSocio: 'Juan Perez',
             numeroSocio: 42,
+            holding: holdingVacio(),
         })
 
         const primero = await addLibroPrestado(libro('Primero Sin Numero'))
@@ -137,6 +141,7 @@ describe('addLibroPrestado (integration)', () => {
             numeroInventario: 8888,
             nombreSocio: 'Carlos Ruiz',
             numeroSocio: 5,
+            holding: holdingVacio(),
         }
 
         const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
@@ -162,6 +167,7 @@ describe('addLibroPrestado (integration)', () => {
             numeroInventario: inventarioExistente,
             nombreSocio: 'Socio Nuevo',
             numeroSocio: 99,
+            holding: holdingVacio(),
         }
 
         await addLibroPrestado(libro, new Date('2024-01-01'))

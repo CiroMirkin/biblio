@@ -1,12 +1,9 @@
-import type { CallNumber } from "./callNumber";
-import type { Dewey } from "./dewey";
-import type { Libro, LibroEnPrestamo, LibroRegistrado } from "./libro";
-import type { DatosPrestamo } from "./prestamo";
+import type { Libro } from "./libro";
 
 export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
 
 /**
- * Registro de un libro en formato MARC 21.
+ * Columnas MARC 21 de un libro en la hoja Excel.
 | Columna Excel          | Campo MARC 21 | Descripción                       |
 |------------------------|---------------|------------------------------------|
 | `245$a Título`         | 245 $a        | Título (R)                        |
@@ -24,60 +21,24 @@ export type Marc21ItemType = "BK" | "DVD" | "MAP" | "MX" | "REF" | "SER"
 | `952$o Signatura`      | 952 $o        | Signatura topográfica    (op)     |
  */
 
-export interface Marc21 extends Libro {
-  authorCountry?: string
-  itemType: Marc21ItemType
-
-  edition?: string
-  placeOfPublication?: string
-  publisher?: string
-  publicationYear?: string
-  dewey?: Dewey
-  volume?: string
-
-  holding: {
-    homeBranch: string
-    holdingBranch: string
-    barcode?: string
-    publicNote?: string
-    callNumber?: CallNumber
-  }
-}
-
-export type Marc21EnPrestamo = Marc21 & DatosPrestamo
-
 function tieneValor(valor: unknown): boolean {
   if (typeof valor === "number") return !isNaN(valor)
   return valor !== undefined && valor !== null && valor !== ""
 }
 
-export function isMarc21(libro: LibroRegistrado | undefined): libro is Marc21EnPrestamo {
+/** La sede y el itemType no cuentan porque un libro cargado en modo simple tambien puede tenerlos */
+export function tieneDatosMarc(libro: Libro | undefined | null): boolean {
   if (!libro) return false
 
-  if (!('itemType' in libro)) return false
-
   return (
-    tieneValor(libro?.edition) ||
-    tieneValor(libro?.placeOfPublication) ||
-    tieneValor(libro?.publisher) ||
-    tieneValor(libro?.publicationYear) ||
-    tieneValor(libro?.authorCountry) ||
-    tieneValor(libro?.dewey) ||
+    tieneValor(libro.edition) ||
+    tieneValor(libro.placeOfPublication) ||
+    tieneValor(libro.publisher) ||
+    tieneValor(libro.publicationYear) ||
+    tieneValor(libro.authorCountry) ||
+    tieneValor(libro.dewey) ||
     tieneValor(libro.holding?.callNumber) ||
-    tieneValor(libro.holding?.barcode)
+    tieneValor(libro.holding?.barcode) ||
+    tieneValor(libro.holding?.publicNote)
   )
 }
-
-export function makeBlankMark21(libro: Libro | LibroEnPrestamo): Marc21 {
-  return {
-    ...libro,
-    itemType: "BK",
-    holding: {
-      barcode: "",
-      holdingBranch: "",
-      homeBranch: "",
-      callNumber: "",
-    },
-  }
-}
-
