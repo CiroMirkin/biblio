@@ -1,6 +1,6 @@
 import type ExcelJS from 'exceljs'
 import { modificarLibros } from "../../utils/datosExcel"
-import { generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
+import { getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
 import { type LibroRegistrado } from "@shared/models/libro"
 import { actualizarNroLibroEnHistorial } from '../historial'
 
@@ -28,8 +28,10 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Lib
         const libroGuardadoActualmente = rowToLibro(targetRow)
         if (nuevosDatos.titulo === '' && libroGuardadoActualmente.titulo) return null
 
+        if ('numeroInventario' in nuevosDatos && !nuevosDatos.numeroInventario) return null
+
         const numeroInventarioFinal = 'numeroInventario' in nuevosDatos
-            ? (nuevosDatos.numeroInventario || generarIdSinInventariar())
+            ? nuevosDatos.numeroInventario
             : libroGuardadoActualmente.numeroInventario
 
         let nroInventarioDuplicado = false  
