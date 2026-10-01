@@ -17,7 +17,16 @@ describe('libroDesdeLibroForm', () => {
             autor: 'Cortazar, Julio',
             literaryForm: 'u',
             literaryGenres: '',
+            authorCountry: '',
+            holding: { publicNote: '' },
         })
+    })
+
+    it('Toma nacionalidad y observaciones opcionales', () => {
+        const libro = libroDesdeLibroForm({ titulo: 'Rayuela', callNumberPrefix: 'argentino', publicNote: 'tapa rota' })
+
+        expect(libro.authorCountry).toBe('Argentina')
+        expect(libro.holding?.publicNote).toBe('Tapa rota')
     })
 
     it('Al editar, un autor vacio conserva el autor guardado', () => {

@@ -1,4 +1,4 @@
-import { calcularCallNumber, formatCountry, type DatosLibro, type Libro } from "@shared/models"
+import { calcularCallNumber, type DatosLibro, type Libro } from "@shared/models"
 import { validateISBN } from "@shared/utils"
 import { formatName } from "@/utils/formatName"
 import { formatTitulo } from "@/utils/formatTitulo"
@@ -20,7 +20,6 @@ export function libroDesdeMarc21Form(campos: CamposForm, libroGuardado?: Libro):
     placeOfPublication: formatName(campos.placeOfPublication ?? ""),
     publisher: formatName(campos.publisher ?? ""),
     publicationYear: campos.publicationYear || "",
-    authorCountry: formatCountry(campos.callNumberPrefix ?? ""),
     dewey: isNaN(dewey) ? undefined : dewey,
     holding: {
       barcode: validateISBN(campos.barcode ?? "") ? campos.barcode : "",

@@ -1,4 +1,4 @@
-import type { DatosLibro, Libro, LiteraryForm } from "@shared/models"
+import { formatCountry, type DatosLibro, type Libro, type LiteraryForm } from "@shared/models"
 import { formatName } from "@/utils/formatName"
 import { formatTitulo } from "@/utils/formatTitulo"
 
@@ -11,5 +11,7 @@ export function libroDesdeLibroForm(campos: CamposForm, libroGuardado?: Libro): 
     autor: formatName(campos.autor ?? "") || libroGuardado?.autor || "",
     literaryForm: (campos.literaryForm || "u") as LiteraryForm,
     literaryGenres: campos.genres || "",
+    authorCountry: formatCountry(campos.callNumberPrefix ?? ""),
+    holding: { publicNote: formatTitulo(campos.publicNote ?? "") },
   }
 }
