@@ -20,7 +20,6 @@ declare global {
       getLibros: () => Promise<LibroRegistrado[]>
       editarDatosLibro: (nroInventario: string, datos: Partial<Libro | LibroRegistrado>) => Promise<LibroRegistrado | null>
       ingresarLibro: (libro: Libro) => Promise<Libro | null>
-      ingresarLibroMark21: (libro: Libro) => Promise<Libro | null>
 
       addLibroPrestado: (libro: LibroRegistrado, fecha?: Date) => Promise<LibroRegistrado | null>
       

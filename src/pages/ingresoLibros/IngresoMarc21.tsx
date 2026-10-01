@@ -8,7 +8,7 @@ import { formatName, formatTitulo } from "@/utils"
 import { validateISBN } from "@shared/utils"
 
 export function IngresoMarc21() {
-  const { ingresoMark21 } = useLibrosStore()
+  const { ingresarLibro } = useLibrosStore()
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
   const [ nroInvalido, setNroComoInvalido ] = useState(false)
@@ -58,7 +58,7 @@ export function IngresoMarc21() {
         }
 
         setLoading(true)
-        const ingresado = await ingresoMark21(registro)
+        const ingresado = await ingresarLibro(registro)
         setLoading(false)
         if (!ingresado) {
             console.error("Error en el ingreso del registro MARC21")

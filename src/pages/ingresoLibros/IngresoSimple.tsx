@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { formatName, formatTitulo } from "@/utils"
 
 export function IngresoSimple() {
-  const { ingresoSimple, getUltimoNumeroInventario } = useLibrosStore()
+  const { ingresarLibro, getUltimoNumeroInventario } = useLibrosStore()
   const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formKey, setFormKey] = useState(0)
@@ -35,7 +35,7 @@ export function IngresoSimple() {
     }
 
     setLoading(true)
-    const actualizado = await ingresoSimple(libro)
+    const actualizado = await ingresarLibro(libro)
     setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")

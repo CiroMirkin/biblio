@@ -35,8 +35,7 @@ interface LibrosState {
   devolverLibro: (nroInventario: number | string) => Promise<void>
   getLibroPorInventario: (nroInventario: number | string) => LibroRegistrado | null
 
-  ingresoMark21: (ingreso: Libro) => Promise<boolean>
-  ingresoSimple: (ingreso: Libro) => Promise<boolean>
+  ingresarLibro: (ingreso: Libro) => Promise<boolean>
 
   getUltimoNumeroInventario: () => number
   esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
@@ -165,27 +164,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     return result.length ? result[0] : null
   },
 
-  ingresoMark21: async (ingreso: Libro) => {
-    if (!ingreso.titulo?.trim() || !ingreso.itemType) return false
-    if (!ingreso.numeroInventario || !ingreso.holding.homeBranch) return false
-
-    const libroRegistrado = await window.electronAPI.ingresarLibroMark21(ingreso)
-    if(!libroRegistrado) return false
-
-    const { libros, librosDisponibles } = get()
-    set({
-      libros: [...libros, {
-        ...libroRegistrado,
-        fechaDePrestamo: null,
-      }],
-      librosDisponibles: [...librosDisponibles, libroRegistrado],
-    })
-    return true
-  },
-
-  ingresoSimple: async (ingreso: Libro) => {
-    if(!ingreso.titulo.trim()) return false
-
+  ingresarLibro: async (ingreso: Libro) => {
     const libroRegistrado = await window.electronAPI.ingresarLibro(ingreso)
     if(!libroRegistrado) return false
     const newLibro = {
