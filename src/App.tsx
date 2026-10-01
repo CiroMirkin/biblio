@@ -44,7 +44,7 @@ const views = [
 ]
 
 function App() {
-  const { showListaSocios, buscar, inicializar: inicializarSocios } = useSociosStore()
+  const { showListaSocios, buscar, inicializar: inicializarSocios, salirDeSocio } = useSociosStore()
   const { inicializar: inicializarLibros, verCatalogo } = useLibrosStore()
   const { inicializar: inicializarSettings, numerosDeInventarioExternos, gestionDeCuotas } = useSettingsStore()
 
@@ -68,11 +68,11 @@ function App() {
     <div className="h-full bg-white flex flex-col scroll-smooth tracking-wide">
       <nav className="h-18 flex justify-start items-end gap-1">
         <motion.button
-          onClick={() => {
+          onClick={() => salirDeSocio(() => {
             setActualView(options.CUOTA)
             showListaSocios()
             buscar("", { showDetallesSocio: false })
-          }}
+          })}
           animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
@@ -85,7 +85,7 @@ function App() {
           <span className="block md:hidden">Socios</span>
         </motion.button>
         <motion.button
-          onClick={() => setActualView(options.INSCRIPCION)}
+          onClick={() => salirDeSocio(() => setActualView(options.INSCRIPCION))}
           animate={{ height: actualView === options.INSCRIPCION ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
@@ -97,10 +97,10 @@ function App() {
           Inscripción
         </motion.button>
         <motion.button
-          onClick={() => {
+          onClick={() => salirDeSocio(() => {
             setActualView(options.LIBROS)
             verCatalogo()
-          }}
+          })}
           animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
@@ -112,7 +112,7 @@ function App() {
           { numerosDeInventarioExternos ? "Catalogo" : "Prestamos" }
         </motion.button>
         <motion.button
-          onClick={() => setActualView(options.INGRESO_LIBROS)}
+          onClick={() => salirDeSocio(() => setActualView(options.INGRESO_LIBROS))}
           animate={{ height: actualView === options.INGRESO_LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
@@ -126,7 +126,7 @@ function App() {
           <span className="block md:hidden text-base min-w-20">Ing. Libros</span>
         </motion.button>
         <motion.button
-          onClick={() => setActualView(options.AJUSTES)}
+          onClick={() => salirDeSocio(() => setActualView(options.AJUSTES))}
           animate={{ height: actualView === options.AJUSTES ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(

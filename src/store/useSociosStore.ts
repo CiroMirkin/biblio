@@ -50,6 +50,12 @@ interface SociosState {
     verSocioVinculado: (nroSocio: number) => void
 
     showListaSocios: () => void
+
+    // los utiliza la tabla de prestamos mientras esta montada
+    hayPrestamoSinRegistrar: () => boolean
+    salidaPendiente: (() => void) | null
+    salirDeSocio: (accion: () => void) => void
+    cancelarSalida: () => void
 }
 
 export const useSociosStore = create<SociosState>((set, get) => ({
@@ -64,6 +70,8 @@ export const useSociosStore = create<SociosState>((set, get) => ({
     sociosActivos: 0,
     sociosInactivos: 0,
     loadingSocios: true,
+    hayPrestamoSinRegistrar: () => false,
+    salidaPendiente: null,
 
     inicializar: async () => {
         const socios = await cargarSocios()
@@ -368,6 +376,13 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             showDetallesSocio: false,
         })
     },
+
+    salirDeSocio: (accion) => {
+        if (get().hayPrestamoSinRegistrar()) set({ salidaPendiente: accion })
+        else accion()
+    },
+
+    cancelarSalida: () => set({ salidaPendiente: null }),
 }))
 
 const actualizarSocioEnLista = (socio: Socio, lista: Socio[]) =>
