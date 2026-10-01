@@ -1,16 +1,16 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { Libro } from "@shared/models/libro"
+import type { DatosLibro, Libro } from "@shared/models/libro"
 import type { NewSocio, Socio } from '@shared/models/socio'
 import type { PeriodoDeIngreso } from './utils/crearArchivoMrc'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getSocios: () => ipcRenderer.invoke('getSocios'),
   getLibros: () => ipcRenderer.invoke('getLibros'),
-  editarDatosLibro: (nro: number, datos: Partial<Libro>) => ipcRenderer.invoke('editarDatosLibro', nro, datos),
+  editarDatosLibro: (nro: number, datos: Partial<DatosLibro>) => ipcRenderer.invoke('editarDatosLibro', nro, datos),
   devolverLibro: (numeroInventario: number | string) => ipcRenderer.invoke('devolverLibro', numeroInventario),
   
   addLibroPrestado: (libro: Libro, fecha?: Date) => ipcRenderer.invoke('addLibroPrestado', libro, fecha),
-  ingresarLibro: (ingreso: Libro) => ipcRenderer.invoke('ingresarLibro', ingreso),
+  ingresarLibro: (ingreso: DatosLibro) => ipcRenderer.invoke('ingresarLibro', ingreso),
   
   getLibrosPrestadosSocio: (nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nroSocio),
   

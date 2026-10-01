@@ -20,7 +20,8 @@ import { getCuotasSocio, toggleCuota } from './cuotas'
 import { getHistorialSocio, getHistorialLibro } from './historial'
 import { copiarExcel, type ArchivoKey } from '../utils/copiarExcel'
 
-import type { Libro, LibroRegistrado } from "@shared/models/libro"
+import type { DatosLibro, Libro } from "@shared/models/libro"
+import type { DatosPrestamo } from "@shared/models/prestamo"
 import type { NewSocio, Socio } from '@shared/models/socio'
 import { descargarMrc } from '../utils/descargarMrc'
 import { importarMrc } from '../utils/importarMrc'
@@ -32,8 +33,8 @@ import { ejecutarSincronizacionDesdeSheets } from '../utils/ejecutarSincronizaci
 const librosIpcHandlers = {
   getLibros: () => getLibros(),
   addLibroPrestado: (_: unknown, libro: Libro, fecha?: Date) => addLibroPrestado(libro, fecha),
-  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<LibroRegistrado>) => editarDatosLibro(nroInventario, datos),
-  ingresarLibro: (_: unknown, ingreso: Libro) => ingresarLibro(ingreso),
+  editarDatosLibro: (_: unknown, nroInventario: number, datos: Partial<DatosLibro & DatosPrestamo>) => editarDatosLibro(nroInventario, datos),
+  ingresarLibro: (_: unknown, ingreso: DatosLibro) => ingresarLibro(ingreso),
 }
 
 const prestamosIpcHandlers = {

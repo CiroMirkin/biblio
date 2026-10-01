@@ -37,6 +37,9 @@ export interface Libro {
 
 export type LibroRegistrado = Libro & DatosPrestamo
 
+/** Lo que se carga al ingresar o editar un libro. Las sedes que falten las completa el catalogo */
+export type DatosLibro = Omit<Libro, "holding"> & { holding?: Partial<Holding> }
+
 export const holdingVacio = (): Holding => ({ homeBranch: "", holdingBranch: "" })
 
 export function isValidNumeroInventario(value: string | number | undefined): boolean {
