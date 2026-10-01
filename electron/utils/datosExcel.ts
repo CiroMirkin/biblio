@@ -20,6 +20,8 @@ export const {
   modificar: modificarCuotas,
 } = archivo(CUOTAS_XLSX_PATH, 'original')
 
+export const ANIOS_DE_CUOTAS_CONSERVADOS = 3
+
 export const {
   leer: leerLibros,
   modificar: modificarLibros,

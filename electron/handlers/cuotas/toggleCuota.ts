@@ -1,8 +1,10 @@
 import { modificarCuotas } from '../../utils/datosExcel'
-import { construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
+import { asegurarAnio, construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
 export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: number) => {
   return modificarCuotas(async ({ worksheet, writeWorkbook }) => {
+    asegurarAnio(worksheet, anio)
+
     const headerRow = worksheet.getRow(1)
     const indiceMeses = construirIndiceMeses(headerRow)
 
