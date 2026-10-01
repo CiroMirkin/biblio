@@ -26,7 +26,7 @@ const calcularMesesDesdeUltimoPago = async (
 
 /** Devuelve la cantidad de cuotas adeudadas contando a partir de la ultima cuota paga,
  *  sin considerar meses posteriores al mes actual. */
-export const calcularCuotasAdeudadas = async (nroSocio: number): Promise<number> => {
+export const calcularCuotasAdeudadas = async (nroSocio: number, fechaIngreso?: String | null): Promise<number> => {
     const { meses: mesesCuotas, anio } = await cargarCuotasSocio(nroSocio)
 
     const mesActual = new Date().getMonth()
@@ -43,10 +43,20 @@ export const calcularCuotasAdeudadas = async (nroSocio: number): Promise<number>
         return calcularMesesDesdeUltimoPago(nroSocio, anioDesde, mesUltimoPago)
     }
 
-    if (ultimoPago === -1) return mesesHastaActual.length
+    if (ultimoPago === -1) {
+        return mesesHastaActual.length - mesesAntesDeIngreso(fechaIngreso, anioActual)
+    }
 
     return mesesHastaActual
         .slice(ultimoPago + 1)
         .filter(mes => Object.values(mes)[0] === false)
         .length
+}
+
+// fechaIngreso viene como D/M/AA o D/M/AAAA, si no se puede leer se cuenta desde enero
+const mesesAntesDeIngreso = (fechaIngreso: String | null | undefined, anioActual: number): number => {
+    const [, mes, anio] = String(fechaIngreso ?? '').split('/').map(Number)
+    if (!mes || !anio) return 0
+    const anioCompleto = anio < 100 ? 2000 + anio : anio
+    return anioCompleto === anioActual ? mes - 1 : 0
 }

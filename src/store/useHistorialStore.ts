@@ -32,7 +32,7 @@ export const useHistorialStore = create<HistorialState>((set) => ({
       const entriesConLibro: HistorialEntryConLibro[] = entries.map(e => {
         const libro = libros.find(l => String(l.numeroInventario) === e.nroLibro)
         return { ...e, ...libro } as HistorialEntryConLibro
-      })
+      }).reverse()
 
       set({ entriesConLibro, loading: false })
     }
@@ -50,7 +50,7 @@ export const useHistorialStore = create<HistorialState>((set) => ({
       const entriesConSocio: HistorialEntryConSocio[] = entries.map(e => {
         const socio = socios.find(s => s.nroSocio === e.nroSocio)
         return { ...e, ...socio } as HistorialEntryConSocio
-      })
+      }).reverse()
 
       set({ entriesConSocio, loading: false })
     }

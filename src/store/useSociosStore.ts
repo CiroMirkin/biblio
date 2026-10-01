@@ -351,7 +351,7 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const caracterSocio = getCaracterSocio(socio.caracterSocio)
         if (caracterSocio.tieneCuotasDesactualizadas) return
 
-        const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio)
+        const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio, socio.fechaIngreso)
         if (caracterSocio.caracter) {
             if (cuotasAdeudadas > maximoDeCuotasAdeudadas) {
                 await get().darDeBaja(socio)

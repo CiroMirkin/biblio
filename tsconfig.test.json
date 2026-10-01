@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2023",
-    "lib": ["ES2023"],
+    "lib": ["ES2023", "DOM"],
     "module": "esnext",
     "composite": true,
+    "outDir": "./dist-ts/test",
     "types": ["node", "vitest/globals"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -13,8 +14,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@shared/*": ["./shared/*"]
+      "@shared/*": ["./shared/*"],
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["tests", "electron", "shared"]
+  "include": ["tests", "electron", "shared", "src/store", "src/models", "src/utils", "src/services", "src/types"]
 }
