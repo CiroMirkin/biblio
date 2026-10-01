@@ -79,6 +79,15 @@ const deweyPaises: DeweyEntrada[] = [
   { codigo: 867, genero: "Humor, sátiras, etc.", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
   { codigo: 868, genero: "Formas mixtas", paises: ["España", "Mexico", "Argentina", "Colombia", "Chile", "Peru", "Venezuela", "Ecuador", "Guatemala", "Cuba", "Bolivia", "Republica Dominicana", "Honduras", "Paraguay", "El Salvador", "Nicaragua", "Costa Rica", "Panama", "Uruguay", "Guinea Ecuatorial"] },
   { codigo: 869, genero: "Ficción", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.1, genero: "Poesía", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.2, genero: "Dramas", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.3, genero: "Novela", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.3, genero: "Cuentos", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.4, genero: "Ensayo", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.5, genero: "Discursos", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.6, genero: "Cartas", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.7, genero: "Humor, sátiras, etc.", paises: ["Portugal", "Brasil"] },
+  { codigo: 869.8, genero: "Formas mixtas", paises: ["Portugal", "Brasil"] },
 
   { codigo: 870, genero: "Ficción", paises: ["Roma antigua"] },
   { codigo: 871, genero: "Poesía", paises: ["Roma antigua"] },
@@ -393,29 +402,89 @@ export function getDatosDelDewey(codigo: Dewey | undefined | null): { genero: Li
   }
 }
 
+// alias sin acentos porque formatCountry los quita antes de buscar
+const aliasesPais: Record<string, string[]> = {
+  'Argentina': ['arg', 'argentino', 'a', 'ar'],
+  'Estados Unidos': ['eeuu', 'eu', 'ee uu', 'ee.uu', 'usa', 'estadounidense', 'norteamericano', 'norteamericana', 'americano', 'americana'],
+  'Reino Unido': ['uk', 'inglaterra', 'ingles', 'inglesa', 'britanico', 'britanica', 'escocia', 'escoces', 'escocesa', 'gales'],
+  'España': ['es', 'espanol', 'espanola', 'espana', 'esp'],
+  'Portugal': ['portugues', 'portuguesa', 'portuges', 'portigues', 'portuguez', 'pt'],
+  'Chile': ['ch', 'chileno', 'chilena'],
+  'Brasil': ['brazil', 'brasilera', 'brazilera', 'brasilero', 'brazilero', 'brasileno', 'brasilena'],
+  'Uruguay': ['uru', 'uruguayo', 'uruguaya'],
+  'Paraguay': ['paraguayo', 'paraguaya'],
+  'Bolivia': ['boliviano', 'boliviana'],
+  'Peru': ['peruano', 'peruana'],
+  'Ecuador': ['ecuatoriano', 'ecuatoriana'],
+  'Colombia': ['colombiano', 'colombiana'],
+  'Venezuela': ['venezolana', 'venezolano'],
+  'Mexico': ['mx', 'mexicano', 'mexicana'],
+  'Cuba': ['cubano', 'cubana'],
+  'Republica Dominicana': ['dominicano', 'dominicana'],
+  'Costa Rica': ['costarricense'],
+  'Panama': ['panameno', 'panamena'],
+  'Nicaragua': ['nicaraguense'],
+  'Honduras': ['hondureno', 'hondurena'],
+  'El Salvador': ['salvadoreno', 'salvadorena'],
+  'Guatemala': ['guatemalteco', 'guatemalteca'],
+  'Canada': ['canadiense'],
+  'Francia': ['frances', 'francesa'],
+  'Italia': ['italiano', 'italiana'],
+  'Alemania': ['aleman', 'alemana'],
+  'Austria': ['austriaco', 'austriaca'],
+  'Suiza': ['suizo', 'suiza'],
+  'Belgica': ['belga'],
+  'Paises Bajos': ['holanda', 'holandes', 'holandesa', 'neerlandes', 'neerlandesa'],
+  'Irlanda': ['irlandes', 'irlandesa'],
+  'Islandia': ['islandes', 'islandesa'],
+  'Dinamarca': ['danes', 'danesa'],
+  'Noruega': ['noruego', 'noruega'],
+  'Suecia': ['sueco', 'sueca'],
+  'Finlandia': ['finlandes', 'finlandesa'],
+  'Estonia': ['estonio', 'estonia'],
+  'Polonia': ['polaco', 'polaca'],
+  'Republica Checa': ['checo', 'checa', 'chequia'],
+  'Eslovaquia': ['eslovaco', 'eslovaca'],
+  'Hungria': ['hungaro', 'hungara'],
+  'Rumania': ['rumano', 'rumana'],
+  'Ucrania': ['ucraniano', 'ucraniana'],
+  'Rusia': ['ruso', 'rusa'],
+  'Grecia': ['griego', 'griega'],
+  'Turquia': ['turco', 'turca'],
+  'Roma antigua': ['roma', 'romano', 'romana'],
+  'Israel': ['israeli'],
+  'Siria': ['sirio', 'siria'],
+  'Iraq': ['irak', 'iraqui'],
+  'Iran': ['irani', 'persa'],
+  'Arabia Saudita': ['arabia', 'saudi'],
+  'Egipto': ['egipcio', 'egipcia'],
+  'Marruecos': ['marroqui'],
+  'Etiopia': ['etiope'],
+  'Nigeria': ['nigeriano', 'nigeriana'],
+  'Kenia': ['keniano', 'keniana'],
+  'Sudafrica': ['sudafricano', 'sudafricana'],
+  'India': ['indio', 'india', 'hindu'],
+  'China': ['chino', 'china'],
+  'Japon': ['japones', 'japonesa', 'nipon', 'jp'],
+  'Corea del Sur': ['corea del sur', 'surcoreano', 'surcoreana'],
+  'Corea del Norte': ['corea del norte', 'norcoreano', 'norcoreana'],
+  'Vietnam': ['vietnamita'],
+  'Tailandia': ['tailandes', 'tailandesa'],
+  'Filipinas': ['filipino', 'filipina'],
+  'Indonesia': ['indonesio', 'indonesia'],
+  'Australia': ['australiano', 'australiana'],
+  'Nueva Zelanda': ['neozelandes', 'neozelandesa'],
+}
+
 export function formatCountry(pais: string): string {
-  pais = pais.trim().toLowerCase()
+  pais = pais.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
   if(!pais) return ""
 
-  if(['arg', 'argentino', 'a', 'ar'].includes(pais)) pais = 'Argentina'
-  if(['eeuu', 'eu', 'ee uu', 'ee.uu'].includes(pais)) pais = 'Estados unidos'
-  if(['uk', 'inglaterra', 'ingles', 'inglesa', 'britanico', 'britanica'].includes(pais)) pais = 'Reino Unido'
-  if(['es', 'espanol', 'espanola', 'espana', 'esp'].includes(pais)) pais = 'España'
-  if(['ch', 'chileno', 'chilena'].includes(pais)) pais = 'Chile'
-  if(['brazil', 'brasilera', 'brazilera', 'brasilero', 'brazilero'].includes(pais)) pais = 'Brasil'
-  if(['uru'].includes(pais)) pais = 'Uruguay'
-  if(['venezolana', 'venezolano'].includes(pais)) pais = 'Venezuela'
-  if(['mx', 'mexicano', 'mexicana'].includes(pais)) pais = 'Mexico'
-  if(['roma'].includes(pais)) pais = 'Roma antigua'
-  if(['japones', 'japonesa', 'nipon'].includes(pais)) pais = 'Japon'
-  if(['aleman', 'alemana'].includes(pais)) pais = 'Alemania'
-  if(['arabia'].includes(pais)) pais = 'Arabia Saudita'
-  if(['vietnamita'].includes(pais)) pais = 'Vietnam'
+  for (const [nombre, alias] of Object.entries(aliasesPais)) {
+    if (alias.includes(pais)) return nombre
+  }
 
-  if(['corea del sur'].includes(pais)) return 'Corea del Sur'
-  if(['corea del norte'].includes(pais)) return 'Corea del Norte'
-  
-  return pais.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  return pais.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 }
 
 export function getDeweyPorPaisYGenero(pais: string, genero: LiteraryFormLabel): Dewey | null {
