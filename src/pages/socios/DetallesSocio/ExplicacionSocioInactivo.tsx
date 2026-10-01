@@ -9,7 +9,7 @@ export function ExplicacionSocioInactivo() {
         <section className="card">
             <div className="flex flex-col gap-px mb-4 opacity-75 text-lg tracking-normal">
                 { gestionDeCuotas &&
-                    <p>Este socio esta inactivo, la causa puede ser la adeuda de {maximoDeCuotasAdeudadas} cuotas o mas.</p>
+                    <p>Este socio esta inactivo, la causa puede ser un baja voluntaria o la deuda de {maximoDeCuotasAdeudadas} cuotas o mas.</p>
                 }
                 { !gestionDeCuotas &&
                     <p>Este socio esta inactivo.</p>
