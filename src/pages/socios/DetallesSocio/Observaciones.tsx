@@ -14,6 +14,7 @@ export function Observaciones() {
             min={1}
             classNameInput="border-black/35"
             submitLabel={<CheckIcon size={20} />}
+            className="rounded p-4 card"
             classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
             onSubmit={setObservaciones}
             onChange={() => {}}

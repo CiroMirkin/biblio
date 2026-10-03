@@ -12,17 +12,14 @@ export function MaximoDeCuotasAdeudadas() {
     }
 
     return (
-        <section className="">
-            { /** se debe desactivar al estar loading */}
-            <Form 
-                label="Cantidad de cuotas adeudadas necesarias para dar de baja a un socio automáticamente:"
-                defaultValue={maximoDeCuotasAdeudadas}
-                inputType="number"
-                onChange={setMaximo}
-                min={1}
-                submitLabel={<CheckIcon size={20} />}
-                classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
-            />
-        </section>
+        <Form 
+            label="Cantidad de cuotas adeudadas necesarias para dar de baja a un socio automáticamente:"
+            defaultValue={maximoDeCuotasAdeudadas}
+            inputType="number"
+            onChange={setMaximo}
+            min={1}
+            submitLabel={<CheckIcon size={20} />}
+            classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
+        />
     )
 }

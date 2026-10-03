@@ -7,7 +7,7 @@ export function EstablecerUsoDeCuotas() {
     const toggle = () => toggleSetting('gestionDeCuotas')
 
     return (
-        <section className="card">
+        <section>
             <h2 className="text-lg mb-2">Requiero gestionar gestionar cuotas mensuales:</h2>
             <Toggle
                 labelOn="Requiero gestionar cuotas"

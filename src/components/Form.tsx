@@ -70,7 +70,7 @@ export function Form({
   }
 
   return (
-    <form className={cn("w-full rounded p-4 card", className)} onSubmit={handleSubmit}>
+    <form className={cn("w-full", className)} onSubmit={handleSubmit}>
       <label className={cn("text-lg", classNameLabel)}>{label}</label>
       <div className="mt-1 w-full flex gap-2">
         {textarea ? (
