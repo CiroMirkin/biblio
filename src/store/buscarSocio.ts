@@ -10,9 +10,14 @@ interface Params {
 }
 
 export function buscarSocio({ socios, dato, libros = [] }: Params): Socio[] {
-    // prestamo "nombre del libro" -> prestamo crimen y castigo 
-    if (/^prestamo\s+/i.test(dato)) {
-        return buscarPorPrestamo(dato, socios, libros)
+    const filtrado = dato.startsWith("-")
+    dato = dato.replace(/^-\s*/, "")
+    if(filtrado) {
+        // prestamo "nombre del libro" -> prestamo crimen y castigo 
+        if (/^prestamos?\s+/i.test(dato)) {
+          return buscarPorPrestamo(dato, socios, libros)
+        }
+        return []
     }
 
     if (!isNaN(Number(dato))) {

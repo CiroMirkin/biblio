@@ -15,37 +15,43 @@ interface Params {
 
 export function buscarLibro({ libros, dato }: Params): LibroRegistrado[] {
   dato = dato.toLocaleLowerCase().trim()
-  
-  if (dato === "prestamos de hoy") {
-    return buscarLibrosDeHoy(libros)
-  }
 
-  if(dato === "ingresos de hoy") {
-    return filtrarLibrosRegistrados.hoy(libros)
-  }
+  const filtrado = dato.startsWith("-")
+  dato = dato.replace(/^-\s*/, "")
+  if(filtrado) {
+      if (dato === "prestamos de hoy") {
+        return buscarLibrosDeHoy(libros)
+      }
 
-  if (dato === "numeros de inventario repetidos") {
-    return buscarNrosRepetidos(libros)
-  }
+    if(dato === "ingresos de hoy") {
+      return filtrarLibrosRegistrados.hoy(libros)
+    }
 
-  if(dato === "adeudados recientes") {
-    return filtrarLibrosVencidos({
-      libros,
-      limiteDeDias: useSettingsStore.getState().limiteDeDias,
-      order: 'asc',
-    })
-  }
+    if (dato === "numeros de inventario repetidos") {
+      return buscarNrosRepetidos(libros)
+    }
+    
+    if(dato === "adeudados recientes") {
+      return filtrarLibrosVencidos({
+        libros,
+        limiteDeDias: useSettingsStore.getState().limiteDeDias,
+        order: 'asc',
+      })
+    }
+    
+    if(dato === "adeudados antiguos") {
+      return filtrarLibrosVencidos({
+        libros,
+        limiteDeDias: useSettingsStore.getState().limiteDeDias,
+        order: 'desc',
+      })
+    }
+    
+    if(busquedaPorDiaKeys.includes(dato)) {
+      return buscarLibrosDelDia(dato, libros)
+    }
 
-  if(dato === "adeudados antiguos") {
-    return filtrarLibrosVencidos({
-      libros,
-      limiteDeDias: useSettingsStore.getState().limiteDeDias,
-      order: 'desc',
-    })
-  }
-
-  if(busquedaPorDiaKeys.includes(dato)) {
-    return buscarLibrosDelDia(dato, libros)
+    return []
   }
 
   if (!isNaN(Number(dato))) {
