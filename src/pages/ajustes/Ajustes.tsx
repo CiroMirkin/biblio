@@ -15,6 +15,8 @@ import { NombreBiblioteca } from "./NombreBiblioteca";
 import { ImportarArchivoMrc } from "./ImportarArchivoMrc";
 import { AjustarCamposDeInscripcion } from "./AjustarCamposDeInscripcion";
 import { ImportarCopiaCompleta } from "./ImportarCopiaCompleta";
+import type { ReactNode } from "react";
+import { cn } from "@/utils";
 
 export function Ajustes() {
     const { gestionDeCuotas, numerosDeInventarioExternos } = useSettingsStore()
@@ -22,31 +24,63 @@ export function Ajustes() {
     return (
         <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4">
             <div className="pb-6">
-                <h2 className="pt-4 mb-4 text-xl font-semibold">Ajustes del sistema</h2>
-                <div className="flex flex-col gap-4">
+                <div className="pt-4 flex flex-col gap-4">
                     <NombreBiblioteca />
-                    <EstablecerUsoDeCuotas />
-                    { gestionDeCuotas && 
-                        <div className="pl-8 flex flex-col gap-4">
-                            <PrecioCuota />
-                            <MaximoDeCuotasAdeudadas />
-                        </div>
-                    }
-                    <MaximoPrestamosForm />
-                    <MaximoDiasDelPrestamo />
-                    <AjustarCamposDeInscripcion />
-                    <ComoEstablecerFechaPrestamo />
-                    <PermitirVincularSocios />
-                    <UsarNumeroDeInventarioExternos />
-                    { numerosDeInventarioExternos && 
-                        <div className="pl-8 flex flex-col gap-4">
-                            <EstableceTipoDeCatalogacion />
-                        </div>
-                    }
-                    <CopiarExcels />
-                    <ImportarCopiaCompleta />
-                    <DescargarArchivoMrc />
-                    <ImportarArchivoMrc />
+                    <AjusteSection>
+                        <h3 className="font-semibold text-xl">Gestión de prestamos</h3>
+                        <AjusteSubItem>
+                            <MaximoPrestamosForm />
+                            <MaximoDiasDelPrestamo />
+                            <ComoEstablecerFechaPrestamo />
+                        </AjusteSubItem>
+                    </AjusteSection>
+                    <AjusteSection>
+                        <h3 className="font-semibold text-xl">Gestión de socios</h3>
+                        <AjusteContent>
+                            <AjustarCamposDeInscripcion />
+                            <PermitirVincularSocios />
+                        </AjusteContent>
+                    </AjusteSection>
+                    <AjusteSection>
+                        <h3 className="font-semibold text-xl">Gestión de cuotas</h3>
+                        <AjusteContent>
+                            <EstablecerUsoDeCuotas />
+                            { gestionDeCuotas && 
+                                <AjusteSubItem>
+                                    <PrecioCuota />
+                                    <MaximoDeCuotasAdeudadas />
+                                </AjusteSubItem>
+                            }
+                        </AjusteContent>
+                    </AjusteSection>
+                    <AjusteSection>
+                        <h3 className="font-semibold text-xl">Gestión de inventario</h3>
+                        <AjusteContent>
+                            <UsarNumeroDeInventarioExternos />
+                            { numerosDeInventarioExternos && 
+                                <AjusteSubItem>
+                                    <EstableceTipoDeCatalogacion />
+                                </AjusteSubItem>
+                            }
+                        </AjusteContent>
+                    </AjusteSection>
+                    <AjusteSection>
+                        <h3 className="font-semibold text-xl">Copia de seguridad</h3>
+                        <p className="opacity-50">Importar y exportar un archivos excel con la información del sistema.</p>
+                        <AjusteContent>
+                            <CopiarExcels />
+                            <ImportarCopiaCompleta />
+                        </AjusteContent>
+                    </AjusteSection>
+                    <AjusteSection>
+                        <h3 className="font-semibold text-xl">Gestión de archivos MARC (Avanzado)</h3>
+                        <p className="opacity-50">Permite intercambiar informacion entre otros sistemas como Aguapey o Koha.</p>
+                        <AjusteContent>
+                            <DescargarArchivoMrc />
+                            <ImportarArchivoMrc />
+                        </AjusteContent>
+                    </AjusteSection>
+
                     <ActualizarApp />
                     <div className="card mt-4">
                         Ante cualquier inconveniente o sugerencia, puedes enviar un mensaje a traves del 
@@ -64,9 +98,21 @@ export function Ajustes() {
             <aside className="sticky top-0 h-fit hidden md:flex flex-col">
                 <div className="h-4 w-full bg-transparent" />
                 <section className="card mb-4 flex flex-col gap-2">
-                    <p>Dentro de esta sección puedes ajustar el sistema según sus necesidades y preferencias.</p>
+                    <p>Dentro de esta sección pueden ajustar el sistema según sus necesidades y preferencias.</p>
                 </section>
             </aside>
         </div>
     )
 }
+
+const AjusteSection = ({ children, className }: { children: ReactNode, className?: string }) => (
+    <div className={cn("card", className)}>{ children }</div>
+)
+
+const AjusteContent = ({ children, className }: { children: ReactNode, className?: string }) => (
+    <div className={cn("pt-4 flex flex-col gap-4", className)}>{ children }</div>
+)
+
+const AjusteSubItem = ({ children, className }: { children: ReactNode, className?: string }) => (
+    <AjusteContent className={cn("pl-8 pt-0", className)}>{ children }</AjusteContent>
+)

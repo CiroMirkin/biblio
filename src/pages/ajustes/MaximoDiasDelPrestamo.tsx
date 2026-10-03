@@ -19,7 +19,6 @@ export function MaximoDiasDelPrestamo() {
             onChange={setMaximo}
             min={1}
             submitLabel={<CheckIcon size={20} />}
-            className="rounded p-4 card"
             classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
         />
     )

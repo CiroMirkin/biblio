@@ -15,9 +15,17 @@ export function CopiarExcels() {
     }
 
     return (
-        <div className="flex flex-col gap-2 card">
-            <h3 className="font-semibold text-lg">Obtener copia archivos Excel</h3>
+        <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-lg">Obtener copia de seguridad</h3>
             <div className="flex gap-2">
+                <button
+                    className={cn("mr-4 btn", cargando === "completo" && "btn-disabled")}
+                    disabled={!!cargando}
+                    onClick={() => handleDescargar('completo')}
+                >
+                    {cargando === 'completo' ? 'Exportando copia...' : 'Copia completa'}
+                </button>
+
                 <button
                     className={cn("btn", cargando === "socios" && "btn-disabled")}
                     disabled={!!cargando}
@@ -38,13 +46,6 @@ export function CopiarExcels() {
                     onClick={() => handleDescargar('libros')}
                 >
                     {cargando === 'libros' ? 'Copiando libros...' : 'Libros'}
-                </button>
-                <button
-                    className={cn("ml-4 btn", cargando === "completo" && "btn-disabled")}
-                    disabled={!!cargando}
-                    onClick={() => handleDescargar('completo')}
-                >
-                    {cargando === 'completo' ? 'Exportando copia...' : 'Copia completa'}
                 </button>
             </div>
         </div>

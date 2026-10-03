@@ -19,7 +19,6 @@ export function MaximoPrestamosForm() {
             min={1}
             onChange={setMaximo}
             submitLabel={<CheckIcon size={20} />}
-            className="rounded p-4 card"
             classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
         />
     )

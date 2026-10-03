@@ -7,7 +7,7 @@ export function ComoEstablecerFechaPrestamo() {
     const toggle = () => toggleSetting('fechaDePrestamoAutomatica')
 
     return (
-        <section className="card">
+        <section>
             <h2 className="text-lg mb-2">Fecha de préstamo:</h2>
             <Toggle
                 labelOn="Quiero que la fecha de préstamo se establezca automáticamente."

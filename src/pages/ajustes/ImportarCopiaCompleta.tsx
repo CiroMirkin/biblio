@@ -17,8 +17,8 @@ export function ImportarCopiaCompleta() {
     }
 
     return (
-        <div className="flex flex-col gap-2 card">
-            <h3 className="font-semibold text-lg">Importar copia de completa de los archivos Excel.</h3>
+        <div>
+            <h3 className="font-semibold text-lg">Restaurar copia de seguridad completa.</h3>
             { res !== null &&  res.ok 
                 ? <span className="mb-1 text-lg font-semibold text-greem bg-white">
                     { res.message }
@@ -31,7 +31,7 @@ export function ImportarCopiaCompleta() {
                     { res.message }
                 </span>
             }
-            <div className="flex gap-2">
+            <div className="flex gap-2 pt-2">
                 <button
                     className={cn("btn", cargando && "btn-disabled")}
                     disabled={cargando}
