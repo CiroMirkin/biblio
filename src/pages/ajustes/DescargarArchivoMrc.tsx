@@ -25,11 +25,14 @@ export function DescargarArchivoMrc() {
     }
 
     return (
-        <div className="flex flex-col gap-2 card">
-            <h3 className="font-semibold text-lg">Descargar inventario de libros para subirlo al Koha</h3>
+        <div className="flex flex-col gap-2">
+            <div>
+                <h3 className="font-semibold text-lg">Descargar registros</h3>
+                <p className="opacity-50">Biblio exporta registros e items, pero sistemas como Koha solo importar registros.</p>
+            </div>
             <div className="my-2">
                 <Toggle
-                    labelOn="Ignorar libros sin ISBN establecido (evita duplicar registros al importar el archivo en Koha)."
+                    labelOn="Ignorar libros sin ISBN establecido (evita duplicar registros al importar)."
                     labelOff="Incluir libro con y sin ISBN."
                     value={excluirSinISBN}
                     onChange={setExcluirSinISBN}

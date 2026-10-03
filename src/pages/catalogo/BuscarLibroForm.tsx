@@ -19,6 +19,7 @@ export function BuscarLibroForm() {
     <Form
       label="Buscar libro:"
       placeholder={placeholder}
+      className="rounded p-4 card"
       onChange={handleBusqueda}
     />
   )

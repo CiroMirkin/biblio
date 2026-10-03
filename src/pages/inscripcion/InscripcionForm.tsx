@@ -43,19 +43,19 @@ export function InscripcionForm({
       <div className="w-full grid grid-cols-2 gap-4">
         <label className="flex flex-col gap-1 text-base">
           Apellidos: *
-          <input onKeyDown={handleEnter} type="text" name="apellidos" id="apellidos" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Apellidos" required />
+          <input onKeyDown={handleEnter} type="text" name="apellidos" id="apellidos" className="w-full border bg-white border-black rounded p-1 px-2" required />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
           Nombres: *
-          <input onKeyDown={handleEnter} type="text" name="nombres" id="nombres" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Nombres" required />
+          <input onKeyDown={handleEnter} type="text" name="nombres" id="nombres" className="w-full border bg-white border-black rounded p-1 px-2" required />
         </label>
       </div>
 
       <div className="w-full grid grid-cols-2 gap-4">
         <label className="flex flex-col gap-1 text-base">
           DNI:{camposRequeridos.dni && " *"}
-          <input onKeyDown={handleEnter} type="text" name="dni" id="dni" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="DNI" required={camposRequeridos.dni} />
+          <input onKeyDown={handleEnter} type="text" name="dni" id="dni" className="w-full border bg-white border-black rounded p-1 px-2" required={camposRequeridos.dni} />
         </label>
 
         <label className="flex flex-col gap-1 text-base">
@@ -73,7 +73,6 @@ export function InscripcionForm({
             name="telefono"
             id="telefono"
             className="w-full border bg-white border-black rounded p-1 px-2"
-            placeholder="Numero de celular"
             required={camposRequeridos.telefono}
             minLength={10}
           />
@@ -81,18 +80,18 @@ export function InscripcionForm({
 
         <label className="flex flex-col gap-1 text-base">
           Email:{camposRequeridos.email && " *"}
-          <input onKeyDown={handleEnter} type="email" name="email" id="email" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Email" required={camposRequeridos.email} />
+          <input onKeyDown={handleEnter} type="email" name="email" id="email" className="w-full border bg-white border-black rounded p-1 px-2" required={camposRequeridos.email} />
         </label>
       </div>
 
       <label className="flex flex-col gap-1 text-base">
         Dirección:{camposRequeridos.domicilio && " *"}
-        <input onKeyDown={handleEnter} type="text" name="domicilio" id="domicilio" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="Dirección" required={camposRequeridos.domicilio} />
+        <input onKeyDown={handleEnter} type="text" name="domicilio" id="domicilio" className="w-full border bg-white border-black rounded p-1 px-2" required={camposRequeridos.domicilio} />
       </label>
 
       <label className="flex flex-col gap-1 text-base">
         Observaciones generales:
-        <input onKeyDown={handleEnter} type="text" name="observaciones" id="observaciones" className="w-full border bg-white border-black rounded p-1 px-2" placeholder="" />
+        <input onKeyDown={handleEnter} type="text" name="observaciones" id="observaciones" className="w-full border bg-white border-black rounded p-1 px-2" />
       </label>
 
         <SubmitButton

@@ -8,7 +8,7 @@ export function PermitirVincularSocios() {
         toggleSetting('vincularSocios')
     }
     return (
-        <section className="card">
+        <section>
             <h2 className="text-lg mb-2">Quiero poder vincular socios:</h2>
             <Toggle
                 labelOn="Quiero vincular socios"

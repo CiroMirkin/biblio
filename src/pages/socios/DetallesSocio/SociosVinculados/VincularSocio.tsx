@@ -44,7 +44,7 @@ export function VincularSocio() {
             min={1}
             classNameInput="border-black/35"
             submitLabel={<CheckIcon size={20} />}
-            className="border-none! p-0! placeholder:opacity-40"
+            className="rounded card border-none! p-0! placeholder:opacity-40"
             classNameBtn="hidden"
             onSubmit={handleSubmit}
             placeholder="Nombre del socio a vincular..."

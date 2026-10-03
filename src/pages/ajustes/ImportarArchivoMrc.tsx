@@ -37,12 +37,12 @@ export function ImportarArchivoMrc() {
   const cargando = estado === 'cargando'
 
   return (
-    <div className="flex flex-col gap-3 card">
-      <h3 className="font-semibold text-lg">Importar archivo ".mrc" desde Koha</h3>
+    <div className="flex flex-col gap-3">
+      <h3 className="font-semibold text-lg">Importar existencias</h3>
 
       <div className="flex gap-2">
         <button
-          className={cn('btn flex items-center justify-center gap-1.5', cargando && 'btn-disabled')}
+          className={cn('btn pt-0.5 flex items-center justify-center gap-1.5', cargando && 'btn-disabled')}
           disabled={cargando}
           onClick={() => inputRef.current?.click()}
         >

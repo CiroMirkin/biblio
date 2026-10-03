@@ -15,8 +15,8 @@ const libros = [
 
 describe('buscarSocio por libro prestado', () => {
     it('Devuelve los socios que tienen el libro buscado', () => {
-        expect(buscarSocio({ socios, libros, dato: 'prestamo rayuela' })).toEqual([socios[1]])
-        expect(buscarSocio({ socios, libros, dato: 'prestamo ficciones' })).toEqual([socios[0]])
+        expect(buscarSocio({ socios, libros, dato: '-prestamo rayuela' })).toEqual([socios[1]])
+        expect(buscarSocio({ socios, libros, dato: '-prestamo ficciones' })).toEqual([socios[0]])
     })
 
     it('Sin coincidencias no devuelve socios', () => {

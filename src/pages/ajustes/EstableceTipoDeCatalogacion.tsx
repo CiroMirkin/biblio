@@ -7,7 +7,7 @@ export function EstableceTipoDeCatalogacion() {
     const toggle = () => toggleSetting('catalogacionSimple')
 
     return (
-        <section className="card">
+        <section>
             <h2 className="text-lg mb-2">Tipo de catalogación:</h2>
             <Toggle
                 labelOn="Quiero un registro de libros simple (solo N° de inventario, titulo y autor)."
