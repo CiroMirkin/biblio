@@ -74,7 +74,13 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       }
     })
 
-    set({ libros, librosVencidos, librosDisponibles, librosPrestados, librosFiltrados: [...librosVencidos] })
+    set({
+      libros,
+      librosVencidos: librosVencidos.reverse(),
+      librosDisponibles,
+      librosPrestados,
+      librosFiltrados: [...librosVencidos],
+    })
   },
 
   buscar: (query) => {
