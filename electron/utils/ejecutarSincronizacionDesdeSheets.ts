@@ -5,6 +5,8 @@ import { LIBROS_XLSX_PATH, SCRIPT_SINCRONIZAR_SHEETS_PATH, SHEET_URL_TXT_PATH, S
 import { modificarArchivo } from './hojaExcel'
 
 const execFileAsync = promisify(execFile)
+// Evita retener la cola de libros.xlsx indefinidamente si el script se cuelga 
+const TIMEOUT_SCRIPT_MS = 120_000
 
 export type ResultadoSincronizacion =
   | { ok: true, cantidad: number }
@@ -30,13 +32,19 @@ export async function ejecutarSincronizacionDesdeSheets(): Promise<ResultadoSinc
       '-SheetCsvUrl', sheetUrl,
       '-ExcelPath', LIBROS_XLSX_PATH,
       '-LogPath', SINCRONIZACION_LOG_PATH,
-    ]))
+    ], { timeout: TIMEOUT_SCRIPT_MS }))
     return {
       ok: true,
       cantidad: Number(stdout.trim()) || 0,
     }
   }
   catch (error) {
+    if ((error as { killed?: boolean })?.killed) {
+      return {
+        ok: false,
+        error: `La sincronización superó el límite de ${TIMEOUT_SCRIPT_MS / 1000} segundos y se canceló`,
+      }
+    }
     const stderr = (error as { stderr?: string })?.stderr?.trim()
     return {
       ok: false,

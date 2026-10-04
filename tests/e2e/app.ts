@@ -68,7 +68,7 @@ export async function inscribir(page: Page, apellido: string, nombre: string) {
     await page.locator('#nombres').fill(nombre)
     await page.locator('#telefono').fill('1122334455')
     await page.getByRole('button', { name: 'Inscribir' }).click()
-    await expect(page.getByText('Socio creado exitosamente')).toBeVisible()
+    await expect(page.getByRole('heading', { name: `${apellido}, ${nombre}` })).toBeVisible()
 }
 
 export async function abrirSocio(page: Page, apellido: string) {

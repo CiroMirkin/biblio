@@ -338,6 +338,8 @@ export const useSociosStore = create<SociosState>((set, get) => ({
         const nuevoSocio = await window.electronAPI.createSocio(socioData)
         if (!nuevoSocio) return null
 
+        const { anio, meses: mesesCuotas } = await cargarCuotasSocio(nuevoSocio.nroSocio)
+
         const actualizarLista = (lista: Socio[]) =>
             ordenarSociosAlfabeticamente([...lista, nuevoSocio])
 
@@ -346,7 +348,9 @@ export const useSociosStore = create<SociosState>((set, get) => ({
             sociosFiltrados: actualizarLista(sociosFiltrados),
             socioSeleccionado: nuevoSocio,
             showDetallesSocio: true,
-            mesesCuotas: [],
+            sociosVinculados: [],
+            mesesCuotas,
+            anio,
         })
 
         return nuevoSocio
