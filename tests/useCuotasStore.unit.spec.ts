@@ -65,6 +65,14 @@ describe('useCuotasStore', () => {
         expect(darDeBajaSocio).not.toHaveBeenCalled()
     })
 
+    it('Abrir no vuelve a dar de baja a un socio inactivo', async () => {
+        useSociosStore.setState({ socios: [{ ...socio, caracterSocio: 'Inactivo' }] })
+
+        await useCuotasStore.getState().abrir(1)
+
+        expect(darDeBajaSocio).not.toHaveBeenCalled()
+    })
+
     it('Toggle marca el mes como pago', async () => {
         await useCuotasStore.getState().abrir(1)
 

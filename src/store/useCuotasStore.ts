@@ -72,7 +72,7 @@ const aplicarCambioAutomaticoDeCaracter = async (nroSocio: number, cuotas: { ani
     if (!socio) return
 
     const caracterSocio = getCaracterSocio(socio.caracterSocio)
-    if (caracterSocio.tieneCuotasDesactualizadas) return
+    if (!caracterSocio.estado || caracterSocio.tieneCuotasDesactualizadas) return
 
     const { maximoDeCuotasAdeudadas } = useSettingsStore.getState()
     const cuotasAdeudadas = await calcularCuotasAdeudadas(nroSocio, socio.fechaIngreso, cuotas)
