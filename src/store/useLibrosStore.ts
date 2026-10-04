@@ -6,6 +6,7 @@ import { buscarLibroPorNro } from "./buscarLibroPorNro"
 interface LibrosState {
   libros: LibroRegistrado[]
   query: string
+  loadingLibros: boolean
 
   inicializar: () => Promise<void>
 
@@ -36,10 +37,15 @@ export const useLibrosStore = create<LibrosState>((set, get) => {
   return {
     libros: [],
     query: "",
+    loadingLibros: true,
 
     inicializar: async () => {
-      const libros = await cargarLibrosEnPrestamo()
-      set({ libros })
+      try {
+        set({ libros: await cargarLibrosEnPrestamo() })
+      }
+      finally {
+        set({ loadingLibros: false })
+      }
     },
 
     buscar: (query) => set({ query }),

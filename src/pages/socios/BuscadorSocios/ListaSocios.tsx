@@ -1,12 +1,13 @@
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { useSociosFiltrados, useSociosStore, useVistaStore } from "@/store"
+import { useLibrosStore, useSociosFiltrados, useSociosStore, useVistaStore } from "@/store"
 import { Spinner } from "@/components";
 
 const PAGINA = 10
 
 export function ListaSocios() {
   const { loadingSocios } = useSociosStore()
+  const { loadingLibros } = useLibrosStore()
   const { filtrados: sociosFiltrados } = useSociosFiltrados()
   const { verSocio } = useVistaStore()
   const [cantidad, setCantidad] = useState(PAGINA)
@@ -27,7 +28,8 @@ export function ListaSocios() {
     return () => observer.disconnect()
   }, [sociosFiltrados.length])
 
-  if(loadingSocios) {
+  // sin los libros cargados aun no se sabe que socios tienen prestamos
+  if(loadingSocios || loadingLibros) {
     return <div className="flex gap-2 items-center text-lg">
       <Spinner  /> Cargando...
     </div>
