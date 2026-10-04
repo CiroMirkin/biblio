@@ -25,18 +25,19 @@ interface VistaState {
     verHistorialLibro: (nroInventario?: number | string) => void
     verCatalogo: () => void
 
-    // la tabla de prestamos lo reemplaza mientras esta montada
     hayPrestamoSinRegistrar: () => boolean
     salidaPendiente: (() => void) | null
     cancelarSalida: () => void
 }
 
 export const useVistaStore = create<VistaState>((set, get) => {
-    // toda navegacion que deja el detalle del socio pasa por el aviso de prestamo sin registrar
     const salirDeSocio = (accion: () => void) => {
         const { vistaActual, socios, hayPrestamoSinRegistrar } = get()
         const enDetalle = vistaActual === 'socios' && socios.modo === 'detalle'
-        if (enDetalle && hayPrestamoSinRegistrar()) set({ salidaPendiente: accion })
+
+        if (enDetalle && hayPrestamoSinRegistrar()) {
+            set({ salidaPendiente: accion })
+        }
         else accion()
     }
 
@@ -50,22 +51,49 @@ export const useVistaStore = create<VistaState>((set, get) => {
         ir: (vista) => salirDeSocio(() => {
             if (vista === 'socios') {
                 useSociosStore.getState().buscar("")
-                set({ vistaActual: vista, socios: { modo: 'lista' } })
+                set({
+                    vistaActual: vista,
+                    socios: { modo: 'lista' },
+                })
             }
-            else if (vista === 'catalogo') set({ vistaActual: vista, catalogo: { modo: 'lista' } })
-            else set({ vistaActual: vista })
+            else if (vista === 'catalogo') {
+                set({
+                    vistaActual: vista,
+                    catalogo: { modo: 'lista' },
+                })
+            }
+            else {
+                set({ vistaActual: vista })
+            }
         }),
 
         verSocio: (nroSocio) => salirDeSocio(async () => {
             await useSociosStore.getState().prepararSocio(nroSocio)
-            set({ vistaActual: 'socios', socios: { modo: 'detalle', nroSocio } })
+            set({
+                vistaActual: 'socios',
+                socios: { modo: 'detalle', nroSocio },
+            })
         }),
 
         verListaSocios: () => salirDeSocio(() => set({ socios: { modo: 'lista' } })),
 
-        verEditarLibro: (nro) => set({ catalogo: { modo: 'editar', nroInventario: String(nro ?? "") } }),
-        verHistorialLibro: (nro) => set({ catalogo: { modo: 'historial', nroInventario: String(nro ?? "") } }),
-        verCatalogo: () => set({ catalogo: { modo: 'lista' } }),
+        verEditarLibro: (nro) => set({
+            catalogo: {
+                modo: 'editar',
+                nroInventario: String(nro ?? ""),
+            },
+        }),
+        verHistorialLibro: (nro) => set({
+            catalogo: {
+                modo: 'historial',
+                nroInventario: String(nro ?? ""),
+            },
+        }),
+        verCatalogo: () => set({
+            catalogo: {
+                modo: 'lista',
+            },
+        }),
 
         cancelarSalida: () => set({ salidaPendiente: null }),
     }
