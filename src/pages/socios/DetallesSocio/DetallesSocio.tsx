@@ -1,4 +1,4 @@
-import { useSettingsStore, useSociosStore, useVistaStore, useSocioSeleccionado } from "@/store"
+import { useCuotasStore, useSettingsStore, useVistaStore, useSocioSeleccionado } from "@/store"
 import { Prestamos } from "./Prestamos/Prestamos"
 import { CalendarioCuotas } from "./CalendarioCuotas"
 import { Datos as SocioDatos } from "./Datos"
@@ -17,7 +17,7 @@ import { HistorialPrestamos } from "./HistorialPrestamos"
 const anioActual: number = new Date().getFullYear()
 
 export function DetalleSocio() {
-  const { anio } = useSociosStore()
+  const { anio } = useCuotasStore()
   const { verListaSocios } = useVistaStore()
   const socioSeleccionado = useSocioSeleccionado()
   const { precioCuota, gestionDeCuotas, vincularSocios } = useSettingsStore()

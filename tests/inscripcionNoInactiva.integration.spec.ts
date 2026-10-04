@@ -8,6 +8,7 @@ import { darDeBajaSocio } from '../electron/handlers/socios/darDeBajaSocio'
 import { getSocios } from '../electron/handlers/socios/getSocios'
 import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH } from '../electron/constants'
 import { useSociosStore } from '@/store/useSociosStore'
+import { useCuotasStore } from '@/store/useCuotasStore'
 import { getCaracterSocio } from '@/models'
 import { formatFecha } from '@/utils/formatFecha'
 
@@ -43,7 +44,7 @@ describe('Inscripcion de un socio', () => {
             sociosVinculados: [],
         })
 
-        await useSociosStore.getState().prepararSocio(nuevo!.nroSocio)
+        await useCuotasStore.getState().abrir(nuevo!.nroSocio)
 
         const guardado = (await getSocios() as any[]).find(s => s.nroSocio === nuevo!.nroSocio)!
         expect(getCaracterSocio(guardado.caracterSocio).estado).toBe(true)

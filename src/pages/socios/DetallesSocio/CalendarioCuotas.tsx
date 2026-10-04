@@ -1,6 +1,6 @@
 import { cn } from "@/utils"
 import { useState } from "react"
-import { useSociosStore, useSocioSeleccionado } from "@/store"
+import { useCuotasStore } from "@/store"
 import { Spinner, ChevronsLeftIcon, ChevronsRightICon } from "@/components"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -28,6 +28,7 @@ function Mes({ nombre, pagado, gris, loading, anyLoading, onToggle, year }: MesP
           {nombre}
         </span>
       </div>
+
       {pagado
         ? <button disabled={loading} className={cn(
           "px-4 pb-1 flex items-center justify-center gap-1.5 bg-white opacity-50 hover:opacity-100 rounded",
@@ -49,8 +50,7 @@ function Mes({ nombre, pagado, gris, loading, anyLoading, onToggle, year }: MesP
 }
 
 export function CalendarioCuotas() {
-  const { mesesCuotas, anio, toggleMes, irAnioAnterior, irAnioSiguiente } = useSociosStore()
-  const nroSocio = useSocioSeleccionado()?.nroSocio
+  const { meses: mesesCuotas, anio, toggleMes, irAnioAnterior, irAnioSiguiente } = useCuotasStore()
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const anioActual = new Date().getFullYear()
 
@@ -60,9 +60,9 @@ export function CalendarioCuotas() {
   }, -1)
 
   const handleToggle = async (i: number) => {
-    if (loadingIndex !== null || !nroSocio) return
+    if (loadingIndex !== null) return
     setLoadingIndex(i)
-    await toggleMes(nroSocio, i)
+    await toggleMes(i)
     setLoadingIndex(null)
   }
 
@@ -99,16 +99,18 @@ export function CalendarioCuotas() {
       </div>
 
       <footer className="w-full pt-4 flex gap-5 justify-center items-center">
-        <button onClick={() => nroSocio && irAnioAnterior(nroSocio)} disabled={loadingIndex !== null} className={cn("btn py-1", loadingIndex !== null && "opacity-35 pointer-events-none")}>
+        <button onClick={irAnioAnterior} disabled={loadingIndex !== null} className={cn("btn py-1", loadingIndex !== null && "opacity-35 pointer-events-none")}>
           <ChevronsLeftIcon />
         </button>
+
         <span
           className={cn("px-1.5 font-semibold text-lg opacity-70 rounded", anio !== anioActual && "bg-amber")}
         >
           {anio}
         </span>
+
         <button
-          onClick={() => nroSocio && irAnioSiguiente(nroSocio)}
+          onClick={irAnioSiguiente}
           className={cn("btn py-1", (anio >= anioActual || loadingIndex !== null) ? "opacity-35 pointer-events-none" : "")}
           disabled={anio >= anioActual || loadingIndex !== null}
         >

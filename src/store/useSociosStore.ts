@@ -2,28 +2,18 @@ import { create } from "zustand"
 import type { CaracterSocio } from "@/models/Socio"
 import type { NewSocio, Socio } from "@shared/models"
 import { cargarSocios } from "@/services/cargarSocios"
-import { cargarCuotasSocio } from "@/services/cargarCuotasSocio"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
-import { calcularCuotasAdeudadas } from "@/utils"
-import { getCaracterSocio, type Calendario } from "@/models"
 import { buscarSocio } from "./buscarSocio"
-import { useSettingsStore } from "./useSettingsStore"
 import { useLibrosStore } from "./useLibrosStore"
 
 interface SociosState {
     socios: Socio[]
     sociosConLibros: Socio[]
     sociosFiltrados: Socio[]
-    mesesCuotas: Calendario
-    anio: number
     loadingSocios: boolean
 
     inicializar: () => Promise<void>
     buscar: (apellido: string) => void
-    prepararSocio: (nroSocio: number) => Promise<void>
-    toggleMes: (nroSocio: number, mesIndex: number) => Promise<void>
-    irAnioAnterior: (nroSocio: number) => Promise<void>
-    irAnioSiguiente: (nroSocio: number) => Promise<void>
 
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
     editarDatos: (nroSocio: number, datos: Partial<Socio>) => Promise<void>
@@ -32,7 +22,6 @@ interface SociosState {
 
     darDeBaja: (nroSocio: number) => Promise<void>
     reactivar: (nroSocio: number) => Promise<void>
-    aplicarCambioAutomaticoDeCaracter: (socio: Socio) => Promise<void>
 
     vincularSocio: (nroSocio: number, nroAVincular: number) => Promise<boolean>
     desvincularSocio: (nroSocio: number, nroADesvincular: number) => Promise<boolean>
@@ -53,8 +42,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
         socios: [],
         sociosConLibros: [],
         sociosFiltrados: [],
-        mesesCuotas: [],
-        anio: new Date().getFullYear(),
         loadingSocios: true,
 
         inicializar: async () => {
@@ -87,15 +74,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
             set({ sociosFiltrados: filtrados })
         },
 
-        prepararSocio: async (nroSocio) => {
-            const socio = getSocio(nroSocio)
-            if (!socio) return
-
-            const { anio, meses: mesesCuotas } = await cargarCuotasSocio(nroSocio)
-            await get().aplicarCambioAutomaticoDeCaracter(socio)
-            set({ mesesCuotas, anio })
-        },
-
         editarDatos: async (nroSocio, datos) => {
             const socio = getSocio(nroSocio)
             if (!socio) return
@@ -104,23 +82,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
             if (!ok) return
 
             reemplazar({ ...socio, ...datos })
-        },
-
-        toggleMes: async (nroSocio, mesIndex) => {
-            const socio = getSocio(nroSocio)
-            if (!socio) return
-
-            // PARA MIGRACION: permite que luego de actualizar las cuotas el caracter se defina automaticamente
-            if(getCaracterSocio(socio.caracterSocio).tieneCuotasDesactualizadas) {
-                await get().reactivar(nroSocio)
-            }
-
-            const pagado = await window.electronAPI.toggleCuota(nroSocio, get().anio, mesIndex)
-
-            const next = [...get().mesesCuotas]
-            const key = Object.keys(next[mesIndex])[0]
-            next[mesIndex] = { [key]: pagado }
-            set({ mesesCuotas: next })
         },
 
         darDeBaja: async (nroSocio) => {
@@ -187,18 +148,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
             return true
         },
 
-        irAnioAnterior: async (nroSocio) => {
-            const nuevoAnio = get().anio - 1
-            const { meses } = await cargarCuotasSocio(nroSocio, nuevoAnio)
-            set({ anio: nuevoAnio, mesesCuotas: meses })
-        },
-
-        irAnioSiguiente: async (nroSocio) => {
-            const nuevoAnio = get().anio + 1
-            const { meses } = await cargarCuotasSocio(nroSocio, nuevoAnio)
-            set({ anio: nuevoAnio, mesesCuotas: meses })
-        },
-
         crearSocio: async (socioData) => {
             const nuevoSocio = await window.electronAPI.createSocio(socioData)
             if (!nuevoSocio) return null
@@ -209,22 +158,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
                 sociosFiltrados: ordenarSociosAlfabeticamente([...sociosFiltrados, nuevoSocio]),
             })
             return nuevoSocio
-        },
-
-        aplicarCambioAutomaticoDeCaracter: async (socio: Socio) => {
-            const { maximoDeCuotasAdeudadas, gestionDeCuotas } = useSettingsStore.getState()
-
-            if (!gestionDeCuotas) return
-
-            const caracterSocio = getCaracterSocio(socio.caracterSocio)
-            if (caracterSocio.tieneCuotasDesactualizadas) return
-
-            const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio, socio.fechaIngreso)
-            if (caracterSocio.caracter) {
-                if (cuotasAdeudadas > maximoDeCuotasAdeudadas) {
-                    await get().darDeBaja(socio.nroSocio)
-                }
-            }
         },
     }
 })

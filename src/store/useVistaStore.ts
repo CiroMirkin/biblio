@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { create } from "zustand"
 import { useSociosStore } from "./useSociosStore"
+import { useCuotasStore } from "./useCuotasStore"
 import { useLibrosStore } from "./useLibrosStore"
 
 export type Vista = 'socios' | 'inscripcion' | 'catalogo' | 'ingreso' | 'ajustes'
@@ -68,7 +69,7 @@ export const useVistaStore = create<VistaState>((set, get) => {
         }),
 
         verSocio: (nroSocio) => salirDeSocio(async () => {
-            await useSociosStore.getState().prepararSocio(nroSocio)
+            await useCuotasStore.getState().abrir(nroSocio)
             set({
                 vistaActual: 'socios',
                 socios: { modo: 'detalle', nroSocio },
