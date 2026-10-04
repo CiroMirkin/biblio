@@ -1,18 +1,19 @@
-import { CheckIcon } from "@/components"
 import type { NewSocio } from "@shared/models"
 import { useSociosStore } from "@/store"
 import { useRef, useState } from "react"
 import type { SyntheticEvent } from "react"
-import { AnimatePresence, motion } from "motion/react"
 import { formatFecha, formatName } from "@/utils"
 import { format } from "@formkit/tempo"
 import { InscripcionForm } from "./InscripcionForm"
 import { DatosNecesariosTexto } from "./DatosNecesariosTexto"
 
-export function Inscripcion() {
+type InscripcionProps = {
+  onInscripto: () => void
+}
+
+export function Inscripcion({ onInscripto }: InscripcionProps) {
   const { crearSocio } = useSociosStore()
   const formRef = useRef<HTMLFormElement>(null)
-  const [exito, setExito] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -41,32 +42,17 @@ export function Inscripcion() {
       return
     }
 
-    formRef.current?.reset()
-    setExito(true)
-    setTimeout(() => setExito(false), 1200)
+    onInscripto()
   }
 
   return (
     <>
       <h2 className="pt-4 mb-2 flex items-center gap-4 text-xl font-semibold">
         Inscripción de un nuevo socio
-        <AnimatePresence>
-          {exito && (
-            <motion.span
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2 }}
-              className="pt-1 pb-1.5 px-1.5 flex gap-1.5 items-center rounded text-greem bg-white"
-            >
-              <CheckIcon size={22} /> Socio creado exitosamente
-            </motion.span>
-          )}
-        </AnimatePresence>
       </h2>
 
       <div className="w-full grid grid-cols-1 md:grid-cols-[3.5fr_1.5fr] gap-4 mt-4">
-        <InscripcionForm formRef={formRef} onSubmit={handleSubmit} loading={loading} success={exito} />
+        <InscripcionForm formRef={formRef} onSubmit={handleSubmit} loading={loading} success={false} />
 
         <aside className="sticky top-0 h-fit hidden md:block">
           <section className="p-4 rounded bg-white text-base">

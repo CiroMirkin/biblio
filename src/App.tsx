@@ -18,27 +18,27 @@ type options = typeof options[keyof typeof options];
 const views = [
   {
     id: options.CUOTA,
-    view: <Socios />,
+    view: () => <Socios />,
     bgColor: "bg-secondary",
-  }, 
+  },
   {
     id: options.INSCRIPCION,
-    view: <Inscripcion />,
+    view: (verSocios: () => void) => <Inscripcion onInscripto={verSocios} />,
     bgColor: "bg-[#a3c2f3]",
   },
   {
     id: options.LIBROS,
-    view: <Catalogo />,
+    view: () => <Catalogo />,
     bgColor: "bg-[#d26fb9c9]",
   },
   {
     id: options.INGRESO_LIBROS,
-    view: <IngresoLibros />,
+    view: () => <IngresoLibros />,
     bgColor: "bg-[#a1c690]",
   },
   {
     id: options.AJUSTES,
-    view: <Ajustes />,
+    view: () => <Ajustes />,
     bgColor: "bg-[#b6d4d4]",
   },
 ]
@@ -142,7 +142,7 @@ function App() {
       </nav>
 
       <main className={cn("p-4 pt-0 rounded-b rounded-r flex-1 overflow-y-auto scroll_custom", bg)}>
-        { views.filter(view => view.id === actualView)[0].view }
+        { views.filter(view => view.id === actualView)[0].view(() => setActualView(options.CUOTA)) }
       </main>
     </div>
   )
