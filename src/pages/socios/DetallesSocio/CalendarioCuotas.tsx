@@ -1,6 +1,6 @@
 import { cn } from "@/utils"
 import { useState } from "react"
-import { useSociosStore } from "@/store"
+import { useSociosStore, useSocioSeleccionado } from "@/store"
 import { Spinner, ChevronsLeftIcon, ChevronsRightICon } from "@/components"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -50,6 +50,7 @@ function Mes({ nombre, pagado, gris, loading, anyLoading, onToggle, year }: MesP
 
 export function CalendarioCuotas() {
   const { mesesCuotas, anio, toggleMes, irAnioAnterior, irAnioSiguiente } = useSociosStore()
+  const nroSocio = useSocioSeleccionado()?.nroSocio
   const [loadingIndex, setLoadingIndex] = useState<number | null>(null)
   const anioActual = new Date().getFullYear()
 
@@ -59,9 +60,9 @@ export function CalendarioCuotas() {
   }, -1)
 
   const handleToggle = async (i: number) => {
-    if (loadingIndex !== null) return
+    if (loadingIndex !== null || !nroSocio) return
     setLoadingIndex(i)
-    await toggleMes(i)
+    await toggleMes(nroSocio, i)
     setLoadingIndex(null)
   }
 
@@ -98,7 +99,7 @@ export function CalendarioCuotas() {
       </div>
 
       <footer className="w-full pt-4 flex gap-5 justify-center items-center">
-        <button onClick={irAnioAnterior} disabled={loadingIndex !== null} className={cn("btn py-1", loadingIndex !== null && "opacity-35 pointer-events-none")}>
+        <button onClick={() => nroSocio && irAnioAnterior(nroSocio)} disabled={loadingIndex !== null} className={cn("btn py-1", loadingIndex !== null && "opacity-35 pointer-events-none")}>
           <ChevronsLeftIcon />
         </button>
         <span
@@ -107,7 +108,7 @@ export function CalendarioCuotas() {
           {anio}
         </span>
         <button
-          onClick={irAnioSiguiente}
+          onClick={() => nroSocio && irAnioSiguiente(nroSocio)}
           className={cn("btn py-1", (anio >= anioActual || loadingIndex !== null) ? "opacity-35 pointer-events-none" : "")}
           disabled={anio >= anioActual || loadingIndex !== null}
         >

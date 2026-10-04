@@ -1,6 +1,6 @@
 import { CheckIcon, Form, Spinner } from "@/components"
 import type { Socio } from "@shared/models"
-import { useSociosStore } from "@/store"
+import { useSociosStore, useSocioSeleccionado, useSociosVinculados } from "@/store"
 import { cn } from "@/utils"
 import { useState } from "react"
 
@@ -8,6 +8,7 @@ export function VincularSocio() {
     const [nombre, setNombre] = useState('')
     const [ socioEnVinculacion, setSocioEnVinculacion ] = useState(null as null | number)
     const { buscar, sociosFiltrados, vincularSocio } = useSociosStore()
+    const socioSeleccionado = useSocioSeleccionado()
 
     const handleSubmit = (value: string) => {
         if(socioEnVinculacion !== null) return;
@@ -24,12 +25,10 @@ export function VincularSocio() {
     }
 
     const handleVinculacion = async (nroSocio: number) => {
-        if(socioEnVinculacion !== null) return;
+        if(socioEnVinculacion !== null || !socioSeleccionado) return;
 
         setSocioEnVinculacion(nroSocio)
-        await vincularSocio(
-            Number(nroSocio)
-        )
+        await vincularSocio(socioSeleccionado.nroSocio, Number(nroSocio))
         setSocioEnVinculacion(null)
         buscar("")
         setNombre("")
@@ -71,7 +70,8 @@ interface PropsBtn {
 }
 
 function SocioBtn({ socio, socioEnVinculacion, handleVinculacion }: PropsBtn) {
-    const { sociosVinculados, socioSeleccionado } = useSociosStore()
+    const socioSeleccionado = useSocioSeleccionado()
+    const sociosVinculados = useSociosVinculados()
     
     if(socio.nroSocio === socioSeleccionado!.nroSocio) return;
     

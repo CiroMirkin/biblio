@@ -14,380 +14,236 @@ interface SociosState {
     socios: Socio[]
     sociosConLibros: Socio[]
     sociosFiltrados: Socio[]
-    socioSeleccionado: Socio | null
-    sociosVinculados: Socio[]
     mesesCuotas: Calendario
     anio: number
-    showDetallesSocio: boolean
     sociosActivos: number
     sociosInactivos: number
     loadingSocios: boolean
 
     inicializar: () => Promise<void>
-    buscar: (apellido: string, options?: {
-        showDetallesSocio?: boolean,
-    }) => void
-    seleccionar: (socio: Socio) => void
-    toggleMes: (mesIndex: number) => Promise<void>
-    irAnioAnterior: () => void
-    irAnioSiguiente: () => void
+    buscar: (apellido: string) => void
+    prepararSocio: (nroSocio: number) => Promise<void>
+    toggleMes: (nroSocio: number, mesIndex: number) => Promise<void>
+    irAnioAnterior: (nroSocio: number) => Promise<void>
+    irAnioSiguiente: (nroSocio: number) => Promise<void>
 
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
-    editarDatos: (datos: Partial<Socio>) => Promise<void>
-    cambiarNombre: (newName: string) => Promise<void>
+    editarDatos: (nroSocio: number, datos: Partial<Socio>) => Promise<void>
+    cambiarNombre: (nroSocio: number, newName: string) => Promise<void>
+    setObservaciones: (nroSocio: number, newObservaciones: string) => Promise<void>
 
-    darDeBaja: (socio: Socio, options?: { esSocioSeleccionado?: boolean }) => Promise<void>
-    reactivar: (socio: Socio, options?: { esSocioSeleccionado?: boolean }) => Promise<void>
-
-    darDeBajaSocioSeleccionado: () => Promise<void>
-    reactivarSocioSeleccionado: () => Promise<void>
+    darDeBaja: (nroSocio: number) => Promise<void>
+    reactivar: (nroSocio: number) => Promise<void>
     aplicarCambioAutomaticoDeCaracter: (socio: Socio) => Promise<void>
 
-    setObservaciones: (newObservaciones: string) => Promise<void>
-
-    vincularSocio: (nroSocio: number) => Promise<boolean>
-    desvincularSocio: (nroSocio: number) => Promise<boolean>
-    verSocioVinculado: (nroSocio: number) => void
-
-    showListaSocios: () => void
-
-    // los utiliza la tabla de prestamos mientras esta montada
-    hayPrestamoSinRegistrar: () => boolean
-    salidaPendiente: (() => void) | null
-    salirDeSocio: (accion: () => void) => void
-    cancelarSalida: () => void
+    vincularSocio: (nroSocio: number, nroAVincular: number) => Promise<boolean>
+    desvincularSocio: (nroSocio: number, nroADesvincular: number) => Promise<boolean>
 }
 
-export const useSociosStore = create<SociosState>((set, get) => ({
-    socios: [],
-    sociosConLibros: [],
-    sociosFiltrados: [],
-    sociosVinculados: [],
-    socioSeleccionado: null,
-    mesesCuotas: [],
-    anio: new Date().getFullYear(),
-    showDetallesSocio: false,
-    sociosActivos: 0,
-    sociosInactivos: 0,
-    loadingSocios: true,
-    hayPrestamoSinRegistrar: () => false,
-    salidaPendiente: null,
+export const useSociosStore = create<SociosState>((set, get) => {
+    const getSocio = (nroSocio: number) => get().socios.find(s => s.nroSocio === nroSocio)
 
-    inicializar: async () => {
-        const socios = await cargarSocios()
-        const sociosRegistradosConLibros = await window.electronAPI.getSociosConLibros()
-        const ordenados = ordenarSociosAlfabeticamente(socios)
-
-        let [ sociosActivos, sociosInactivos ] = [ 0, 0 ]
-        socios.forEach(s => {
-            if(getCaracterSocio(s.caracterSocio).estado && !getCaracterSocio(s.caracterSocio).tieneCuotasDesactualizadas) sociosActivos++
-            else sociosInactivos++
-        })
-
-        const sociosConLibros = ordenados.filter(s =>
-            sociosRegistradosConLibros.some(sl => sl.nroSocio === s.nroSocio)
-        )
-
-        set({
-            socios: ordenados,
-            sociosConLibros,
-            sociosActivos,
-            sociosInactivos,
-            sociosFiltrados: [...sociosConLibros],
-            loadingSocios: false,
-        })
-    },
-
-    buscar: (apellido, options = {}) => {
-        const { socios, sociosConLibros } = get()
-        const { showDetallesSocio } = options
-
-        if (!apellido.trim()) {
-            set({ sociosFiltrados: [...sociosConLibros], showDetallesSocio: showDetallesSocio !== false })
-            return
-        }
-
-        const query = apellido.toLowerCase().trim()
-        if(!query) set({ sociosFiltrados:  [...sociosConLibros] })
-
-        const filtrados = buscarSocio({ dato: query, socios, libros: useLibrosStore.getState().libros })
-        set({ sociosFiltrados: filtrados, showDetallesSocio: showDetallesSocio !== false })
-    },
-
-    seleccionar: async (socio) => {
-        const { anio, meses: mesesCuotas } = await cargarCuotasSocio(socio.nroSocio)
-        await get().aplicarCambioAutomaticoDeCaracter(socio)
-
-        const { socios } = get()
-        const sociosVinculados = socios.filter(s => socio.sociosVinculados.includes(s.nroSocio))
-        
-        set({
-            socioSeleccionado: socio,
-            sociosVinculados: sociosVinculados,
-            showDetallesSocio: true,
-            mesesCuotas,
-            anio,
-        })        
-    },
-
-    editarDatos: async (datos) => {
-        const { socioSeleccionado, socios, sociosFiltrados } = get()
-        if (!socioSeleccionado || !socioSeleccionado.nroSocio) return
-
-        const ok = await window.electronAPI.editarDatosSocio(socioSeleccionado.nroSocio, datos)
-        if (!ok) return
-
-        const actualizado = { ...socioSeleccionado, ...datos }
-
-        set({
-            socioSeleccionado: actualizado,
-            socios: actualizarSocioEnLista(actualizado, socios),
-            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
-        })
-    },
-
-    toggleMes: async (mesIndex) => {
-        const { socioSeleccionado, anio, mesesCuotas, reactivar } = get()
-        if (!socioSeleccionado) return
-
-        // PARA MIGRACION: permite que luego de actualizar las cuotas el caracter se defina automaticamente
-        if(getCaracterSocio(socioSeleccionado.caracterSocio).tieneCuotasDesactualizadas) {
-            await reactivar(socioSeleccionado)
-        }
-
-        const pagado = await window.electronAPI.toggleCuota(socioSeleccionado.nroSocio, anio, mesIndex)
-
-        const next = [...mesesCuotas]
-        const key = Object.keys(next[mesIndex])[0]
-        next[mesIndex] = { [key]: pagado }
-        set({ mesesCuotas: next })
-    },
-
-    darDeBaja: async (socio, { esSocioSeleccionado } = {}) => {
-        const { socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
-
-        const ok = await window.electronAPI.darDeBajaSocio(socio.nroSocio)
-        if (!ok) return
-
-        const caracterSocio: CaracterSocio = 'Inactivo'
-        const actualizado = { ...socio, caracterSocio }
-
-        set({
-            ...(esSocioSeleccionado && { socioSeleccionado: actualizado }),
-            socios: actualizarSocioEnLista(actualizado, socios),
-            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
-            sociosInactivos: sociosInactivos + 1,
-            sociosActivos: sociosActivos - 1,
-        })
-    },
-
-    reactivar: async (socio, { esSocioSeleccionado } = {}) => {
-        const { socios, sociosFiltrados, sociosActivos, sociosInactivos } = get()
-
-        const ok = await window.electronAPI.reactivarSocio(socio.nroSocio)
-        if (!ok) return
-
-        const caracterSocio: CaracterSocio = 'Regular'
-        const actualizado = { ...socio, caracterSocio }
-
-        set({
-            ...(esSocioSeleccionado && { socioSeleccionado: actualizado }),
-            socios: actualizarSocioEnLista(actualizado, socios),
-            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
-            sociosActivos: sociosActivos + 1,
-            sociosInactivos: sociosInactivos - 1,
-        })
-    },
-
-    darDeBajaSocioSeleccionado: async () => {
-        const { socioSeleccionado } = get()
-        if (!socioSeleccionado) return
-        await get().darDeBaja(socioSeleccionado, { esSocioSeleccionado: true })
-    },
-
-    reactivarSocioSeleccionado: async () => {
-        const { socioSeleccionado } = get()
-        if (!socioSeleccionado) return
-        await get().reactivar(socioSeleccionado, { esSocioSeleccionado: true })
-    },
-
-    setObservaciones: async (newObservaciones) => get().editarDatos({ observaciones: newObservaciones }),
-
-    cambiarNombre: async (newName) => {
-        const { socioSeleccionado: socio, socios, sociosFiltrados } = get()
-        if(!socio || !socio.nroSocio || !newName.trim()) return
-
-        const ok = await window.electronAPI.cambiarNombreSocio(
-            socio.nroSocio, newName,
-        )
-        if(!ok) return 
-        
-        const actualizado = { ...socio, nombreYApellido: newName, }
-
-        set({
-            socioSeleccionado: { ...actualizado },    
-            socios: actualizarSocioEnLista(actualizado, socios),
-            sociosFiltrados: actualizarSocioEnLista(actualizado, sociosFiltrados),
-        })
-    },
-
-    desvincularSocio: async (nroSocio: number) => {
-        const { socioSeleccionado: socio_a, socios, sociosFiltrados, sociosVinculados } = get()
-        if(!nroSocio || !socio_a || !socio_a.nroSocio) return false
-
-        const socio_b = socios.filter(s => s.nroSocio === nroSocio)[0]
-        if(!socio_b) return false
-
-        const ok = await window.electronAPI.desvincularSocios(
-            socio_b, socio_a,
-        )
-
-        if(!ok) return false
-
-        const updatedSocio_a = {
-            ...socio_a,
-            sociosVinculados: socio_a.sociosVinculados.filter(nro => nro !== nroSocio),
-        }
-
-        const updatedSocio_b = {
-            ...socio_b,
-            sociosVinculados: socio_b.sociosVinculados.filter(nro => nro !== socio_a.nroSocio),
-        }
-
-        set({
-            socioSeleccionado: updatedSocio_a,
-            sociosVinculados: sociosVinculados.filter(s => s.nroSocio !== socio_b.nroSocio),
-            socios: actualizarSocioEnLista(
-                updatedSocio_a,
-                actualizarSocioEnLista(updatedSocio_b, socios)
-            ),
-            sociosFiltrados: actualizarSocioEnLista(
-                socio_a,
-                actualizarSocioEnLista(updatedSocio_b, sociosFiltrados)
-            ),
-        })
-        return true
-    },
-
-    vincularSocio: async (nroSocio: number) => {
-        const { socioSeleccionado: socio_a, socios, sociosFiltrados, sociosVinculados } = get()
-        if(!nroSocio || !socio_a || !socio_a.nroSocio) return false
-
-        const socio_b = socios.filter(s => s.nroSocio === nroSocio)[0]
-        if(!socio_b) return false
-
-        const ok = await window.electronAPI.vincularSocios(
-            socio_b, socio_a,
-        )
-
-        if(!ok) return false
-
-        const updatedSocio_a = {
-            ...socio_a,
-            sociosVinculados: [ ...socio_a.sociosVinculados, nroSocio ],
-        }
-
-        const updatedSocio_b = {
-            ...socio_b,
-            sociosVinculados: [ ...socio_b.sociosVinculados, socio_a.nroSocio ],
-        }
-
-        set({
-            socioSeleccionado: updatedSocio_a,
-            sociosVinculados: [ ...sociosVinculados, socio_b ],
-            socios: actualizarSocioEnLista(
-                updatedSocio_a,
-                actualizarSocioEnLista(updatedSocio_b, socios)
-            ),
-            sociosFiltrados: actualizarSocioEnLista(
-                socio_a,
-                actualizarSocioEnLista(updatedSocio_b, sociosFiltrados)
-            ),
-        })
-        return true
-    },
-
-    verSocioVinculado: (nroSocio: number) => {
-        const { socioSeleccionado, socios, seleccionar } = get()
-        if(!socioSeleccionado || !socioSeleccionado.nroSocio || !nroSocio) return
-
-        const socioVinculado = socios.filter(s => Number(s.nroSocio) === Number(nroSocio))
-        if(!socioVinculado.length) return;
-        seleccionar(socioVinculado[0])
-    },
-
-    irAnioAnterior: async () => {
-        const { socioSeleccionado, anio } = get()
-        if (!socioSeleccionado) return
-        const nuevoAnio = anio - 1
-        const { meses } = await cargarCuotasSocio(socioSeleccionado.nroSocio, nuevoAnio)
-        set({ anio: nuevoAnio, mesesCuotas: meses })
-    },
-
-    irAnioSiguiente: async () => {
-        const { socioSeleccionado, anio } = get()
-        if (!socioSeleccionado) return
-        const nuevoAnio = anio + 1
-        const { meses } = await cargarCuotasSocio(socioSeleccionado.nroSocio, nuevoAnio)
-        set({ anio: nuevoAnio, mesesCuotas: meses })
-    },
-
-    crearSocio: async (socioData) => {
+    const reemplazar = (...actualizados: Socio[]) => {
         const { socios, sociosFiltrados } = get()
-
-        const nuevoSocio = await window.electronAPI.createSocio(socioData)
-        if (!nuevoSocio) return null
-
-        const { anio, meses: mesesCuotas } = await cargarCuotasSocio(nuevoSocio.nroSocio)
-
-        const actualizarLista = (lista: Socio[]) =>
-            ordenarSociosAlfabeticamente([...lista, nuevoSocio])
-
         set({
-            socios: actualizarLista(socios),
-            sociosFiltrados: actualizarLista(sociosFiltrados),
-            socioSeleccionado: nuevoSocio,
-            showDetallesSocio: true,
-            sociosVinculados: [],
-            mesesCuotas,
-            anio,
+            socios: actualizados.reduce((lista, s) => actualizarSocioEnLista(s, lista), socios),
+            sociosFiltrados: actualizados.reduce((lista, s) => actualizarSocioEnLista(s, lista), sociosFiltrados),
         })
+    }
 
-        return nuevoSocio
-    },
+    return {
+        socios: [],
+        sociosConLibros: [],
+        sociosFiltrados: [],
+        mesesCuotas: [],
+        anio: new Date().getFullYear(),
+        sociosActivos: 0,
+        sociosInactivos: 0,
+        loadingSocios: true,
 
-    aplicarCambioAutomaticoDeCaracter: async (socio: Socio) => {
-        const { maximoDeCuotasAdeudadas, gestionDeCuotas } = useSettingsStore.getState()
+        inicializar: async () => {
+            const socios = await cargarSocios()
+            const sociosRegistradosConLibros = await window.electronAPI.getSociosConLibros()
+            const ordenados = ordenarSociosAlfabeticamente(socios)
 
-        if (!gestionDeCuotas) return
+            let [ sociosActivos, sociosInactivos ] = [ 0, 0 ]
+            socios.forEach(s => {
+                if(getCaracterSocio(s.caracterSocio).estado && !getCaracterSocio(s.caracterSocio).tieneCuotasDesactualizadas) sociosActivos++
+                else sociosInactivos++
+            })
 
-        const caracterSocio = getCaracterSocio(socio.caracterSocio)
-        if (caracterSocio.tieneCuotasDesactualizadas) return
+            const sociosConLibros = ordenados.filter(s =>
+                sociosRegistradosConLibros.some(sl => sl.nroSocio === s.nroSocio)
+            )
 
-        const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio, socio.fechaIngreso)
-        if (caracterSocio.caracter) {
-            if (cuotasAdeudadas > maximoDeCuotasAdeudadas) {
-                await get().darDeBaja(socio)
+            set({
+                socios: ordenados,
+                sociosConLibros,
+                sociosActivos,
+                sociosInactivos,
+                sociosFiltrados: [...sociosConLibros],
+                loadingSocios: false,
+            })
+        },
+
+        buscar: (apellido) => {
+            const { socios, sociosConLibros } = get()
+
+            const query = apellido.toLowerCase().trim()
+            if (!query) {
+                set({ sociosFiltrados: [...sociosConLibros] })
+                return
             }
-        }
-    },
 
-    showListaSocios: () => {
-        const { showDetallesSocio } = get()
-        if(!showDetallesSocio) return
-        
-        set({
-            showDetallesSocio: false,
-        })
-    },
+            const filtrados = buscarSocio({ dato: query, socios, libros: useLibrosStore.getState().libros })
+            set({ sociosFiltrados: filtrados })
+        },
 
-    salirDeSocio: (accion) => {
-        if (get().hayPrestamoSinRegistrar()) set({ salidaPendiente: accion })
-        else accion()
-    },
+        prepararSocio: async (nroSocio) => {
+            const socio = getSocio(nroSocio)
+            if (!socio) return
 
-    cancelarSalida: () => set({ salidaPendiente: null }),
-}))
+            const { anio, meses: mesesCuotas } = await cargarCuotasSocio(nroSocio)
+            await get().aplicarCambioAutomaticoDeCaracter(socio)
+            set({ mesesCuotas, anio })
+        },
+
+        editarDatos: async (nroSocio, datos) => {
+            const socio = getSocio(nroSocio)
+            if (!socio) return
+
+            const ok = await window.electronAPI.editarDatosSocio(nroSocio, datos)
+            if (!ok) return
+
+            reemplazar({ ...socio, ...datos })
+        },
+
+        toggleMes: async (nroSocio, mesIndex) => {
+            const socio = getSocio(nroSocio)
+            if (!socio) return
+
+            // PARA MIGRACION: permite que luego de actualizar las cuotas el caracter se defina automaticamente
+            if(getCaracterSocio(socio.caracterSocio).tieneCuotasDesactualizadas) {
+                await get().reactivar(nroSocio)
+            }
+
+            const pagado = await window.electronAPI.toggleCuota(nroSocio, get().anio, mesIndex)
+
+            const next = [...get().mesesCuotas]
+            const key = Object.keys(next[mesIndex])[0]
+            next[mesIndex] = { [key]: pagado }
+            set({ mesesCuotas: next })
+        },
+
+        darDeBaja: async (nroSocio) => {
+            const socio = getSocio(nroSocio)
+            if (!socio) return
+
+            const ok = await window.electronAPI.darDeBajaSocio(nroSocio)
+            if (!ok) return
+
+            const caracterSocio: CaracterSocio = 'Inactivo'
+            reemplazar({ ...socio, caracterSocio })
+            const { sociosActivos, sociosInactivos } = get()
+            set({ sociosInactivos: sociosInactivos + 1, sociosActivos: sociosActivos - 1 })
+        },
+
+        reactivar: async (nroSocio) => {
+            const socio = getSocio(nroSocio)
+            if (!socio) return
+
+            const ok = await window.electronAPI.reactivarSocio(nroSocio)
+            if (!ok) return
+
+            const caracterSocio: CaracterSocio = 'Regular'
+            reemplazar({ ...socio, caracterSocio })
+            const { sociosActivos, sociosInactivos } = get()
+            set({ sociosActivos: sociosActivos + 1, sociosInactivos: sociosInactivos - 1 })
+        },
+
+        setObservaciones: async (nroSocio, newObservaciones) => get().editarDatos(nroSocio, { observaciones: newObservaciones }),
+
+        cambiarNombre: async (nroSocio, newName) => {
+            const socio = getSocio(nroSocio)
+            if(!socio || !newName.trim()) return
+
+            const ok = await window.electronAPI.cambiarNombreSocio(nroSocio, newName)
+            if(!ok) return
+
+            reemplazar({ ...socio, nombreYApellido: newName })
+        },
+
+        desvincularSocio: async (nroSocio, nroADesvincular) => {
+            const socio_a = getSocio(nroSocio)
+            const socio_b = getSocio(nroADesvincular)
+            if(!socio_a || !socio_b) return false
+
+            const ok = await window.electronAPI.desvincularSocios(socio_b, socio_a)
+            if(!ok) return false
+
+            reemplazar(
+                { ...socio_a, sociosVinculados: socio_a.sociosVinculados.filter(nro => nro !== nroADesvincular) },
+                { ...socio_b, sociosVinculados: socio_b.sociosVinculados.filter(nro => nro !== nroSocio) },
+            )
+            return true
+        },
+
+        vincularSocio: async (nroSocio, nroAVincular) => {
+            const socio_a = getSocio(nroSocio)
+            const socio_b = getSocio(nroAVincular)
+            if(!socio_a || !socio_b) return false
+
+            const ok = await window.electronAPI.vincularSocios(socio_b, socio_a)
+            if(!ok) return false
+
+            reemplazar(
+                { ...socio_a, sociosVinculados: [ ...socio_a.sociosVinculados, nroAVincular ] },
+                { ...socio_b, sociosVinculados: [ ...socio_b.sociosVinculados, nroSocio ] },
+            )
+            return true
+        },
+
+        irAnioAnterior: async (nroSocio) => {
+            const nuevoAnio = get().anio - 1
+            const { meses } = await cargarCuotasSocio(nroSocio, nuevoAnio)
+            set({ anio: nuevoAnio, mesesCuotas: meses })
+        },
+
+        irAnioSiguiente: async (nroSocio) => {
+            const nuevoAnio = get().anio + 1
+            const { meses } = await cargarCuotasSocio(nroSocio, nuevoAnio)
+            set({ anio: nuevoAnio, mesesCuotas: meses })
+        },
+
+        crearSocio: async (socioData) => {
+            const nuevoSocio = await window.electronAPI.createSocio(socioData)
+            if (!nuevoSocio) return null
+
+            const { socios, sociosFiltrados } = get()
+            set({
+                socios: ordenarSociosAlfabeticamente([...socios, nuevoSocio]),
+                sociosFiltrados: ordenarSociosAlfabeticamente([...sociosFiltrados, nuevoSocio]),
+            })
+            return nuevoSocio
+        },
+
+        aplicarCambioAutomaticoDeCaracter: async (socio: Socio) => {
+            const { maximoDeCuotasAdeudadas, gestionDeCuotas } = useSettingsStore.getState()
+
+            if (!gestionDeCuotas) return
+
+            const caracterSocio = getCaracterSocio(socio.caracterSocio)
+            if (caracterSocio.tieneCuotasDesactualizadas) return
+
+            const cuotasAdeudadas = await calcularCuotasAdeudadas(socio.nroSocio, socio.fechaIngreso)
+            if (caracterSocio.caracter) {
+                if (cuotasAdeudadas > maximoDeCuotasAdeudadas) {
+                    await get().darDeBaja(socio.nroSocio)
+                }
+            }
+        },
+    }
+})
 
 const actualizarSocioEnLista = (socio: Socio, lista: Socio[]) =>
     lista.map(s => s.nroSocio === socio.nroSocio ? socio : s)

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { type LibroRegistrado } from "@shared/models"
 import { cn } from "@/utils"
-import { useSettingsStore, useSociosStore } from "@/store"
+import { useSettingsStore, useVistaStore } from "@/store"
 import { BotonRegistrarPrestamo } from "./BotonRegistrarPrestamo"
 import { ModalPrestamoSinRegistrar } from "./ModalPrestamoSinRegistrar"
 import { FilaLibroPrestado } from "./FilaLibroPrestado"
@@ -61,11 +61,11 @@ export function TablaPrestamos({ libros, disabled, onRegistrar }: Props) {
 
   useEffect(() => {
     const haySlotsEscritos = () => getSlotsEscritos().length > 0
-    useSociosStore.setState({ hayPrestamoSinRegistrar: haySlotsEscritos })
+    useVistaStore.setState({ hayPrestamoSinRegistrar: haySlotsEscritos })
     return () => {
       // al cambiar de socio la tabla nueva se monta antes de que termine de salir la vieja
-      if (useSociosStore.getState().hayPrestamoSinRegistrar === haySlotsEscritos) {
-        useSociosStore.setState({ hayPrestamoSinRegistrar: () => false })
+      if (useVistaStore.getState().hayPrestamoSinRegistrar === haySlotsEscritos) {
+        useVistaStore.setState({ hayPrestamoSinRegistrar: () => false })
       }
     }
   }, [slots])

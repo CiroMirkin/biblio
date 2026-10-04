@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "motion/react"
 import { useState } from "react"
-import { useSociosStore } from "@/store"
+import { useSociosStore, useSocioSeleccionado } from "@/store"
 import { getCaracterSocio } from "@/models"
 import { formatName, formatDNI } from "@/utils"
 import { PencilIcon } from "@/components/PencilIcon"
@@ -9,7 +9,8 @@ import { Spinner } from "@/components"
 type CampoEditable = "dni" | "telefono" | "domicilio" | "email" | "fechaNacimiento" | "fechaIngreso" | "fechaEgreso"
 
 export function Datos() {
-    const { socioSeleccionado: socio, editarDatos, cambiarNombre } = useSociosStore()
+    const { editarDatos, cambiarNombre } = useSociosStore()
+    const socio = useSocioSeleccionado()
     const [ loading, setLoading ] = useState(false)
     const [expandido, setExpandido] = useState(false)
     const [campoEditando, setCampoEditando] = useState<CampoEditable | null>(null)
@@ -26,9 +27,9 @@ export function Datos() {
     }
 
     const guardar = async () => {
-        if (!campoEditando) return
+        if (!campoEditando || !socio) return
         setLoading(true)
-        await editarDatos({ [campoEditando]: valorEdicion })
+        await editarDatos(socio.nroSocio, { [campoEditando]: valorEdicion })
         setCampoEditando(null)
         setLoading(false)
     }
@@ -40,8 +41,9 @@ export function Datos() {
     }
 
     const guardarNombre = async () => {
+        if (!socio) return
         setLoading(true)
-        await cambiarNombre(formatName(nombreEdicion))
+        await cambiarNombre(socio.nroSocio, formatName(nombreEdicion))
         setEditandoNombre(false)
         setLoading(false)
     }

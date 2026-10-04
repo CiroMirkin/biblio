@@ -1,12 +1,13 @@
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { useSociosStore } from "@/store"
+import { useSociosStore, useVistaStore } from "@/store"
 import { Spinner } from "@/components";
 
 const PAGINA = 10
 
 export function ListaSocios() {
-  const { sociosFiltrados, seleccionar, loadingSocios } = useSociosStore()
+  const { sociosFiltrados, loadingSocios } = useSociosStore()
+  const { verSocio } = useVistaStore()
   const [cantidad, setCantidad] = useState(PAGINA)
   const loaderRef = useRef<HTMLDivElement>(null)
 
@@ -44,7 +45,7 @@ export function ListaSocios() {
             "px-4 py-4 flex gap-2 justify-between hover:pl-6 border-l-2 border-transparent hover:border-l-black transition-all ease-in duration-100",
             index % 2 === 0 ? "bg-white" : "bg-white/50"
           )}
-          onClick={() => seleccionar(socio)}
+          onClick={() => verSocio(socio.nroSocio)}
         >
           <span className="w-full text-lg cursor-default select-none">{socio.nombreYApellido}</span>
           <button className="btn">

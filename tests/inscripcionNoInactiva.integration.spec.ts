@@ -43,7 +43,7 @@ describe('Inscripcion de un socio', () => {
             sociosVinculados: [],
         })
 
-        await useSociosStore.getState().seleccionar(nuevo!)
+        await useSociosStore.getState().prepararSocio(nuevo!.nroSocio)
 
         const guardado = (await getSocios() as any[]).find(s => s.nroSocio === nuevo!.nroSocio)!
         expect(getCaracterSocio(guardado.caracterSocio).estado).toBe(true)
