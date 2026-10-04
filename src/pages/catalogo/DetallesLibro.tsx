@@ -32,12 +32,14 @@ export function DetallesLibro({ libro }: Props) {
                     >
                         <ListaDeDatos libro={libro} />
                         <span className="mt-4 flex gap-4">
-                            <button
-                                className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                                onClick={() => verEditarLibro(libro.numeroInventario)}
-                            >
-                                Editar Libro
-                            </button>
+                            { !!libro.numeroInventario &&
+                                <button
+                                    className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
+                                    onClick={() => verEditarLibro(libro.numeroInventario)}
+                                >
+                                    Editar Libro
+                                </button>
+                            }
                             { verHistorial &&
                                 <button
                                     className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
