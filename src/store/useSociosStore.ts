@@ -16,8 +16,6 @@ interface SociosState {
     sociosFiltrados: Socio[]
     mesesCuotas: Calendario
     anio: number
-    sociosActivos: number
-    sociosInactivos: number
     loadingSocios: boolean
 
     inicializar: () => Promise<void>
@@ -57,20 +55,12 @@ export const useSociosStore = create<SociosState>((set, get) => {
         sociosFiltrados: [],
         mesesCuotas: [],
         anio: new Date().getFullYear(),
-        sociosActivos: 0,
-        sociosInactivos: 0,
         loadingSocios: true,
 
         inicializar: async () => {
             const socios = await cargarSocios()
             const sociosRegistradosConLibros = await window.electronAPI.getSociosConLibros()
             const ordenados = ordenarSociosAlfabeticamente(socios)
-
-            let [ sociosActivos, sociosInactivos ] = [ 0, 0 ]
-            socios.forEach(s => {
-                if(getCaracterSocio(s.caracterSocio).estado && !getCaracterSocio(s.caracterSocio).tieneCuotasDesactualizadas) sociosActivos++
-                else sociosInactivos++
-            })
 
             const sociosConLibros = ordenados.filter(s =>
                 sociosRegistradosConLibros.some(sl => sl.nroSocio === s.nroSocio)
@@ -79,8 +69,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
             set({
                 socios: ordenados,
                 sociosConLibros,
-                sociosActivos,
-                sociosInactivos,
                 sociosFiltrados: [...sociosConLibros],
                 loadingSocios: false,
             })
@@ -144,8 +132,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
 
             const caracterSocio: CaracterSocio = 'Inactivo'
             reemplazar({ ...socio, caracterSocio })
-            const { sociosActivos, sociosInactivos } = get()
-            set({ sociosInactivos: sociosInactivos + 1, sociosActivos: sociosActivos - 1 })
         },
 
         reactivar: async (nroSocio) => {
@@ -157,8 +143,6 @@ export const useSociosStore = create<SociosState>((set, get) => {
 
             const caracterSocio: CaracterSocio = 'Regular'
             reemplazar({ ...socio, caracterSocio })
-            const { sociosActivos, sociosInactivos } = get()
-            set({ sociosActivos: sociosActivos + 1, sociosInactivos: sociosInactivos - 1 })
         },
 
         setObservaciones: async (nroSocio, newObservaciones) => get().editarDatos(nroSocio, { observaciones: newObservaciones }),

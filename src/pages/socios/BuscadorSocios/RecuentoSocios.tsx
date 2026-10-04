@@ -1,7 +1,8 @@
-import { useSociosStore } from "@/store"
+import { useRecuentoSocios, useSociosStore } from "@/store"
 
 export function RecuentoSocios() {
-    const { sociosActivos, sociosInactivos, sociosConLibros } = useSociosStore()
+    const { sociosConLibros } = useSociosStore()
+    const { activos: sociosActivos, inactivos: sociosInactivos } = useRecuentoSocios()
     
     return (
         <section className="w-55 card card-secondary mt-4">
