@@ -33,7 +33,7 @@ describe('useVistaStore', () => {
             electronAPI: { getCuotasSocio, darDeBajaSocio: vi.fn(async () => true) },
         }
 
-        useSociosStore.setState({ socios: [socio], sociosFiltrados: [], sociosConLibros: [] })
+        useSociosStore.setState({ socios: [socio] })
         useVistaStore.setState(vistaInicial, true)
     })
 

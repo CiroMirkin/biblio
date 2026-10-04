@@ -39,7 +39,7 @@ describe('useCuotasStore', () => {
         conPagosHasta(-1)
 
         useSettingsStore.setState({ gestionDeCuotas: true, maximoDeCuotasAdeudadas: 6 })
-        useSociosStore.setState({ socios: [socio], sociosFiltrados: [] })
+        useSociosStore.setState({ socios: [socio] })
         useCuotasStore.setState(cuotasInicial, true)
     })
 

@@ -1,13 +1,14 @@
 import { CheckIcon, Form, Spinner } from "@/components"
 import type { Socio } from "@shared/models"
-import { useSociosStore, useSocioSeleccionado, useSociosVinculados } from "@/store"
+import { useSociosFiltrados, useSociosStore, useSocioSeleccionado, useSociosVinculados } from "@/store"
 import { cn } from "@/utils"
 import { useState } from "react"
 
 export function VincularSocio() {
     const [nombre, setNombre] = useState('')
     const [ socioEnVinculacion, setSocioEnVinculacion ] = useState(null as null | number)
-    const { buscar, sociosFiltrados, vincularSocio } = useSociosStore()
+    const { buscar, vincularSocio } = useSociosStore()
+    const { filtrados: sociosFiltrados } = useSociosFiltrados()
     const socioSeleccionado = useSocioSeleccionado()
 
     const handleSubmit = (value: string) => {

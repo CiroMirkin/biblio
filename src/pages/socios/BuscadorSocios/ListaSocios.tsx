@@ -1,12 +1,13 @@
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { useSociosStore, useVistaStore } from "@/store"
+import { useSociosFiltrados, useSociosStore, useVistaStore } from "@/store"
 import { Spinner } from "@/components";
 
 const PAGINA = 10
 
 export function ListaSocios() {
-  const { sociosFiltrados, loadingSocios } = useSociosStore()
+  const { loadingSocios } = useSociosStore()
+  const { filtrados: sociosFiltrados } = useSociosFiltrados()
   const { verSocio } = useVistaStore()
   const [cantidad, setCantidad] = useState(PAGINA)
   const loaderRef = useRef<HTMLDivElement>(null)

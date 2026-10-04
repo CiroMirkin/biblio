@@ -3,17 +3,14 @@ import type { CaracterSocio } from "@/models/Socio"
 import type { NewSocio, Socio } from "@shared/models"
 import { cargarSocios } from "@/services/cargarSocios"
 import { ordenarSociosAlfabeticamente } from "@/utils/ordenarSocios"
-import { buscarSocio } from "./buscarSocio"
-import { useLibrosStore } from "./useLibrosStore"
 
 interface SociosState {
     socios: Socio[]
-    sociosConLibros: Socio[]
-    sociosFiltrados: Socio[]
+    query: string
     loadingSocios: boolean
 
     inicializar: () => Promise<void>
-    buscar: (apellido: string) => void
+    buscar: (query: string) => void
 
     crearSocio: (socioData: NewSocio) => Promise<Socio | null>
     editarDatos: (nroSocio: number, datos: Partial<Socio>) => Promise<void>
@@ -30,49 +27,24 @@ interface SociosState {
 export const useSociosStore = create<SociosState>((set, get) => {
     const getSocio = (nroSocio: number) => get().socios.find(s => s.nroSocio === nroSocio)
 
-    const reemplazar = (...actualizados: Socio[]) => {
-        const { socios, sociosFiltrados } = get()
-        set({
-            socios: actualizados.reduce((lista, s) => actualizarSocioEnLista(s, lista), socios),
-            sociosFiltrados: actualizados.reduce((lista, s) => actualizarSocioEnLista(s, lista), sociosFiltrados),
-        })
-    }
+    const reemplazar = (...actualizados: Socio[]) => set({
+        socios: actualizados.reduce((lista, s) => actualizarSocioEnLista(s, lista), get().socios),
+    })
 
     return {
         socios: [],
-        sociosConLibros: [],
-        sociosFiltrados: [],
+        query: "",
         loadingSocios: true,
 
         inicializar: async () => {
             const socios = await cargarSocios()
-            const sociosRegistradosConLibros = await window.electronAPI.getSociosConLibros()
-            const ordenados = ordenarSociosAlfabeticamente(socios)
-
-            const sociosConLibros = ordenados.filter(s =>
-                sociosRegistradosConLibros.some(sl => sl.nroSocio === s.nroSocio)
-            )
-
             set({
-                socios: ordenados,
-                sociosConLibros,
-                sociosFiltrados: [...sociosConLibros],
+                socios: ordenarSociosAlfabeticamente(socios),
                 loadingSocios: false,
             })
         },
 
-        buscar: (apellido) => {
-            const { socios, sociosConLibros } = get()
-
-            const query = apellido.toLowerCase().trim()
-            if (!query) {
-                set({ sociosFiltrados: [...sociosConLibros] })
-                return
-            }
-
-            const filtrados = buscarSocio({ dato: query, socios, libros: useLibrosStore.getState().libros })
-            set({ sociosFiltrados: filtrados })
-        },
+        buscar: (query) => set({ query }),
 
         editarDatos: async (nroSocio, datos) => {
             const socio = getSocio(nroSocio)
@@ -152,11 +124,7 @@ export const useSociosStore = create<SociosState>((set, get) => {
             const nuevoSocio = await window.electronAPI.createSocio(socioData)
             if (!nuevoSocio) return null
 
-            const { socios, sociosFiltrados } = get()
-            set({
-                socios: ordenarSociosAlfabeticamente([...socios, nuevoSocio]),
-                sociosFiltrados: ordenarSociosAlfabeticamente([...sociosFiltrados, nuevoSocio]),
-            })
+            set({ socios: ordenarSociosAlfabeticamente([...get().socios, nuevoSocio]) })
             return nuevoSocio
         },
     }
