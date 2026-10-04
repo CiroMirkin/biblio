@@ -2,7 +2,7 @@ import { useLibrosStore, useSettingsStore } from "@/store"
 import { Form } from "@/components"
 
 export function BuscarLibroForm() {
-  const { buscar } = useLibrosStore()
+  const { buscar, query } = useLibrosStore()
   const { numerosDeInventarioExternos } = useSettingsStore()
 
   const handleBusqueda = (nombreLibro: string) => {
@@ -19,6 +19,7 @@ export function BuscarLibroForm() {
     <Form
       label="Buscar libro:"
       placeholder={placeholder}
+      defaultValue={query}
       className="rounded p-4 card"
       onChange={handleBusqueda}
     />
