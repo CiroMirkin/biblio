@@ -13,18 +13,11 @@ interface LibrosState {
   librosVencidos: LibroRegistrado[]
   librosDisponibles: LibroRegistrado[]
   librosPrestados: LibroRegistrado[]
-  
-  showDetallesLibro: boolean
-  showHistorialLibro: boolean
-  libroSeleccionado: LibroRegistrado | null
 
   inicializar: () => Promise<void>
 
-  verDetallesLibro: (libro: Libro | LibroRegistrado) => void
-  verHistorialLibro: (libro: Libro | LibroRegistrado) => void
-  editarLibro: (libro: Partial<DatosLibro>) => Promise<LibroRegistrado | null>
-  
-  verCatalogo: () => void
+  editarLibro: (nroViejo: number | string | undefined, libro: Partial<DatosLibro>) => Promise<LibroRegistrado | null>
+
   buscar: (query: string) => void
 
   getLibrosSocio: (nroSocio: number) => Promise<LibroRegistrado[]>
@@ -38,7 +31,7 @@ interface LibrosState {
   ingresarLibro: (ingreso: DatosLibro) => Promise<boolean>
 
   getUltimoNumeroInventario: () => number
-  esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
+  esNroInventarioExistente: (nro: string | number, options?: { nroActual?: string | number }) => { libro: LibroRegistrado | null, existente: boolean }
 
   actualizarListados: <T extends Libro>(updated: T | undefined, options?: { nroViejo?: string }) => void
 }
@@ -49,10 +42,6 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
   librosFiltrados: [],
   librosDisponibles: [],
   librosPrestados: [],
-
-  showDetallesLibro: false,
-  showHistorialLibro: false,
-  libroSeleccionado: null,
 
   inicializar: async () => {
     const { limiteDeDias } = useSettingsStore.getState()
@@ -98,41 +87,14 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     set({ librosFiltrados: filtrados })
   },
 
-  verCatalogo: () => set({ showDetallesLibro: false, showHistorialLibro: false, libroSeleccionado: null, }),
-
-  verHistorialLibro: (libro) => {
-    if(!libro) return;
-
-    set({
-      showHistorialLibro: true,
-      libroSeleccionado: { ...libro },
-    })
-  },
-
-  verDetallesLibro: (libro) => {
-    if(!libro) return;
-
-    set({
-      showDetallesLibro: true,
-      libroSeleccionado: { ...libro },
-    })
-  },
-
-  editarLibro: async (libro) => {
+  editarLibro: async (nroViejo, libro) => {
     if(!libro || !libro.numeroInventario) return null
-    const { libroSeleccionado } = get()
-    if(!libroSeleccionado) return null
 
-    const updatedLibro = await window.electronAPI.editarDatosLibro(
-      String(libroSeleccionado!.numeroInventario),
-      { ...libro }
-    )
-    
+    const updatedLibro = await window.electronAPI.editarDatosLibro(String(nroViejo ?? ""), { ...libro })
     if(!updatedLibro) return null
 
-    const nroViejo = String(libroSeleccionado.numeroInventario)
     const { actualizarListados } = get()
-    actualizarListados(updatedLibro, { nroViejo })
+    actualizarListados(updatedLibro, { nroViejo: String(nroViejo ?? "") })
     return updatedLibro
   },
 
@@ -196,7 +158,7 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
     }, 0)
   },
 
-  esNroInventarioExistente: (nro: string | number) => {
+  esNroInventarioExistente: (nro, options) => {
     if(nro === "" || nro === null || nro === undefined) {
       return {
         libro: null,
@@ -204,19 +166,10 @@ export const useLibrosStore = create<LibrosState>((set, get) => ({
       }
     }
 
-    const { libros, libroSeleccionado } = get()
-
-    if(String(libroSeleccionado?.numeroInventario) === String(nro)) {
-      return {
-        libro: libroSeleccionado,
-        existente: false,
-      }
-    }
-
-    const libro = libros.find(l => String(l.numeroInventario) === String(nro)) ?? null
+    const libro = get().libros.find(l => String(l.numeroInventario) === String(nro)) ?? null
     return {
       libro,
-      existente: libro !== null,
+      existente: libro !== null && String(nro) !== String(options?.nroActual),
     }
   },
 

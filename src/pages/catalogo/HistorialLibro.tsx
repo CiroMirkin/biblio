@@ -1,10 +1,11 @@
 import { useEffect } from "react"
-import { useHistorialStore, useLibrosStore } from "@/store"
+import { useHistorialStore, useLibroSeleccionado, useVistaStore } from "@/store"
 import { ChevronLeftIcon, Spinner } from "@/components"
 import { cn, formatFecha } from "@/utils"
 
 export function HistorialLibro() {
-  const { libroSeleccionado, verCatalogo } = useLibrosStore()
+  const libroSeleccionado = useLibroSeleccionado()
+  const { verCatalogo } = useVistaStore()
   const { entriesConSocio, loading, error, buscarPorLibro } = useHistorialStore()
 
   const nroInv = libroSeleccionado?.numeroInventario

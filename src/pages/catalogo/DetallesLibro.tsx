@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react"
 import { type LibroRegistrado, formatLiteraryForm, getDatosDelDewey, getDeweyFromCallNumber, getGrupoLiterario } from "@shared/models"
 import { useState } from "react"
-import { useLibrosStore, useSettingsStore } from "@/store"
+import { useSettingsStore, useVistaStore } from "@/store"
 import { cn, formatFecha, formatNro, formatTitulo } from "@/utils"
 import { formatISBN } from "@shared/utils"
 
@@ -11,7 +11,7 @@ interface Props {
 
 export function DetallesLibro({ libro }: Props) {
     const [expandido, setExpandido] = useState(false)
-    const { verDetallesLibro, verHistorialLibro } = useLibrosStore()
+    const { verEditarLibro, verHistorialLibro } = useVistaStore()
     const { numerosDeInventarioExternos } = useSettingsStore()
     const verHistorial = numerosDeInventarioExternos && !!libro.numeroInventario
 
@@ -34,14 +34,14 @@ export function DetallesLibro({ libro }: Props) {
                         <span className="mt-4 flex gap-4">
                             <button
                                 className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                                onClick={() => verDetallesLibro(libro)}
+                                onClick={() => verEditarLibro(libro.numeroInventario)}
                             >
                                 Editar Libro
                             </button>
                             { verHistorial &&
                                 <button
                                     className="btn-secondary text-black/85 text-base pt-0.5 cursor-pointer hover:underline"
-                                    onClick={() => verHistorialLibro(libro)}
+                                    onClick={() => verHistorialLibro(libro.numeroInventario)}
                                 >
                                     Ver historial
                                 </button>

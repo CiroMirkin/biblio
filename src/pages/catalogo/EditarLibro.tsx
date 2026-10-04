@@ -2,13 +2,15 @@ import { CheckIcon, ChevronLeftIcon, LibroForm, Marc21Form, Spinner } from "@/co
 import { isValidNumeroInventario, tieneDatosMarc } from "@shared/models"
 import { libroDesdeLibroForm, type CamposForm } from "@/components/libroDesdeLibroForm"
 import { libroDesdeMarc21Form } from "@/components/libroDesdeMarc21Form"
-import { useLibrosStore, useSettingsStore } from "@/store"
+import { useLibroSeleccionado, useLibrosStore, useSettingsStore, useVistaStore } from "@/store"
 import { useState } from "react"
 import type { SyntheticEvent } from "react"
 import { AnimatePresence, motion } from "motion/react"
 
 export function EditarLibro() {
-  const { libroSeleccionado, editarLibro, verCatalogo } = useLibrosStore()
+  const libroSeleccionado = useLibroSeleccionado()
+  const { editarLibro } = useLibrosStore()
+  const { verCatalogo, verEditarLibro } = useVistaStore()
   const { catalogacionSimple } = useSettingsStore()
   const usaMarc = tieneDatosMarc(libroSeleccionado) || !catalogacionSimple
   const [exito, setExito] = useState(false)
@@ -32,12 +34,13 @@ export function EditarLibro() {
     const libro = { ...datos, numeroInventario: nro }
 
     setLoading(true)
-    const actualizado = await editarLibro(libro)
+    const actualizado = await editarLibro(libroSeleccionado.numeroInventario, libro)
     setLoading(false)
     if (!actualizado) {
       console.error("Error en la edición del libro")
       return false
     }
+    verEditarLibro(actualizado.numeroInventario)
     return true
   }
 

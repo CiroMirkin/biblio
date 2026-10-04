@@ -1,4 +1,4 @@
-import { useLibrosStore, useSettingsStore } from "@/store"
+import { useSettingsStore, useVistaStore } from "@/store"
 import { BuscarLibroForm } from "./BuscarLibroForm"
 import { ListaLibrosEnPrestamo } from "./ListaLibrosEnPrestamo"
 import { RecuentoLibros } from "./RecuentoLibros"
@@ -10,7 +10,9 @@ import MovimientosDelDia from "./MovimientosDelDia"
 
 export function Catalogo() {
     const { limiteDeDias } = useSettingsStore()
-    const { showDetallesLibro, showHistorialLibro } = useLibrosStore()
+    const vista = useVistaStore(s => s.catalogo)
+    const showDetallesLibro = vista.modo === "editar"
+    const showHistorialLibro = vista.modo === "historial"
     const enCatalogo = !showDetallesLibro && !showHistorialLibro
 
     return (
