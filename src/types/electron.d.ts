@@ -13,7 +13,6 @@ export type ImportarMrcResult = {
 declare global {
   type ArchivoKey = 'socios' | 'cuotas' | 'libros' | 'completo'
   type PeriodoDeIngreso = 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
-  type SocioConLibros = Pick<Socio, 'nombreYApellido' | 'nroSocio'>
   interface Window {
     electronAPI: {
       getSocios: () => Promise<Record<string, unknown>[]>
@@ -25,7 +24,6 @@ declare global {
       
       devolverLibro: (numeroInventario: number | string) => Promise<boolean>
       getLibrosPrestadosSocio: (nroSocio: number) => Promise<Libro[]>
-      getSociosConLibros: () => Promise<SocioConLibros[]>
 
       editarDatosSocio: (nroSocio: number, datos: Partial<Socio>) => Promise<boolean>
       cambiarNombreSocio: (nroSocio: number, nombre: string) => Promise<boolean>

@@ -14,8 +14,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   getLibrosPrestadosSocio: (nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nroSocio),
   
-  getSociosConLibros: () => ipcRenderer.invoke('getSociosConLibros'),
-  
   cambiarNombreSocio: (nroSocio: number, nombre: string) => ipcRenderer.invoke(
     'cambiarNombreSocio', 
     nroSocio,
