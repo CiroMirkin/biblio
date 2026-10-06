@@ -1,5 +1,5 @@
 import { modificarCuotas } from '../../utils/datosExcel'
-import { asegurarAnio, construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
+import { asegurarAnio, celdaCuotas, construirIndiceMeses, toggleCeldaPago } from '../../models/cuotas'
 
 export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: number) => {
   return modificarCuotas(async ({ worksheet, writeWorkbook }) => {
@@ -20,7 +20,7 @@ export const toggleCuota = async (nroSocio: number, anio: number, mesIndex: numb
 
     worksheet.eachRow((row, rowIndex) => {
       if (rowIndex === 1) return
-      if (Number(row.getCell(3).value) !== nroSocio) return
+      if (Number(celdaCuotas(row, 'nroSocio').value) !== nroSocio) return
 
       found = true
       newStatus = toggleCeldaPago(row.getCell(colIndex))

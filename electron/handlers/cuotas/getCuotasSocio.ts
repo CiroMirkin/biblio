@@ -1,7 +1,7 @@
 import type ExcelJS from 'exceljs'
 import { MESES } from '../../constants'
 import { leerCuotas } from '../../utils/datosExcel'
-import { construirIndiceMeses, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
+import { celdaCuotas, construirIndiceMeses, type CalendarioDeCuotas, type HistorialDeCuotas } from '../../models/cuotas'
 
 export const getCuotasSocio = async (nroSocio: number, anio?: number) => leerCuotas(({ worksheet }) => {
   const headerRow = worksheet.getRow(1)
@@ -57,7 +57,7 @@ const extraerMesesDeAnio = (
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
-    if (Number(row.getCell(3).value) !== nroSocio) return
+    if (Number(celdaCuotas(row, 'nroSocio').value) !== nroSocio) return
 
     meses = MESES.map((nombre, mesIndex) => {
       const col = columnasSocio.find(c => c.mes === mesIndex)
