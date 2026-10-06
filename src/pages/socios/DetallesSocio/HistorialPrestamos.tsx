@@ -6,7 +6,7 @@ import { cn, formatFecha } from "@/utils"
 
 export function HistorialPrestamos() {
   const socioSeleccionado = useSocioSeleccionado()
-  const { entriesConLibro, loading, error, buscarPorSocio } = useHistorialStore()
+  const { entriesConLibro, archivadoCargado, loading, error, buscarPorSocio } = useHistorialStore()
   const { numerosDeInventarioExternos, catalogacionSimple } = useSettingsStore()
   const [consultado, setConsultado] = useState(false)
 
@@ -114,6 +114,15 @@ export function HistorialPrestamos() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {!loading && !error && consultado && !archivadoCargado && (
+        <button
+          onClick={() => buscarPorSocio(socioSeleccionado!.nroSocio, true)}
+          className="btn py-1 self-start"
+        >
+          Ver historial archivado
+        </button>
+      )}
     </div>
   )
 }

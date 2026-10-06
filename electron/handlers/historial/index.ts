@@ -5,3 +5,4 @@ export { actualizarNroLibroEnHistorial } from './actualizarNroLibroEnHistorial'
 
 export { getHistorialSocio } from './getHistorialSocio'
 export { getHistorialLibro } from './getHistorialLibro'
+export { getEstadoHistorial, archivarAnioMasAntiguo } from './archivarHistorial'

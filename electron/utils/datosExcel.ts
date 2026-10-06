@@ -1,6 +1,8 @@
 import ExcelJS from 'exceljs'
+import path from 'node:path'
+import { mkdir, readdir } from 'node:fs/promises'
 import { modificarHoja, leerHoja, type HojaExcel, type HojaLectura } from './hojaExcel'
-import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, PRESTAMOS_HISTORIAL_XLSX_PATH } from '../constants'
+import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, PRESTAMOS_HISTORIAL_XLSX_PATH, HISTORIAL_ARCHIVADO_DIR } from '../constants'
 
 const archivo = (path: string, hoja: string, crearSiFalta?: () => Promise<void>) => ({
   leer: <T>(fn: (h: HojaLectura) => T | Promise<T>) =>
@@ -27,7 +29,7 @@ export const {
   modificar: modificarLibros,
 } = archivo(LIBROS_XLSX_PATH, 'Hoja1')
 
-async function crearHistorial() {
+async function crearHistorial(xlsxPath: string) {
   const workbook = new ExcelJS.Workbook()
   const worksheet = workbook.addWorksheet('prestamos')
   worksheet.columns = [
@@ -37,7 +39,8 @@ async function crearHistorial() {
     { header: 'nroSocio', key: 'nroSocio' },
     { header: 'nroLibro', key: 'nroLibro' },
   ]
-  await workbook.xlsx.writeFile(PRESTAMOS_HISTORIAL_XLSX_PATH)
+  await mkdir(path.dirname(xlsxPath), { recursive: true })
+  await workbook.xlsx.writeFile(xlsxPath)
 }
 
 export const {
@@ -46,5 +49,19 @@ export const {
 } = archivo(
   PRESTAMOS_HISTORIAL_XLSX_PATH,
   'prestamos',
-  crearHistorial,
+  () => crearHistorial(PRESTAMOS_HISTORIAL_XLSX_PATH),
 )
+
+export function historialArchivado(anio: number) {
+  const xlsxPath = path.join(HISTORIAL_ARCHIVADO_DIR, `prestamos_historial_${anio}.xlsx`)
+  return archivo(xlsxPath, 'prestamos', () => crearHistorial(xlsxPath))
+}
+
+export async function aniosArchivados(): Promise<number[]> {
+  const nombres = await readdir(HISTORIAL_ARCHIVADO_DIR).catch(() => [])
+  return nombres
+    .map(nombre => /^prestamos_historial_(\d{4})\.xlsx$/.exec(nombre)?.[1])
+    .filter(anio => anio !== undefined)
+    .map(Number)
+    .sort((a, b) => a - b)
+}

@@ -15,6 +15,7 @@ import { NombreBiblioteca } from "./NombreBiblioteca";
 import { ImportarArchivoMrc } from "./ImportarArchivoMrc";
 import { AjustarCamposDeInscripcion } from "./AjustarCamposDeInscripcion";
 import { ImportarCopiaCompleta } from "./ImportarCopiaCompleta";
+import { ArchivarHistorial } from "./ArchivarHistorial";
 import type { ReactNode } from "react";
 import { cn } from "@/utils";
 
@@ -33,6 +34,7 @@ export function Ajustes() {
                             <MaximoDiasDelPrestamo />
                             <ComoEstablecerFechaPrestamo />
                         </AjusteSubItem>
+                        <ArchivarHistorial />
                     </AjusteSection>
                     <AjusteSection>
                         <h3 className="font-semibold text-xl">Gestión de socios</h3>

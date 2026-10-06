@@ -6,7 +6,7 @@ import { cn, formatFecha } from "@/utils"
 export function HistorialLibro() {
   const libroSeleccionado = useLibroSeleccionado()
   const { verCatalogo } = useVistaStore()
-  const { entriesConSocio, loading, error, buscarPorLibro } = useHistorialStore()
+  const { entriesConSocio, archivadoCargado, loading, error, buscarPorLibro } = useHistorialStore()
 
   const nroInv = libroSeleccionado?.numeroInventario
 
@@ -70,6 +70,15 @@ export function HistorialLibro() {
               ))}
             </tbody>
           </table>
+        )}
+
+        {!loading && !error && nroInv && !archivadoCargado && (
+          <button
+            onClick={() => buscarPorLibro(String(nroInv), true)}
+            className="btn py-1 mt-4"
+          >
+            Ver historial archivado
+          </button>
         )}
       </div>
     </>

@@ -46,6 +46,8 @@ export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'prestamos-historial-test.xlsx')
   : PRESTAMOS_HISTORIAL_XLSX_DEFAULT
 
+export const HISTORIAL_ARCHIVADO_DIR = path.join(path.dirname(PRESTAMOS_HISTORIAL_XLSX_PATH), 'historial')
+
 const SCRIPTS_PATH = IS_DEV
   ? path.join(process.cwd(), 'scripts')
   : path.join(process.resourcesPath, 'scripts')

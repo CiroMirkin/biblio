@@ -1,5 +1,6 @@
 import type { DatosLibro, HistorialEntry, Libro, LibroRegistrado, NewSocio, Socio } from "@/models"
 import type { Settings as SettingsSchema } from "@/services/settingsService"
+import type { EstadoHistorial } from "@shared/models"
 
 export {}
 
@@ -54,8 +55,10 @@ declare global {
       
       openExternal: (url: string) => Promise<void>
 
-      getHistorialSocio: (nroSocio: number) => Promise<HistorialEntry[]>
-      getHistorialLibro: (nroLibro: string) => Promise<HistorialEntry[]>
+      getHistorialSocio: (nroSocio: number, archivado?: boolean) => Promise<HistorialEntry[]>
+      getHistorialLibro: (nroLibro: string, archivado?: boolean) => Promise<HistorialEntry[]>
+      getEstadoHistorial: () => Promise<EstadoHistorial>
+      archivarHistorial: () => Promise<{ anio: number, cantidad: number } | null>
 
       sincronizacionDisponible: () => Promise<boolean>
       ejecutarSincronizacionDesdeSheets: () => Promise<{ ok: true, cantidad: number } | { ok: false, error: string }>

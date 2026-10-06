@@ -12,10 +12,13 @@ async function fetchHistorial<T>(fetch: () => Promise<T[]>): Promise<HistorialEn
   })
 }
 
-export async function getHistorialSocio(nroSocio: number): Promise<HistorialEntry[]> {
-  return fetchHistorial(() => window.electronAPI.getHistorialSocio(nroSocio))
+export async function getHistorialSocio(nroSocio: number, archivado = false): Promise<HistorialEntry[]> {
+  return fetchHistorial(() => window.electronAPI.getHistorialSocio(nroSocio, archivado))
 }
 
-export async function getHistorialLibro(nroLibro: string): Promise<HistorialEntry[]> {
-  return fetchHistorial(() => window.electronAPI.getHistorialLibro(nroLibro))
+export async function getHistorialLibro(nroLibro: string, archivado = false): Promise<HistorialEntry[]> {
+  return fetchHistorial(() => window.electronAPI.getHistorialLibro(nroLibro, archivado))
 }
+
+export const getEstadoHistorial = () => window.electronAPI.getEstadoHistorial()
+export const archivarHistorial = () => window.electronAPI.archivarHistorial()

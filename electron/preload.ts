@@ -59,8 +59,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
 
-  getHistorialSocio: (nroSocio: number) => ipcRenderer.invoke('getHistorialSocio', nroSocio),
-  getHistorialLibro: (nroLibro: string) => ipcRenderer.invoke('getHistorialLibro', nroLibro),
+  getHistorialSocio: (nroSocio: number, archivado?: boolean) => ipcRenderer.invoke('getHistorialSocio', nroSocio, archivado),
+  getHistorialLibro: (nroLibro: string, archivado?: boolean) => ipcRenderer.invoke('getHistorialLibro', nroLibro, archivado),
+  getEstadoHistorial: () => ipcRenderer.invoke('getEstadoHistorial'),
+  archivarHistorial: () => ipcRenderer.invoke('archivarHistorial'),
 
   sincronizacionDisponible: () => ipcRenderer.invoke('sincronizacionDisponible'),
   ejecutarSincronizacionDesdeSheets: () => ipcRenderer.invoke('ejecutarSincronizacionDesdeSheets'),

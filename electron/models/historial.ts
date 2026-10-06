@@ -6,6 +6,15 @@ function parseFecha(value: ExcelJS.CellValue): Date | null {
   return isNaN(fecha.getTime()) ? null : fecha
 }
 
+export function historialEntries(worksheet: ExcelJS.Worksheet): HistorialEntry[] {
+  const entries: HistorialEntry[] = []
+  worksheet.eachRow((row, nroFila) => {
+    const entry = nroFila > 1 && rowToHistorialEntry(row)
+    if (entry) entries.push(entry)
+  })
+  return entries
+}
+
 export function rowToHistorialEntry(row: ExcelJS.Row): HistorialEntry | null {
   const fechaPrestamo = parseFecha(row.getCell(2).value)
   if (!fechaPrestamo) return null

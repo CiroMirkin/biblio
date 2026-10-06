@@ -1,8 +1,11 @@
 import type { HistorialEntry } from '@shared/models'
 import { leerHistorial } from '../../utils/datosExcel'
 import { rowToHistorialEntry } from '../../models/historial'
+import { buscarEnHistorialArchivado } from './archivarHistorial'
 
-export async function getHistorialLibro(nroLibro: string): Promise<HistorialEntry[]> {
+export async function getHistorialLibro(nroLibro: string, archivado = false): Promise<HistorialEntry[]> {
+  if (archivado) return buscarEnHistorialArchivado(e => e.nroLibro === nroLibro)
+
   return leerHistorial(({ worksheet }) => {
     const results: HistorialEntry[] = []
     for (let i = 1; i <= worksheet.actualRowCount; i++) {
