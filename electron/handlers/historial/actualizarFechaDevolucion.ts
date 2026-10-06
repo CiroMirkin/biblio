@@ -1,4 +1,5 @@
 import { modificarHistorial } from '../../utils/datosExcel'
+import { celdaHistorial } from '../../models/historial'
 import { getHistorialLibro } from './getHistorialLibro'
 
 export async function actualizarFechaDevolucion(numeroInventario: string): Promise<boolean> {
@@ -14,9 +15,9 @@ export async function actualizarFechaDevolucion(numeroInventario: string): Promi
       const fechaDevolucion = new Date()
       for (let i = 1; i <= worksheet.actualRowCount; i++) {
         const row = worksheet.getRow(i)
-        const id = String(row.getCell(1).value ?? '')
+        const id = String(celdaHistorial(row, 'idPrestamo').value ?? '')
         if (id === idPrestamo) {
-          row.getCell(3).value = fechaDevolucion
+          celdaHistorial(row, 'fechaDevolucion').value = fechaDevolucion
           row.commit()
           await writeWorkbook()
           return true
