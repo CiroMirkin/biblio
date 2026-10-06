@@ -1,5 +1,7 @@
 import { modificarSocios, modificarCuotas, modificarLibros } from '../../utils/datosExcel'
 import { rowToSocio } from '../../models/socio'
+import { celdaCuotas } from '../../models/cuotas'
+import { celdaLibro } from '../../models/libro'
 import { writeSocio } from '../../models/socio'
 
 export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string): Promise<boolean> => {
@@ -31,8 +33,8 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
 
         cuotasSheet.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (Number(row.getCell(3).value) === nroSocio) {
-                row.getCell(4).value = nuevoNombre
+            if (Number(celdaCuotas(row, 'nroSocio').value) === nroSocio) {
+                celdaCuotas(row, 'nombre').value = nuevoNombre
             }
         })
 
@@ -46,8 +48,8 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
 
         librosSheet.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (Number(row.getCell(2).value) === nroSocio) {
-                row.getCell(1).value = nuevoNombre
+            if (Number(celdaLibro(row, 'numeroSocio').value) === nroSocio) {
+                celdaLibro(row, 'nombreSocio').value = nuevoNombre
             }
         })
 
