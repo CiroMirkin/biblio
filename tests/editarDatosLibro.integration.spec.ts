@@ -1,24 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import path from 'node:path'
 import fs from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { editarDatosLibro } from '../electron/handlers/libros'
 import { LIBROS_XLSX_PATH } from '../electron/constants'
+import { leerPrestamosDeDisco, limpiarLibrosYPrestamos, prepararLibrosYPrestamos } from './helpers/prestamos'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'libros-template.xlsx')
 
 describe('editarDatosLibro (integration)', () => {
-    beforeEach(() => {
-        fs.copyFileSync(FIXTURE_PATH, LIBROS_XLSX_PATH)
-    })
-
-    afterEach(() => {
-        if (fs.existsSync(LIBROS_XLSX_PATH)) {
-            fs.rmSync(LIBROS_XLSX_PATH, { force: true })
-        }
-    })
+    beforeEach(prepararLibrosYPrestamos, 30000)
+    afterEach(limpiarLibrosYPrestamos)
 
     it('Edita el titulo y autor de un libro existente', async () => {
         const workbook = new ExcelJS.Workbook()
@@ -135,40 +125,18 @@ describe('editarDatosLibro (integration)', () => {
         expect(filaEncontrada!.getCell(4).value).toBe('Autor Sin Cambio De Inventario')
     }, 30000)
 
-    it('Edita los datos del libro sin eliminar la informacion del prestamo', async () => {
-        const workbook = new ExcelJS.Workbook()
-        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-        const ws = workbook.getWorksheet('Hoja1')
-
-        const nroInventario = ws!.getRow(3).getCell(6).value as number
-
-        const result = await editarDatosLibro(nroInventario, {
-            numeroInventario: nroInventario,
-            autor: 'Autor Sin Cambio De Inventario',
+    it('Lleva el nuevo numero, titulo y autor al prestamo activo y lo devuelve con el libro', async () => {
+        const result = await editarDatosLibro(2, {
+            numeroInventario: 5000,
+            titulo: 'Ficciones (2da ed)',
             nombreSocio: 'Pepe',
         })
 
-        expect(result).not.toBeNull()
-        expect(result).not.toBe('Pepe')
+        expect(result).toMatchObject({ nombreSocio: 'Prueba,Julia', numeroSocio: 9 })
 
-        const workbookActualizado = new ExcelJS.Workbook()
-        await workbookActualizado.xlsx.readFile(LIBROS_XLSX_PATH)
-        const wsActualizado = workbookActualizado.getWorksheet('Hoja1')
-
-        let filaEncontrada: ExcelJS.Row | undefined
-        wsActualizado!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (String(row.getCell(6).value) === String(nroInventario)) {
-                filaEncontrada = row
-            }
-        })
-
-        expect(filaEncontrada).toBeDefined()
-        expect(filaEncontrada!.getCell(1).value).toBe('Prueba,Julia')
-        expect(filaEncontrada!.getCell(2).value).toBe(9)
-        expect(filaEncontrada!.getCell(3).value).not.toBeNull()
+        const prestamo = (await leerPrestamosDeDisco()).find(p => p.nroSocio === 9)
+        expect(prestamo).toMatchObject({ nroLibro: '5000', titulo: 'Ficciones (2da ed)', autor: 'Jorge Luis Borges' })
     }, 30000)
-
 
     it('Retorna null y no modifica el archivo si se intenta vaciar el titulo de un libro existente', async () => {
         const workbook = new ExcelJS.Workbook()

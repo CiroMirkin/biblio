@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 import type ExcelJS from 'exceljs'
-import type { LibroRegistrado, LiteraryForm, Marc21ItemType  } from "@shared/models"
+import type { Libro, LiteraryForm, Marc21ItemType  } from "@shared/models"
 
 export const COLUMNAS_LIBRO = {
     nombreSocio: 1,
@@ -29,14 +29,11 @@ export const COLUMNAS_LIBRO = {
 export const celdaLibro = (row: ExcelJS.Row, campo: keyof typeof COLUMNAS_LIBRO) =>
     row.getCell(COLUMNAS_LIBRO[campo])
 
-export function rowToLibro(row: ExcelJS.Row): LibroRegistrado {
+export function rowToLibro(row: ExcelJS.Row): Libro {
     return {
         titulo: String(celdaLibro(row, 'titulo').value ?? ''),
         autor: String(celdaLibro(row, 'autor').value ?? '') || undefined,
         numeroInventario: String(celdaLibro(row, 'numeroInventario').value ?? ''),
-        nombreSocio: String(celdaLibro(row, 'nombreSocio').value ?? ''),
-        numeroSocio: Number(celdaLibro(row, 'numeroSocio').value ?? null),
-        fechaDePrestamo: getFechaDePrestamoFromRow(row),
         literaryForm: (String(celdaLibro(row, 'literaryForm').value ?? '') || undefined) as LiteraryForm | undefined,
         fechaDeIngreso: getFechaDeIngresoFromRow(row),
         literaryGenres: String(celdaLibro(row, 'literaryGenres') ?? ''),
@@ -79,37 +76,7 @@ export const getFechaDeIngresoFromRow = (row: ExcelJS.Row): Date | null => {
 
 export const getNroDeInventarioFromRow = (row: ExcelJS.Row): string => celdaLibro(row, 'numeroInventario').value?.toString() ?? '' 
 
-export function libroToRow(libro: LibroRegistrado): (string | number | Date | null)[] {
-    return [
-        libro.nombreSocio ?? '',
-        libro.numeroSocio ?? null,
-        libro.fechaDePrestamo ?? null,
-        libro.autor || '',
-        libro.titulo,
-        libro.numeroInventario ?? '',
-        libro.itemType ?? '',
-        libro.literaryForm ?? '',
-        libro.edition ?? '',
-        libro.placeOfPublication ?? '',
-        libro.publisher ?? '',
-        libro.publicationYear ?? '',
-        // Holding
-        libro.holding.homeBranch ?? '',
-        libro.holding.holdingBranch ?? '',
-        libro.holding.publicNote ?? '',
-        libro.holding.callNumber ?? '',
-        libro.authorCountry ?? '',
-        libro.holding.barcode ?? '',
-        libro.dewey ?? '',
-        libro.fechaDeIngreso ?? '',
-        libro?.literaryGenres ?? '',
-    ]
-}
-
-export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
-    if (libro.nombreSocio !== undefined) celdaLibro(row, 'nombreSocio').value = libro.nombreSocio
-    if (libro.numeroSocio !== undefined) celdaLibro(row, 'numeroSocio').value = libro.numeroSocio
-    if (libro.fechaDePrestamo !== undefined) celdaLibro(row, 'fechaDePrestamo').value = libro.fechaDePrestamo
+export function writeLibro(row: ExcelJS.Row, libro: Libro): void {
     if (libro.fechaDeIngreso !== undefined && libro.fechaDeIngreso !== null) {
         celdaLibro(row, 'fechaDeIngreso').value = libro.fechaDeIngreso
     }
@@ -137,6 +104,7 @@ export function writeLibro(row: ExcelJS.Row, libro: LibroRegistrado): void {
     row.commit()
 }
 
+// las columnas de préstamo siguen en libros.xlsx solo para no correr el resto, se vacían al migrar a prestamos.xlsx
 export function limpiarPrestamo(row: ExcelJS.Row): void {
     celdaLibro(row, 'nombreSocio').value = ''
     celdaLibro(row, 'numeroSocio').value = null

@@ -41,9 +41,6 @@ describe('rowToLibro', () => {
         const result = rowToLibro(row)
 
         expect(result).toMatchObject({
-            nombreSocio:        'Juan Perez',
-            numeroSocio:        42,
-            fechaDePrestamo:    fecha,
             autor:              'Gabriel Garcia Marquez',
             titulo:             'Cien anos de soledad',
             numeroInventario:   '555555',
@@ -123,12 +120,9 @@ describe('rowToLibro', () => {
         const result = rowToLibro(row)
 
         expect(result).toMatchObject({
-            nombreSocio:      'Maria Lopez',
-            numeroSocio:      7,
             fechaDeIngreso: null,
             literaryForm: undefined,
             literaryGenres: '',
-            fechaDePrestamo:  fecha,
             autor:            'Julio Cortazar',
             titulo:           'Rayuela',
             numeroInventario: '100001',
@@ -159,33 +153,13 @@ describe('rowToLibro', () => {
         expect((result as any).holding.callNumber).toBeUndefined()
     })
 
-    it('Parsea la fecha correctamente cuando la celda contiene un string en lugar de un Date', () => {
-        const row = crearRow({
-            5:  'El Aleph',
-            6:  '888888',
-            7:  'BK',
-            3:  '2024-09-20',
-            13: 'Central',
-            14: 'Central',
-        })
+    it('Ignora las columnas de prestamo, que ahora viven en prestamos.xlsx', () => {
+        const row = crearRow({ 1: 'Juan Perez', 2: 42, 3: new Date('2024-06-01'), 5: 'El Aleph', 6: '888888' })
 
         const result = rowToLibro(row)
 
-        expect((result as any).fechaDePrestamo).toBeInstanceOf(Date)
-        expect((result as any).fechaDePrestamo.getFullYear()).toBe(2024)
-    })
-
-    it('Retorna fechaDePrestamo null cuando la celda de fecha esta vacia', () => {
-        const row = crearRow({
-            5:  'Bestiario',
-            6:  '999999',
-            7:  'BK',
-            13: 'Central',
-            14: 'Central',
-        })
-
-        const result = rowToLibro(row)
-
-        expect((result as any).fechaDePrestamo).toBeNull()
+        expect(result).not.toHaveProperty('nombreSocio')
+        expect(result).not.toHaveProperty('numeroSocio')
+        expect(result).not.toHaveProperty('fechaDePrestamo')
     })
 })

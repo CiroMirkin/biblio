@@ -4,6 +4,7 @@ import { getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/
 import { type DatosLibro, type LibroRegistrado } from "@shared/models/libro"
 import { type DatosPrestamo } from "@shared/models/prestamo"
 import { actualizarNroLibroEnHistorial } from '../historial'
+import { actualizarLibroEnPrestamo } from '../prestamos/actualizarLibroEnPrestamo'
 
 export const editarDatosLibro = async (nroInventario: number, datos: Partial<DatosLibro & DatosPrestamo>): Promise<LibroRegistrado | null> => {
     const newLibro = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
@@ -59,9 +60,17 @@ export const editarDatosLibro = async (nroInventario: number, datos: Partial<Dat
         return newLibro
     })
 
-    if (newLibro && String(nroInventario) !== String(newLibro.numeroInventario)) {
+    if (!newLibro) return null
+
+    if (String(nroInventario) !== String(newLibro.numeroInventario)) {
       await actualizarNroLibroEnHistorial(String(nroInventario), String(newLibro.numeroInventario))
     }
 
-    return newLibro
+    const prestamo = await actualizarLibroEnPrestamo(String(nroInventario), newLibro)
+    return {
+        ...newLibro,
+        nombreSocio: prestamo?.nombreSocio ?? '',
+        numeroSocio: prestamo?.nroSocio ?? null,
+        fechaDePrestamo: prestamo?.fechaPrestamo ?? null,
+    }
 }
