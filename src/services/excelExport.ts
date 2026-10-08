@@ -13,6 +13,10 @@ export class ExcelExportService {
     return window.electronAPI.copiarExcel('libros')
   }
 
+  static async descargarPrestamos(): Promise<boolean> {
+    return window.electronAPI.copiarExcel('prestamos')
+  }
+
   static async descargarInventarioEnMRC({ excluirSinISBN, periodoDeIngreso }: { excluirSinISBN?: boolean, periodoDeIngreso?: PeriodoDeIngreso }): Promise<void> {
     return window.electronAPI.obtenerArchivoMrc(excluirSinISBN, periodoDeIngreso)
   }
