@@ -1,39 +1,30 @@
-import { modificarLibros } from '../../utils/datosExcel'
-import { esSinInventariar, getNroDeInventarioFromRow, limpiarPrestamo } from "../../models/libro"
+import { modificarPrestamos } from '../../utils/datosExcel'
+import { esSinInventariar } from "../../models/libro"
+import { rowToPrestamo, type Prestamo } from '../../models/prestamo'
 import { actualizarFechaDevolucion } from '../historial'
 
 export async function devolverLibro(numeroInventario: number | string): Promise<boolean> {
-  const devuelto = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
-    let found = false
-    const rowsToDelete: number[] = []
+  const devuelto = await modificarPrestamos(async ({ worksheet, writeWorkbook }) => {
+    let prestamo: Prestamo | null = null
+    let fila = 0
 
     worksheet.eachRow((row, rowIndex) => {
-      if (rowIndex === 1) return
-      const nroInventario = getNroDeInventarioFromRow(row)
-
-      if(nroInventario === numeroInventario.toString()) {
-        found = true
-
-        if (esSinInventariar(numeroInventario)) {
-          rowsToDelete.push(rowIndex)
-        }
-        else {
-          limpiarPrestamo(row)
-        }
+      if (rowIndex === 1 || prestamo) return
+      const actual = rowToPrestamo(row)
+      if (actual.nroLibro === String(numeroInventario)) {
+        prestamo = actual
+        fila = rowIndex
       }
     })
 
-    if (!found) return false
+    if (!prestamo) return null
 
-    for (const rowIndex of rowsToDelete.reverse()) {
-      worksheet.spliceRows(rowIndex, 1)
-    }
-
+    worksheet.spliceRows(fila, 1)
     await writeWorkbook()
-    return true
+    return prestamo as Prestamo
   })
 
   if (!devuelto) return false
-  if(!esSinInventariar(numeroInventario)) await actualizarFechaDevolucion(String(numeroInventario))
+  if (!esSinInventariar(numeroInventario)) await actualizarFechaDevolucion(devuelto.idPrestamo)
   return true
 }

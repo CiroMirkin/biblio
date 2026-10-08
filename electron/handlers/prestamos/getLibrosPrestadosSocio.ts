@@ -1,16 +1,16 @@
-import { leerLibros } from '../../utils/datosExcel'
-import { rowToLibro } from '../../models/libro'
-import { type Libro } from "@shared/models/libro"
+import { leerPrestamos } from '../../utils/datosExcel'
+import { prestamoALibro, rowToPrestamo } from '../../models/prestamo'
+import { type LibroRegistrado } from "@shared/models/libro"
 
-export const getLibrosPrestadosSocio =  async (nroSocio: number) => leerLibros(({ worksheet }) => {
-  const libros: Libro[] = []
+export const getLibrosPrestadosSocio = async (nroSocio: number) => leerPrestamos(({ worksheet }) => {
+  const libros: LibroRegistrado[] = []
 
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex === 1) return
 
-    const libro = rowToLibro(row)
-    if (Number(libro.numeroSocio) === Number(nroSocio)) {
-      libros.push(libro)
+    const prestamo = rowToPrestamo(row)
+    if (Number(prestamo.nroSocio) === Number(nroSocio)) {
+      libros.push(prestamoALibro(prestamo))
     }
   })
 

@@ -1,184 +1,92 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import path from 'node:path'
 import fs from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
 import { addLibroPrestado } from '../electron/handlers/prestamos/addLibroPrestado'
-import { LIBROS_XLSX_PATH } from '../electron/constants'
+import { getHistorialLibro } from '../electron/handlers/historial'
+import { LIBROS_XLSX_PATH, PRESTAMOS_XLSX_PATH } from '../electron/constants'
 import { holdingVacio } from '@shared/models'
+import { leerPrestamosDeDisco, limpiarLibrosYPrestamos, prepararLibrosYPrestamos } from './helpers/prestamos'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'libros-template.xlsx')
+const prestamo = (datos: { titulo: string, autor?: string, numeroInventario?: number | string }) => ({
+    nombreSocio: 'Juan Perez',
+    numeroSocio: 42,
+    holding: holdingVacio(),
+    ...datos,
+})
 
+// en la fixture el inventario 1 (Bar del Infierno) esta disponible
 describe('addLibroPrestado (integration)', () => {
-    beforeEach(() => {
-        fs.copyFileSync(FIXTURE_PATH, LIBROS_XLSX_PATH)
-    })
+    beforeEach(prepararLibrosYPrestamos, 30000)
+    afterEach(limpiarLibrosYPrestamos)
 
-    afterEach(() => {
-        if (fs.existsSync(LIBROS_XLSX_PATH)) {
-            fs.rmSync(LIBROS_XLSX_PATH, { force: true })
-        }
-    })
-
-    it('Agrega un libro al inventario si el numero de inventario no existe previamente', async () => {
-        const libro = {
-            titulo: 'El Senor de los Anillos',
-            autor: 'J.R.R. Tolkien',
-            numeroInventario: 9999,
-            nombreSocio: 'Juan Perez',
-            numeroSocio: 42,
-            holding: holdingVacio(),
-        }
-        const fecha = new Date('2024-06-01')
-
-        const result = await addLibroPrestado(libro, fecha)
-
-        expect(result).not.toBeNull()
-        expect(result?.titulo).toBe(libro.titulo)
-        expect(result?.fechaDePrestamo).toEqual(fecha)
-
-        const workbook = new ExcelJS.Workbook()
-        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-        const ws = workbook.getWorksheet('Hoja1')
-
-        let filaEncontrada: ExcelJS.Row | undefined
-        ws!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (String(row.getCell(6).value) === String(libro.numeroInventario)) {
-                filaEncontrada = row
-            }
-        })
-
-        expect(filaEncontrada).toBeDefined()
-        expect(filaEncontrada!.getCell(1).value).toBe(libro.nombreSocio)
-        expect(filaEncontrada!.getCell(2).value).toBe(libro.numeroSocio)
-        expect(filaEncontrada!.getCell(4).value).toBe(libro.autor)
-        expect(filaEncontrada!.getCell(5).value).toBe(libro.titulo)
-    }, 30000)
-
-    it('Actualiza solo los datos del socio si el libro ya existe en el inventario', async () => {
-        const workbook = new ExcelJS.Workbook()
-        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-        const ws = workbook.getWorksheet('Hoja1')
-
-        const inventarioExistente = ws!.getRow(2).getCell(6).value
-
-        const libro = {
-            titulo: 'Titulo Modificado',
-            autor: 'Autor Modificado',
-            numeroInventario: inventarioExistente as number,
-            nombreSocio: 'Maria Lopez',
-            numeroSocio: 7,
-            holding: holdingVacio(),
-        }
+    it('Registra el prestamo con los datos del catalogo sin reescribir libros.xlsx', async () => {
+        const statLibros = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
         const fecha = new Date('2024-07-15')
 
-        const tituloOriginal = ws!.getRow(2).getCell(5).value as string
-        const autorOriginal = ws!.getRow(2).getCell(4).value as string
+        const result = await addLibroPrestado(prestamo({ titulo: 'Titulo Del Form', numeroInventario: 1 }), fecha)
 
-        const result = await addLibroPrestado(libro, fecha)
-
-        expect(result).not.toBeNull()
         expect(result?.fechaDePrestamo).toEqual(fecha)
+        expect(fs.statSync(LIBROS_XLSX_PATH).mtimeMs).toBe(statLibros)
 
-        const workbookActualizado = new ExcelJS.Workbook()
-        await workbookActualizado.xlsx.readFile(LIBROS_XLSX_PATH)
-        const wsActualizado = workbookActualizado.getWorksheet('Hoja1')
-
-        let filaEncontrada: ExcelJS.Row | undefined
-        wsActualizado!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (String(row.getCell(6).value) === String(inventarioExistente)) {
-                filaEncontrada = row
-            }
+        const registrado = (await leerPrestamosDeDisco()).find(p => p.nroLibro === '1')
+        expect(registrado).toMatchObject({
+            nroSocio: 42,
+            nombreSocio: 'Juan Perez',
+            fechaPrestamo: fecha,
+            titulo: 'Bar del Infierno',
+            autor: 'Alejandro Dolina',
         })
 
-        expect(filaEncontrada).toBeDefined()
-        expect(filaEncontrada!.getCell(1).value).toBe(libro.nombreSocio)
-        expect(filaEncontrada!.getCell(2).value).toBe(libro.numeroSocio)
-        expect(filaEncontrada!.getCell(4).value).toBe(autorOriginal)
-        expect(filaEncontrada!.getCell(5).value).toBe(tituloOriginal)
+        const historial = await getHistorialLibro('1')
+        expect(historial.map(h => h.idPrestamo)).toEqual([registrado!.idPrestamo])
     }, 30000)
 
-    it('Agrega una fila nueva si el libro no tiene numero de inventario, aunque existan filas sin numero', async () => {
+    it('Da de alta en el catalogo un numero de inventario que no existe', async () => {
+        const result = await addLibroPrestado(prestamo({ titulo: 'El Senor de los Anillos', autor: 'J.R.R. Tolkien', numeroInventario: 9999 }))
+
+        expect(result).not.toBeNull()
+        expect((await leerPrestamosDeDisco()).some(p => p.nroLibro === '9999')).toBe(true)
+
         const workbook = new ExcelJS.Workbook()
         await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-        const ws = workbook.getWorksheet('Hoja1')
-        ws!.addRow(['', null, null, 'Autor Viejo', 'Libro Sin Numero', null]).commit()
-        await workbook.xlsx.writeFile(LIBROS_XLSX_PATH)
-
-        const libro = (titulo: string) => ({
-            titulo,
-            autor: '',
-            numeroInventario: '',
-            nombreSocio: 'Juan Perez',
-            numeroSocio: 42,
-            holding: holdingVacio(),
+        let fila: ExcelJS.Row | undefined
+        workbook.getWorksheet('Hoja1')!.eachRow(row => {
+            if (String(row.getCell(6).value) === '9999') fila = row
         })
+        expect(fila!.getCell(5).value).toBe('El Senor de los Anillos')
+        expect(fila!.getCell(1).value).toBeNull()
+    }, 30000)
 
-        const primero = await addLibroPrestado(libro('Primero Sin Numero'))
-        const segundo = await addLibroPrestado(libro('Segundo Sin Numero'))
+    it('Los libros sin inventariar solo van a prestamos.xlsx', async () => {
+        const statLibros = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
 
-        expect(primero).not.toBeNull()
-        expect(segundo).not.toBeNull()
+        const primero = await addLibroPrestado(prestamo({ titulo: 'Primero Sin Numero', numeroInventario: '' }))
+        const segundo = await addLibroPrestado(prestamo({ titulo: 'Segundo Sin Numero' }))
 
-        const workbookActualizado = new ExcelJS.Workbook()
-        await workbookActualizado.xlsx.readFile(LIBROS_XLSX_PATH)
-        const titulosPrestados: unknown[] = []
-        workbookActualizado.getWorksheet('Hoja1')!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (row.getCell(1).value === 'Juan Perez') titulosPrestados.push(row.getCell(5).value)
-        })
+        expect(String(primero?.numeroInventario).startsWith('SN-')).toBe(true)
+        expect(String(segundo?.numeroInventario).startsWith('SN-')).toBe(true)
+        expect(fs.statSync(LIBROS_XLSX_PATH).mtimeMs).toBe(statLibros)
 
-        expect(titulosPrestados).toEqual(['Primero Sin Numero', 'Segundo Sin Numero'])
+        const titulos = (await leerPrestamosDeDisco()).filter(p => p.nroSocio === 42).map(p => p.titulo)
+        expect(titulos).toEqual(['Primero Sin Numero', 'Segundo Sin Numero'])
     }, 30000)
 
     it('Retorna null y no modifica el archivo si el libro no tiene titulo', async () => {
-        const libro = {
-            titulo: '',
-            autor: 'Autor Sin Titulo',
-            numeroInventario: 8888,
-            nombreSocio: 'Carlos Ruiz',
-            numeroSocio: 5,
-            holding: holdingVacio(),
-        }
+        const statBefore = fs.statSync(PRESTAMOS_XLSX_PATH).mtimeMs
 
-        const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
-
-        const result = await addLibroPrestado(libro)
+        const result = await addLibroPrestado(prestamo({ titulo: '', numeroInventario: 8888 }))
 
         expect(result).toBeNull()
-
-        const statAfter = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
-        expect(statAfter).toBe(statBefore)
+        expect(fs.statSync(PRESTAMOS_XLSX_PATH).mtimeMs).toBe(statBefore)
     }, 30000)
 
     it('Retorna null y no modifica el archivo si el libro ya esta en prestamo', async () => {
-        const workbook = new ExcelJS.Workbook()
-        await workbook.xlsx.readFile(LIBROS_XLSX_PATH)
-        const ws = workbook.getWorksheet('Hoja1')
+        await addLibroPrestado(prestamo({ titulo: 'Bar del Infierno', numeroInventario: 1 }), new Date('2024-01-01'))
+        const statBefore = fs.statSync(PRESTAMOS_XLSX_PATH).mtimeMs
 
-        const inventarioExistente = ws!.getRow(2).getCell(6).value as number
-
-        const libro = {
-            titulo: 'Cualquier Titulo',
-            autor: 'Cualquier Autor',
-            numeroInventario: inventarioExistente,
-            nombreSocio: 'Socio Nuevo',
-            numeroSocio: 99,
-            holding: holdingVacio(),
-        }
-
-        await addLibroPrestado(libro, new Date('2024-01-01'))
-
-        const statBefore = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
-
-        const result = await addLibroPrestado(libro, new Date('2024-06-01'))
+        const result = await addLibroPrestado({ ...prestamo({ titulo: 'Bar del Infierno', numeroInventario: 1 }), numeroSocio: 99 })
 
         expect(result).toBeNull()
-
-        const statAfter = fs.statSync(LIBROS_XLSX_PATH).mtimeMs
-        expect(statAfter).toBe(statBefore)
-    })
+        expect(fs.statSync(PRESTAMOS_XLSX_PATH).mtimeMs).toBe(statBefore)
+    }, 30000)
 })
