@@ -1,7 +1,7 @@
-import { modificarSocios, modificarCuotas, modificarLibros } from '../../utils/datosExcel'
+import { modificarSocios, modificarCuotas, modificarPrestamos } from '../../utils/datosExcel'
 import { rowToSocio } from '../../models/socio'
 import { celdaCuotas } from '../../models/cuotas'
-import { celdaLibro } from '../../models/libro'
+import { celdaPrestamo } from '../../models/prestamo'
 import { writeSocio } from '../../models/socio'
 
 export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string): Promise<boolean> => {
@@ -43,17 +43,17 @@ export const cambiarNombreSocio = async (nroSocio: number, nuevoNombre: string):
     })
     if (!cuotasOk) return false
 
-    return modificarLibros(async ({ worksheet: librosSheet, writeWorkbook: writeLibros }) => {
-        if (!librosSheet) return false
+    return modificarPrestamos(async ({ worksheet: prestamosSheet, writeWorkbook: writePrestamos }) => {
+        if (!prestamosSheet) return false
 
-        librosSheet.eachRow((row, rowIndex) => {
+        prestamosSheet.eachRow((row, rowIndex) => {
             if (rowIndex === 1) return
-            if (Number(celdaLibro(row, 'numeroSocio').value) === nroSocio) {
-                celdaLibro(row, 'nombreSocio').value = nuevoNombre
+            if (Number(celdaPrestamo(row, 'nroSocio').value) === nroSocio) {
+                celdaPrestamo(row, 'nombreSocio').value = nuevoNombre
             }
         })
 
-        await writeLibros()
+        await writePrestamos()
         return true
     })
 }
