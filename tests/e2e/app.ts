@@ -7,6 +7,8 @@ import type { SettingsSchema } from '../../electron/settings'
 const ROOT = path.join(__dirname, '..', '..')
 const FIXTURES = path.join(ROOT, 'tests', 'fixtures')
 const ARCHIVOS = ['socios', 'cuotas', 'libros', 'prestamos-historial']
+// sin plantilla, la app lo migra desde libros-test.xlsx al abrir
+const PRESTAMOS_TEST = path.join(FIXTURES, 'prestamos-test.xlsx')
 
 export const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
@@ -15,6 +17,7 @@ export function restaurarFixtures() {
     for (const nombre of ARCHIVOS) {
         fs.copyFileSync(path.join(FIXTURES, `${nombre}-template.xlsx`), path.join(FIXTURES, `${nombre}-test.xlsx`))
     }
+    fs.rmSync(PRESTAMOS_TEST, { force: true })
 }
 
 type Fixtures = {
@@ -54,6 +57,7 @@ export const test = base.extend<Fixtures>({
         app = undefined
         fs.rmSync(userData, { recursive: true, force: true })
         for (const nombre of ARCHIVOS) fs.rmSync(path.join(FIXTURES, `${nombre}-test.xlsx`), { force: true })
+        fs.rmSync(PRESTAMOS_TEST, { force: true })
     },
     page: async ({ abrirApp }, use) => use(await abrirApp()),
     reabrirApp: async ({ abrirApp, page: _page }, use) => use(abrirApp),
