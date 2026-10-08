@@ -1,6 +1,6 @@
 # Caché en memoria y cola por archivo para los Excel
 
-Todo acceso a los archivos `.xlsx` de la app (`socios`, `cuotas`, `libros`, `prestamos_historial`)
+Todo acceso a los archivos `.xlsx` de la app (`socios`, `cuotas`, `libros`, `prestamos`, `prestamos_historial`)
 pasa por `electron/utils/hojaExcel.ts`. El módulo resuelve tres cosas:
 
 1. **Caché:** cada workbook queda en memoria y solo se relee de disco si el archivo cambió.
@@ -56,10 +56,12 @@ export const { leer: leerSocios, modificar: modificarSocios } = archivo(SOCIOS_X
 | cuotas | `original` | `leerCuotas` | `modificarCuotas` |
 | libros | `Hoja1` | `leerLibros` | `modificarLibros` |
 | historial | `prestamos` | `leerHistorial` | `modificarHistorial` |
+| prestamos | `prestamos` | `leerPrestamos` | `modificarPrestamos` |
 
 El historial pasa además `crearHistorial` como `crearSiFalta`: si el archivo no existe, se crea con
 sus columnas (`idPrestamo`, `fechaPrestamo`, `fechaDevolucion`, `nroSocio`, `nroLibro`) antes de
-cargarlo, dentro de la cola.
+cargarlo, dentro de la cola. Préstamos hace lo mismo con `crearPrestamos`, pero al arrancar la app
+`migrarPrestamos` lo crea antes con los préstamos que estaban en las columnas 1 a 3 de `libros.xlsx`.
 
 Los handlers usan siempre estos envoltorios:
 
