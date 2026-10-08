@@ -3,6 +3,7 @@ import { COLUMNAS_HISTORIAL } from '../electron/models/historial'
 import { COLUMNAS_CUOTAS } from '../electron/models/cuotas'
 import { COLUMNAS_SOCIO } from '../electron/models/socio'
 import { COLUMNAS_LIBRO } from '../electron/models/libro'
+import { COLUMNAS_PRESTAMO } from '../electron/models/prestamo'
 
 // Los números reflejan el layout de los Excel reales. Si este test falla, el cambio en el model rompe la lectura de archivos existentes.
 describe('columnas de los Excel', () => {
@@ -13,6 +14,18 @@ describe('columnas de los Excel', () => {
             fechaDevolucion: 3,
             nroSocio: 4,
             nroLibro: 5,
+        })
+    })
+
+    it('prestamos', () => {
+        expect(COLUMNAS_PRESTAMO).toEqual({
+            idPrestamo: 1,
+            nroLibro: 2,
+            nroSocio: 3,
+            nombreSocio: 4,
+            fechaPrestamo: 5,
+            titulo: 6,
+            autor: 7,
         })
     })
 
