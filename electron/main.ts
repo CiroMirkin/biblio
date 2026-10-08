@@ -4,6 +4,7 @@ import log from 'electron-log'
 import path from 'node:path'
 import { ipcHandlers } from './handlers/ipcHandlers'
 import { initializeDataFiles } from './utils/initializeDataFiles'
+import { migrarPrestamos } from './utils/migrarPrestamos'
 import { registerSettingsHandlers } from './utils/registerSettingsHandlers'
 import { sincronizacionDisponible } from './utils/verificarSincronizacionDisponible'
 import { IS_DEV } from './constants'
@@ -99,9 +100,11 @@ function createWindow() {
     autoUpdater.checkForUpdates()
   })
 }
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   registerSettingsHandlers()
   initializeDataFiles()
+  // antes de abrir la ventana para que el primer acceso no cree un prestamos.xlsx vacio
+  await migrarPrestamos()
   sincronizacionDisponible() // chequeo en background, cacheado, no bloquea el arranque
   createWindow()
 })
