@@ -1,0 +1,6 @@
+export * from "./quitarTildes"
+export * from "./quitarSignos"
+export * from "./limpiarTexto"
+export * from "./tokenizar"
+export * from "./quitarPalabrasIgnoradas"
+export * from "./normalizarParaBusqueda"
