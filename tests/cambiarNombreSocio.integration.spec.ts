@@ -3,29 +3,32 @@ import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ExcelJS from 'exceljs'
-import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH } from '../electron/constants'
+import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, PRESTAMOS_XLSX_PATH } from '../electron/constants'
 import { rowToSocio } from '../electron/models/socio'
 import { cambiarNombreSocio } from '../electron/handlers/socios/cambiarNombreSocio'
+import { addLibroPrestado } from '../electron/handlers/prestamos/addLibroPrestado'
+import { holdingVacio } from '@shared/models'
+import { leerPrestamosDeDisco, limpiarLibrosYPrestamos, prepararLibrosYPrestamos } from './helpers/prestamos'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const SOCIOS_FIXTURE = path.join(__dirname, 'fixtures', 'socios-template.xlsx')
 const CUOTAS_FIXTURE = path.join(__dirname, 'fixtures', 'cuotas-template.xlsx')
-const LIBROS_FIXTURE = path.join(__dirname, 'fixtures', 'libros-template.xlsx')
 
 const NRO_SOCIO = 9
 const NOMBRE_ORIGINAL = 'Prueba,Julia'
 const NOMBRE_NUEVO = 'Prueba,Julia Modificada'
 
 describe('cambiarNombre (integration)', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         fs.copyFileSync(SOCIOS_FIXTURE, SOCIOS_XLSX_PATH)
         fs.copyFileSync(CUOTAS_FIXTURE, CUOTAS_XLSX_PATH)
-        fs.copyFileSync(LIBROS_FIXTURE, LIBROS_XLSX_PATH)
-    })
+        await prepararLibrosYPrestamos()
+    }, 30000)
 
     afterEach(() => {
-        for (const filePath of [SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH]) {
+        limpiarLibrosYPrestamos()
+        for (const filePath of [SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH]) {
             if (fs.existsSync(filePath)) {
                 fs.rmSync(filePath, { force: true })
             }
@@ -41,7 +44,7 @@ describe('cambiarNombre (integration)', () => {
         const statAntes = {
             socios: fs.statSync(SOCIOS_XLSX_PATH).mtimeMs,
             cuotas: fs.statSync(CUOTAS_XLSX_PATH).mtimeMs,
-            libros: fs.statSync(LIBROS_XLSX_PATH).mtimeMs,
+            prestamos: fs.statSync(PRESTAMOS_XLSX_PATH).mtimeMs,
         }
 
         const result = await cambiarNombreSocio(999000001, NOMBRE_NUEVO)
@@ -49,7 +52,7 @@ describe('cambiarNombre (integration)', () => {
 
         expect(fs.statSync(SOCIOS_XLSX_PATH).mtimeMs).toBe(statAntes.socios)
         expect(fs.statSync(CUOTAS_XLSX_PATH).mtimeMs).toBe(statAntes.cuotas)
-        expect(fs.statSync(LIBROS_XLSX_PATH).mtimeMs).toBe(statAntes.libros)
+        expect(fs.statSync(PRESTAMOS_XLSX_PATH).mtimeMs).toBe(statAntes.prestamos)
     }, 30000)
 
     it('Actualiza el nombre en socios y deja el resto de los campos intactos', async () => {
@@ -103,39 +106,14 @@ describe('cambiarNombre (integration)', () => {
         expect(nombreEncontrado).toBe(NOMBRE_NUEVO)
     }, 30000)
 
-    it('Actualiza el nombre en libros solo en filas del socio y deja las demas intactas', async () => {
-        const wbAntes = new ExcelJS.Workbook()
-        await wbAntes.xlsx.readFile(LIBROS_XLSX_PATH)
-        const otrasFilas: { nroInventario: string; nombreSocio: string | null }[] = []
-        wbAntes.getWorksheet('Hoja1')!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (Number(row.getCell(2).value) !== NRO_SOCIO) {
-                const rawNombre = row.getCell(1).value
-                otrasFilas.push({
-                    nroInventario: String(row.getCell(6).value),
-                    nombreSocio: rawNombre == null ? null : String(rawNombre),
-                })
-            }
-        })
+    it('Actualiza el nombre en los prestamos del socio y deja los demas intactos', async () => {
+        await addLibroPrestado({ titulo: 'Bar del Infierno', numeroInventario: 1, nombreSocio: 'Otro', numeroSocio: 42, holding: holdingVacio() })
 
         await cambiarNombreSocio(NRO_SOCIO, NOMBRE_NUEVO)
 
-        const wbDespues = new ExcelJS.Workbook()
-        await wbDespues.xlsx.readFile(LIBROS_XLSX_PATH)
-
-        wbDespues.getWorksheet('Hoja1')!.eachRow((row, rowIndex) => {
-            if (rowIndex === 1) return
-            if (Number(row.getCell(2).value) === NRO_SOCIO) {
-                expect(row.getCell(1).value).toBe(NOMBRE_NUEVO)
-            } else {
-                const fila = otrasFilas.find(f => f.nroInventario === String(row.getCell(3).value))
-                if (fila) {
-                    const rawNombre = row.getCell(1).value
-                    const nombreActual = rawNombre == null ? null : String(rawNombre)
-                    expect(nombreActual).toBe(fila.nombreSocio)
-                }
-            }
-        })
+        const prestamos = await leerPrestamosDeDisco()
+        expect(prestamos.find(p => p.nroSocio === NRO_SOCIO)?.nombreSocio).toBe(NOMBRE_NUEVO)
+        expect(prestamos.find(p => p.nroSocio === 42)?.nombreSocio).toBe('Otro')
     }, 30000)
 
     it('No modifica el nombre original en socios si se invoca con el mismo nombre', async () => {

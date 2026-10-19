@@ -11,7 +11,7 @@ export type ImportarMrcResult = {
 }
 
 declare global {
-  type ArchivoKey = 'socios' | 'cuotas' | 'libros' | 'completo'
+  type ArchivoKey = 'socios' | 'cuotas' | 'libros' | 'prestamos' | 'completo'
   type PeriodoDeIngreso = 'hoy' | 'semana' | 'mes' | 'año' | 'todos'
   interface Window {
     electronAPI: {
