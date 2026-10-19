@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import type { LibroRegistrado } from '@shared/models'
 import {
     quitarTildes,
     quitarSignos,
@@ -6,6 +7,7 @@ import {
     tokenizar,
     quitarPalabrasIgnoradas,
     normalizarParaBusqueda,
+    normalizarLibro,
 } from '@/store/buscarLibro/normalizar'
 
 describe('quitarTildes', () => {
@@ -65,5 +67,23 @@ describe('normalizarParaBusqueda', () => {
 
     it('Los signos no separan resultados distintos', () => {
         expect(normalizarParaBusqueda('Rayuela: (novela)')).toEqual(normalizarParaBusqueda('rayuela novela'))
+    })
+})
+
+describe('normalizarLibro', () => {
+    it('Separa las palabras del titulo y del autor', () => {
+        const libro = { titulo: 'La Casa de los Espíritus', autor: 'Allende, Isabel' } as LibroRegistrado
+
+        expect(normalizarLibro(libro)).toEqual({
+            libro,
+            titulo: ['la', 'casa', 'de', 'los', 'espiritus'],
+            tituloSignificativo: ['casa', 'espiritus'],
+            autor: ['allende', 'isabel'],
+        })
+    })
+
+    it('Un libro sin autor no tiene palabras de autor', () => {
+        const libro = { titulo: 'Anonimo' } as LibroRegistrado
+        expect(normalizarLibro(libro).autor).toEqual([])
     })
 })
