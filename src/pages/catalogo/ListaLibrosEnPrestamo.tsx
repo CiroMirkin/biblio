@@ -1,11 +1,11 @@
-import { useLibrosStore } from "@/store"
+import { useLibrosClasificados } from "@/store"
 import { LibroEnPrestamo } from "./LibroEnPrestamo"
 import { useEffect, useRef, useState } from "react"
 
 const PASO = 10
 
 export function ListaLibrosEnPrestamo() {
-    const { librosFiltrados } = useLibrosStore()
+    const { filtrados: librosFiltrados } = useLibrosClasificados()
     const [cantidad, setCantidad] = useState(PASO)
     const bottomRef = useRef<HTMLDivElement>(null)
 

@@ -1,12 +1,15 @@
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
-import { useSociosStore } from "@/store"
+import { useLibrosStore, useSociosFiltrados, useSociosStore, useVistaStore } from "@/store"
 import { Spinner } from "@/components";
 
 const PAGINA = 10
 
 export function ListaSocios() {
-  const { sociosFiltrados, seleccionar, loadingSocios } = useSociosStore()
+  const { loadingSocios } = useSociosStore()
+  const { loadingLibros } = useLibrosStore()
+  const { filtrados: sociosFiltrados } = useSociosFiltrados()
+  const { verSocio } = useVistaStore()
   const [cantidad, setCantidad] = useState(PAGINA)
   const loaderRef = useRef<HTMLDivElement>(null)
 
@@ -25,7 +28,8 @@ export function ListaSocios() {
     return () => observer.disconnect()
   }, [sociosFiltrados.length])
 
-  if(loadingSocios) {
+  // sin los libros cargados aun no se sabe que socios tienen prestamos
+  if(loadingSocios || loadingLibros) {
     return <div className="flex gap-2 items-center text-lg">
       <Spinner  /> Cargando...
     </div>
@@ -44,7 +48,7 @@ export function ListaSocios() {
             "px-4 py-4 flex gap-2 justify-between hover:pl-6 border-l-2 border-transparent hover:border-l-black transition-all ease-in duration-100",
             index % 2 === 0 ? "bg-white" : "bg-white/50"
           )}
-          onClick={() => seleccionar(socio)}
+          onClick={() => verSocio(socio.nroSocio)}
         >
           <span className="w-full text-lg cursor-default select-none">{socio.nombreYApellido}</span>
           <button className="btn">

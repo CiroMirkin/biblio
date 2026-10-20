@@ -14,8 +14,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   getLibrosPrestadosSocio: (nroSocio: number) => ipcRenderer.invoke('getLibrosPrestadosSocio', nroSocio),
   
-  getSociosConLibros: () => ipcRenderer.invoke('getSociosConLibros'),
-  
   cambiarNombreSocio: (nroSocio: number, nombre: string) => ipcRenderer.invoke(
     'cambiarNombreSocio', 
     nroSocio,
@@ -47,7 +45,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ),
   createSocio: (socio: NewSocio) => ipcRenderer.invoke('createSocio', socio),
   
-  copiarExcel: (key: 'socios' | 'cuotas' | 'libros') => ipcRenderer.invoke('copiarExcel', key),
+  copiarExcel: (key: 'socios' | 'cuotas' | 'libros' | 'prestamos') => ipcRenderer.invoke('copiarExcel', key),
   obtenerArchivoMrc: (excluirSinIsbn?: boolean, periodoDeIngreso?: PeriodoDeIngreso) => ipcRenderer.invoke(
     'obtenerArchivoMrc', excluirSinIsbn, periodoDeIngreso
   ),

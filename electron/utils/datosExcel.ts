@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs'
 import { modificarHoja, leerHoja, type HojaExcel, type HojaLectura } from './hojaExcel'
-import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, PRESTAMOS_HISTORIAL_XLSX_PATH } from '../constants'
+import { SOCIOS_XLSX_PATH, CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, PRESTAMOS_HISTORIAL_XLSX_PATH, PRESTAMOS_XLSX_PATH } from '../constants'
+import { COLUMNAS_PRESTAMO, writePrestamo, type Prestamo } from '../models/prestamo'
 
 const archivo = (path: string, hoja: string, crearSiFalta?: () => Promise<void>) => ({
   leer: <T>(fn: (h: HojaLectura) => T | Promise<T>) =>
@@ -47,4 +48,21 @@ export const {
   PRESTAMOS_HISTORIAL_XLSX_PATH,
   'prestamos',
   crearHistorial,
+)
+
+export async function crearPrestamos(prestamos: Prestamo[] = []) {
+  const workbook = new ExcelJS.Workbook()
+  const worksheet = workbook.addWorksheet('prestamos')
+  worksheet.columns = Object.keys(COLUMNAS_PRESTAMO).map(key => ({ header: key, key }))
+  for (const prestamo of prestamos) writePrestamo(worksheet.addRow([]), prestamo)
+  await workbook.xlsx.writeFile(PRESTAMOS_XLSX_PATH)
+}
+
+export const {
+  leer: leerPrestamos,
+  modificar: modificarPrestamos,
+} = archivo(
+  PRESTAMOS_XLSX_PATH,
+  'prestamos',
+  crearPrestamos,
 )

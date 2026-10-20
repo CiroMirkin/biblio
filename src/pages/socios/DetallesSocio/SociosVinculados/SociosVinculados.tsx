@@ -1,4 +1,4 @@
-import { useSociosStore } from "@/store";
+import { useSociosStore, useSociosVinculados } from "@/store";
 import { cn } from "@/utils";
 import { useState } from "react";
 import { ListaDeVinculados } from "./ListaDeVinculados";
@@ -6,7 +6,8 @@ import { VincularSocio } from "./VincularSocio";
 
 export function SociosVinculados() {
     const [ showInput, setShowInput ] = useState(false)
-    const { buscar, sociosVinculados } = useSociosStore()
+    const { buscar } = useSociosStore()
+    const sociosVinculados = useSociosVinculados()
     const noHayVinculados = !sociosVinculados.length
 
     return (

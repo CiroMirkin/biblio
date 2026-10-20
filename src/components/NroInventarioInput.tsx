@@ -37,7 +37,10 @@ export function NroInventarioInput({
       return
     }
 
-    const { libro, existente } = esNroInventarioExistente(valor)
+    const { libro, existente } = esNroInventarioExistente(valor, {
+      nroActual: mode === "edicion" ? defaultValue : undefined,
+    })
+
     if (existente && libro !== null) {
       const autor = libro.autor ? `de ${libro.autor}.` : "."
       setMensajeDeError([

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { getCaracterSocio } from "@/models"
 import { holdingVacio, type LibroRegistrado } from "@shared/models"
 import { formatName, formatTitulo } from "@/utils"
-import { useSociosStore, useLibrosStore } from "@/store"
+import { useLibrosStore, useSocioSeleccionado } from "@/store"
 import { TablaPrestamos } from "./TablaPrestamos"
 import { type InputLibro } from "./types"
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function Prestamos({ onSuccess }: Props) {
-  const { socioSeleccionado: socio } = useSociosStore()
+  const socio = useSocioSeleccionado()
   const {
     getLibrosSocio,
     agregarLibroEnPrestamo,

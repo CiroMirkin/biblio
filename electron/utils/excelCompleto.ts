@@ -1,16 +1,22 @@
 import { dialog } from 'electron'
 import ExcelJS from 'exceljs'
-import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from '../constants'
+import fs from 'node:fs/promises'
+import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, PRESTAMOS_XLSX_PATH, SOCIOS_XLSX_PATH } from '../constants'
 import { getAll, set, type SettingsSchema } from '../settings'
 import { modificarArchivo, leerHoja } from './hojaExcel'
+import { migrarPrestamos } from './migrarPrestamos'
 
 const ARCHIVOS = {
     socios: { path: SOCIOS_XLSX_PATH, hojaOrigen: 'Hoja1', hojaDestino: 'socios' },
     cuotas: { path: CUOTAS_XLSX_PATH, hojaOrigen: 'original', hojaDestino: 'cuotas' },
     libros: { path: LIBROS_XLSX_PATH, hojaOrigen: 'Hoja1', hojaDestino: 'libros' },
+    prestamos: { path: PRESTAMOS_XLSX_PATH, hojaOrigen: 'prestamos', hojaDestino: 'prestamos' },
 } as const
 
 const HOJA_AJUSTES = 'ajustes'
+
+// las copias anteriores a prestamos.xlsx traen los préstamos dentro de la hoja libros
+const HOJAS_OPCIONALES: string[] = [ARCHIVOS.prestamos.hojaDestino]
 
 export const exportarExcelCompleto = async () => {
     const fecha = new Date().toLocaleDateString(
@@ -56,7 +62,7 @@ export const importarExcelCompleto = async () => {
     const hojasFaltantes = [
         ...Object.values(ARCHIVOS).map(({ hojaDestino }) => hojaDestino),
         HOJA_AJUSTES,
-    ].filter(hojaDestino => !origenWb.getWorksheet(hojaDestino))
+    ].filter(hojaDestino => !HOJAS_OPCIONALES.includes(hojaDestino) && !origenWb.getWorksheet(hojaDestino))
 
     if (hojasFaltantes.length > 0) {
         const prural = hojasFaltantes.length === 1
@@ -67,7 +73,11 @@ export const importarExcelCompleto = async () => {
     }
 
     for (const { path: destinoPath, hojaOrigen, hojaDestino } of Object.values(ARCHIVOS)) {
-        const hoja = origenWb.getWorksheet(hojaDestino)!
+        const hoja = origenWb.getWorksheet(hojaDestino)
+        if (!hoja) {
+            await modificarArchivo(destinoPath, () => fs.rm(destinoPath, { force: true }))
+            continue
+        }
 
         const destinoWb = new ExcelJS.Workbook()
         copiarHoja(destinoWb, hoja, hojaOrigen)
@@ -75,6 +85,7 @@ export const importarExcelCompleto = async () => {
         await modificarArchivo(destinoPath, () => destinoWb.xlsx.writeFile(destinoPath))
     }
 
+    await migrarPrestamos()
     importarHojaAjustes(origenWb.getWorksheet(HOJA_AJUSTES)!)
 
     return {

@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { useSociosStore } from "@/store"
+import { useSociosStore, useSocioSeleccionado } from "@/store"
 import { Spinner } from "@/components"
 import { getCaracterSocio } from "@/models"
 import { cn } from "@/utils"
 
 export function GestionEstadoSocio() {
-    const { socioSeleccionado, darDeBajaSocioSeleccionado, reactivarSocioSeleccionado } = useSociosStore()
+    const { darDeBaja, reactivar } = useSociosStore()
+    const socioSeleccionado = useSocioSeleccionado()
     const [cargando, setCargando] = useState(false)
 
     const isSocioActivo = getCaracterSocio(socioSeleccionado?.caracterSocio).estado
@@ -13,8 +14,9 @@ export function GestionEstadoSocio() {
     const handleEstadoSocio = async () => {
         setCargando(true)
         try {
-            if (isSocioActivo) await darDeBajaSocioSeleccionado()
-            else await reactivarSocioSeleccionado()
+            if (!socioSeleccionado) return
+            if (isSocioActivo) await darDeBaja(socioSeleccionado.nroSocio)
+            else await reactivar(socioSeleccionado.nroSocio)
         }
         finally {
             setCargando(false)

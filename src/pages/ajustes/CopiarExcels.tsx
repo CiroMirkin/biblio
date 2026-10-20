@@ -10,6 +10,7 @@ export function CopiarExcels() {
         if (key === 'socios') await ExcelExportService.descargarSocios()
         if (key === 'cuotas') await ExcelExportService.descargarCuotas()
         if (key === 'libros') await ExcelExportService.descargarLibros()
+        if (key === 'prestamos') await ExcelExportService.descargarPrestamos()
         if (key === 'completo') await ExcelExportService.copiaDeSeguridad()
         setCargando(null)
     }
@@ -46,6 +47,13 @@ export function CopiarExcels() {
                     onClick={() => handleDescargar('libros')}
                 >
                     {cargando === 'libros' ? 'Copiando libros...' : 'Libros'}
+                </button>
+                <button
+                    className={cn("btn", cargando === "prestamos" && "btn-disabled")}
+                    disabled={!!cargando}
+                    onClick={() => handleDescargar('prestamos')}
+                >
+                    {cargando === 'prestamos' ? 'Copiando préstamos...' : 'Préstamos'}
                 </button>
             </div>
         </div>

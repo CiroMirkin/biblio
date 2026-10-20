@@ -1,15 +1,13 @@
-import { useSociosStore } from "@/store"
+import { useVistaStore } from "@/store"
 import { BuscadorSocios } from "./BuscadorSocios/BuscadorSocios"
 import { DetalleSocio } from "./DetallesSocio/DetallesSocio"
 
 export function Socios() {
-  const {
-    showDetallesSocio,
-  } = useSociosStore()
+  const vista = useVistaStore(s => s.socios)
 
   return (
     <>
-      { showDetallesSocio
+      { vista.modo === "detalle"
         ? <DetalleSocio />
         : <BuscadorSocios />
       }

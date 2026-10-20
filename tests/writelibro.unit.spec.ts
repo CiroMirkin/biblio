@@ -42,9 +42,9 @@ describe('writeLibro', () => {
 
         writeLibro(row, libro)
 
-        expect(row.getCell(1).value).toBe(libro.nombreSocio)
-        expect(row.getCell(2).value).toBe(libro.numeroSocio)
-        expect(row.getCell(3).value).toEqual(libro.fechaDePrestamo)
+        expect(row.getCell(1).value).toBeNull()
+        expect(row.getCell(2).value).toBeNull()
+        expect(row.getCell(3).value).toBeNull()
         expect(row.getCell(4).value).toBe(libro.autor)
         expect(row.getCell(5).value).toBe(libro.titulo)
         expect(row.getCell(6).value).toBe(libro.numeroInventario)

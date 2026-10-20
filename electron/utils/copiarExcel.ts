@@ -1,12 +1,13 @@
 import { dialog } from 'electron'
 import fs from 'node:fs/promises'
-import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, SOCIOS_XLSX_PATH } from '../constants'
+import { CUOTAS_XLSX_PATH, LIBROS_XLSX_PATH, PRESTAMOS_XLSX_PATH, SOCIOS_XLSX_PATH } from '../constants'
 import { modificarArchivo } from './hojaExcel'
 
 const ARCHIVOS = {
   socios: SOCIOS_XLSX_PATH,
   cuotas: CUOTAS_XLSX_PATH,
   libros: LIBROS_XLSX_PATH,
+  prestamos: PRESTAMOS_XLSX_PATH,
 } as const
 
 export type ArchivoKey = keyof typeof ARCHIVOS

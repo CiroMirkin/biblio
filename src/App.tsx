@@ -3,27 +3,26 @@ import { motion } from "motion/react"
 import { Inscripcion, Socios, Catalogo, Ajustes, IngresoLibros } from "@/pages";
 import { cn } from "./utils";
 import { ZoomControl } from "./components";
-import { useSociosStore, useLibrosStore, useSettingsStore } from "./store";
+import { useSociosStore, useLibrosStore, useSettingsStore, useVistaStore, type Vista } from "./store";
 
 const options = {
-  CUOTA: "Socios",
-  INSCRIPCION: "Inscripción",
-  LIBROS: "Inventario",
-  INGRESO_LIBROS: "Ingreso de libros",
-  AJUSTES: "Ajustes",
-} as const;
+  SOCIOS: "socios",
+  INSCRIPCION: "inscripcion",
+  LIBROS: "catalogo",
+  INGRESO_LIBROS: "ingreso",
+  AJUSTES: "ajustes",
+} as const satisfies Record<string, Vista>;
 
-type options = typeof options[keyof typeof options];
 
 const views = [
   {
-    id: options.CUOTA,
+    id: options.SOCIOS,
     view: () => <Socios />,
     bgColor: "bg-secondary",
   },
   {
     id: options.INSCRIPCION,
-    view: (verSocios: () => void) => <Inscripcion onInscripto={verSocios} />,
+    view: () => <Inscripcion />,
     bgColor: "bg-[#a3c2f3]",
   },
   {
@@ -44,11 +43,11 @@ const views = [
 ]
 
 function App() {
-  const { showListaSocios, buscar, inicializar: inicializarSocios, salirDeSocio } = useSociosStore()
-  const { inicializar: inicializarLibros, verCatalogo } = useLibrosStore()
+  const { inicializar: inicializarSocios } = useSociosStore()
+  const { inicializar: inicializarLibros } = useLibrosStore()
+  const { vistaActual, ir } = useVistaStore()
   const { inicializar: inicializarSettings, numerosDeInventarioExternos, gestionDeCuotas } = useSettingsStore()
 
-  const [ actualView, setActualView ] = useState<options>(options.CUOTA)
   const [ bg, setbg ] = useState("bg-secondary")
 
   useEffect(() => {
@@ -59,7 +58,7 @@ function App() {
   }, [])
 
   views.forEach(view => {
-    if(view.id === actualView && bg !== view.bgColor) {
+    if(view.id === vistaActual && bg !== view.bgColor) {
       setbg(view.bgColor)
     }
   })
@@ -68,71 +67,68 @@ function App() {
     <div className="h-full bg-white flex flex-col scroll-smooth tracking-wide">
       <nav className="h-18 flex justify-start items-end gap-1">
         <motion.button
-          onClick={() => salirDeSocio(() => {
-            setActualView(options.CUOTA)
-            showListaSocios()
-            buscar("", { showDetallesSocio: false })
-          })}
-          animate={{ height: actualView === options.CUOTA ? 72 : 56 }}
+          onClick={() => ir(options.SOCIOS)}
+          animate={{ height: vistaActual === options.SOCIOS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
             "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-secondary transition-colors duration-75 ease-in",
-            actualView === options.CUOTA && "font-semibold",
-            actualView !== options.CUOTA && "opacity-80",
+            vistaActual === options.SOCIOS && "font-semibold",
+            vistaActual !== options.SOCIOS && "opacity-80",
           )}
         >
           <span className="hidden md:block">{ gestionDeCuotas ? "Socios y cuotas" : "Socios" }</span>
           <span className="block md:hidden">Socios</span>
         </motion.button>
+
         <motion.button
-          onClick={() => salirDeSocio(() => setActualView(options.INSCRIPCION))}
-          animate={{ height: actualView === options.INSCRIPCION ? 72 : 56 }}
+          onClick={() => ir(options.INSCRIPCION)}
+          animate={{ height: vistaActual === options.INSCRIPCION ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
             "text-lg tracking-wider hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#a3c2f3] transition-colors duration-75 ease-in",
-            actualView === options.INSCRIPCION && "font-semibold",
-            actualView !== options.INSCRIPCION && "opacity-80"
+            vistaActual === options.INSCRIPCION && "font-semibold",
+            vistaActual !== options.INSCRIPCION && "opacity-80"
           )}
         >
           Inscripción
         </motion.button>
+
         <motion.button
-          onClick={() => salirDeSocio(() => {
-            setActualView(options.LIBROS)
-            verCatalogo()
-          })}
-          animate={{ height: actualView === options.LIBROS ? 72 : 56 }}
+          onClick={() => ir(options.LIBROS)}
+          animate={{ height: vistaActual === options.LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
             "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#d26fb9c9] transition-colors duration-75 ease-in",
-            actualView === options.LIBROS && "font-semibold",
-            actualView !== options.LIBROS && "opacity-80",
+            vistaActual === options.LIBROS && "font-semibold",
+            vistaActual !== options.LIBROS && "opacity-80",
           )}
         >
           { numerosDeInventarioExternos ? "Catalogo" : "Prestamos" }
         </motion.button>
+
         <motion.button
-          onClick={() => salirDeSocio(() => setActualView(options.INGRESO_LIBROS))}
-          animate={{ height: actualView === options.INGRESO_LIBROS ? 72 : 56 }}
+          onClick={() => ir(options.INGRESO_LIBROS)}
+          animate={{ height: vistaActual === options.INGRESO_LIBROS ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
             "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#a1c690] transition-colors duration-75 ease-in",
-            actualView === options.INGRESO_LIBROS && "font-semibold",
-            actualView !== options.INGRESO_LIBROS && "opacity-80",
+            vistaActual === options.INGRESO_LIBROS && "font-semibold",
+            vistaActual !== options.INGRESO_LIBROS && "opacity-80",
             !numerosDeInventarioExternos && "hidden",
           )}
         >
           <span className="hidden md:block">Ingreso de libros</span>
           <span className="block md:hidden text-base min-w-20">Ing. Libros</span>
         </motion.button>
+
         <motion.button
-          onClick={() => salirDeSocio(() => setActualView(options.AJUSTES))}
-          animate={{ height: actualView === options.AJUSTES ? 72 : 56 }}
+          onClick={() => ir(options.AJUSTES)}
+          animate={{ height: vistaActual === options.AJUSTES ? 72 : 56 }}
           transition={{ type: "spring", stiffness: 400, damping: 30 }}
           className={cn(
             "text-lg hover:opacity-100 py-3 pl-4 pr-6 rounded-t rounded-tr-2xl bg-[#b6d4d4] transition-colors duration-75 ease-in",
-            actualView === options.AJUSTES && "font-semibold",
-            actualView !== options.AJUSTES && "opacity-80",
+            vistaActual === options.AJUSTES && "font-semibold",
+            vistaActual !== options.AJUSTES && "opacity-80",
           )}
         >
           Ajustes
@@ -142,7 +138,7 @@ function App() {
       </nav>
 
       <main className={cn("p-4 pt-0 rounded-b rounded-r flex-1 overflow-y-auto scroll_custom", bg)}>
-        { views.filter(view => view.id === actualView)[0].view(() => setActualView(options.CUOTA)) }
+        { views.filter(view => view.id === vistaActual)[0].view() }
       </main>
     </div>
   )

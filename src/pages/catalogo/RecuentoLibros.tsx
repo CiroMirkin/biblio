@@ -1,12 +1,8 @@
-import { useLibrosStore, useSettingsStore } from "@/store"
+import { useLibrosClasificados, useLibrosStore, useSettingsStore } from "@/store"
 
 export function RecuentoLibros() {
-    const {
-        librosVencidos,
-        librosDisponibles,
-        librosPrestados,
-        libros
-    } = useLibrosStore()
+    const { libros } = useLibrosStore()
+    const { vencidos: librosVencidos, disponibles: librosDisponibles, prestados: librosPrestados } = useLibrosClasificados()
     const { numerosDeInventarioExternos } = useSettingsStore()
 
     return (

@@ -6,6 +6,15 @@ export type CalendarioDeCuotas = Cuota[]
 
 export type HistorialDeCuotas = Map< number, { anio: number; mes: number} >
 
+// Las columnas de meses no van acá porque se ubican leyendo las fechas del encabezado con construirIndiceMeses.
+export const COLUMNAS_CUOTAS = {
+  nroSocio: 3,
+  nombre: 4,
+} as const
+
+export const celdaCuotas = (row: ExcelJS.Row, campo: keyof typeof COLUMNAS_CUOTAS) =>
+  row.getCell(COLUMNAS_CUOTAS[campo])
+
 export function toggleCeldaPago(cell: ExcelJS.Cell): boolean {
   if (cell.value === 'pago') {
     cell.value = 'adeuda'

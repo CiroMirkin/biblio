@@ -1,5 +1,5 @@
 import type { NewSocio } from "@shared/models"
-import { useSociosStore } from "@/store"
+import { useSociosStore, useVistaStore } from "@/store"
 import { useRef, useState } from "react"
 import type { SyntheticEvent } from "react"
 import { formatFecha, formatName } from "@/utils"
@@ -7,12 +7,9 @@ import { format } from "@formkit/tempo"
 import { InscripcionForm } from "./InscripcionForm"
 import { DatosNecesariosTexto } from "./DatosNecesariosTexto"
 
-type InscripcionProps = {
-  onInscripto: () => void
-}
-
-export function Inscripcion({ onInscripto }: InscripcionProps) {
+export function Inscripcion() {
   const { crearSocio } = useSociosStore()
+  const { verSocio } = useVistaStore()
   const formRef = useRef<HTMLFormElement>(null)
   const [loading, setLoading] = useState(false)
 
@@ -42,7 +39,7 @@ export function Inscripcion({ onInscripto }: InscripcionProps) {
       return
     }
 
-    onInscripto()
+    verSocio(newSocio.nroSocio)
   }
 
   return (

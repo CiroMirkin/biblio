@@ -1,4 +1,5 @@
 import { modificarHistorial } from '../../utils/datosExcel'
+import { celdaHistorial } from '../../models/historial'
 
 export async function actualizarNroLibroEnHistorial(viejoNro: string, nuevoNro: string): Promise<string> {
   try {
@@ -6,9 +7,9 @@ export async function actualizarNroLibroEnHistorial(viejoNro: string, nuevoNro: 
       let contador = 0
       for (let i = 1; i <= worksheet.actualRowCount; i++) {
         const row = worksheet.getRow(i)
-        const nro = String(row.getCell(5).value ?? '')
+        const nro = String(celdaHistorial(row, 'nroLibro').value ?? '')
         if (nro === viejoNro) {
-          row.getCell(5).value = nuevoNro
+          celdaHistorial(row, 'nroLibro').value = nuevoNro
           row.commit()
           contador++
         }

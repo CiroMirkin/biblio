@@ -46,6 +46,14 @@ export const PRESTAMOS_HISTORIAL_XLSX_PATH = IS_TEST
   ? path.join(FIXTURES_PATH, 'prestamos-historial-test.xlsx')
   : PRESTAMOS_HISTORIAL_XLSX_DEFAULT
 
+const PRESTAMOS_XLSX_DEFAULT = IS_DEV
+  ? path.join(RESOURCES_PATH, 'prestamos.xlsx')
+  : path.join(app.getPath('userData'), 'prestamos.xlsx')
+
+export const PRESTAMOS_XLSX_PATH = IS_TEST
+  ? path.join(FIXTURES_PATH, 'prestamos-test.xlsx')
+  : PRESTAMOS_XLSX_DEFAULT
+
 const SCRIPTS_PATH = IS_DEV
   ? path.join(process.cwd(), 'scripts')
   : path.join(process.resourcesPath, 'scripts')

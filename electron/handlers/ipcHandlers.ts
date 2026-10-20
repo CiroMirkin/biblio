@@ -2,7 +2,6 @@ import { getLibros, editarDatosLibro, ingresarLibro } from './libros'
 import {
   devolverLibro,
   getLibrosPrestadosSocio,
-  getSociosConLibros,
   addLibroPrestado
 } from './prestamos'
 import {
@@ -40,7 +39,6 @@ const librosIpcHandlers = {
 const prestamosIpcHandlers = {
   devolverLibro: (_: unknown, numeroInventario: number | string) => devolverLibro(numeroInventario),
   getLibrosPrestadosSocio: (_: unknown, nroSocio: number) => getLibrosPrestadosSocio(nroSocio),
-  getSociosConLibros: () => getSociosConLibros(),
 }
 
 const sociosIpcHandlers = {

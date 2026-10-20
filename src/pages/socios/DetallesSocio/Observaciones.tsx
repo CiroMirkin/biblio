@@ -1,8 +1,9 @@
 import { CheckIcon, Form } from "@/components"
-import { useSociosStore } from "@/store"
+import { useSociosStore, useSocioSeleccionado } from "@/store"
 
 export function Observaciones() {
-    const { socioSeleccionado, setObservaciones } = useSociosStore()
+    const { setObservaciones } = useSociosStore()
+    const socioSeleccionado = useSocioSeleccionado()
     const observaciones = socioSeleccionado?.observaciones
 
     return (
@@ -16,7 +17,7 @@ export function Observaciones() {
             submitLabel={<CheckIcon size={20} />}
             className="rounded p-4 card"
             classNameBtn="self-end py-2 px-2 w-10 flex justify-center items-center"
-            onSubmit={setObservaciones}
+            onSubmit={(valor) => socioSeleccionado && setObservaciones(socioSeleccionado.nroSocio, valor)}
             onChange={() => {}}
         />
     )

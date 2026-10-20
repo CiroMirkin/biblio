@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { useHistorialStore, useSettingsStore, useSociosStore } from "@/store"
+import { useHistorialStore, useSettingsStore, useSocioSeleccionado } from "@/store"
 import { motion, AnimatePresence } from "motion/react"
 import { Spinner } from "@/components"
 import { cn, formatFecha } from "@/utils"
 
 export function HistorialPrestamos() {
-  const { socioSeleccionado } = useSociosStore()
+  const socioSeleccionado = useSocioSeleccionado()
   const { entriesConLibro, loading, error, buscarPorSocio } = useHistorialStore()
   const { numerosDeInventarioExternos, catalogacionSimple } = useSettingsStore()
   const [consultado, setConsultado] = useState(false)

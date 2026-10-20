@@ -1,30 +1,17 @@
 import { create } from "zustand"
-import type { DatosLibro, Libro, LibroRegistrado } from "@shared/models"
+import type { DatosLibro, LibroRegistrado } from "@shared/models"
 import { cargarLibrosEnPrestamo } from "@/services"
-import { calcularDiasDesdePrestamo } from "@/utils"
-import { buscarLibro } from "./buscarLibro"
-import { useSettingsStore } from "./useSettingsStore"
 import { buscarLibroPorNro } from "./buscarLibroPorNro"
-import { filtrarLibrosVencidos } from "./filtrarLibrosVencidos"
 
 interface LibrosState {
   libros: LibroRegistrado[]
-  librosFiltrados: LibroRegistrado[]
-  librosVencidos: LibroRegistrado[]
-  librosDisponibles: LibroRegistrado[]
-  librosPrestados: LibroRegistrado[]
-  
-  showDetallesLibro: boolean
-  showHistorialLibro: boolean
-  libroSeleccionado: LibroRegistrado | null
+  query: string
+  loadingLibros: boolean
 
   inicializar: () => Promise<void>
 
-  verDetallesLibro: (libro: Libro | LibroRegistrado) => void
-  verHistorialLibro: (libro: Libro | LibroRegistrado) => void
-  editarLibro: (libro: Partial<DatosLibro>) => Promise<LibroRegistrado | null>
-  
-  verCatalogo: () => void
+  editarLibro: (nroViejo: number | string | undefined, libro: Partial<DatosLibro>) => Promise<LibroRegistrado | null>
+
   buscar: (query: string) => void
 
   getLibrosSocio: (nroSocio: number) => Promise<LibroRegistrado[]>
@@ -38,225 +25,112 @@ interface LibrosState {
   ingresarLibro: (ingreso: DatosLibro) => Promise<boolean>
 
   getUltimoNumeroInventario: () => number
-  esNroInventarioExistente: (nro: string | number) => { libro: LibroRegistrado | null, existente: boolean }
-
-  actualizarListados: <T extends Libro>(updated: T | undefined, options?: { nroViejo?: string }) => void
+  esNroInventarioExistente: (nro: string | number, options?: { nroActual?: string | number }) => { libro: LibroRegistrado | null, existente: boolean }
 }
 
-export const useLibrosStore = create<LibrosState>((set, get) => ({
-  libros: [],
-  librosVencidos: [],
-  librosFiltrados: [],
-  librosDisponibles: [],
-  librosPrestados: [],
-
-  showDetallesLibro: false,
-  showHistorialLibro: false,
-  libroSeleccionado: null,
-
-  inicializar: async () => {
-    const { limiteDeDias } = useSettingsStore.getState()
-
-    const libros = await cargarLibrosEnPrestamo()
-    const librosVencidos: LibroRegistrado[] = filtrarLibrosVencidos({ libros, limiteDeDias })
-    const librosDisponibles: Libro[] = []
-    const librosPrestados: LibroRegistrado[] = []
-
-    libros.forEach(libro => {
-      if (libro.fechaDePrestamo === null) {
-        librosDisponibles.push(libro)
-      }
-      else if (calcularDiasDesdePrestamo(libro.fechaDePrestamo) > limiteDeDias) {
-        return;
-      }
-      else {
-        librosPrestados.push(libro)
-      }
-    })
-
+export const useLibrosStore = create<LibrosState>((set, get) => {
+  const reemplazar = (updated: LibroRegistrado, nroViejo?: string) =>
     set({
-      libros,
-      librosVencidos: librosVencidos.reverse(),
-      librosDisponibles,
-      librosPrestados,
-      librosFiltrados: [...librosVencidos],
+      libros: reemplazarLibro(get().libros, updated, nroViejo)
     })
-  },
 
-  buscar: (query) => {
-    const { libros, librosVencidos } = get()
+  return {
+    libros: [],
+    query: "",
+    loadingLibros: true,
 
-    if (!query.trim()) {
-      set({ librosFiltrados: [...librosVencidos] })
-      return
-    }
+    inicializar: async () => {
+      try {
+        set({ libros: await cargarLibrosEnPrestamo() })
+      }
+      finally {
+        set({ loadingLibros: false })
+      }
+    },
 
-    const filtrados = buscarLibro({
-      libros,
-      dato: query.toLowerCase().trim(),
-    }) || []
-    set({ librosFiltrados: filtrados })
-  },
+    buscar: (query) => set({ query }),
 
-  verCatalogo: () => set({ showDetallesLibro: false, showHistorialLibro: false, libroSeleccionado: null, }),
+    editarLibro: async (nroViejo, libro) => {
+      if(!libro || !libro.numeroInventario) return null
 
-  verHistorialLibro: (libro) => {
-    if(!libro) return;
+      const updatedLibro = await window.electronAPI.editarDatosLibro(String(nroViejo ?? ""), { ...libro })
+      if(!updatedLibro) return null
 
-    set({
-      showHistorialLibro: true,
-      libroSeleccionado: { ...libro },
-    })
-  },
+      reemplazar(updatedLibro, String(nroViejo ?? ""))
+      return updatedLibro
+    },
 
-  verDetallesLibro: (libro) => {
-    if(!libro) return;
+    getLibrosSocio: async (nroSocio) => {
+      const libros = await window.electronAPI.getLibrosPrestadosSocio(nroSocio)
+      return libros || []
+    },
 
-    set({
-      showDetallesLibro: true,
-      libroSeleccionado: { ...libro },
-    })
-  },
+    agregarLibroEnPrestamo: async (libro, { fechaDePrestamo } = {}) => {
+      const libroPrestado = await window.electronAPI.addLibroPrestado(libro, fechaDePrestamo)
+      if (!libroPrestado) return null
 
-  editarLibro: async (libro) => {
-    if(!libro || !libro.numeroInventario) return null
-    const { libroSeleccionado } = get()
-    if(!libroSeleccionado) return null
+      reemplazar(libroPrestado)
+      return libroPrestado
+    },
 
-    const updatedLibro = await window.electronAPI.editarDatosLibro(
-      String(libroSeleccionado!.numeroInventario),
-      { ...libro }
-    )
-    
-    if(!updatedLibro) return null
+    devolverLibro: async (nroInventario) => {
+      const ok = await window.electronAPI.devolverLibro(nroInventario)
+      if (!ok) return
 
-    const nroViejo = String(libroSeleccionado.numeroInventario)
-    const { actualizarListados } = get()
-    actualizarListados(updatedLibro, { nroViejo })
-    return updatedLibro
-  },
-
-  getLibrosSocio: async (nroSocio) => {
-    const libros = await window.electronAPI.getLibrosPrestadosSocio(nroSocio)
-    return libros || []
-  },
-
-  agregarLibroEnPrestamo: async (libro, { fechaDePrestamo } = {}) => {
-    const libroPrestado = await window.electronAPI.addLibroPrestado(libro, fechaDePrestamo)
-    if (!libroPrestado) return null
-    const { actualizarListados } = get()
-    actualizarListados(libroPrestado)
-    return libroPrestado
-  },
-
-  devolverLibro: async (nroInventario) => {
-    const ok = await window.electronAPI.devolverLibro(nroInventario)
-    if (!ok) return
-    
-    const { actualizarListados, libros } = get()
-    const libroEnPrestamo = libros.find(l => String(l.numeroInventario) === String(nroInventario))
-    const libroDevuelto = {
-      ...libroEnPrestamo,
-      fechaDePrestamo: null,
-      nombreSocio: "",
-      numeroSocio: null,
-    } as LibroRegistrado
-    actualizarListados(libroDevuelto)
-  },
-
-  getLibroPorInventario: (nroInventario) => {
-    const { libros } = get()
-    const result = buscarLibroPorNro(String(nroInventario), libros)
-    return result.length ? result[0] : null
-  },
-
-  ingresarLibro: async (ingreso: DatosLibro) => {
-    const libroRegistrado = await window.electronAPI.ingresarLibro(ingreso)
-    if(!libroRegistrado) return false
-    const newLibro = {
-        ...libroRegistrado,
+      const libroEnPrestamo = get().libros.find(l => String(l.numeroInventario) === String(nroInventario))
+      reemplazar({
+        ...libroEnPrestamo,
         fechaDePrestamo: null,
+        nombreSocio: "",
+        numeroSocio: null,
+      } as LibroRegistrado)
+    },
+
+    getLibroPorInventario: (nroInventario) => {
+      const { libros } = get()
+      const result = buscarLibroPorNro(String(nroInventario), libros)
+      return result.length ? result[0] : null
+    },
+
+    ingresarLibro: async (ingreso: DatosLibro) => {
+      const libroRegistrado = await window.electronAPI.ingresarLibro(ingreso)
+      if(!libroRegistrado) return false
+
+      reemplazar({ ...libroRegistrado, fechaDePrestamo: null })
+      return true
+    },
+
+    getUltimoNumeroInventario: () => {
+      const { libros } = get()
+      if (!libros.length) return 0
+
+      return libros.reduce((max, l) => {
+        const n = Number(l.numeroInventario)
+        return n > max ? n : max
+      }, 0)
+    },
+
+    esNroInventarioExistente: (nro, options) => {
+      if(nro === "" || nro === null || nro === undefined) {
+        return {
+          libro: null,
+          existente: false,
+        }
       }
 
-    const { libros, librosDisponibles } = get()
-    set({
-      libros: [...libros, newLibro],
-      librosDisponibles: [...librosDisponibles, newLibro ],
-    })
-    return true
-  },
-
-  getUltimoNumeroInventario: () => {
-    const { libros } = get()
-    if (!libros.length) return 0
-
-    return libros.reduce((max, l) => {
-      const n = Number(l.numeroInventario)
-      return n > max ? n : max
-    }, 0)
-  },
-
-  esNroInventarioExistente: (nro: string | number) => {
-    if(nro === "" || nro === null || nro === undefined) {
+      const libro = get().libros.find(l => String(l.numeroInventario) === String(nro)) ?? null
       return {
-        libro: null,
-        existente: false,
+        libro,
+        existente: libro !== null && String(nro) !== String(options?.nroActual),
       }
-    }
-
-    const { libros, libroSeleccionado } = get()
-
-    if(String(libroSeleccionado?.numeroInventario) === String(nro)) {
-      return {
-        libro: libroSeleccionado,
-        existente: false,
-      }
-    }
-
-    const libro = libros.find(l => String(l.numeroInventario) === String(nro)) ?? null
-    return {
-      libro,
-      existente: libro !== null,
-    }
-  },
-
-  actualizarListados: (updated, options) => {
-    if(!updated) return
-
-    const { limiteDeDias } = useSettingsStore.getState()
-    const nroViejo = options?.nroViejo
-    const { libros, librosDisponibles, librosPrestados, librosVencidos, librosFiltrados } = get()
-
-    const updatedPrestamo = updated as LibroRegistrado
-    const disponible = updatedPrestamo.fechaDePrestamo === null || updatedPrestamo.fechaDePrestamo === undefined
-    const vencido = !disponible && calcularDiasDesdePrestamo(updatedPrestamo.fechaDePrestamo!) > limiteDeDias
-    const prestado = !disponible && !vencido
-
-    set({
-      libros: actualizarListaLibros(libros, updated as LibroRegistrado, true, nroViejo),
-      librosDisponibles: actualizarListaLibros(librosDisponibles, updated as Libro, disponible, nroViejo),
-      librosPrestados: actualizarListaLibros(librosPrestados, updated as LibroRegistrado, prestado, nroViejo),
-      librosVencidos: actualizarListaLibros(librosVencidos, updated as LibroRegistrado, vencido, nroViejo),
-      librosFiltrados: actualizarListaLibros(librosFiltrados, updated as LibroRegistrado, vencido, nroViejo),
-    })
+    },
   }
-}))
+})
 
-function actualizarListaLibros<T extends Libro>(
-  lista: T[], updated: T, pertenece: boolean, nroViejo?: string
-): T[] {
+function reemplazarLibro(lista: LibroRegistrado[], updated: LibroRegistrado, nroViejo?: string): LibroRegistrado[] {
   const nro = nroViejo ?? String(updated.numeroInventario)
   const existe = lista.some(l => String(l.numeroInventario) === nro)
-
-  if (pertenece) {
-    if (existe) {
-      return lista.map(l => String(l.numeroInventario) === nro ? updated : l)
-    }
-    return [...lista, updated]
-  }
-
-  if (existe) {
-    return lista.filter(l => String(l.numeroInventario) !== nro)
-  }
-  return lista
+  return existe
+    ? lista.map(l => String(l.numeroInventario) === nro ? updated : l)
+    : [...lista, updated]
 }

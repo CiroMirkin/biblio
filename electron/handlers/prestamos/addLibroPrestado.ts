@@ -1,65 +1,71 @@
-import type ExcelJS from 'exceljs'
+import { randomUUID } from 'node:crypto'
 import { holdingVacio, type LibroRegistrado } from "@shared/models/libro"
-import { esSinInventariar, generarIdSinInventariar, getFechaDePrestamoFromRow, getNroDeInventarioFromRow, libroToRow, rowToLibro, writeLibro } from "../../models/libro"
-import { modificarLibros } from '../../utils/datosExcel'
+import { esSinInventariar, generarIdSinInventariar, getNroDeInventarioFromRow, rowToLibro, writeLibro } from "../../models/libro"
+import { rowToPrestamo, writePrestamo } from '../../models/prestamo'
+import { leerLibros, modificarLibros, modificarPrestamos } from '../../utils/datosExcel'
 import { insertarHistorial } from '../historial'
 
 export async function addLibroPrestado(libro: LibroRegistrado, fecha?: Date): Promise<LibroRegistrado | null> {
+  if (!libro.titulo) return null
+
   const date = fecha ? fecha : new Date()
-  const numeroInventario = libro.numeroInventario || generarIdSinInventariar()
+  const numeroInventario = String(libro.numeroInventario || generarIdSinInventariar())
+  const sinInventariar = esSinInventariar(numeroInventario)
 
-  const prestado = await modificarLibros(async ({ worksheet, writeWorkbook }) => {
-    if(!libro.titulo) return false
+  const enCatalogo = sinInventariar ? undefined : await leerLibros(({ worksheet }) => {
+    let encontrado: ReturnType<typeof rowToLibro> | undefined
+    worksheet.eachRow((row, rowIndex) => {
+      if (rowIndex === 1 || encontrado) return
+      if (getNroDeInventarioFromRow(row) === numeroInventario) encontrado = rowToLibro(row)
+    })
+    return encontrado
+  })
 
-    let targetRow: ExcelJS.Row | null = null
-
+  const idPrestamo = randomUUID()
+  const prestado = await modificarPrestamos(async ({ worksheet, writeWorkbook }) => {
+    let yaPrestado = false
     worksheet.eachRow((row, rowIndex) => {
       if (rowIndex === 1) return
-
-      if (libro.numeroInventario && getNroDeInventarioFromRow(row) === String(libro.numeroInventario)) {
-        targetRow = row
-      }
+      if (rowToPrestamo(row).nroLibro === numeroInventario) yaPrestado = true
     })
+    if (yaPrestado) return false
 
-    if (targetRow) {
-      if (getFechaDePrestamoFromRow(targetRow)) {
-        return false
-      }
-
-      writeLibro(targetRow, {
-        ...rowToLibro(targetRow),
-        nombreSocio: libro.nombreSocio,
-        numeroSocio: libro.numeroSocio ?? null,
-        fechaDePrestamo: date,
-      })
-    }
-    else {
-      const newRow = worksheet.addRow(libroToRow({
-        nombreSocio: libro.nombreSocio,
-        numeroSocio: libro.numeroSocio ?? null,
-        fechaDePrestamo: date,
-        autor: libro.autor,
-        titulo: libro.titulo,
-        numeroInventario,
-        fechaDeIngreso: new Date(),
-        holding: holdingVacio(),
-      }))
-      newRow.commit()
-    }
-
+    writePrestamo(worksheet.addRow([]), {
+      idPrestamo,
+      nroLibro: numeroInventario,
+      nroSocio: libro.numeroSocio ?? null,
+      nombreSocio: libro.nombreSocio ?? '',
+      fechaPrestamo: date,
+      titulo: enCatalogo?.titulo ?? libro.titulo,
+      autor: (enCatalogo ? enCatalogo.autor : libro.autor) ?? '',
+    })
     await writeWorkbook()
     return true
   })
 
   if (!prestado) return null
 
-  if (libro.numeroSocio && !esSinInventariar(numeroInventario)) {
-    await insertarHistorial(date, libro.numeroSocio, String(numeroInventario))
+  // un número de inventario que no está en el catálogo se da de alta al prestarlo
+  if (!sinInventariar && !enCatalogo) {
+    await modificarLibros(async ({ worksheet, writeWorkbook }) => {
+      writeLibro(worksheet.getRow(worksheet.rowCount + 1), {
+        autor: libro.autor,
+        titulo: libro.titulo,
+        numeroInventario,
+        fechaDeIngreso: new Date(),
+        holding: holdingVacio(),
+      })
+      await writeWorkbook()
+    })
+  }
+
+  if (libro.numeroSocio && !sinInventariar) {
+    await insertarHistorial(date, libro.numeroSocio, numeroInventario, idPrestamo)
   }
 
   return {
     ...libro,
-    numeroInventario,
+    numeroInventario: libro.numeroInventario || numeroInventario,
     fechaDePrestamo: date,
   }
 }

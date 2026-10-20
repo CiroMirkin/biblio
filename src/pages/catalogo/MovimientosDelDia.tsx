@@ -1,4 +1,4 @@
-import { useLibrosStore, useSettingsStore } from "@/store"
+import { useLibrosClasificados, useLibrosStore, useSettingsStore } from "@/store"
 import { buscarLibrosDeHoy, cn } from "@/utils"
 import { filtrarLibrosRegistrados } from "@shared/utils"
 
@@ -7,10 +7,8 @@ interface Props {
 }
 
 export default function MovimientosDelDia({ className = "" }: Props) {
-    const {
-        librosPrestados,
-        libros,
-    } = useLibrosStore()
+    const { libros } = useLibrosStore()
+    const { prestados: librosPrestados } = useLibrosClasificados()
     const { numerosDeInventarioExternos } = useSettingsStore()
 
     const librosPrestadosHoy = buscarLibrosDeHoy(librosPrestados).length

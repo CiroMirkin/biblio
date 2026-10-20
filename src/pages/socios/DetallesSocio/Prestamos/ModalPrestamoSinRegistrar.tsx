@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 import { motion, useReducedMotion } from "motion/react"
-import { useSociosStore } from "@/store"
+import { useVistaStore } from "@/store"
 
 interface Props {
   onRegistrar: () => Promise<unknown>
 }
 
 export function ModalPrestamoSinRegistrar({ onRegistrar }: Props) {
-  const { salidaPendiente, cancelarSalida } = useSociosStore()
+  const { salidaPendiente, cancelarSalida } = useVistaStore()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [loading, setLoading] = useState(false)
   const reducirMovimiento = useReducedMotion()
