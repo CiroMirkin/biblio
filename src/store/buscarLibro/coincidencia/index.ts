@@ -1,0 +1,5 @@
+export * from "./coincidePorPrefijo"
+export * from "./coincidePorTolerancia"
+export * from "./coincidePalabra"
+export * from "./coincidenTodas"
+export * from "./contarCoincidencias"
