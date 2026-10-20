@@ -1,3 +1,5 @@
+ignore 
+
 # Electron
 dist-electron
 dist-ts
