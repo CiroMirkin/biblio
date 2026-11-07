@@ -1,38 +1,52 @@
-import { useLibrosClasificados } from "@/store"
+import { useLibrosClasificados, useLibrosStore } from "@/store"
 import { LibroEnPrestamo } from "./LibroEnPrestamo"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 const PASO = 10
 
 export function ListaLibrosEnPrestamo() {
     const { filtrados: librosFiltrados } = useLibrosClasificados()
+    const sinBusqueda = !useLibrosStore(s => s.query).trim()
+    const [invertido, setInvertido] = useState(false)
     const [cantidad, setCantidad] = useState(PASO)
     const bottomRef = useRef<HTMLDivElement>(null)
 
+    const libros = useMemo(() => (
+        invertido && sinBusqueda ? [...librosFiltrados].reverse() : librosFiltrados
+    ), [librosFiltrados, invertido, sinBusqueda])
+
     useEffect(() => {
         setCantidad(PASO)
-    }, [librosFiltrados])
+    }, [libros])
 
     useEffect(() => {
         if (!bottomRef.current) return
 
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
-                setCantidad(prev => Math.min(prev + PASO, librosFiltrados.length))
+                setCantidad(prev => Math.min(prev + PASO, libros.length))
             }
         })
 
         observer.observe(bottomRef.current)
         return () => observer.disconnect()
-    }, [librosFiltrados.length, cantidad])
+    }, [libros.length, cantidad])
 
-    if (!librosFiltrados.length) {
-        return <p className="tracking-wide text-lg">No se encontraron resultados, pero aún puedes probar buscando por autor o por N° de inventario.</p>
+    if (!libros.length) {
+        return <p className="tracking-wide text-lg">No se encontraron resultados, pero aún podes probar buscando por autor o por N° de inventario.</p>
     }
 
     return (
         <ul className="flex flex-col gap-3 pb-4">
-            {librosFiltrados.slice(0, cantidad).map(libro => (
+            { sinBusqueda &&
+                <button
+                    className="ml-auto text-sm opacity-60 hover:opacity-100 transition-opacity hover:underline cursor-pointer"
+                    onClick={() => setInvertido(v => !v)}
+                >
+                    {invertido ? "Más recientes primero" : "Más antiguos primero"}
+                </button>
+            }
+            {libros.slice(0, cantidad).map(libro => (
                 <LibroEnPrestamo
                     key={`${libro.numeroInventario} ${libro.titulo}`}
                     libro={libro}
