@@ -33,18 +33,20 @@ export function ListaLibrosEnPrestamo() {
     }, [libros.length, cantidad])
 
     if (!libros.length) {
-        return <p className="tracking-wide text-lg">No se encontraron resultados, pero aún podes probar buscando por autor o por N° de inventario.</p>
+        return <p className="tracking-wide text-lg">No se encontraron resultados, pero aún podés probar buscando por autor o por N° de inventario.</p>
     }
 
     return (
         <ul className="flex flex-col gap-3 pb-4">
             { sinBusqueda &&
-                <button
-                    className="ml-auto text-sm opacity-60 hover:opacity-100 transition-opacity hover:underline cursor-pointer"
-                    onClick={() => setInvertido(v => !v)}
-                >
-                    {invertido ? "Más recientes primero" : "Más antiguos primero"}
-                </button>
+                <li className="ml-auto">
+                    <button
+                        className="text-sm opacity-60 hover:opacity-100 transition-opacity hover:underline cursor-pointer"
+                        onClick={() => setInvertido(v => !v)}
+                    >
+                        {invertido ? "Más recientes primero" : "Más antiguos primero"}
+                    </button>
+                </li>
             }
             {libros.slice(0, cantidad).map(libro => (
                 <LibroEnPrestamo
